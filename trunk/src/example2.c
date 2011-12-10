@@ -47,10 +47,16 @@ Ppoint_list plist_quad = {
 };
 
 Pcolr_rep col_rep;
+int view_index;
 
-int main(void)
+int main(int argc, char *argv[])
 {
    XEvent event;
+
+   if (argc > 1) {
+      view_index = atoi(argv[1]);
+      printf("Use view: %d\n", view_index);
+   }
 
    popen_phigs("", 0);
    popen_ws(0, NULL, 0);
@@ -70,7 +76,7 @@ int main(void)
    pset_linetype(PLINE_DASH);
    pset_linewidth(4.0);
    ppolyline(&plist_line);
-   pset_marker_type(PMARKER_CROSS);
+   pset_marker_type(PMARKER_ASTERISK);
    pset_marker_size(0.1);
    ppolymarker(&plist_mark);
    pclose_struct();
@@ -84,7 +90,7 @@ int main(void)
    pclose_struct();
 
    popen_struct(3);
-   pset_view_ind3(0);
+   pset_view_ind3(view_index);
    pset_int_colr_ind(0);
    pexec_struct(0);
    pexec_struct(1);
