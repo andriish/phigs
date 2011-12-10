@@ -59,18 +59,6 @@ int main(int argc, char *argv[])
    }
 
    popen_phigs("", 0);
-   popen_ws(0, NULL, 0);
-   ws->out_ws.model.b.ws_viewport_pending = PUPD_PEND;
-   ws->out_ws.model.b.req_ws_viewport.x_min = 0;
-   ws->out_ws.model.b.req_ws_viewport.x_max = 600;
-   ws->out_ws.model.b.req_ws_viewport.y_min = 0;
-   ws->out_ws.model.b.req_ws_viewport.y_max = 600;
-   (*ws->redraw_all)(ws, PFLAG_ALWAYS);
-
-   col_rep.rgb.red = 1.0;
-   col_rep.rgb.green = 1.0;
-   col_rep.rgb.blue = 1.0;
-   pset_colr_rep(0, 0, &col_rep);
 
    popen_struct(0);
    pset_linetype(PLINE_DASH);
@@ -97,8 +85,37 @@ int main(int argc, char *argv[])
    //pexec_struct(2);
    pclose_struct();
 
+   popen_ws(0, NULL, 0);
+   ws->out_ws.model.b.ws_viewport_pending = PUPD_PEND;
+   ws->out_ws.model.b.req_ws_viewport.x_min = 0;
+   ws->out_ws.model.b.req_ws_viewport.x_max = 300;
+   ws->out_ws.model.b.req_ws_viewport.y_min = 0;
+   ws->out_ws.model.b.req_ws_viewport.y_max = 300;
+   (*ws->redraw_all)(ws, PFLAG_ALWAYS);
+   printf("Created workspace: %x\n", (unsigned int) ws);
+
+   col_rep.rgb.red = 1.0;
+   col_rep.rgb.green = 1.0;
+   col_rep.rgb.blue = 1.0;
+   pset_colr_rep(0, 0, &col_rep);
+
+   popen_ws(1, NULL, 0);
+   ws->out_ws.model.b.ws_viewport_pending = PUPD_PEND;
+   ws->out_ws.model.b.req_ws_viewport.x_min = 0;
+   ws->out_ws.model.b.req_ws_viewport.x_max = 300;
+   ws->out_ws.model.b.req_ws_viewport.y_min = 0;
+   ws->out_ws.model.b.req_ws_viewport.y_max = 300;
+   (*ws->redraw_all)(ws, PFLAG_ALWAYS);
+   printf("Created workspace: %x\n", (unsigned int) ws);
+
+   col_rep.rgb.red = 1.0;
+   col_rep.rgb.green = 1.0;
+   col_rep.rgb.blue = 1.0;
+   pset_colr_rep(1, 0, &col_rep);
+
    printf("Post struct...");
    ppost_struct(0, 3, 0);
+   ppost_struct(1, 3, 0);
    printf("Done.\n");
 
    XSelectInput(ws->display,
@@ -109,7 +126,8 @@ int main(int argc, char *argv[])
       switch(event.type) {
          case Expose:
             while (XCheckTypedEvent(ws->display, Expose, &event));
-            (*ws->redraw_all)(ws, PFLAG_ALWAYS);
+            (*ws_list[0]->redraw_all)(ws_list[0], PFLAG_ALWAYS);
+            (*ws_list[1]->redraw_all)(ws_list[1], PFLAG_ALWAYS);
          break;
 
          case KeyPress:

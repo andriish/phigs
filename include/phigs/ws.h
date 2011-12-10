@@ -297,6 +297,10 @@ typedef struct _Ws {
                    struct _Ws *ws,
                    Phg_ret *ret
                    );
+   void         (*set_rep)(
+                   struct _Ws *ws,
+                   Phg_args_rep_type type,
+                   Phg_args_rep_data *rep);
 } Ws;
 
 #define WSB_NONE_POSTED(posted_ptr) \
@@ -412,6 +416,7 @@ void phg_wsb_inq_view_rep(Ws *ws, Pint index, Phg_ret *ret);
 void phg_wsb_inq_ws_xform(Ws *ws, Phg_ret *ret);
 void phg_wsb_inq_disp_update_state(Ws *ws, Phg_ret *ret);
 void phg_wsb_inq_hlhsr_mode(Ws *ws, Phg_ret *ret);
+void phg_wsb_set_rep(Ws *ws, Phg_args_rep_type type, Phg_args_rep_data *rep);
 
 #endif
 
