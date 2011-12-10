@@ -51,10 +51,10 @@ void phg_init_default_views(void)
      * view plane = 0.0, front plane = 1.0, back plane = 0.0
      * vp x limits = [.1,.4], vp y limits = [.1,.4], vp z limits = [0,1]
      */
-    view[1].map_matrix[0][0] = 0.3;
-    view[1].map_matrix[3][0] = 0.1;
-    view[1].map_matrix[1][1] = 0.3;
-    view[1].map_matrix[3][1] = 0.1;
+    view[1].map_matrix[0][0] = 0.5;
+    view[1].map_matrix[3][0] = -0.5;
+    view[1].map_matrix[1][1] = 0.5;
+    view[1].map_matrix[3][1] = -0.5;
 
     /* View 2: top view in upper left corner of ws window.
      * vrp = (0,0,0), vup = <0,0,-1>, vpn = <0,1,0>, prp = (0.5,-0.5,5.0)
@@ -80,7 +80,7 @@ void phg_init_default_views(void)
     view[3].map_matrix[0][0] = 0.3;
     view[3].map_matrix[3][0] = 0.9;
     view[3].map_matrix[1][1] = 0.3;
-    view[3].map_matrix[3][1] = 0.1;
+    view[3].map_matrix[3][1] = -0.5;
     view[3].ori_matrix[0][0] =  0.0;
     view[3].ori_matrix[2][0] = -1.0;
     view[3].ori_matrix[0][2] =  1.0;

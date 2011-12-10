@@ -84,8 +84,8 @@ static void wsb_load_funcs(Ws *ws)
     ws->make_requested_current = phg_wsb_make_requested_current;
     ws->update = phg_wsb_update;
     ws->set_disp_update_state = phg_wsb_set_disp_update_state;
-#if TODO
     ws->set_rep = phg_wsb_set_rep;
+#if TODO
     ws->set_filter = phg_wsb_set_filter;
 #endif
     ws->set_hlhsr_mode = phg_wsb_set_hlhsr_mode;
@@ -729,7 +729,7 @@ void phg_wsb_make_requested_current(Ws *ws)
 	     * request because the pending views may not be contiguous.
 	     */
 #ifdef DEBUG
-	    printf("Set pending view: %d\n", owsb->num_pending_views);
+	    printf("Set pending view: %d\n", req_view->id);
 #endif
 #ifdef TODO
 	    (void)phg_utx_view_entry_to_pex( &req_view->view, &pex_view );
@@ -975,6 +975,9 @@ void phg_wsb_post(Ws *ws,
     Ws_post_str 	*cur, *end;
     Ws_post_str 	*new;
 
+#ifdef DEBUG
+    printf("Post on workspace: %x\n", (unsigned int) ws);
+#endif
 
     if ( !first_posting ) {
 	/* Check to see if structure is already posted. */
@@ -1471,15 +1474,10 @@ void phg_wsb_set_view_input_priority(Ws *ws,
     /* Has no effect on the screen */
 }
 
-#if 0
-void
-phg_wsb_set_rep( ws, type, rep )
-    Ws			*ws;
-    Phg_args_rep_type	type;
-    Phg_args_rep_data	*rep;
+void phg_wsb_set_rep(Ws *ws, Phg_args_rep_type type, Phg_args_rep_data *rep)
 {
-    register	Wsb_output_ws	*owsb = &ws->out_ws.model.b;
-    register	int		i;
+    Wsb_output_ws	*owsb = &ws->out_ws.model.b;
+    int		i;
 
     switch ( type ) {
 	case PHG_ARGS_LNREP:
@@ -1496,9 +1494,11 @@ phg_wsb_set_rep( ws, type, rep )
 	case PHG_ARGS_EXTPTREP:
 	case PHG_ARGS_DCUEREP:
 	case PHG_ARGS_LIGHTSRCREP:
+#if TODO
 	case PHG_ARGS_COLRMAPREP:
 	    phg_wsx_set_LUT_entry( ws, type, rep, (Pgcolr*)NULL );
 	    break;
+#endif
 
 	case PHG_ARGS_VIEWREP:
 	    /* Add it to the list of pending views. */
@@ -1516,6 +1516,7 @@ phg_wsb_set_rep( ws, type, rep )
 	    break;
 
 	case PHG_ARGS_COREP: {
+#if TODO
 	    Pgcolr	gcolr;
 
 	    /* Store in current colour model. */
@@ -1524,6 +1525,7 @@ phg_wsb_set_rep( ws, type, rep )
 	    gcolr.val.general.y = rep->bundl.corep.rgb.green;
 	    gcolr.val.general.z = rep->bundl.corep.rgb.blue;
 	    phg_wsx_set_LUT_entry( ws, type, rep, &gcolr );
+#endif
 	    } break;
     }
 
@@ -1547,6 +1549,7 @@ phg_wsb_set_rep( ws, type, rep )
     }
 }
 
+#if 0
 void
 phg_wsb_set_filter( ws, type, devid, inc_set, exc_set )
     Ws			*ws;

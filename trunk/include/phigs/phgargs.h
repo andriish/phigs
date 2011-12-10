@@ -77,6 +77,19 @@ typedef struct {
    int empty;
 } Phg_args_open_ws;
 
+typedef struct {
+   Pint              index;
+   union {
+      Pline_bundle   lnrep;
+      Pmarker_bundle mkrep;
+      Ptext_bundle   txrep;
+      Pint_bundle    interrep;
+      Pedge_bundle   edgerep;
+      Pcolr_rep      corep;
+      Pview_rep3     viewrep;
+   }                 bundl;
+} Phg_args_rep_data;
+
 typedef union {
     struct {
         Pint    ep1;

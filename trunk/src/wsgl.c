@@ -33,6 +33,8 @@
 #include <phigs/ws.h>
 #include <phigs/mat_utils.h>
 
+#define MAX_VIEW_ENTRIES       10
+
 static int glConfig[] = {
    GLX_DOUBLEBUFFER,
    GLX_RGBA,
@@ -45,9 +47,9 @@ static int glConfig[] = {
 
 static attribute_group my_attrs;
 static Pmatrix3        total_tran, local_tran;
-static Ws             *curr_ws;
 static Ws_view_entry  *curr_view_entry;
 static Pint            curr_view_index = -1;
+static Ws             *curr_ws;
 
 static void setMatrix(Pmatrix3 mat)
 {
@@ -68,7 +70,7 @@ static void setMatrix(Pmatrix3 mat)
 static void setView(Ws *ws, Pint index)
 {
    if (curr_view_index != index) {
-      curr_view_entry = &ws->out_ws.model.b.views[index];
+      curr_view_entry = &curr_ws->out_ws.model.b.views[index];
       curr_view_index = index;
    }
 
@@ -185,6 +187,10 @@ int phg_wsgl_open_window(Ws *ws)
                                    CWBorderPixel | CWColormap | CWEventMask,
                                    &wattr);
 
+#ifdef DEBUG
+   printf("Make context current: %x\n", (unsigned int) ws->glx_context);
+#endif
+
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
    XMapWindow(ws->display, ws->drawable_id);
 }
@@ -201,7 +207,12 @@ void phg_wsgl_destroy(Ws *ws)
 
 void phg_wsgl_set_window(Ws *ws, Plimit3 *win)
 {
-   setView(ws, 0);
+#ifdef DEBUG
+   printf("Make context current: %x\n", (unsigned int) ws->glx_context);
+#endif
+
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
+
    glEnable(GL_DEPTH_BUFFER);
 }
 
@@ -210,6 +221,13 @@ void phg_wsgl_set_viewport(Ws *ws, Plimit3 *vp)
    XResizeWindow(ws->display, ws->drawable_id,
                  (vp->x_max - vp->x_min),
                  (vp->y_max - vp->y_min));
+
+#ifdef DEBUG
+   printf("Make context current: %x\n", (unsigned int) ws->glx_context);
+#endif
+
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
+
    glViewport(vp->x_min, vp->y_min, vp->x_max, vp->y_max);
 }
 
@@ -220,6 +238,11 @@ void phg_wsgl_clear(void)
 
 void phg_wsgl_flush(Ws *ws)
 {
+#ifdef DEBUG
+   printf("Make context current: %x\n", (unsigned int) ws->glx_context);
+#endif
+
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
    if (ws->has_double_buffer)
       glXSwapBuffers(ws->display, ws->drawable_id);
    else
@@ -250,8 +273,6 @@ void phg_wsgl_begin_rendering(Ws *ws)
 {
    curr_ws = ws;
    memcpy(&my_attrs, phg_get_default_attr(), sizeof(attribute_group));
-   phg_mat_identity(local_tran);
-   setView(ws, curr_view_index);
 }
 
 void phg_wsgl_end_rendering(void)
