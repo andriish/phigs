@@ -15,10 +15,13 @@ OBJS=mat_utils.o css_ini.o css_stb.o css_set.o css_str.o css_el.o \
      css_inq.o css_pr.o phg_str.o css_ws.o phg_el.o phg_attr.o phg_dr.o \
      wsgl.o wsb.o ws.o phg.o phg_views.o phg_col.o misc_utils.o phg_inq.o
 
-all: example1
+all: example1 example2
 
 example1: $(OBJS) example1.o
 	$(CC) $(LDFLAGS) -o ../bin/example1 $(OBJS) example1.o $(LIBS)
+
+example2: $(OBJS) example2.o
+	$(CC) $(LDFLAGS) -o ../bin/example2 $(OBJS) example2.o $(LIBS)
 
 cleanup:
 	$(RM) -rf *.o
@@ -26,4 +29,5 @@ cleanup:
 clean:
 	$(RM) -rf *.o
 	$(RM) -rf ../bin/example1
+	$(RM) -rf ../bin/example2
 
