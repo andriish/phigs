@@ -1,0 +1,40 @@
+#ifndef _mat_utils_h
+#define _mat_utils_h
+
+#define PHG_COPY_MAT(to, from) \
+   memcpy(to, from, sizeof(Pmatrix3));
+
+int phg_mat_equal(Pfloat *a, Pfloat *b);
+void phg_mat_scale(Pmatrix3 m, Pfloat x, Pfloat y, Pfloat z);
+void phg_mat_trans(Pmatrix3 m, Pfloat x, Pfloat y, Pfloat z);
+void phg_mat_shear_z(Pmatrix3 m, Pfloat a, Pfloat b);
+void phg_mat_rot_x(Pmatrix3 m, Pfloat theta);
+void phg_mat_rot_y(Pmatrix3 m, Pfloat theta);
+void phg_mat_rot_z(Pmatrix3 m, Pfloat theta);
+void phg_mat_transpose(Pmatrix3 m);
+Pfloat phg_mat_trace(Pmatrix3 m);
+void phg_mat_mul_pt(Pfloat *new_pt, Ppoint3 *opt, Pmatrix3 mat);
+void phg_mat_mul(Pmatrix3 m , Pmatrix3 a, Pmatrix3 b);
+void phg_mat_mul_3x3(Pmatrix m, Pmatrix a, Pmatrix b);
+void phg_mat_identity(Pmatrix3 mat);
+void phg_mat_zero(Pmatrix3 mat);
+void phg_mat_copy(Pmatrix3 m1, Pmatrix3 m2);
+void phg_mat_copy_3x3(Pmatrix m1, Pmatrix m2);
+int phg_vector_equal(Pvec3 *a, Pvec3 *b);
+void phg_vector_add(Pvec3 *a, Pvec3 *b, Pvec3 *c);
+void phg_vector_sub(Pvec3 *a, Pvec3 *b, Pvec3 *c);
+void phg_vector_scale(Pvec3 *a, Pfloat scale);
+Pfloat phg_vector_dot_prod(Pvec3 *a, Pvec3 *b);
+void phg_vector_cross_prod(Pvec3 *a, Pvec3 *b, Pvec3 *c);
+Pfloat phg_vector_length(Pvec3 *a);
+void phg_vector_normalize(Pvec3 *v);
+void phg_mat_print(Pmatrix3 m);
+void phg_mat_print_3x3(Pmatrix m);
+void phg_mat_inv(Pmatrix3 a);
+int phg_tranpt3(Ppoint3 *p, Pmatrix3 m, Ppoint3 *r);
+int phg_tranpts3(Pmatrix3 m, int n, Ppoint3 *p, Ppoint3 *r);
+void phg_tranpt4(Ppoint4 *p, Pmatrix3 m, Ppoint4 *r);
+void phg_tranpts4(Pmatrix3 m, int n, Ppoint4 *p, Ppoint4 *r);
+
+#endif
+
