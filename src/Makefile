@@ -12,8 +12,8 @@ LIBS= -lGL -lGLU -lX11 -lXmu -lm
 	$(CC) $(DFLAGS) $(CFLAGS) $(INCFLAGS) -c $*.c
 
 OBJS=mat_utils.o css_ini.o css_stb.o css_set.o css_str.o css_el.o \
-     css_inq.o css_pr.o phg_str.o css_ws.o phg_el.o phg_attr.o phg_dr.o \
-     wsgl.o wsb.o ws.o phg.o phg_views.o phg_col.o misc_utils.o phg_inq.o
+     css_inq.o css_pr.o phg_str.o css_ws.o phg_el.o phg_attr.o wsgl.o \
+     wsb.o ws.o phg.o phg_views.o phg_col.o misc_utils.o phg_inq.o
 
 all: example1 example2
 

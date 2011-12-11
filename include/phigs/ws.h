@@ -336,23 +336,7 @@ typedef struct _Ws {
 #define WS_ANY_INP_DEV_ACTIVE(_wsh) \
    ((_wsh)->num_active_input_devs > 0)
 
-//extern Css_handle  css;
 extern Ws_handle  *ws_list;
-
-Ws* phg_wsgl_create(Phg_args_open_ws *args);
-int phg_wsgl_open_window(Ws *ws);
-void phg_wsgl_release_window(Ws *ws);
-void phg_wsgl_destroy(Ws *ws);
-void phg_wsgl_set_window(Ws *ws, Plimit3 *win);
-void phg_wsgl_set_viewport(Ws *ws, Plimit3 *vp);
-void phg_wsgl_clear(void);
-void phg_wsgl_flush(Ws *ws);
-void phg_wsgl_compute_ws_transform(Plimit3 *ws_win,
-                                   Plimit3 *ws_vp,
-                                   Ws_xform *ws_xform);
-void phg_wsgl_begin_rendering(Ws *ws);
-void phg_wsgl_end_rendering(void);
-void phg_wsgl_render_element(El_handle el);
 
 void popen_ws(Pint ws_id, void *conn_id, Pint ws_type);
 void ppost_struct(Pint ws_id, Pint struct_id, Pfloat priority);

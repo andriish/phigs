@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
    popen_ws(1, NULL, 0);
    printf("Created workspace: %x\n", (unsigned int) ws_list[1]);
 
-   col_rep.rgb.red = 1.0;
+   col_rep.rgb.red = 0.0;
    col_rep.rgb.green = 1.0;
    col_rep.rgb.blue = 1.0;
    pset_colr_rep(1, 0, &col_rep);
