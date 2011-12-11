@@ -69,6 +69,7 @@ SOFTWARE.
 #include <phigs/phg.h>
 #include <phigs/css.h>
 #include <phigs/private/cssP.h>
+#include <phigs/private/phgP.h>
 #include <phigs/alloc.h>
 
 static int css_inq_sort(const void *n1_param, const void *n2_param);

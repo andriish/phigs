@@ -25,6 +25,8 @@
 #include <phigs/mat_utils.h>
 #include <phigs/private/phgP.h>
 
+#define UNDEF_COLR_IND         0
+
 /*******************************************************************************
  * phg_handle_names_set
  *
@@ -840,7 +842,7 @@ void pset_int_colr_ind(Pint colr_ind)
    Phg_args_add_el args;
 
    if (colr_ind < 0 || colr_ind > 255)
-      colr_ind = ws->white_color;
+      colr_ind = UNDEF_COLR_IND;
 
    ARGS_ELMT_TYPE(&args) = PELEM_INT_COLR_IND;
    ARGS_ELMT_DATA(&args).int_data = colr_ind;
@@ -875,7 +877,7 @@ void pset_line_colr_ind(Pint colr_ind)
    Phg_args_add_el args;
 
    if (colr_ind < 0 || colr_ind > 255)
-      colr_ind = ws->black_color;
+      colr_ind = UNDEF_COLR_IND;
 
    ARGS_ELMT_TYPE(&args) = PELEM_LINE_COLR_IND;
    ARGS_ELMT_DATA(&args).int_data = colr_ind;
@@ -925,7 +927,7 @@ void pset_marker_colr_ind(Pint colr_ind)
    Phg_args_add_el args;
 
    if (colr_ind < 0 || colr_ind > 255)
-      colr_ind = ws->black_color;
+      colr_ind = UNDEF_COLR_IND;
 
    ARGS_ELMT_TYPE(&args) = PELEM_MARKER_COLR_IND;
    ARGS_ELMT_DATA(&args).int_data = colr_ind;
@@ -976,7 +978,7 @@ void pset_edge_colr_ind(Pint colr_ind)
    Phg_args_add_el args;
 
    if (colr_ind < 0 || colr_ind > 255)
-      colr_ind = ws->black_color;
+      colr_ind = UNDEF_COLR_IND;
 
    ARGS_ELMT_TYPE(&args) = PELEM_EDGE_COLR_IND;
    ARGS_ELMT_DATA(&args).int_data = colr_ind;
@@ -1059,7 +1061,7 @@ void pset_text_colr_ind(Pint colr_ind)
    Phg_args_add_el args;
 
    if (colr_ind < 0 || colr_ind > 255)
-      colr_ind = ws->black_color;
+      colr_ind = UNDEF_COLR_IND;
 
    ARGS_ELMT_TYPE(&args) = PELEM_TEXT_COLR_IND;
    ARGS_ELMT_DATA(&args).int_data = colr_ind;

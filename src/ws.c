@@ -27,8 +27,6 @@
 #include <phigs/css.h>
 #include <phigs/ws.h>
 
-Ws_handle ws;
-
 /*******************************************************************************
  * popen_ws
  *
@@ -57,8 +55,6 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
       ws_list[ws_id]->out_ws.model.b.cssh = css;
       ws_list[ws_id]->id = ws_id;
    }
-
-   ws = ws_list[ws_id];
 }
 
 /*******************************************************************************

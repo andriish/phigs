@@ -70,6 +70,7 @@ SOFTWARE.
 #include <phigs/phg.h>
 #include <phigs/css.h>
 #include <phigs/private/cssP.h>
+#include <phigs/private/phgP.h>
 #include <phigs/alloc.h>
 
 static void css_rm_from_refer_sets(Struct_handle edit_struct,

@@ -52,6 +52,7 @@ SOFTWARE.
 #include <phigs/phg.h>
 #include <phigs/css.h>
 #include <phigs/private/cssP.h>
+#include <phigs/private/phgP.h>
 
 #define ADD_TO_WS_LIST(cssh, wslist, wshdl, n, wspost) \
   { Css_ws_list wsptr; \
