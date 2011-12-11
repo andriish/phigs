@@ -1,7 +1,7 @@
 CC=gcc
 RM=rm
 DFLAGS=
-CFLAGS=
+CFLAGS= -Wall
 INCFLAGS=-I../include -I/usr/X11R6/include
 LDFLAGS=-L./ -L/usr/X11R6/lib
 LIBS= -lGL -lGLU -lX11 -lXmu -lm

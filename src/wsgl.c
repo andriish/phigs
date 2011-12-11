@@ -193,6 +193,8 @@ int phg_wsgl_open_window(Ws *ws)
 
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
    XMapWindow(ws->display, ws->drawable_id);
+
+   return 1;
 }
 
 void phg_wsgl_release_window(Ws *ws)
@@ -257,7 +259,7 @@ void phg_wsgl_compute_ws_transform(Plimit3 *ws_win,
 
    sx = (ws_vp->x_max - ws_vp->x_min) / (ws_win->x_max - ws_win->x_min);
    sy = (ws_vp->y_max - ws_vp->y_min) / (ws_win->y_max - ws_win->y_min);
-   sy = (ws_vp->z_max - ws_vp->z_min) / (ws_win->z_max - ws_win->z_min);
+   sz = (ws_vp->z_max - ws_vp->z_min) / (ws_win->z_max - ws_win->z_min);
 
    sxy = (sx < sy) ? sx : sy;
 

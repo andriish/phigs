@@ -32,6 +32,9 @@ void pdel_elem(void);
 void pdel_elem_range(Pint elem_ptr1_value, Pint elem_ptr2_value);
 void pdel_elems_labels(Pint label1_id, Pint label2_id);
 void pinq_elem_ptr(Pint *err_ind, Pint *elem_ptr_value);
+void pinq_open_struct(Pint *err_ind,
+    Popen_struct_status *status,
+    Pint *struct_id);
 void pcopy_all_elems_struct(Pint struct_id);
 void padd_names_set(Pint_list *names);
 void premove_names_set(Pint_list *names);

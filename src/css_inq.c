@@ -192,7 +192,7 @@ void phg_css_inq_struct_status(Css_handle cssh,
 {
     Struct_handle structp;
 
-    if ( structp = CSS_STRUCT_EXISTS(cssh, structid) )
+    if ((structp = CSS_STRUCT_EXISTS(cssh, structid)) != NULL)
 	ret->data.idata = (Pint) (structp->num_el ? 
 			   PSTRUCT_STATUS_NOT_EMPTY : PSTRUCT_STATUS_EMPTY);
     else
@@ -351,13 +351,15 @@ int phg_css_get_conf(Pint_list *csslist,
     arend = arptr + arlist->num_ints;
     while (cssptr < cssend) {
 	while (*arptr<*cssptr && ++arptr!=arend) ;
-	if (arptr == arend)
+	if (arptr == arend) {
 	    break;
-	if (*arptr == *cssptr)
+        }
+	if (*arptr == *cssptr) {
 	    if (conflist)
 		conflist->ints[numconf++] = *arptr;
 	    else
 		return(1);
+        }
 	cssptr++;
     }
     if (conflist)
@@ -759,7 +761,7 @@ void phg_css_inq_ws_posted(Css_handle cssh,
 	return;				 /* structure does not exist */
     }
     ret->data.int_list.num_ints = 0;
-    if (wsptr = structp->ws_posted_to)
+    if ((wsptr = structp->ws_posted_to) != NULL)
 	while (wsptr->wsh)
 	    ret->data.int_list.ints[ret->data.int_list.num_ints++] = 
 		(wsptr++)->wsh->id;

@@ -185,6 +185,10 @@ El_handle phg_css_set_ep(Css_handle cssh, Phg_args_set_ep_op opcode, Pint data)
 	}
 	cssh->el_index = i;
         break;
+
+      default:
+        /* Default */
+        break;
     }
     return(cssh->el_ptr = elptr);
 }
@@ -483,13 +487,17 @@ int phg_css_no_data(Css_handle cssh,
     Phg_ret_q_content *ret_data = (Phg_ret_q_content *)argdata;
 
     switch (opcode) {
-	case CSS_EL_INQ_CONTENT:
-	    memset(&ret_data->el_data, 0, sizeof(Phg_ret_q_content));
-	break;
+      case CSS_EL_INQ_CONTENT:
+        memset(&ret_data->el_data, 0, sizeof(Phg_ret_q_content));
+        break;
 
-	case CSS_EL_INQ_TYPE_SIZE:
-            ARGS_ELMT_SIZE(argdata) = 0;
-	break;
+      case CSS_EL_INQ_TYPE_SIZE:
+        ARGS_ELMT_SIZE(argdata) = 0;
+        break;
+
+      default:
+        /* Default */
+        break;
     }
     return(TRUE);
 }

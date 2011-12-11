@@ -36,8 +36,6 @@
 
 void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
 {
-   Err_handle erh;
-   Css_ssh_type type;
    Phg_args_open_ws args;
    Phg_ret ret;
 

@@ -154,5 +154,7 @@ end_prog:
    (*ws_list[0]->close)(ws_list[0]);
    (*ws_list[1]->close)(ws_list[1]);
    phg_css_destroy(css);
+
+   return 0;
 }
 
