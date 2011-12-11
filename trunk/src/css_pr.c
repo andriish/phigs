@@ -64,6 +64,8 @@ SOFTWARE.
 
 ******************************************************************/
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <phigs/phg.h>
 #include <phigs/css.h>
 #include <phigs/private/cssP.h>

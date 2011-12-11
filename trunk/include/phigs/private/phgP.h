@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <phigs/ws.h>
 #include <phigs/phg.h>
 #include <phigs/phg_el.h>
 #include <phigs/private/cssP.h>
@@ -113,35 +114,44 @@ void phg_init_default_attr(void);
 attribute_group* phg_get_default_attr(void);
 void phg_traverse(Css_handle css, Struct_handle structp);
 
+extern Css_handle css;
 extern Pview_rep3 default_views[];
+
 void phg_init_default_views(void);
 
 void phg_draw_fill_area(
+   Ws              *ws,
    Ppoint_list     *point_list,
    attribute_group *attrs
    );
 void phg_draw_polyline(
+   Ws              *ws,
    Ppoint_list     *point_list,
    attribute_group *attrs
    );
 void phg_draw_polymarker(
+   Ws              *ws,
    Ppoint_list     *point_list,
    attribute_group *attrs
    );
 void phg_draw_text(
+   Ws              *ws,
    Ppoint          *pos,
    char            *text,
    attribute_group *attrs
    );
 void phg_draw_fill_area3(
+   Ws              *ws,
    Ppoint_list3    *point_list,
    attribute_group *attrs
    );
 void phg_draw_polyline3(
+   Ws              *ws,
    Ppoint_list3    *point_list,
    attribute_group *attrs
    );
 void phg_draw_polymarker3(
+   Ws              *ws,
    Ppoint_list3    *point_list,
    attribute_group *attrs
    );

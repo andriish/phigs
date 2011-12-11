@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <phigs/phg.h>
+#include <phigs/private/phgP.h>
 #include <phigs/css.h>
 #include <phigs/ws.h>
 
@@ -86,13 +87,13 @@ int main(int argc, char *argv[])
    pclose_struct();
 
    popen_ws(0, NULL, 0);
-   ws->out_ws.model.b.ws_viewport_pending = PUPD_PEND;
-   ws->out_ws.model.b.req_ws_viewport.x_min = 0;
-   ws->out_ws.model.b.req_ws_viewport.x_max = 300;
-   ws->out_ws.model.b.req_ws_viewport.y_min = 0;
-   ws->out_ws.model.b.req_ws_viewport.y_max = 300;
-   (*ws->redraw_all)(ws, PFLAG_ALWAYS);
-   printf("Created workspace: %x\n", (unsigned int) ws);
+   ws_list[0]->out_ws.model.b.ws_viewport_pending = PUPD_PEND;
+   ws_list[0]->out_ws.model.b.req_ws_viewport.x_min = 0;
+   ws_list[0]->out_ws.model.b.req_ws_viewport.x_max = 300;
+   ws_list[0]->out_ws.model.b.req_ws_viewport.y_min = 0;
+   ws_list[0]->out_ws.model.b.req_ws_viewport.y_max = 300;
+   (*ws_list[0]->redraw_all)(ws_list[0], PFLAG_ALWAYS);
+   printf("Created workspace: %x\n", (unsigned int) ws_list[0]);
 
    col_rep.rgb.red = 1.0;
    col_rep.rgb.green = 1.0;
@@ -100,13 +101,13 @@ int main(int argc, char *argv[])
    pset_colr_rep(0, 0, &col_rep);
 
    popen_ws(1, NULL, 0);
-   ws->out_ws.model.b.ws_viewport_pending = PUPD_PEND;
-   ws->out_ws.model.b.req_ws_viewport.x_min = 0;
-   ws->out_ws.model.b.req_ws_viewport.x_max = 300;
-   ws->out_ws.model.b.req_ws_viewport.y_min = 0;
-   ws->out_ws.model.b.req_ws_viewport.y_max = 300;
-   (*ws->redraw_all)(ws, PFLAG_ALWAYS);
-   printf("Created workspace: %x\n", (unsigned int) ws);
+   ws_list[1]->out_ws.model.b.ws_viewport_pending = PUPD_PEND;
+   ws_list[1]->out_ws.model.b.req_ws_viewport.x_min = 0;
+   ws_list[1]->out_ws.model.b.req_ws_viewport.x_max = 300;
+   ws_list[1]->out_ws.model.b.req_ws_viewport.y_min = 0;
+   ws_list[1]->out_ws.model.b.req_ws_viewport.y_max = 300;
+   (*ws_list[1]->redraw_all)(ws_list[1], PFLAG_ALWAYS);
+   printf("Created workspace: %x\n", (unsigned int) ws_list[1]);
 
    col_rep.rgb.red = 1.0;
    col_rep.rgb.green = 1.0;
@@ -118,14 +119,14 @@ int main(int argc, char *argv[])
    ppost_struct(1, 3, 0);
    printf("Done.\n");
 
-   XSelectInput(ws->display,
-                ws->drawable_id,
+   XSelectInput(ws_list[0]->display,
+                ws_list[0]->drawable_id,
                 ExposureMask | KeyPressMask | ButtonPressMask);
    while (1) {
-      XNextEvent(ws->display, &event);
+      XNextEvent(ws_list[0]->display, &event);
       switch(event.type) {
          case Expose:
-            while (XCheckTypedEvent(ws->display, Expose, &event));
+            while (XCheckTypedEvent(ws_list[0]->display, Expose, &event));
             (*ws_list[0]->redraw_all)(ws_list[0], PFLAG_ALWAYS);
             (*ws_list[1]->redraw_all)(ws_list[1], PFLAG_ALWAYS);
          break;
@@ -150,7 +151,8 @@ int main(int argc, char *argv[])
    }
 
 end_prog:
-   (*ws->close)(ws);
+   (*ws_list[0]->close)(ws_list[0]);
+   (*ws_list[1]->close)(ws_list[1]);
    phg_css_destroy(css);
 }
 

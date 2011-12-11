@@ -71,6 +71,7 @@ SOFTWARE.
 #include <string.h>
 #include <assert.h>
 #include <phigs/phg.h>
+#include <phigs/private/phgP.h>
 #include <phigs/ws.h>
 #include <phigs/css.h>
 #include <phigs/alloc.h>

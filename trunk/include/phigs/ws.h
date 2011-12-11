@@ -25,7 +25,6 @@
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 #include <phigs/phg.h>
-#include <phigs/private/phgP.h>
 
 #define NUM_DEFERRAL            5
 #define NUM_MODIFICATION        3
@@ -335,9 +334,9 @@ typedef struct _Ws {
 
 #define WS_ANY_INP_DEV_ACTIVE(_wsh) \
    ((_wsh)->num_active_input_devs > 0)
+
+//extern Css_handle  css;
 extern Ws_handle  *ws_list;
-extern Ws_handle  ws;
-extern Css_handle css;
 
 Ws* phg_wsgl_create(Phg_args_open_ws *args);
 int phg_wsgl_open_window(Ws *ws);

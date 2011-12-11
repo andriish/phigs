@@ -67,11 +67,10 @@ static void phg_set_line_attr(Pline_bundle *attr)
  * RETURNS:	N/A
  */
 
-static void phg_set_int_attr(Pint_bundle *attr)
+static void phg_set_int_attr(Ws *ws, Pint_bundle *attr)
 {
-   Pint index;
+   Pint index = attr->colr_ind;
 
-   index = attr->colr_ind;
    glColor3f(ws->colr_table[index].red,
              ws->colr_table[index].green,
              ws->colr_table[index].blue);
@@ -84,11 +83,10 @@ static void phg_set_int_attr(Pint_bundle *attr)
  * RETURNS:	N/A
  */
 
-static void phg_set_edge_attr(Pedge_bundle *attr)
+static void phg_set_edge_attr(Ws *ws, Pedge_bundle *attr)
 {
-   Pint index;
+   Pint index = attr->colr_ind;
 
-   index = attr->colr_ind;
    glColor3f(ws->colr_table[index].red,
              ws->colr_table[index].green,
              ws->colr_table[index].blue);
@@ -102,11 +100,10 @@ static void phg_set_edge_attr(Pedge_bundle *attr)
  * RETURNS:	N/A
  */
 
-static void phg_set_marker_attr(Pmarker_bundle *attr)
+static void phg_set_marker_attr(Ws *ws, Pmarker_bundle *attr)
 {
-   Pint index;
+   Pint index = attr->colr_ind;
 
-   index = attr->colr_ind;
    glColor3f(ws->colr_table[index].red,
              ws->colr_table[index].green,
              ws->colr_table[index].blue);
@@ -247,6 +244,7 @@ static void phg_draw_marker_cross(
  */
 
 void phg_draw_fill_area(
+   Ws              *ws,
    Ppoint_list     *point_list,
    attribute_group *attrs
    )
@@ -268,6 +266,7 @@ void phg_draw_fill_area(
  */
 
 void phg_draw_polyline(
+   Ws              *ws,
    Ppoint_list     *point_list,
    attribute_group *attrs
    )
@@ -290,11 +289,12 @@ void phg_draw_polyline(
  */
 
 void phg_draw_polymarker(
+   Ws              *ws,
    Ppoint_list     *point_list,
    attribute_group *attrs
    )
 {
-   phg_set_marker_attr(&attrs->marker_bundle);
+   phg_set_marker_attr(ws, &attrs->marker_bundle);
    switch (attrs->marker_bundle.type) {
       case PMARKER_DOT:
          phg_draw_marker_dot(point_list, attrs->marker_bundle.size);
@@ -322,6 +322,7 @@ void phg_draw_polymarker(
  */
 
 void phg_draw_text(
+   Ws              *ws,
    Ppoint          *pos,
    char            *text,
    attribute_group *attrs
@@ -339,6 +340,7 @@ void phg_draw_text(
  */
 
 void phg_draw_fill_area3(
+   Ws              *ws,
    Ppoint_list3    *point_list,
    attribute_group *attrs
    )
@@ -346,7 +348,7 @@ void phg_draw_fill_area3(
    int i;
 
    if (attrs->int_bundle.style == PSTYLE_SOLID) {
-      phg_set_int_attr(&attrs->int_bundle);
+      phg_set_int_attr(ws, &attrs->int_bundle);
       glBegin(GL_POLYGON);
       for (i = 0; i < point_list->num_points; i++)
          glVertex3f(point_list->points[i].x,
@@ -356,7 +358,7 @@ void phg_draw_fill_area3(
    }
 
    if (attrs->edge_bundle.flag == PEDGE_ON) {
-      phg_set_edge_attr(&attrs->edge_bundle);
+      phg_set_edge_attr(ws, &attrs->edge_bundle);
       glBegin(GL_LINE_LOOP);
       for (i = 0; i < point_list->num_points; i++)
          glVertex3f(point_list->points[i].x,
@@ -374,6 +376,7 @@ void phg_draw_fill_area3(
  */
 
 void phg_draw_polyline3(
+   Ws              *ws,
    Ppoint_list3    *point_list,
    attribute_group *attrs
    )
@@ -397,6 +400,7 @@ void phg_draw_polyline3(
  */
 
 void phg_draw_polymarker3(
+   Ws              *ws,
    Ppoint_list3    *point_list,
    attribute_group *attrs
    )
@@ -412,7 +416,7 @@ void phg_draw_polymarker3(
       pts[i].y = point_list->points[i].y;
    }
 
-   phg_set_marker_attr(&attrs->marker_bundle);
+   phg_set_marker_attr(ws, &attrs->marker_bundle);
    switch (attrs->marker_bundle.type) {
       case PMARKER_DOT:
          phg_draw_marker_dot(&plist, attrs->marker_bundle.size);

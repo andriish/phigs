@@ -70,7 +70,7 @@ static void setMatrix(Pmatrix3 mat)
 static void setView(Ws *ws, Pint index)
 {
    if (curr_view_index != index) {
-      curr_view_entry = &curr_ws->out_ws.model.b.views[index];
+      curr_view_entry = &ws->out_ws.model.b.views[index];
       curr_view_index = index;
    }
 
@@ -118,15 +118,15 @@ static Colormap getSharableColormap(XVisualInfo *vi, Display *dpy)
 
 Ws* phg_wsgl_create(Phg_args_open_ws *args)
 {
-   Ws *ws;
+   Ws_handle wsh;
 
-   ws = malloc(sizeof(Ws));
-   if (ws == NULL)
+   wsh = malloc(sizeof(Ws));
+   if (wsh == NULL)
       return NULL;
 
-   memset(ws, 0, sizeof(Ws));
+   memset(wsh, 0, sizeof(Ws));
 
-   return ws;
+   return wsh;
 }
 
 int phg_wsgl_open_window(Ws *ws)
@@ -334,23 +334,23 @@ void phg_wsgl_render_element(El_handle el)
       break;
 
       case PELEM_FILL_AREA:
-         phg_draw_fill_area (PHG_POINT_LIST(el), &my_attrs);
+         phg_draw_fill_area (curr_ws, PHG_POINT_LIST(el), &my_attrs);
       break;
       case PELEM_POLYLINE:
-         phg_draw_polyline (PHG_POINT_LIST(el), &my_attrs);
+         phg_draw_polyline (curr_ws, PHG_POINT_LIST(el), &my_attrs);
       break;
       case PELEM_POLYMARKER:
-         phg_draw_polymarker (PHG_POINT_LIST(el), &my_attrs);
+         phg_draw_polymarker (curr_ws, PHG_POINT_LIST(el), &my_attrs);
       break;
 
       case PELEM_FILL_AREA3:
-         phg_draw_fill_area3 (PHG_POINT_LIST3(el), &my_attrs);
+         phg_draw_fill_area3 (curr_ws, PHG_POINT_LIST3(el), &my_attrs);
       break;
       case PELEM_POLYLINE3:
-         phg_draw_polyline3 (PHG_POINT_LIST3(el), &my_attrs);
+         phg_draw_polyline3 (curr_ws, PHG_POINT_LIST3(el), &my_attrs);
       break;
       case PELEM_POLYMARKER3:
-         phg_draw_polymarker3 (PHG_POINT_LIST3(el), &my_attrs);
+         phg_draw_polymarker3 (curr_ws, PHG_POINT_LIST3(el), &my_attrs);
       break;
 
       case PELEM_LOCAL_MODEL_TRAN3:
