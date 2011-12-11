@@ -119,42 +119,5 @@ extern Pview_rep3 default_views[];
 
 void phg_init_default_views(void);
 
-void phg_draw_fill_area(
-   Ws              *ws,
-   Ppoint_list     *point_list,
-   attribute_group *attrs
-   );
-void phg_draw_polyline(
-   Ws              *ws,
-   Ppoint_list     *point_list,
-   attribute_group *attrs
-   );
-void phg_draw_polymarker(
-   Ws              *ws,
-   Ppoint_list     *point_list,
-   attribute_group *attrs
-   );
-void phg_draw_text(
-   Ws              *ws,
-   Ppoint          *pos,
-   char            *text,
-   attribute_group *attrs
-   );
-void phg_draw_fill_area3(
-   Ws              *ws,
-   Ppoint_list3    *point_list,
-   attribute_group *attrs
-   );
-void phg_draw_polyline3(
-   Ws              *ws,
-   Ppoint_list3    *point_list,
-   attribute_group *attrs
-   );
-void phg_draw_polymarker3(
-   Ws              *ws,
-   Ppoint_list3    *point_list,
-   attribute_group *attrs
-   );
-
 #endif
 
