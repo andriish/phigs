@@ -112,8 +112,9 @@ void phg_init_default_views(void)
      * view plane = 10.0, front plane = sqrt(3), back plane = 0.0
      * vp x limits = [0,1], vp y limits = [0,1], vp z limits = [0,1]
      */
-    bcopy( (char *)view[4].ori_matrix, (char *)view[5].ori_matrix,
-	sizeof(Pmatrix3) );
+    memcpy(view[5].ori_matrix,
+           view[4].ori_matrix,
+	   sizeof(Pmatrix3));
     view[5].map_matrix[0][0] =  0.5 / sqrt(2.0);
     view[5].map_matrix[1][1] =  0.5 / sqrt(2.0);
     view[5].map_matrix[2][0] = -0.025;

@@ -71,9 +71,9 @@ static void phg_set_int_attr(Ws *ws, Pint_bundle *attr)
 {
    Pint index = attr->colr_ind;
 
-   glColor3f(ws->colr_table[index].red,
-             ws->colr_table[index].green,
-             ws->colr_table[index].blue);
+   glColor3f(ws->colr_table[index].val.general.x,
+             ws->colr_table[index].val.general.y,
+             ws->colr_table[index].val.general.z);
 }
 
 /*******************************************************************************
@@ -87,9 +87,9 @@ static void phg_set_edge_attr(Ws *ws, Pedge_bundle *attr)
 {
    Pint index = attr->colr_ind;
 
-   glColor3f(ws->colr_table[index].red,
-             ws->colr_table[index].green,
-             ws->colr_table[index].blue);
+   glColor3f(ws->colr_table[index].val.general.x,
+             ws->colr_table[index].val.general.y,
+             ws->colr_table[index].val.general.z);
    glLineWidth(attr->width);
 }
 
@@ -104,9 +104,9 @@ static void phg_set_marker_attr(Ws *ws, Pmarker_bundle *attr)
 {
    Pint index = attr->colr_ind;
 
-   glColor3f(ws->colr_table[index].red,
-             ws->colr_table[index].green,
-             ws->colr_table[index].blue);
+   glColor3f(ws->colr_table[index].val.general.x,
+             ws->colr_table[index].val.general.y,
+             ws->colr_table[index].val.general.z);
 }
 
 /*******************************************************************************

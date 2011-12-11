@@ -27,8 +27,13 @@
 
 void pset_colr_rep(Pint ws, Pint index, Pcolr_rep *rep)
 {
-   Ws *wsh = ws_list[ws];
+   Ws *wsh;
+   Phg_args_rep_data corep;
 
-   memcpy(&wsh->colr_table[index], &rep->rgb, sizeof(Prgb));
+   wsh = ws_list[ws];
+   corep.index = index;
+   memcpy(&corep.bundl.corep, rep, sizeof(Pcolr_rep));
+
+   (*wsh->set_rep)(wsh, PHG_ARGS_COREP, &corep);
 }
 

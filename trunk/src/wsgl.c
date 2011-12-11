@@ -157,6 +157,7 @@ int phg_wsgl_open_window(Ws *ws)
    }
 
    ws->has_double_buffer = TRUE;
+   ws->current_colour_model = PMODEL_RGB;
    vi = glXChooseVisual(ws->display,
                         DefaultScreen(ws->display),
                         glConfig);

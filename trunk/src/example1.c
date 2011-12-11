@@ -76,6 +76,12 @@ int main(int argc, char *argv[])
 
    popen_phigs("", 0);
    popen_ws(0, NULL, 0);
+   limits.x_min = 100.0;
+   limits.x_max = 600.0;
+   limits.y_min = 100.0;
+   limits.y_max = 600.0;
+   (*ws_list[0]->set_ws_window)(ws_list[0], 0, &limits);
+   (*ws_list[0]->set_ws_vp)(ws_list[0], 0, &limits);
 
    col_rep.rgb.red = 0.0;
    col_rep.rgb.green = 0.25;

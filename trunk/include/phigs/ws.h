@@ -155,6 +155,7 @@ typedef struct {
 typedef struct _Ws {
    Pint         id;
    Ws_output_ws out_ws;
+   Pint         current_colour_model;
    Pint         num_active_input_devs;
 
    Err_handle   erh;
@@ -166,7 +167,7 @@ typedef struct _Ws {
    GLXContext   glx_context;
    int          has_double_buffer;
    XRectangle   ws_rect;
-   Prgb         colr_table[256];
+   Pgcolr       colr_table[256];
 
    int          black_color;
    int          white_color;
