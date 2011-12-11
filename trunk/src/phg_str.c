@@ -274,7 +274,7 @@ void pcopy_all_elems_struct(Pint struct_id)
    Struct_handle str;
    Css_ws_list   ws_list;
 
-   if (str = CSS_STRUCT_EXISTS(css, struct_id)) {
+   if ((str = CSS_STRUCT_EXISTS(css, struct_id)) != NULL) {
       ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(css));
       /* Get the element pointer before it changes. */
       ep = CSS_CUR_ELP(css);

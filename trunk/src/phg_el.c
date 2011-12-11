@@ -87,6 +87,11 @@ int phg_handle_names_set(Css_handle cssh,
       case CSS_EL_FREE:
          free(ELMT_DATA_PTR(elmt));
       break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
    }
 
    return (TRUE);
@@ -138,6 +143,11 @@ int phg_handle_local_tran(Css_handle cssh,
       case CSS_EL_FREE:
          free(ELMT_DATA_PTR(elmt));
       break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
    }
 
    return (TRUE);
@@ -186,6 +196,11 @@ int phg_handle_local_tran3(Css_handle cssh,
 
       case CSS_EL_FREE:
          free(ELMT_DATA_PTR(elmt));
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
       break;
    }
 
@@ -252,6 +267,11 @@ int phg_handle_point_list(Css_handle cssh,
       case CSS_EL_FREE:
          free(ELMT_DATA_PTR(elmt));
       break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
    }
 
    return (TRUE);
@@ -317,6 +337,11 @@ int phg_handle_point_list3(Css_handle cssh,
       case CSS_EL_FREE:
          free(ELMT_DATA_PTR(elmt));
       break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
    }
 
    return (TRUE);
@@ -378,6 +403,11 @@ int phg_handle_text(Css_handle cssh,
       case CSS_EL_FREE:
          free(ELMT_DATA_PTR(elmt));
       break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
    }
 
    return (TRUE);
@@ -424,6 +454,11 @@ int phg_handle_int(Css_handle cssh,
 
       case CSS_EL_FREE:
          free(ELMT_DATA_PTR(elmt));
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
       break;
    }
 
@@ -472,6 +507,11 @@ int phg_handle_float(Css_handle cssh,
       case CSS_EL_FREE:
          free(ELMT_DATA_PTR(elmt));
       break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
    }
 
    return (TRUE);
@@ -519,6 +559,11 @@ int phg_handle_edge_flag(Css_handle cssh,
       case CSS_EL_FREE:
          free(ELMT_DATA_PTR(elmt));
       break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
    }
 
    return (TRUE);
@@ -565,6 +610,11 @@ int phg_handle_int_style(Css_handle cssh,
 
       case CSS_EL_FREE:
          free(ELMT_DATA_PTR(elmt));
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
       break;
    }
 

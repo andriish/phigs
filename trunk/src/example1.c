@@ -195,5 +195,7 @@ int main(int argc, char *argv[])
 end_prog:
    (*ws_list[0]->close)(ws_list[0]);
    phg_css_destroy(css);
+
+   return 0;
 }
 

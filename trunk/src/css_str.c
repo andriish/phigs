@@ -281,7 +281,7 @@ void phg_css_delete_net(Css_handle cssh,
 	delstruct = network->elements->next;
     phg_css_delete_struct(cssh, structp);
     while (delstruct) {
-	if (ws_list = CSS_GET_WS_ON( (Struct_handle)delstruct->key ))
+	if ((ws_list = CSS_GET_WS_ON( (Struct_handle)delstruct->key )) != NULL)
 	    for (;ws_list->wsh; ws_list++)
 		(*ws_list->wsh->unpost)( ws_list->wsh,
 		    (Struct_handle)delstruct->key );
@@ -495,7 +495,7 @@ Css_ws_list phg_css_change_struct_id(Css_handle cssh,
 	    /* fix up ws_posted_to and ws_appear_on lists */
 	    if ( !phg_css_copy_ws_lists(cssh, orig, structp, CSS_WS_BOTH) )
 		return(NULL);				/* out of memory */
-	    if (wsnext = orig->ws_posted_to) {
+	    if ((wsnext = orig->ws_posted_to) != NULL) {
 		/* tell ws about changed structure pointer for orig */
 		while (wsnext->wsh) {
 		    (*wsnext->wsh->change_posting)( wsnext->wsh,
@@ -536,7 +536,7 @@ Css_ws_list phg_css_change_struct_id(Css_handle cssh,
 		ERR_BUF(cssh->erh, ERR901);
 		return(NULL);				/* out of memory */
 	    }
-	    if (wsnext = new->ws_posted_to)
+	    if ((wsnext = new->ws_posted_to) != NULL)
 		/* tell ws about changed structure pointer for new */
 		while (wsnext->wsh) {
 		    (*wsnext->wsh->change_posting)(wsnext->wsh, new, orig);
@@ -608,7 +608,7 @@ Css_ws_list phg_css_change_struct_refs(Css_handle cssh,
 		&cssh->ws_list, CSS_WS_APPEAR) )
 	    return(NULL);				/* out of memory */
 	/* add orig's posted_to and appear_on lists to new, then delete */
-	if (wsnext = orig->ws_posted_to) {
+	if ((wsnext = orig->ws_posted_to) != NULL) {
 	    while (wsnext->wsh) {
 		if ( !phg_css_ws_posted(new, wsnext->wsh) ) {
 		    if ( !phg_css_post(cssh, new->struct_id, wsnext->wsh, 
@@ -676,7 +676,7 @@ Css_ws_list phg_css_change_struct_idrefs(Css_handle cssh,
                 return(NULL);                           /* out of memory */
             }
 	    /* tell ws about changed structure pointer for new */
-	    if (wsnext = new->ws_posted_to)
+	    if ((wsnext = new->ws_posted_to) != NULL)
 		while (wsnext->wsh) {
 		    (*wsnext->wsh->change_posting)(wsnext->wsh, new, orig);
 		    wsnext++;

@@ -367,7 +367,6 @@ void phg_wsb_traverse_net(Ws_handle ws, Struct_handle structp);
 void phg_wsb_add_el(Ws *ws);
 int phg_wsb_asti_update(Ws *ws, Pctrl_flag clear_control);
 void phg_wsb_close_struct(Ws *ws, Struct_handle structh);
-static void wsb_update_a_posting(Ws *ws, Ws_post_str *posting);
 void phg_wsb_post(Ws *ws,
                   Struct_handle structh,
                   Pfloat priority,

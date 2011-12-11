@@ -854,6 +854,9 @@ static int wsb_visible_element_type(El_handle el)
 	case PELEM_PICK_ID:
 	    status = 0;
 	    break;
+        default:
+            /* Default */
+            break;
     }
 
     return status;
@@ -912,6 +915,9 @@ int phg_wsb_asti_update(Ws *ws, Pctrl_flag clear_control)
 	case PHG_UPDATE_UWOR:
 	case PHG_UPDATE_NOTHING:
 	    break;
+        default:
+            /* Default */
+            break;
     }
 
     return 0;
@@ -962,6 +968,9 @@ static void wsb_update_a_posting(Ws *ws, Ws_post_str *posting)
 	case PHG_UPDATE_UQUM:
 	    owsb->vis_rep = PVISUAL_ST_DEFER;
 	    break;
+        default:
+            /* Default */
+            break;
     }
 }
 
@@ -1118,6 +1127,9 @@ void phg_wsb_unpost(Ws *ws, Struct_handle structh)
 	    case PHG_UPDATE_UQUM:
 		owsb->vis_rep = PVISUAL_ST_DEFER;
 		break;
+            default:
+                /* Default */
+                break;
 	}
     }
 }
@@ -1138,6 +1150,9 @@ void phg_wsb_unpost_all(Ws *ws)
 	case PHG_UPDATE_UQUM:
 	    owsb->vis_rep = PVISUAL_ST_DEFER;
 	    break;
+        default:
+            /* Default */
+            break;
     }
 }
 
@@ -1172,6 +1187,9 @@ int phg_wsb_delete_struct(Ws *ws,
 	    (void)wsb_unpost_struct_if_found( owsb, structh );
 	    owsb->vis_rep = PVISUAL_ST_DEFER;
 	    break;
+        default:
+            /* Default */
+            break;
     }
 
     return call_again;
@@ -1262,6 +1280,9 @@ void phg_wsb_conditional_redraw(Ws *ws)
 	case PHG_UPDATE_NOTHING:
 	    owsb->vis_rep = PVISUAL_ST_DEFER;
 	    break;
+        default:
+            /* Default */
+            break;
     }
 }
 
@@ -1295,6 +1316,10 @@ void phg_wsb_resolve_now_action(Ws *ws,
 	}
 #endif
 	break;
+
+        default:
+          /* Default */
+        break;
     }
 }
 
@@ -1332,6 +1357,9 @@ void phg_wsb_set_disp_update_state(Ws *ws,
 		if( owsb->vis_rep != PVISUAL_ST_CORRECT )
 		    (*ws->redraw_all)( ws, PFLAG_COND );
 		break;
+            default:
+                /* Default */
+                break;
 	}
     }
 }
@@ -1489,17 +1517,18 @@ void phg_wsb_set_rep(Ws *ws, Phg_args_rep_type type, Phg_args_rep_data *rep)
 	case PHG_ARGS_EXTTXREP:
 	case PHG_ARGS_INTERREP:
 	case PHG_ARGS_EXTINTERREP:
+        case PHG_ARGS_EFREP:
 	case PHG_ARGS_EDGEREP:
 	case PHG_ARGS_EXTEDGEREP:
 	case PHG_ARGS_PTREP:
 	case PHG_ARGS_EXTPTREP:
 	case PHG_ARGS_DCUEREP:
 	case PHG_ARGS_LIGHTSRCREP:
-#if TODO
 	case PHG_ARGS_COLRMAPREP:
+#if TODO
 	    phg_wsx_set_LUT_entry( ws, type, rep, (Pgcolr*)NULL );
-	    break;
 #endif
+	    break;
 
 	case PHG_ARGS_VIEWREP:
 	    /* Add it to the list of pending views. */
@@ -1516,7 +1545,7 @@ void phg_wsb_set_rep(Ws *ws, Phg_args_rep_type type, Phg_args_rep_data *rep)
 	    owsb->views[rep->index].pending = PUPD_PEND;
 	    break;
 
-	case PHG_ARGS_COREP: {
+	case PHG_ARGS_COREP:
 #if TODO
 	    Pgcolr	gcolr;
 
@@ -1527,7 +1556,7 @@ void phg_wsb_set_rep(Ws *ws, Phg_args_rep_type type, Phg_args_rep_data *rep)
 	    gcolr.val.general.z = rep->bundl.corep.rgb.blue;
 	    phg_wsx_set_LUT_entry( ws, type, rep, &gcolr );
 #endif
-	    } break;
+	    break;
     }
 
     WSB_CHECK_FOR_INTERACTION_UNDERWAY(ws, &owsb->now_action);
@@ -1536,16 +1565,16 @@ void phg_wsb_set_rep(Ws *ws, Phg_args_rep_type type, Phg_args_rep_data *rep)
 	    (*ws->redraw_all)( ws, PFLAG_COND );
 	    break;
 
-	default:
-	case PHG_UPDATE_UQUM:
-	case PHG_UPDATE_UWOR:
-	    owsb->vis_rep = PVISUAL_ST_DEFER;
-	    break;
-
 	case PHG_UPDATE_NOTHING:
 	    /* Defer if rep has PENDING flag, or if screen could be affected. */
 	    if ( WSB_SOME_POSTED(&owsb->posted) || (type == PHG_ARGS_VIEWREP) )
 		 owsb->vis_rep = PVISUAL_ST_DEFER;
+	    break;
+
+	default:
+	case PHG_UPDATE_UQUM:
+	case PHG_UPDATE_UWOR:
+	    owsb->vis_rep = PVISUAL_ST_DEFER;
 	    break;
     }
 }
@@ -1770,16 +1799,6 @@ phg_wsb_inq_rep( ws, index, how, rep_type, ret )
 }
 #endif
 
-static void update_inv_view_xform(Ws_view_entry *view)
-{
-     /* Calculate the inverse xform, if necessary. */
-    if ( view->npc_to_wc_state == WS_INV_NOT_CURRENT ) {
-	phg_mat_mul( view->npc_to_wc, view->vmm, view->vom );
-	phg_mat_inv( view->npc_to_wc );
-	view->npc_to_wc_state = WS_INV_CURRENT;
-    }
-}
-
 #if 0
 int
 phg_wsb_map_initial_points( ws, view_index, num_pts, wc_pts, dwbl_pts )
@@ -1837,7 +1856,16 @@ phg_wsb_map_initial_points( ws, view_index, num_pts, wc_pts, dwbl_pts )
 
     return ( *num_pts > 0 ? 1 : 0 );
 }
-
+
+static void update_inv_view_xform(Ws_view_entry *view)
+{
+     /* Calculate the inverse xform, if necessary. */
+    if ( view->npc_to_wc_state == WS_INV_NOT_CURRENT ) {
+	phg_mat_mul( view->npc_to_wc, view->vmm, view->vom );
+	phg_mat_inv( view->npc_to_wc );
+	view->npc_to_wc_state = WS_INV_CURRENT;
+    }
+}
 
 int
 phg_wsb_resolve_locator( ws, dc_pt, determine_z, view_index, wc_pt )
@@ -1888,7 +1916,6 @@ phg_wsb_resolve_locator( ws, dc_pt, determine_z, view_index, wc_pt )
     }
     return status;
 }
-
 
 static int
 wsb_resolve_stroke( ws, two_d, dc_ll, dc_ur, view_index )
@@ -1954,7 +1981,6 @@ wsb_resolve_stroke( ws, two_d, dc_ll, dc_ur, view_index )
     }
     return status;
 }
-
 
 static void
 wsb_transform_stroke( ws, view_index, two_d, num_pts, dc_pts, wc_pts )
@@ -1995,7 +2021,6 @@ wsb_transform_stroke( ws, view_index, two_d, num_pts, dc_pts, wc_pts )
 
     free( (char *)npc_pts );
 }
-
 
 int
 phg_wsb_resolve_stroke( ws, num_pts, dc_pts, determine_z, view_index, wc_pts )
@@ -2052,7 +2077,6 @@ phg_wsb_resolve_stroke( ws, num_pts, dc_pts, determine_z, view_index, wc_pts )
 
     return status;
 }
-
 
 int
 phg_wsb_resolve_pick( ws, dev, echo, dc_pt, pick )
@@ -2212,7 +2236,6 @@ phg_wsb_inq_filter( ws, type, ret )
 {
     phg_wsx_inq_name_set( ws, type, (Pint)0, ret );
 }
-
 
 void
 phg_wsb_drawable_pick( ws, args, ret )
@@ -2226,7 +2249,6 @@ phg_wsb_drawable_pick( ws, args, ret )
     ret->data.drawable_pick.pick.depth = 0;
     ret->data.drawable_pick.pick.path_list = (Ppick_path_elem *)NULL;
 }
-
 
 void
 phg_wsb_map_points( ws, args, ret )
