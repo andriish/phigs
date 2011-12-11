@@ -292,10 +292,12 @@ static int init_view_table(Ws *ws)
         printf("wsb: Set default view: %d\n", i);
 #endif
         view->pending = PUPD_NOT_PEND;
-        bcopy( (char *)predef_view->ori_matrix,(char *) view->vom,
-            sizeof(Pmatrix3) );
-        bcopy( (char *)predef_view->map_matrix, (char *)view->vmm,
-            sizeof(Pmatrix3) );
+        memcpy(view->vom,
+               predef_view->ori_matrix,
+               sizeof(Pmatrix3));
+        memcpy(view->vmm,
+               predef_view->map_matrix,
+               sizeof(Pmatrix3));
         view->clip_limit = predef_view->clip_limit;
         view->xy_clip = predef_view->xy_clip;
         view->back_clip = predef_view->back_clip;
@@ -728,10 +730,12 @@ void phg_wsb_make_requested_current(Ws *ws)
 	    view = &owsb->views[req_view->id];
 	    /*Set it locally. */
 	    view->pending = PUPD_NOT_PEND;
-	    bcopy( (char *)req_view->view.ori_matrix, (char *)view->vom,
-		sizeof(Pmatrix3) );
-	    bcopy( (char *)req_view->view.map_matrix, (char *)view->vmm,
-		sizeof(Pmatrix3) );
+	    memcpy(view->vom,
+	           req_view->view.ori_matrix,
+		   sizeof(Pmatrix3));
+	    memcpy(view->vmm,
+	           req_view->view.map_matrix,
+		   sizeof(Pmatrix3));
 	    view->clip_limit = req_view->view.clip_limit;
 	    view->xy_clip = req_view->view.xy_clip;
 	    view->back_clip = req_view->view.back_clip;
@@ -1524,6 +1528,7 @@ void phg_wsb_set_rep(Ws *ws, Phg_args_rep_type type, Phg_args_rep_data *rep)
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
     int		i;
+    Pgcolr      gcolr;
 
     switch ( type ) {
 	case PHG_ARGS_LNREP:
@@ -1563,14 +1568,13 @@ void phg_wsb_set_rep(Ws *ws, Phg_args_rep_type type, Phg_args_rep_data *rep)
 	    break;
 
 	case PHG_ARGS_COREP:
-#if TODO
-	    Pgcolr	gcolr;
-
 	    /* Store in current colour model. */
 	    gcolr.type = ws->current_colour_model;
 	    gcolr.val.general.x = rep->bundl.corep.rgb.red;
 	    gcolr.val.general.y = rep->bundl.corep.rgb.green;
 	    gcolr.val.general.z = rep->bundl.corep.rgb.blue;
+            memcpy(&ws->colr_table[rep->index], &gcolr, sizeof(Pgcolr));
+#if TODO
 	    phg_wsx_set_LUT_entry( ws, type, rep, &gcolr );
 #endif
 	    break;
@@ -1711,8 +1715,8 @@ void phg_wsb_inq_view_rep(Ws *ws, Pint index, Phg_ret *ret)
 	cr->xy_clip = cv->xy_clip;
 	cr->back_clip = cv->back_clip;
 	cr->front_clip = cv->front_clip;
-	bcopy( (char *)cv->vom, (char *)cr->ori_matrix, sizeof(Pmatrix3) );
-	bcopy( (char *)cv->vmm, (char *)cr->map_matrix, sizeof(Pmatrix3) );
+	memcpy(cr->ori_matrix, cv->vom, sizeof(Pmatrix3));
+	memcpy(cr->map_matrix, cv->vmm, sizeof(Pmatrix3));
     }
 
     /* Load the "requested" view. */

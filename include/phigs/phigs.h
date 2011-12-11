@@ -34,6 +34,10 @@
 #define PMARKER_CIRLCE         4
 #define PMARKER_CROSS          5
 
+/* Color model */
+#define PINDIRECT              0
+#define PMODEL_RGB             1
+
 /* HLHSR constants */
 #define PHIGS_HLHSR_MODE_NONE  0
 #define PHIGS_HLHSR_MODE_ZBUFF 1
@@ -201,6 +205,18 @@ typedef struct {
    Pint      num_elem_refs;
    Pelem_ref *elem_refs;
 } Pelem_ref_list;
+
+typedef struct {
+   Pint         type;
+   union {
+      Pint      ind;
+      struct {
+         Pfloat x;
+         Pfloat y;
+         Pfloat z;
+      }         general;
+   }            val;
+} Pgcolr;
 
 typedef struct {
    Pint   type;
