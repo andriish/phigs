@@ -289,7 +289,7 @@ static int init_view_table(Ws *ws)
     /* Load the predefined views. */
     for ( i = 0; i <= max_pd_view; i++, predef_view++, view++ ) {
 #ifdef DEBUG
-        printf("Set default view: %d\n", i);
+        printf("wsb: Set default view: %d\n", i);
 #endif
         view->pending = PUPD_NOT_PEND;
         bcopy( (char *)predef_view->ori_matrix,(char *) view->vom,
@@ -674,7 +674,7 @@ void phg_wsb_close_ws(Ws *ws)
 void phg_wsb_redraw_all(Ws *ws, Pctrl_flag clear_control)
 {
 #ifdef DEBUG
-    printf("Redraw.\n");
+    printf("wsb: Redraw.\n");
 #endif
 
     (*ws->make_requested_current)( ws );
@@ -694,23 +694,35 @@ void phg_wsb_make_requested_current(Ws *ws)
     if ( owsb->ws_window_pending == PUPD_PEND
 	    || owsb->ws_viewport_pending == PUPD_PEND ) {
 	if ( owsb->ws_window_pending == PUPD_PEND ) {
+#ifdef DEBUG
+            printf("wsb: Set window\n");
+#endif
 	    owsb->ws_window = owsb->req_ws_window;
 	    owsb->ws_window_pending = PUPD_NOT_PEND;
             phg_wsgl_set_window(ws, &owsb->ws_window);
 	}
 
 	if ( owsb->ws_viewport_pending == PUPD_PEND ) {
+#ifdef DEBUG
+            printf("wsb: Set viewport\n");
+#endif
 	    owsb->ws_viewport = owsb->req_ws_viewport;
 	    owsb->ws_viewport_pending = PUPD_NOT_PEND;
             phg_wsgl_set_viewport(ws, &owsb->ws_viewport);
 	}
 
+#ifdef DEBUG
+            printf("wsb: Compute transform\n");
+#endif
 	phg_wsgl_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
 	    &owsb->ws_xform );
     }
 
     /* View table */
     if ( owsb->num_pending_views > 0 ) {
+#ifdef DEBUG
+            printf("wsb: Pending views\n");
+#endif
 	req_view = owsb->pending_views;
 	while ( owsb->num_pending_views > 0 ) {
 	    view = &owsb->views[req_view->id];
@@ -730,7 +742,7 @@ void phg_wsb_make_requested_current(Ws *ws)
 	     * request because the pending views may not be contiguous.
 	     */
 #ifdef DEBUG
-	    printf("Set pending view: %d\n", req_view->id);
+	    printf("wsb: Set pending view: %d\n", req_view->id);
 #endif
 #ifdef TODO
 	    (void)phg_utx_view_entry_to_pex( &req_view->view, &pex_view );
@@ -759,6 +771,11 @@ void phg_wsb_make_requested_current(Ws *ws)
     }
 
 #endif
+
+#ifdef DEBUG
+    printf("wsb: Flush\n");
+#endif
+
     /* Make it all take effect. */
     phg_wsgl_flush(ws);
 }
@@ -774,7 +791,7 @@ void phg_wsb_repaint_all(Ws *ws, Pctrl_flag clear_control)
 	 * entry in the WS colour table and runs it through colour mapping.
 	 */
 #ifdef DEBUG
-        printf("Clear.");
+        printf("wsb: Clear\n");
 #endif
 
 	phg_wsgl_clear();
@@ -868,7 +885,7 @@ void phg_wsb_add_el(Ws *ws)
     El_handle		cur_el = CSS_CUR_ELP(owsb->cssh);
 
 #ifdef DEBUG
-    printf("Add.");
+    printf("wsb: Add\n");
 #endif
 
     assert(CSS_CUR_STRUCTP(owsb->cssh)); /* A structure must be open */
@@ -895,7 +912,7 @@ int phg_wsb_asti_update(Ws *ws, Pctrl_flag clear_control)
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
 #ifdef DEBUG
-    printf("Asti.");
+    printf("wsb: Asti\n");
 #endif
     switch ( (*owsb->update_action_table)
 	    [(int)PHG_TIME_ATI]
@@ -928,7 +945,7 @@ void phg_wsb_close_struct(Ws *ws, Struct_handle structh)
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
 #ifdef DEBUG
-    printf("Close.");
+    printf("wsb: Close\n");
 #endif
 
     WSB_CHECK_FOR_INTERACTION_UNDERWAY(ws, &owsb->now_action);
@@ -954,7 +971,7 @@ static void wsb_update_a_posting(Ws *ws, Ws_post_str *posting)
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
 #ifdef DEBUG
-    printf("Posting.");
+    printf("wsb: Posting\n");
 #endif
 
     WSB_CHECK_FOR_INTERACTION_UNDERWAY(ws, &owsb->now_action);
@@ -986,7 +1003,7 @@ void phg_wsb_post(Ws *ws,
     Ws_post_str 	*new;
 
 #ifdef DEBUG
-    printf("Post on workspace: %x\n", (unsigned int) ws);
+    printf("wsb: Post on workspace: %x\n", (unsigned int) ws);
 #endif
 
     if ( !first_posting ) {

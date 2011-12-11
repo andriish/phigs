@@ -87,12 +87,6 @@ int main(int argc, char *argv[])
    pclose_struct();
 
    popen_ws(0, NULL, 0);
-   ws_list[0]->out_ws.model.b.ws_viewport_pending = PUPD_PEND;
-   ws_list[0]->out_ws.model.b.req_ws_viewport.x_min = 0;
-   ws_list[0]->out_ws.model.b.req_ws_viewport.x_max = 300;
-   ws_list[0]->out_ws.model.b.req_ws_viewport.y_min = 0;
-   ws_list[0]->out_ws.model.b.req_ws_viewport.y_max = 300;
-   (*ws_list[0]->redraw_all)(ws_list[0], PFLAG_ALWAYS);
    printf("Created workspace: %x\n", (unsigned int) ws_list[0]);
 
    col_rep.rgb.red = 1.0;
@@ -101,12 +95,6 @@ int main(int argc, char *argv[])
    pset_colr_rep(0, 0, &col_rep);
 
    popen_ws(1, NULL, 0);
-   ws_list[1]->out_ws.model.b.ws_viewport_pending = PUPD_PEND;
-   ws_list[1]->out_ws.model.b.req_ws_viewport.x_min = 0;
-   ws_list[1]->out_ws.model.b.req_ws_viewport.x_max = 300;
-   ws_list[1]->out_ws.model.b.req_ws_viewport.y_min = 0;
-   ws_list[1]->out_ws.model.b.req_ws_viewport.y_max = 300;
-   (*ws_list[1]->redraw_all)(ws_list[1], PFLAG_ALWAYS);
    printf("Created workspace: %x\n", (unsigned int) ws_list[1]);
 
    col_rep.rgb.red = 1.0;
@@ -121,7 +109,7 @@ int main(int argc, char *argv[])
 
    XSelectInput(ws_list[0]->display,
                 ws_list[0]->drawable_id,
-                ExposureMask | KeyPressMask | ButtonPressMask);
+                ExposureMask | KeyPressMask);
    while (1) {
       XNextEvent(ws_list[0]->display, &event);
       switch(event.type) {
@@ -141,16 +129,11 @@ int main(int argc, char *argv[])
             printf("Done.\n");
          break;
 
-         case ButtonPress:
-            goto end_prog;
-         break;
-
          default:
          break;
       }
    }
 
-end_prog:
    (*ws_list[0]->close)(ws_list[0]);
    (*ws_list[1]->close)(ws_list[1]);
    phg_css_destroy(css);
