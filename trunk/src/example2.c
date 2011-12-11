@@ -64,17 +64,29 @@ int main(int argc, char *argv[])
    popen_struct(0);
    pset_linetype(PLINE_DASH);
    pset_linewidth(4.0);
+   pset_line_colr_ind(0);
    ppolyline(&plist_line);
    pset_marker_type(PMARKER_ASTERISK);
    pset_marker_size(0.1);
+   pset_marker_colr_ind(0);
    ppolymarker(&plist_mark);
    pclose_struct();
 
    popen_struct(1);
+   pset_edge_flag(PEDGE_ON);
+   pset_edge_colr_ind(1);
+   pset_edgewidth(2.0);
+   pset_int_colr_ind(0);
+   pset_int_style(PSTYLE_SOLID);
    pfill_area(&plist_quad);
    pclose_struct();
 
    popen_struct(2);
+   pset_edge_flag(PEDGE_ON);
+   pset_edge_colr_ind(1);
+   pset_edgewidth(2.0);
+   pset_int_colr_ind(0);
+   pset_int_style(PSTYLE_SOLID);
    pfill_area(&plist_tri);
    pclose_struct();
 
@@ -94,6 +106,11 @@ int main(int argc, char *argv[])
    col_rep.rgb.blue = 1.0;
    pset_colr_rep(0, 0, &col_rep);
 
+   col_rep.rgb.red = 0.0;
+   col_rep.rgb.green = 1.0;
+   col_rep.rgb.blue = 0.0;
+   pset_colr_rep(0, 1, &col_rep);
+
    popen_ws(1, NULL, 0);
    printf("Created workspace: %x\n", (unsigned int) ws_list[1]);
 
@@ -101,6 +118,11 @@ int main(int argc, char *argv[])
    col_rep.rgb.green = 1.0;
    col_rep.rgb.blue = 1.0;
    pset_colr_rep(1, 0, &col_rep);
+
+   col_rep.rgb.red = 1.0;
+   col_rep.rgb.green = 0.0;
+   col_rep.rgb.blue = 1.0;
+   pset_colr_rep(1, 1, &col_rep);
 
    printf("Post struct...");
    ppost_struct(0, 3, 0);
