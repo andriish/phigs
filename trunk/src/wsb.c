@@ -329,9 +329,9 @@ static int init_output_state(Ws *ws)
 
     /* Initialize the workstation transform. */
     owsb->req_ws_window.x_min = 0.0;
-    owsb->req_ws_window.x_max = 1.0;
+    owsb->req_ws_window.x_max = (float) ws->ws_rect.width;
     owsb->req_ws_window.y_min = 0.0;
-    owsb->req_ws_window.y_max = 1.0;
+    owsb->req_ws_window.y_max = (float) ws->ws_rect.height;
     owsb->req_ws_window.z_min = 0.0;
     owsb->req_ws_window.z_max = 1.0;
     owsb->ws_window = owsb->req_ws_window;
@@ -339,9 +339,9 @@ static int init_output_state(Ws *ws)
     phg_wsgl_set_window(ws, &owsb->ws_window);
 
     owsb->req_ws_viewport.x_min = 0.0;
-    owsb->req_ws_viewport.x_max = ws->ws_rect.width;
+    owsb->req_ws_viewport.x_max = (float) ws->ws_rect.width;
     owsb->req_ws_viewport.y_min = 0.0;
-    owsb->req_ws_viewport.y_max = ws->ws_rect.height;
+    owsb->req_ws_viewport.y_max = (float) ws->ws_rect.height;
     owsb->req_ws_viewport.z_min = 0.0;
     owsb->req_ws_viewport.z_max = 1.0;
     owsb->ws_viewport = owsb->req_ws_viewport;

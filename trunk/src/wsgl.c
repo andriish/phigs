@@ -44,6 +44,10 @@ static int glConfig[] = {
 };
 
 static attribute_group my_attrs;
+static Plimit3         curr_win;
+static int             win_changed = 0;
+static Plimit3         curr_vp;
+static int             vp_changed = 0;
 static Pmatrix3        total_tran, local_tran;
 static Ws_view_entry  *curr_view_entry = 0;
 static Pint            curr_view_index = -1;
@@ -189,19 +193,6 @@ int phg_wsgl_open_window(Ws *ws)
                                    CWBorderPixel | CWColormap | CWEventMask,
                                    &wattr);
 
-#ifdef DEBUG
-   printf("wsgl: Make context current: %x\n", (unsigned int) ws->glx_context);
-#endif
-
-   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
-   glViewport(0,
-              0,
-              ws->ws_rect.width,
-              ws->ws_rect.height);
-   glEnable(GL_DEPTH_BUFFER);
-
-   XMapWindow(ws->display, ws->drawable_id);
-
    return 1;
 }
 
@@ -217,23 +208,14 @@ void phg_wsgl_destroy(Ws *ws)
 
 void phg_wsgl_set_window(Ws *ws, Plimit3 *win)
 {
-#ifdef DEBUG
-   printf("wsgl: set_window: Make context current: %x\n",
-          (unsigned int) ws->glx_context);
-#endif
-
-   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
+   win_changed = 1;
+   memcpy(&curr_win, win, sizeof(Plimit3));
 }
 
 void phg_wsgl_set_viewport(Ws *ws, Plimit3 *vp)
 {
-#ifdef DEBUG
-   printf("wsgl: set_viewport: Make context current: %x\n",
-          (unsigned int) ws->glx_context);
-#endif
-
-   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
-   glViewport(vp->x_min, vp->y_min, vp->x_max, vp->y_max);
+   vp_changed = 1;
+   memcpy(&curr_vp, vp, sizeof(Plimit3));
 }
 
 void phg_wsgl_clear(void)
@@ -243,15 +225,31 @@ void phg_wsgl_clear(void)
 
 void phg_wsgl_flush(Ws *ws)
 {
-#ifdef DEBUG
-   printf("wsgl: Make context current: %x\n", (unsigned int) ws->glx_context);
-#endif
-
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
-   if (ws->has_double_buffer)
-      glXSwapBuffers(ws->display, ws->drawable_id);
-   else
-      glFlush();
+   curr_ws = ws;
+
+   glEnable(GL_DEPTH_BUFFER);
+
+   if (win_changed)
+   {
+      win_changed = 0;
+      XMoveResizeWindow(ws->display, ws->drawable_id,
+                    (int) curr_win.x_min,
+                    (int) curr_win.y_min,
+                    (int) (curr_win.x_max - curr_win.x_min),
+                    (int) (curr_win.y_max - curr_win.y_min));
+   }
+
+   if (vp_changed)
+   {
+      vp_changed = 0;
+      glViewport(curr_vp.x_min,
+                 curr_vp.y_min,
+                 curr_vp.x_max,
+                 curr_vp.y_max);
+   }
+
+   XMapWindow(ws->display, ws->drawable_id);
 }
 
 void phg_wsgl_compute_ws_transform(Plimit3 *ws_win,
@@ -276,12 +274,17 @@ void phg_wsgl_compute_ws_transform(Plimit3 *ws_win,
 
 void phg_wsgl_begin_rendering(Ws *ws)
 {
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
    curr_ws = ws;
    memcpy(&my_attrs, phg_get_default_attr(), sizeof(attribute_group));
 }
 
 void phg_wsgl_end_rendering(void)
 {
+   if (curr_ws->has_double_buffer)
+      glXSwapBuffers(curr_ws->display, curr_ws->drawable_id);
+   else
+      glFlush();
 }
 
 void phg_wsgl_render_element(El_handle el)
