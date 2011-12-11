@@ -33,8 +33,6 @@
 #include <phigs/ws.h>
 #include <phigs/mat_utils.h>
 
-#define MAX_VIEW_ENTRIES       10
-
 static int glConfig[] = {
    GLX_DOUBLEBUFFER,
    GLX_RGBA,
@@ -47,7 +45,7 @@ static int glConfig[] = {
 
 static attribute_group my_attrs;
 static Pmatrix3        total_tran, local_tran;
-static Ws_view_entry  *curr_view_entry;
+static Ws_view_entry  *curr_view_entry = 0;
 static Pint            curr_view_index = -1;
 static Ws             *curr_ws;
 
@@ -134,7 +132,7 @@ int phg_wsgl_open_window(Ws *ws)
    XVisualInfo *vi;
    Colormap cmap;
    XSetWindowAttributes wattr;
-   int width, height, screen_num;
+   int screen_num;
 
    ws->display = XOpenDisplay(NULL);
    if (ws->display == NULL) {
@@ -144,8 +142,10 @@ int phg_wsgl_open_window(Ws *ws)
 
   screen_num = DefaultScreen(ws->display);
 
-  width = DisplayWidth(ws->display, screen_num) - 100;
-  height = DisplayHeight(ws->display, screen_num) - 100;
+  ws->ws_rect.x = 0;
+  ws->ws_rect.y = 0;
+  ws->ws_rect.width = DisplayWidth(ws->display, screen_num) / 2;
+  ws->ws_rect.height = ws->ws_rect.width;
 
    if (!glXQueryExtension(ws->display, NULL, NULL)) {
       fprintf(stderr, "No Open GL support\n");
@@ -182,16 +182,24 @@ int phg_wsgl_open_window(Ws *ws)
 
    ws->drawable_id = XCreateWindow(ws->display,
                                    RootWindow(ws->display, vi->screen),
-                                   0, 0, width, height, 0, vi->depth,
+                                   ws->ws_rect.x, ws->ws_rect.y,
+                                   ws->ws_rect.width, ws->ws_rect.height,
+                                   0, vi->depth,
                                    InputOutput, vi->visual,
                                    CWBorderPixel | CWColormap | CWEventMask,
                                    &wattr);
 
 #ifdef DEBUG
-   printf("Make context current: %x\n", (unsigned int) ws->glx_context);
+   printf("wsgl: Make context current: %x\n", (unsigned int) ws->glx_context);
 #endif
 
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
+   glViewport(0,
+              0,
+              ws->ws_rect.width,
+              ws->ws_rect.height);
+   glEnable(GL_DEPTH_BUFFER);
+
    XMapWindow(ws->display, ws->drawable_id);
 
    return 1;
@@ -210,26 +218,21 @@ void phg_wsgl_destroy(Ws *ws)
 void phg_wsgl_set_window(Ws *ws, Plimit3 *win)
 {
 #ifdef DEBUG
-   printf("Make context current: %x\n", (unsigned int) ws->glx_context);
+   printf("wsgl: set_window: Make context current: %x\n",
+          (unsigned int) ws->glx_context);
 #endif
 
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
-
-   glEnable(GL_DEPTH_BUFFER);
 }
 
 void phg_wsgl_set_viewport(Ws *ws, Plimit3 *vp)
 {
-   XResizeWindow(ws->display, ws->drawable_id,
-                 (vp->x_max - vp->x_min),
-                 (vp->y_max - vp->y_min));
-
 #ifdef DEBUG
-   printf("Make context current: %x\n", (unsigned int) ws->glx_context);
+   printf("wsgl: set_viewport: Make context current: %x\n",
+          (unsigned int) ws->glx_context);
 #endif
 
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
-
    glViewport(vp->x_min, vp->y_min, vp->x_max, vp->y_max);
 }
 
@@ -241,7 +244,7 @@ void phg_wsgl_clear(void)
 void phg_wsgl_flush(Ws *ws)
 {
 #ifdef DEBUG
-   printf("Make context current: %x\n", (unsigned int) ws->glx_context);
+   printf("wsgl: Make context current: %x\n", (unsigned int) ws->glx_context);
 #endif
 
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);

@@ -67,6 +67,7 @@ void struct_stat(void)
 int main(int argc, char *argv[])
 {
    XEvent event;
+   Plimit3 limits;
 
    if (argc > 1) {
       view_index = atoi(argv[1]);
@@ -75,12 +76,6 @@ int main(int argc, char *argv[])
 
    popen_phigs("", 0);
    popen_ws(0, NULL, 0);
-   ws_list[0]->out_ws.model.b.ws_viewport_pending = PUPD_PEND;
-   ws_list[0]->out_ws.model.b.req_ws_viewport.x_min = 0;
-   ws_list[0]->out_ws.model.b.req_ws_viewport.x_max = 600;
-   ws_list[0]->out_ws.model.b.req_ws_viewport.y_min = 0;
-   ws_list[0]->out_ws.model.b.req_ws_viewport.y_max = 600;
-   (*ws_list[0]->redraw_all)(ws_list[0], PFLAG_ALWAYS);
 
    col_rep.rgb.red = 0.0;
    col_rep.rgb.green = 0.25;
@@ -146,10 +141,19 @@ int main(int argc, char *argv[])
 
    XSelectInput(ws_list[0]->display,
                 ws_list[0]->drawable_id,
-                ExposureMask | KeyPressMask | ButtonPressMask);
+                ExposureMask | StructureNotifyMask |
+                KeyPressMask);
    while (1) {
       XNextEvent(ws_list[0]->display, &event);
       switch(event.type) {
+         case ConfigureNotify:
+            limits.x_min = 0;
+            limits.x_max = event.xconfigure.width;
+            limits.y_min = 0;
+            limits.y_max = event.xconfigure.height;
+            (*ws_list[0]->set_ws_vp)(ws_list[0], 0, &limits);
+         break;
+
          case Expose:
             while (XCheckTypedEvent(ws_list[0]->display, Expose, &event));
             (*ws_list[0]->redraw_all)(ws_list[0], PFLAG_ALWAYS);
@@ -183,16 +187,11 @@ int main(int argc, char *argv[])
             pclose_struct();
          break;
 
-         case ButtonPress:
-            goto end_prog;
-         break;
-
          default:
          break;
       }
    }
 
-end_prog:
    (*ws_list[0]->close)(ws_list[0]);
    phg_css_destroy(css);
 
