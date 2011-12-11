@@ -522,6 +522,12 @@ static void phg_set_view(Ws *ws, Pint index)
 
 static void phg_set_line_attr(Pline_bundle *attr)
 {
+   Pint index = attr->colr_ind;
+
+   glColor3f(wsgl.colr_table[index].val.general.x,
+             wsgl.colr_table[index].val.general.y,
+             wsgl.colr_table[index].val.general.z);
+
    /* Line style */
    switch (attr->type) {
       case PLINE_DASH:
@@ -847,11 +853,23 @@ static void phg_draw_fill_area(Ppoint_list *point_list)
 {
    int i;
 
-   glBegin(GL_POLYGON);
-   for (i = 0; i < point_list->num_points; i++)
-      glVertex2f(point_list->points[i].x,
-                 point_list->points[i].y);
-   glEnd();
+   if (wsgl.attrs.int_bundle.style == PSTYLE_SOLID) {
+      phg_set_int_attr(&wsgl.attrs.int_bundle);
+      glBegin(GL_POLYGON);
+      for (i = 0; i < point_list->num_points; i++)
+         glVertex2f(point_list->points[i].x,
+                    point_list->points[i].y);
+      glEnd();
+   }
+
+   if (wsgl.attrs.edge_bundle.flag == PEDGE_ON) {
+      phg_set_edge_attr(&wsgl.attrs.edge_bundle);
+      glBegin(GL_LINE_LOOP);
+      for (i = 0; i < point_list->num_points; i++)
+         glVertex2f(point_list->points[i].x,
+                    point_list->points[i].y);
+      glEnd();
+   }
 }
 
 /*******************************************************************************
