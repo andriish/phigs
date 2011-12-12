@@ -332,9 +332,9 @@ static int init_output_state(Ws *ws)
 
     /* Initialize the workstation transform. */
     owsb->req_ws_window.x_min = 0.0;
-    owsb->req_ws_window.x_max = (float) ws->ws_rect.width;
+    owsb->req_ws_window.x_max = 1.0;
     owsb->req_ws_window.y_min = 0.0;
-    owsb->req_ws_window.y_max = (float) ws->ws_rect.height;
+    owsb->req_ws_window.y_max = 1.0;
     owsb->req_ws_window.z_min = 0.0;
     owsb->req_ws_window.z_max = 1.0;
     owsb->ws_window = owsb->req_ws_window;
@@ -803,7 +803,7 @@ void phg_wsb_repaint_all(Ws *ws, Pctrl_flag clear_control)
     }
     owsb->surf_state = PSURF_EMPTY;
 
-    phg_wsb_traverse_all_postings( ws );
+    phg_wsb_traverse_all_postings(ws);
 
     /* now swap the buffers and update the drawable indices */
     phg_wsgl_flush(ws);

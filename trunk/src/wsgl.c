@@ -227,32 +227,47 @@ void phg_wsgl_clear(void)
 
 void phg_wsgl_flush(Ws *ws)
 {
+   float w, h;
+
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
    wsgl.curr_ws = ws;
    wsgl.colr_table = ws->colr_table;
 
-   glEnable(GL_DEPTH_BUFFER);
+   if (wsgl.vp_changed)
+   {
+      wsgl.vp_changed = 0;
+      XMoveResizeWindow(ws->display, ws->drawable_id,
+                    (int)  wsgl.curr_vp.x_min,
+                    (int)  wsgl.curr_vp.y_min,
+                    (int) (wsgl.curr_vp.x_max - wsgl.curr_vp.x_min),
+                    (int) (wsgl.curr_vp.y_max - wsgl.curr_vp.y_min));
+   }
 
    if (wsgl.win_changed)
    {
       wsgl.win_changed = 0;
-      XMoveResizeWindow(ws->display, ws->drawable_id,
-                    (int) wsgl.curr_win.x_min,
-                    (int) wsgl.curr_win.y_min,
-                    (int) (wsgl.curr_win.x_max - wsgl.curr_win.x_min),
-                    (int) (wsgl.curr_win.y_max - wsgl.curr_win.y_min));
-   }
 
-   if (wsgl.vp_changed)
-   {
-      wsgl.vp_changed = 0;
-      glViewport(wsgl.curr_vp.x_min,
-                 wsgl.curr_vp.y_min,
-                 wsgl.curr_vp.x_max,
-                 wsgl.curr_vp.y_max);
+      w = wsgl.curr_vp.x_max - wsgl.curr_vp.x_min;
+      h = wsgl.curr_vp.y_max - wsgl.curr_vp.y_min;
+
+      glViewport((GLint)   (wsgl.curr_win.x_min * w),
+                 (GLint)   (wsgl.curr_win.y_min * h),
+                 (GLsizei) (wsgl.curr_win.x_max * w),
+                 (GLsizei) (wsgl.curr_win.y_max * h));
    }
 
    XMapWindow(ws->display, ws->drawable_id);
+
+   glEnable(GL_DEPTH_BUFFER);
+
+   if (wsgl.curr_ws->has_double_buffer)
+   {
+      glXSwapBuffers(wsgl.curr_ws->display, wsgl.curr_ws->drawable_id);
+   }
+   else
+   {
+      glFlush();
+   }
 }
 
 /*******************************************************************************
@@ -291,9 +306,6 @@ void phg_wsgl_compute_ws_transform(Plimit3 *ws_win,
 
 void phg_wsgl_begin_rendering(Ws *ws)
 {
-   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
-   wsgl.curr_ws = ws;
-   wsgl.colr_table = ws->colr_table;
    memcpy(&wsgl.attrs, phg_get_default_attr(), sizeof(attribute_group));
 }
 
@@ -306,10 +318,6 @@ void phg_wsgl_begin_rendering(Ws *ws)
 
 void phg_wsgl_end_rendering(void)
 {
-   if (wsgl.curr_ws->has_double_buffer)
-      glXSwapBuffers(wsgl.curr_ws->display, wsgl.curr_ws->drawable_id);
-   else
-      glFlush();
 }
 
 /*******************************************************************************
