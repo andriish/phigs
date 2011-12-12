@@ -67,7 +67,7 @@ void struct_stat(void)
 int main(int argc, char *argv[])
 {
    XEvent event;
-   Plimit3 limits;
+   Plimit3 vp, win;
 
    if (argc > 1) {
       view_index = atoi(argv[1]);
@@ -75,38 +75,6 @@ int main(int argc, char *argv[])
    }
 
    popen_phigs("", 0);
-   popen_ws(0, NULL, 0);
-   limits.x_min = 100.0;
-   limits.x_max = 600.0;
-   limits.y_min = 100.0;
-   limits.y_max = 600.0;
-   (*ws_list[0]->set_ws_window)(ws_list[0], 0, &limits);
-   (*ws_list[0]->set_ws_vp)(ws_list[0], 0, &limits);
-
-   col_rep.rgb.red = 0.0;
-   col_rep.rgb.green = 0.25;
-   col_rep.rgb.blue = 0.25;
-   pset_colr_rep(0, 0, &col_rep);
-
-   col_rep.rgb.red = 0.0;
-   col_rep.rgb.green = 0.5;
-   col_rep.rgb.blue = 0.5;
-   pset_colr_rep(0, 1, &col_rep);
-
-   col_rep.rgb.red = 0.0;
-   col_rep.rgb.green = 1.0;
-   col_rep.rgb.blue = 1.0;
-   pset_colr_rep(0, 2, &col_rep);
-
-   col_rep.rgb.red = 1.0;
-   col_rep.rgb.green = 1.0;
-   col_rep.rgb.blue = 1.0;
-   pset_colr_rep(0, 3, &col_rep);
-
-   col_rep.rgb.red = 1.0;
-   col_rep.rgb.green = 0.0;
-   col_rep.rgb.blue = 0.0;
-   pset_colr_rep(0, 4, &col_rep);
 
    popen_struct(0);
    pfill_area3(&plist_quad);
@@ -143,22 +111,51 @@ int main(int argc, char *argv[])
    pexec_struct(0);
    pclose_struct();
 
+   popen_ws(0, NULL, 0);
+   vp.x_min = 100.0;
+   vp.x_max = 500.0;
+   vp.y_min = 100.0;
+   vp.y_max = 500.0;
+   win.x_min =  0.0;
+   win.x_max =  1.0;
+   win.y_min =  0.0;
+   win.y_max =  1.0;
+   (*ws_list[0]->set_ws_vp)(ws_list[0], 0, &vp);
+   (*ws_list[0]->set_ws_window)(ws_list[0], 0, &win);
+
+   col_rep.rgb.red = 0.0;
+   col_rep.rgb.green = 0.25;
+   col_rep.rgb.blue = 0.25;
+   pset_colr_rep(0, 0, &col_rep);
+
+   col_rep.rgb.red = 0.0;
+   col_rep.rgb.green = 0.5;
+   col_rep.rgb.blue = 0.5;
+   pset_colr_rep(0, 1, &col_rep);
+
+   col_rep.rgb.red = 0.0;
+   col_rep.rgb.green = 1.0;
+   col_rep.rgb.blue = 1.0;
+   pset_colr_rep(0, 2, &col_rep);
+
+   col_rep.rgb.red = 1.0;
+   col_rep.rgb.green = 1.0;
+   col_rep.rgb.blue = 1.0;
+   pset_colr_rep(0, 3, &col_rep);
+
+   col_rep.rgb.red = 1.0;
+   col_rep.rgb.green = 0.0;
+   col_rep.rgb.blue = 0.0;
+   pset_colr_rep(0, 4, &col_rep);
+
    ppost_struct(0, 1, 0);
 
    XSelectInput(ws_list[0]->display,
                 ws_list[0]->drawable_id,
-                ExposureMask | StructureNotifyMask |
-                KeyPressMask);
+                ExposureMask | KeyPressMask);
    while (1) {
       XNextEvent(ws_list[0]->display, &event);
       switch(event.type) {
-         case ConfigureNotify:
-            limits.x_min = 0;
-            limits.x_max = event.xconfigure.width;
-            limits.y_min = 0;
-            limits.y_max = event.xconfigure.height;
-            (*ws_list[0]->set_ws_vp)(ws_list[0], 0, &limits);
-         break;
 
          case Expose:
             while (XCheckTypedEvent(ws_list[0]->display, Expose, &event));

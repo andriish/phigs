@@ -52,6 +52,7 @@ int view_index;
 
 int main(int argc, char *argv[])
 {
+   Plimit3 vp, win;
    XEvent event;
 
    if (argc > 1) {
@@ -95,11 +96,19 @@ int main(int argc, char *argv[])
    pset_int_colr_ind(0);
    pexec_struct(0);
    pexec_struct(1);
-   //pexec_struct(2);
    pclose_struct();
 
    popen_ws(0, NULL, 0);
-   printf("Created workspace: %x\n", (unsigned int) ws_list[0]);
+   vp.x_min =   0.0;
+   vp.x_max = 200.0;
+   vp.y_min =   0.0;
+   vp.y_max = 200.0;
+   win.x_min =  0.0;
+   win.x_max =  1.0;
+   win.y_min =  0.0;
+   win.y_max =  1.0;
+   (*ws_list[0]->set_ws_vp)(ws_list[0], 0, &vp);
+   (*ws_list[0]->set_ws_window)(ws_list[0], 0, &win);
 
    col_rep.rgb.red = 1.0;
    col_rep.rgb.green = 1.0;
@@ -112,7 +121,16 @@ int main(int argc, char *argv[])
    pset_colr_rep(0, 1, &col_rep);
 
    popen_ws(1, NULL, 0);
-   printf("Created workspace: %x\n", (unsigned int) ws_list[1]);
+   vp.x_min = 200.0;
+   vp.x_max = 300.0;
+   vp.y_min = 200.0;
+   vp.y_max = 300.0;
+   win.x_min =  0.0;
+   win.x_max =  1.0;
+   win.y_min =  0.0;
+   win.y_max =  1.0;
+   (*ws_list[1]->set_ws_vp)(ws_list[1], 0, &vp);
+   (*ws_list[1]->set_ws_window)(ws_list[1], 0, &win);
 
    col_rep.rgb.red = 0.0;
    col_rep.rgb.green = 1.0;
@@ -124,10 +142,8 @@ int main(int argc, char *argv[])
    col_rep.rgb.blue = 1.0;
    pset_colr_rep(1, 1, &col_rep);
 
-   printf("Post struct...");
    ppost_struct(0, 3, 0);
    ppost_struct(1, 3, 0);
-   printf("Done.\n");
 
    XSelectInput(ws_list[0]->display,
                 ws_list[0]->drawable_id,
@@ -143,12 +159,8 @@ int main(int argc, char *argv[])
 
          case KeyPress:
             popen_struct(3);
-            printf("Exec struct...");
             pexec_struct(2);
-            printf("Done.\n");
-            printf("Close struct...");
             pclose_struct();
-            printf("Done.\n");
          break;
 
          default:
