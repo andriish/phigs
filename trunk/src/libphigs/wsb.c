@@ -633,9 +633,6 @@ void phg_wsb_traverse_net(
 {
     El_handle	el;
 
-#if TODO
-    PEXBeginStructure( ws->display, ws->rid, (CARD32)structp->struct_id );
-#endif
     el = structp->first_el;
     while ( 1 ) {	/* termination test is at the bottom */
 	switch ( el->eltype ) {
@@ -653,9 +650,6 @@ void phg_wsb_traverse_net(
 	    break;  /* out of the while over all elements in struct */
 	el = el->next;
     }
-#ifdef TODO
-    PEXEndStructure( ws->display, ws->rid );
-#endif
 }
 
 static int wsb_visible_element_type(
@@ -1426,9 +1420,6 @@ void phg_wsb_set_rep(
 	    gcolr.val.general.y = rep->bundl.corep.rgb.green;
 	    gcolr.val.general.z = rep->bundl.corep.rgb.blue;
             memcpy(&ws->colr_table[rep->index], &gcolr, sizeof(Pgcolr));
-#if TODO
-	    phg_wsx_set_LUT_entry( ws, type, rep, &gcolr );
-#endif
 	    break;
     }
 
@@ -1681,14 +1672,12 @@ void phg_wsb_inq_rep(
 	    cb = &ret->data.rep.corep;
 
 	    /* Need to convert to current colour model. */
-#ifdef TODO
-	    phg_wsx_inq_LUT_entry( ws, index, how, rep_type, ret,
-		&src_gcolr, (Pview_rep3 *)NULL );
-	    gcolr.type = ws->current_colour_model;
-	    (void)phg_utx_convert_colour( &src_gcolr, &gcolr,
-		&ws->type->desc_tbl.phigs_dt.out_dt.chroma_info );
-#endif
             memcpy(&gcolr, &ws->colr_table[index], sizeof(Pgcolr));
+
+            /* NOTE:
+             * Convert to correct colour model here if needed
+             */
+
 	    cb->rgb.red = gcolr.val.general.x;
 	    cb->rgb.green = gcolr.val.general.y;
 	    cb->rgb.blue = gcolr.val.general.z;
@@ -1981,7 +1970,7 @@ int phg_wsb_resolve_stroke(
     return status;
 }
 
-#if 0
+#ifdef NOT_YET
 int phg_wsb_resolve_pick(
     Ws *ws,
     Ws_inp_pick *dev,

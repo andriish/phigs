@@ -48,7 +48,7 @@ Ppoint_list plist_quad = {
 };
 
 Pcolr_rep col_rep;
-int view_index;
+int view_index = 1;
 
 int main(int argc, char *argv[])
 {
