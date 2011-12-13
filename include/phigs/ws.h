@@ -208,6 +208,10 @@ typedef struct _Ws {
                    Pint ref_index,
                    Prel_pri priority
                    );
+   void         (*set_rep)(
+                   struct _Ws *ws,
+                   Phg_args_rep_type type,
+                   Phg_args_rep_data *rep);
    void         (*set_ws_window)(
                    struct _Ws *ws,
                    Pint two_d,
@@ -297,10 +301,13 @@ typedef struct _Ws {
                    struct _Ws *ws,
                    Phg_ret *ret
                    );
-   void         (*set_rep)(
+   void         (*inq_representation)(
                    struct _Ws *ws,
-                   Phg_args_rep_type type,
-                   Phg_args_rep_data *rep);
+                   Pint index,
+                   Pinq_type how,
+                   Phg_args_rep_type rep_type,
+                   Phg_ret *ret
+                   );
 } Ws;
 
 #define WSB_NONE_POSTED(posted_ptr) \
@@ -338,66 +345,200 @@ typedef struct _Ws {
 
 extern Ws_handle  *ws_list;
 
-Ws* phg_wsb_open_ws(Phg_args_open_ws *args, Phg_ret *ret);
-void wsb_free_all_posted(Wsb_output_ws *owsb);
-void wsb_destroy_ws(Ws *ws);
-void phg_wsb_close_ws(Ws *ws);
-void phg_wsb_redraw_all(Ws *ws, Pctrl_flag clear_control);
-void phg_wsb_make_requested_current(Ws *ws);
-void phg_wsb_repaint_all(Ws *ws, Pctrl_flag clear_control);
-void phg_wsb_traverse_all_postings(Ws *ws);
-void phg_wsb_traverse_net(Ws_handle ws, Struct_handle structp);
-void phg_wsb_add_el(Ws *ws);
-int phg_wsb_asti_update(Ws *ws, Pctrl_flag clear_control);
-void phg_wsb_close_struct(Ws *ws, Struct_handle structh);
-void phg_wsb_post(Ws *ws,
-                  Struct_handle structh,
-                  Pfloat priority,
-                  Pint first_posting);
-void phg_wsb_change_posting(Ws *ws,
-                            Struct_handle unpost,
-                            Struct_handle post);
-void phg_wsb_unpost(Ws *ws, Struct_handle structh);
-void phg_wsb_unpost_all(Ws *ws);
-void phg_wsb_delete_all_structs(Ws *ws);
-int phg_wsb_delete_struct(Ws *ws,
-                          Struct_handle structh,
-                          Ws_delete_flag flag);
-int phg_wsb_delete_struct_net(Ws *ws,
-                              Struct_handle structh,
-                              Pref_flag reff,
-                              Ws_delete_flag flag);
-void phg_wsb_copy_struct(Ws *ws, El_handle first_el);
-int phg_wsb_delete_el(Ws *ws,
-                      Struct_handle structh,
-                      El_handle elh1,
-                      El_handle elh2,
-                      Ws_delete_flag flag);
-void phg_wsb_conditional_redraw(Ws *ws);
-void phg_wsb_resolve_now_action(Ws *ws,
-                                Ws_update_action *now_action_ptr);
-void phg_wsb_update(Ws *ws, Pregen_flag flag);
-void phg_wsb_set_disp_update_state(Ws *ws,
-                                   Pdefer_mode def_mode,
-                                   Pmod_mode mod_mode);
-void phg_wsb_set_hlhsr_mode(Ws *ws, Pint mode);
-void phg_wsb_set_ws_window(Ws *ws,
-                           Pint two_d,
-                           Plimit3 *limits);
-void phg_wsb_set_ws_vp(Ws *ws,
-                       Pint two_d,
-                       Plimit3 *limits);
-void phg_wsb_set_view_input_priority(Ws *ws,
-                                     Pint index,
-                                     Pint ref_index,
-                                     Prel_pri priority);
-void phg_wsb_inq_view_indices(Ws *ws, Phg_ret *ret);
-void phg_wsb_inq_posted(Ws *ws, Phg_ret *ret);
-void phg_wsb_inq_view_rep(Ws *ws, Pint index, Phg_ret *ret);
-void phg_wsb_inq_ws_xform(Ws *ws, Phg_ret *ret);
-void phg_wsb_inq_disp_update_state(Ws *ws, Phg_ret *ret);
-void phg_wsb_inq_hlhsr_mode(Ws *ws, Phg_ret *ret);
-void phg_wsb_set_rep(Ws *ws, Phg_args_rep_type type, Phg_args_rep_data *rep);
+Ws* phg_wsb_open_ws(
+    Phg_args_open_ws *args,
+    Phg_ret *ret
+    );
+
+void wsb_free_all_posted(
+    Wsb_output_ws *owsb
+    );
+
+void wsb_destroy_ws(
+    Ws *ws
+    );
+
+void phg_wsb_close_ws(
+    Ws *ws
+    );
+
+void phg_wsb_redraw_all(
+    Ws *ws,
+    Pctrl_flag clear_control
+    );
+
+void phg_wsb_make_requested_current(
+    Ws *ws
+    );
+
+void phg_wsb_repaint_all(
+    Ws *ws,
+    Pctrl_flag clear_control
+    );
+
+void phg_wsb_traverse_all_postings(
+    Ws *ws
+    );
+
+void phg_wsb_traverse_net(
+    Ws_handle ws,
+    Struct_handle structp
+    );
+
+void phg_wsb_add_el(
+    Ws *ws
+    );
+
+int phg_wsb_asti_update(
+    Ws *ws,
+    Pctrl_flag clear_control
+    );
+
+void phg_wsb_close_struct(
+    Ws *ws,
+    Struct_handle structh
+    );
+
+void phg_wsb_post(
+    Ws *ws,
+    Struct_handle structh,
+    Pfloat priority,
+    Pint first_posting
+    );
+
+void phg_wsb_change_posting(
+    Ws *ws,
+    Struct_handle unpost,
+    Struct_handle post
+    );
+
+void phg_wsb_unpost(
+    Ws *ws,
+    Struct_handle structh
+    );
+
+void phg_wsb_unpost_all(
+    Ws *ws
+    );
+
+void phg_wsb_delete_all_structs(
+    Ws *ws
+    );
+
+int phg_wsb_delete_struct(
+    Ws *ws,
+    Struct_handle structh,
+    Ws_delete_flag flag
+    );
+
+int phg_wsb_delete_struct_net(
+    Ws *ws,
+    Struct_handle structh,
+    Pref_flag reff,
+    Ws_delete_flag flag
+    );
+
+void phg_wsb_copy_struct(
+    Ws *ws,
+    El_handle first_el
+    );
+
+int phg_wsb_delete_el(
+    Ws *ws,
+    Struct_handle structh,
+    El_handle elh1,
+    El_handle elh2,
+    Ws_delete_flag flag
+    );
+
+void phg_wsb_conditional_redraw(
+    Ws *ws
+    );
+
+void phg_wsb_resolve_now_action(
+    Ws *ws,
+    Ws_update_action *now_action_ptr
+    );
+
+void phg_wsb_update(
+    Ws *ws,
+    Pregen_flag flag
+    );
+
+void phg_wsb_set_disp_update_state(
+    Ws *ws,
+    Pdefer_mode def_mode,
+    Pmod_mode mod_mode
+    );
+
+void phg_wsb_set_hlhsr_mode(
+    Ws *ws,
+    Pint mode
+    );
+
+void phg_wsb_set_ws_window(
+    Ws *ws,
+    Pint two_d,
+    Plimit3 *limits
+    );
+
+void phg_wsb_set_ws_vp(
+    Ws *ws,
+    Pint two_d,
+    Plimit3 *limits
+    );
+
+void phg_wsb_set_view_input_priority(
+    Ws *ws,
+    Pint index,
+    Pint ref_index,
+    Prel_pri priority
+    );
+
+void phg_wsb_set_rep(
+    Ws *ws,
+    Phg_args_rep_type type,
+    Phg_args_rep_data *rep
+    );
+
+void phg_wsb_inq_view_indices(
+    Ws *ws,
+    Phg_ret *ret
+    );
+
+void phg_wsb_inq_posted(
+    Ws *ws,
+    Phg_ret *ret
+    );
+
+void phg_wsb_inq_view_rep(
+    Ws *ws,
+    Pint index,
+    Phg_ret *ret
+    );
+
+void phg_wsb_inq_ws_xform(
+    Ws *ws,
+    Phg_ret *ret
+    );
+
+void phg_wsb_inq_disp_update_state(
+    Ws *ws,
+    Phg_ret *ret
+    );
+
+void phg_wsb_inq_hlhsr_mode(
+    Ws *ws,
+    Phg_ret *ret
+    );
+
+void phg_wsb_inq_rep(
+    Ws *ws,
+    Pint index,
+    Pinq_type how,
+    Phg_args_rep_type rep_type,
+    Phg_ret *ret
+    );
 
 #endif
 

@@ -77,7 +77,9 @@ SOFTWARE.
 #include <phigs/css.h>
 #include <phigs/alloc.h>
 
-static void wsb_load_funcs(Ws *ws)
+static void wsb_load_funcs(
+    Ws *ws
+    )
 {
     ws->close = phg_wsb_close_ws;
     ws->redraw_all = phg_wsb_redraw_all;
@@ -117,9 +119,7 @@ static void wsb_load_funcs(Ws *ws)
     ws->inq_bundle_indices = phg_wsx_inq_LUT_indices;
 #endif
     ws->inq_posted = phg_wsb_inq_posted;
-#ifdef TODO
     ws->inq_representation = phg_wsb_inq_rep;
-#endif
     ws->inq_view_rep = phg_wsb_inq_view_rep;
     ws->inq_ws_xform = phg_wsb_inq_ws_xform;
     ws->inq_disp_update_state = phg_wsb_inq_disp_update_state;
@@ -232,7 +232,9 @@ static Ws_action_table default_action_table =
     }
 };
 
-static void init_update_state(Ws *ws)
+static void init_update_state(
+    Ws *ws
+    )
 {   
     Ws_output_ws	*ows = &ws->out_ws;
     Wsb_output_ws	*owsb = &ows->model.b;
@@ -250,7 +252,9 @@ static void init_update_state(Ws *ws)
     owsb->surf_state = PSURF_EMPTY;
 }
 
-static int init_view_table(Ws *ws)
+static int init_view_table(
+    Ws *ws
+    )
 {   
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -323,11 +327,13 @@ static int init_view_table(Ws *ws)
     return 1;
 }
 
-static int init_output_state(Ws *ws)
+static int init_output_state(
+    Ws *ws
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
-    if ( !init_view_table( ws ) )
+    if (!init_view_table(ws))
 	return 0;
 
     /* Initialize the workstation transform. */
@@ -581,7 +587,10 @@ static void wsb_update_wdt(Ws *ws)
 }
 #endif /* UNUSED */
 
-Ws* phg_wsb_open_ws(Phg_args_open_ws *args, Phg_ret *ret)
+Ws* phg_wsb_open_ws(
+    Phg_args_open_ws *args,
+    Phg_ret *ret
+    )
 {
     XWindowAttributes	wattr;
     Ws			*ws;
@@ -625,7 +634,9 @@ abort:
     return NULL;
 }
 
-void wsb_free_all_posted(Wsb_output_ws *owsb)
+void wsb_free_all_posted(
+    Wsb_output_ws *owsb
+    )
 {
     Ws_post_str	*cur, *end;
 
@@ -639,7 +650,9 @@ void wsb_free_all_posted(Wsb_output_ws *owsb)
     end->lower = &owsb->posted.lowest;
 }
 
-void wsb_destroy_ws(Ws *ws)
+void wsb_destroy_ws(
+    Ws *ws
+    )
 {
     if ( ws ) {
 	if ( ws->out_ws.model.b.views )
@@ -666,7 +679,9 @@ void wsb_destroy_ws(Ws *ws)
     }
 }
 
-void phg_wsb_close_ws(Ws *ws)
+void phg_wsb_close_ws(
+    Ws *ws
+    )
 {
     if ( ws ) {
 	wsb_free_all_posted( &ws->out_ws.model.b );
@@ -674,7 +689,10 @@ void phg_wsb_close_ws(Ws *ws)
     }
 }
 
-void phg_wsb_redraw_all(Ws *ws, Pctrl_flag clear_control)
+void phg_wsb_redraw_all(
+    Ws *ws,
+    Pctrl_flag clear_control
+    )
 {
 #ifdef DEBUG
     printf("wsb: Redraw.\n");
@@ -686,7 +704,9 @@ void phg_wsb_redraw_all(Ws *ws, Pctrl_flag clear_control)
 }
 
 /* Make all "requested" and pending data current. */
-void phg_wsb_make_requested_current(Ws *ws)
+void phg_wsb_make_requested_current(
+    Ws *ws
+    )
 {
     Ws_view_entry	*view;
     Ws_pending_view	*req_view;
@@ -785,7 +805,10 @@ void phg_wsb_make_requested_current(Ws *ws)
     phg_wsgl_flush(ws);
 }
 
-void phg_wsb_repaint_all(Ws *ws, Pctrl_flag clear_control)
+void phg_wsb_repaint_all(
+    Ws *ws,
+    Pctrl_flag clear_control
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -815,7 +838,9 @@ void phg_wsb_repaint_all(Ws *ws, Pctrl_flag clear_control)
 #endif
 }
 
-void phg_wsb_traverse_all_postings(Ws *ws)
+void phg_wsb_traverse_all_postings(
+    Ws *ws
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
     Ws_post_str		*post_str, *end;
@@ -835,7 +860,10 @@ void phg_wsb_traverse_all_postings(Ws *ws)
     }
 }
 
-void phg_wsb_traverse_net(Ws_handle ws, Struct_handle structp)
+void phg_wsb_traverse_net(
+    Ws_handle ws,
+    Struct_handle structp
+    )
 {
     El_handle	el;
 
@@ -864,7 +892,9 @@ void phg_wsb_traverse_net(Ws_handle ws, Struct_handle structp)
 #endif
 }
 
-static int wsb_visible_element_type(El_handle el)
+static int wsb_visible_element_type(
+    El_handle el
+    )
 {
     int		status = 1;	/* almost all are */
 
@@ -884,7 +914,9 @@ static int wsb_visible_element_type(El_handle el)
     return status;
 }
 
-void phg_wsb_add_el(Ws *ws)
+void phg_wsb_add_el(
+    Ws *ws
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
     El_handle		cur_el = CSS_CUR_ELP(owsb->cssh);
@@ -910,7 +942,10 @@ void phg_wsb_add_el(Ws *ws)
     }
 }
 
-int phg_wsb_asti_update(Ws *ws, Pctrl_flag clear_control)
+int phg_wsb_asti_update(
+    Ws *ws,
+    Pctrl_flag clear_control
+    )
 {
     /* Returns non-zero if redraw occurred. */
 
@@ -945,7 +980,10 @@ int phg_wsb_asti_update(Ws *ws, Pctrl_flag clear_control)
     return 0;
 }
 
-void phg_wsb_close_struct(Ws *ws, Struct_handle structh)
+void phg_wsb_close_struct(
+    Ws *ws,
+    Struct_handle structh
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -971,7 +1009,10 @@ void phg_wsb_close_struct(Ws *ws, Struct_handle structh)
     (void)phg_wsb_asti_update( ws, PFLAG_COND );
 }
 
-static void wsb_update_a_posting(Ws *ws, Ws_post_str *posting)
+static void wsb_update_a_posting(
+    Ws *ws,
+    Ws_post_str *posting
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -996,10 +1037,12 @@ static void wsb_update_a_posting(Ws *ws, Ws_post_str *posting)
     }
 }
 
-void phg_wsb_post(Ws *ws,
-                  Struct_handle structh,
-                  Pfloat priority,
-                  Pint first_posting )
+void phg_wsb_post(
+    Ws *ws,
+    Struct_handle structh,
+    Pfloat priority,
+    Pint first_posting
+    )
 {
     Ws_post_str 	*start;
 
@@ -1077,9 +1120,11 @@ void phg_wsb_post(Ws *ws,
  * have to be changed to use the correct pointers.
  */
 
-void phg_wsb_change_posting(Ws *ws,
-                            Struct_handle unpost,
-                            Struct_handle post)
+void phg_wsb_change_posting(
+    Ws *ws,
+    Struct_handle unpost,
+    Struct_handle post
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
     Ws_post_str 	*cur, *end;
@@ -1109,8 +1154,10 @@ void phg_wsb_change_posting(Ws *ws,
  * (Remember that that could be the dummy element owsb->posted.highest)
  * If not, return NULL.
  */
-static Ws_post_str* wsb_unpost_struct_if_found(Wsb_output_ws *owsb,
-                                               Struct_handle structh)
+static Ws_post_str* wsb_unpost_struct_if_found(
+    Wsb_output_ws *owsb,
+    Struct_handle structh
+    )
 {
     Ws_post_str	*cur, *end;
 
@@ -1129,7 +1176,10 @@ static Ws_post_str* wsb_unpost_struct_if_found(Wsb_output_ws *owsb,
 	return (Ws_post_str*)NULL;
 }
 
-void phg_wsb_unpost(Ws *ws, Struct_handle structh)
+void phg_wsb_unpost(
+    Ws *ws,
+    Struct_handle structh
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1156,7 +1206,9 @@ void phg_wsb_unpost(Ws *ws, Struct_handle structh)
     }
 }
 
-void phg_wsb_unpost_all(Ws *ws)
+void phg_wsb_unpost_all(
+    Ws *ws
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1178,7 +1230,9 @@ void phg_wsb_unpost_all(Ws *ws)
     }
 }
 
-void phg_wsb_delete_all_structs(Ws *ws)
+void phg_wsb_delete_all_structs(
+    Ws *ws
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1186,9 +1240,11 @@ void phg_wsb_delete_all_structs(Ws *ws)
     phg_wsb_unpost_all( ws );
 }
 
-int phg_wsb_delete_struct(Ws *ws,
-                          Struct_handle structh,
-                          Ws_delete_flag flag)
+int phg_wsb_delete_struct(
+    Ws *ws,
+    Struct_handle structh,
+    Ws_delete_flag flag
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
     int			call_again = 0;
@@ -1217,10 +1273,12 @@ int phg_wsb_delete_struct(Ws *ws,
     return call_again;
 }
 
-int phg_wsb_delete_struct_net(Ws *ws,
-                              Struct_handle structh,
-                              Pref_flag reff,
-                              Ws_delete_flag flag)
+int phg_wsb_delete_struct_net(
+    Ws *ws,
+    Struct_handle structh,
+    Pref_flag reff,
+    Ws_delete_flag flag
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
     int			call_again = 0;
@@ -1246,17 +1304,22 @@ int phg_wsb_delete_struct_net(Ws *ws,
     return call_again;
 }
 
-void phg_wsb_copy_struct(Ws *ws, El_handle first_el)
+void phg_wsb_copy_struct(
+    Ws *ws,
+    El_handle first_el
+    )
 {
     (*ws->conditional_redraw)( ws );
 }
 
 /* Delete elements elh1 through elh2, inclusive, in structure structh */
-int phg_wsb_delete_el(Ws *ws,
-                      Struct_handle structh,
-                      El_handle elh1,
-                      El_handle elh2,
-                      Ws_delete_flag flag)
+int phg_wsb_delete_el(
+    Ws *ws,
+    Struct_handle structh,
+    El_handle elh1,
+    El_handle elh2,
+    Ws_delete_flag flag
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
     int			call_again = 0;
@@ -1287,7 +1350,9 @@ int phg_wsb_delete_el(Ws *ws,
 /* Called by CP after difficult operations like change struct refs/ids.
  * Redraws workstation, if that is permitted, else DEFERs.
  */
-void phg_wsb_conditional_redraw(Ws *ws)
+void phg_wsb_conditional_redraw(
+    Ws *ws
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1315,8 +1380,10 @@ void phg_wsb_conditional_redraw(Ws *ws)
  * so that PHG_UPDATE_IF_Ix acts as PHG_UPDATE_ACCURATE (i.e., ASAP)
  * while appicable input devices are (still) active.
  */
-void phg_wsb_resolve_now_action(Ws *ws,
-                                Ws_update_action *now_action_ptr)
+void phg_wsb_resolve_now_action(
+    Ws *ws,
+    Ws_update_action *now_action_ptr
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1345,7 +1412,10 @@ void phg_wsb_resolve_now_action(Ws *ws,
     }
 }
 
-void phg_wsb_update(Ws *ws, Pregen_flag flag)
+void phg_wsb_update(
+    Ws *ws,
+    Pregen_flag flag
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1355,9 +1425,11 @@ void phg_wsb_update(Ws *ws, Pregen_flag flag)
 	(*ws->make_requested_current)( ws );
 }
 
-void phg_wsb_set_disp_update_state(Ws *ws,
-                                   Pdefer_mode def_mode,
-                                   Pmod_mode mod_mode)
+void phg_wsb_set_disp_update_state(
+    Ws *ws,
+    Pdefer_mode def_mode,
+    Pmod_mode mod_mode
+    )
 {
     Ws_update_action	previous_now_action;
 
@@ -1386,7 +1458,10 @@ void phg_wsb_set_disp_update_state(Ws *ws,
     }
 }
 
-void phg_wsb_set_hlhsr_mode(Ws *ws, Pint mode)
+void phg_wsb_set_hlhsr_mode(
+    Ws *ws,
+    Pint mode
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1408,9 +1483,11 @@ void phg_wsb_set_hlhsr_mode(Ws *ws, Pint mode)
     }
 }
 
-void phg_wsb_set_ws_window(Ws *ws,
-                           Pint two_d,
-                           Plimit3 *limits)
+void phg_wsb_set_ws_window(
+    Ws *ws,
+    Pint two_d,
+    Plimit3 *limits
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1438,9 +1515,11 @@ void phg_wsb_set_ws_window(Ws *ws,
     }
 }
 
-void phg_wsb_set_ws_vp(Ws *ws,
-                       Pint two_d,
-                       Plimit3 *limits)
+void phg_wsb_set_ws_vp(
+    Ws *ws,
+    Pint two_d,
+    Plimit3 *limits
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1468,10 +1547,12 @@ void phg_wsb_set_ws_vp(Ws *ws,
     }
 }
 
-void phg_wsb_set_view_input_priority(Ws *ws,
-                                     Pint index,
-                                     Pint ref_index,
-                                     Prel_pri priority)
+void phg_wsb_set_view_input_priority(
+    Ws *ws,
+    Pint index,
+    Pint ref_index,
+    Prel_pri priority
+    )
 {
     Pint		old;
 
@@ -1525,7 +1606,11 @@ void phg_wsb_set_view_input_priority(Ws *ws,
     /* Has no effect on the screen */
 }
 
-void phg_wsb_set_rep(Ws *ws, Phg_args_rep_type type, Phg_args_rep_data *rep)
+void phg_wsb_set_rep(
+    Ws *ws,
+    Phg_args_rep_type type,
+    Phg_args_rep_data *rep
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
     int		i;
@@ -1633,7 +1718,10 @@ phg_wsb_set_filter( ws, type, devid, inc_set, exc_set )
 }
 #endif
 
-void phg_wsb_inq_view_indices(Ws *ws, Phg_ret *ret)
+void phg_wsb_inq_view_indices(
+    Ws *ws,
+    Phg_ret *ret
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1657,7 +1745,10 @@ void phg_wsb_inq_view_indices(Ws *ws, Phg_ret *ret)
     }
 }
 
-void phg_wsb_inq_posted(Ws *ws, Phg_ret *ret)
+void phg_wsb_inq_posted(
+    Ws *ws,
+    Phg_ret *ret
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1695,7 +1786,11 @@ void phg_wsb_inq_posted(Ws *ws, Phg_ret *ret)
     }
 }
 
-void phg_wsb_inq_view_rep(Ws *ws, Pint index, Phg_ret *ret)
+void phg_wsb_inq_view_rep(
+    Ws *ws,
+    Pint index,
+    Phg_ret *ret
+    )
 {
     int			i;
     Pview_rep3		*cr;
@@ -1735,7 +1830,10 @@ void phg_wsb_inq_view_rep(Ws *ws, Pint index, Phg_ret *ret)
     }
 }
 
-void phg_wsb_inq_ws_xform(Ws *ws, Phg_ret *ret)
+void phg_wsb_inq_ws_xform(
+    Ws *ws,
+    Phg_ret *ret
+    )
 {
     Phg_ret_ws_tran3	*wsxf = &ret->data.ws_xform;
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
@@ -1751,7 +1849,10 @@ void phg_wsb_inq_ws_xform(Ws *ws, Phg_ret *ret)
     wsxf->cur_viewport = owsb->ws_viewport;
 }
 
-void phg_wsb_inq_disp_update_state(Ws *ws, Phg_ret *ret)
+void phg_wsb_inq_disp_update_state(
+    Ws *ws,
+    Phg_ret *ret
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1762,7 +1863,10 @@ void phg_wsb_inq_disp_update_state(Ws *ws, Phg_ret *ret)
     ret->data.update_state.state = owsb->vis_rep;
 }
 
-void phg_wsb_inq_hlhsr_mode(Ws *ws, Phg_ret *ret)
+void phg_wsb_inq_hlhsr_mode(
+    Ws *ws,
+    Phg_ret *ret
+    )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
@@ -1772,15 +1876,17 @@ void phg_wsb_inq_hlhsr_mode(Ws *ws, Phg_ret *ret)
     ret->data.hlhsr_mode.req_mode = owsb->req_hlhsr_mode;
 }
 
-#if 0
-void
-phg_wsb_inq_rep( ws, index, how, rep_type, ret )
-    Ws			*ws;
-    Pint		index;
-    Pinq_type		how;		/* set or realized */
-    Phg_args_rep_type	rep_type;
-    Phg_ret		*ret;
+void phg_wsb_inq_rep(
+    Ws *ws,
+    Pint index,
+    Pinq_type how,
+    Phg_args_rep_type rep_type,
+    Phg_ret *ret
+    )
 {
+    Pgcolr gcolr;
+    Pcolr_rep *cb;
+
     ret->err = 0;
     switch ( rep_type ) {
 	case PHG_ARGS_LNREP:
@@ -1799,27 +1905,34 @@ phg_wsb_inq_rep( ws, index, how, rep_type, ret )
 	case PHG_ARGS_LIGHTSRCREP:
 	case PHG_ARGS_COLRMAPREP:
 	/* View rep is done elsewhere. */
+#ifdef TODO
 	    phg_wsx_inq_LUT_entry( ws, index, how, rep_type, ret,
 		(Pgcolr *)NULL, (Pview_rep3 *)NULL );
+#endif
 	    break;
 
-	case PHG_ARGS_COREP: {
-	    Pgcolr		src_gcolr, gcolr;
-	    Pcolr_rep	*cb = &ret->data.rep.corep;
+	case PHG_ARGS_COREP:
+	    cb = &ret->data.rep.corep;
 
 	    /* Need to convert to current colour model. */
+#ifdef TODO
 	    phg_wsx_inq_LUT_entry( ws, index, how, rep_type, ret,
 		&src_gcolr, (Pview_rep3 *)NULL );
 	    gcolr.type = ws->current_colour_model;
 	    (void)phg_utx_convert_colour( &src_gcolr, &gcolr,
 		&ws->type->desc_tbl.phigs_dt.out_dt.chroma_info );
+#endif
+            memcpy(&gcolr, &ws->colr_table[index], sizeof(Pgcolr));
 	    cb->rgb.red = gcolr.val.general.x;
 	    cb->rgb.green = gcolr.val.general.y;
 	    cb->rgb.blue = gcolr.val.general.z;
-	    } break;
+	    break;
+
+	default:
+            /* Default */
+            break;
     }
 }
-#endif
 
 #if 0
 int
