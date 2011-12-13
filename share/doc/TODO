@@ -3,3 +3,10 @@ wsb.c: 599
         ws->out_ws.model.b.cssh = css
 ws.c: 57
 
+--------------------------------------------------------------------------------
+
+Noticed segmentation fault when using view zero for example1
+Noticed segmentation fault when using view zero for example2
+
+--------------------------------------------------------------------------------
+

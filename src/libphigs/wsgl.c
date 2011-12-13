@@ -517,10 +517,8 @@ static void phg_set_matrix(Pmatrix3 mat)
 
 static void phg_set_view(Ws *ws, Pint index)
 {
-   if (wsgl.curr_view_index != index) {
-      wsgl.curr_view_entry = &ws->out_ws.model.b.views[index];
-      wsgl.curr_view_index = index;
-   }
+   wsgl.curr_view_entry = &ws->out_ws.model.b.views[index];
+   wsgl.curr_view_index = index;
 
    glMatrixMode(GL_PROJECTION);
    phg_set_matrix(wsgl.curr_view_entry->vmm);
