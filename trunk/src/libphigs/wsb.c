@@ -108,25 +108,20 @@ static void wsb_load_funcs(
     ws->unpost = phg_wsb_unpost;
     ws->unpost_all = phg_wsb_unpost_all;
     ws->change_posting = phg_wsb_change_posting;
-#if TODO
-    ws->drawable_pick = phg_wsb_drawable_pick;
-    ws->map_points = phg_wsb_map_points;
-    ws->redraw_regions = phg_wsb_redraw_regions;
-#endif
-
     ws->inq_view_indices = phg_wsb_inq_view_indices;
-#ifdef TODO
-    ws->inq_bundle_indices = phg_wsx_inq_LUT_indices;
-#endif
     ws->inq_posted = phg_wsb_inq_posted;
     ws->inq_representation = phg_wsb_inq_rep;
     ws->inq_view_rep = phg_wsb_inq_view_rep;
     ws->inq_ws_xform = phg_wsb_inq_ws_xform;
     ws->inq_disp_update_state = phg_wsb_inq_disp_update_state;
-#ifdef TODO
-    ws->inq_filter = phg_wsb_inq_filter;
-#endif
     ws->inq_hlhsr_mode = phg_wsb_inq_hlhsr_mode;
+#if TODO
+    ws->inq_bundle_indices = phg_wsx_inq_LUT_indices;
+    ws->inq_filter = phg_wsb_inq_filter;
+    ws->drawable_pick = phg_wsb_drawable_pick;
+    ws->map_points = phg_wsb_map_points;
+    ws->redraw_regions = phg_wsb_redraw_regions;
+#endif
 }
 
 /* 
@@ -333,7 +328,7 @@ static int init_output_state(
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
-    if (!init_view_table(ws))
+    if ( ! init_view_table( ws ) )
 	return 0;
 
     /* Initialize the workstation transform. */
@@ -374,219 +369,6 @@ static int init_output_state(
     return 1;
 }
 
-#ifdef UNUSED
-static int wsb_init_resources(Ws *ws)
-{
-    CARD16		count;
-    CARD32		size, *rid_list;
-    pexTableIndex	start;
-    pexBitmask		pmask[PEXMSPipeline], rmask;
-    CARD32		*card32_p;
-    pexReflectionAttr	*refl_attr, *bf_refl_attr;
-    pexFloatColour	*spec_colr, *bf_spec_colr;
-    pexViewport		*vp;
-
-    register int		i;
-    register Ws_view_entry	*view;
-    register pexViewEntry	*pex_view;
-
-    /* Initialize all the predefined table entries from the WDT. */
-    if ( !phg_wsx_init_LUTs( ws, 1 ) )
-	return 0;
-
-    /* Initialize the Pipeline Context.  Since PEX and PHIGS defaults
-     * are different for reflection attrs and culling mode, set those in
-     * PEX when creating the context.
-     */
-    size = 0;
-    bzero((char *)pmask, sizeof(pmask));
-    PEX_BITSET(pmask,PEXPCSurfaceReflAttr);
-	size += sizeof(*refl_attr) + sizeof(*spec_colr);
-    refl_attr = (pexReflectionAttr *)ws->scratch.buf;
-    spec_colr = (pexFloatColour *)(refl_attr + 1);
-    refl_attr->ambient = 1.0;
-    refl_attr->diffuse = 1.0;
-    refl_attr->specular = 1.0;
-    refl_attr->specularConc = 0.0;
-    refl_attr->transmission = 0.0;
-    refl_attr->specularColour.colourType = PEXRgbFloatColour;
-    spec_colr->first = spec_colr->second = spec_colr->third = 1.0;
-    PEX_BITSET(pmask,PEXPCBfSurfaceReflAttr);
-	size += sizeof(*bf_refl_attr) + sizeof(*bf_spec_colr);
-    bf_refl_attr = (pexReflectionAttr *)(spec_colr + 1);
-    *bf_refl_attr = *refl_attr;
-    bf_spec_colr = (pexFloatColour *)(bf_refl_attr + 1);
-    *bf_spec_colr = *spec_colr;
-    PEX_BITSET(pmask,PEXPCCullingMode); size += sizeof(CARD32);
-    card32_p = (CARD32 *)(bf_spec_colr + 1);
-    *card32_p = 0;
-    (void)PEXChangePipelineContext( ws->display, ws->out_ws.model.b.pipeline,
-	pmask, size, (char *)ws->scratch.buf );
-
-    /* Initialize the renderer. */
-    size = 0;
-    bzero((char *)&rmask, sizeof(rmask));
-    rid_list = (XID *)ws->scratch.buf;
-    /* The way the bits are defined in PEX.h doesn't allow the use of
-     * PEX_BITSET().
-     */
-    rmask |= PEXRDPipelineContext; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.model.b.pipeline;
-    rmask |= PEXRDMarkerBundle; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.lut.marker;
-    rmask |= PEXRDTextBundle; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.lut.text;
-    rmask |= PEXRDLineBundle; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.lut.line;
-    rmask |= PEXRDInteriorBundle; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.lut.interior;
-    rmask |= PEXRDEdgeBundle; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.lut.edge;
-    rmask |= PEXRDViewTable; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.lut.view;
-    rmask |= PEXRDColourTable; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.lut.colour;
-    rmask |= PEXRDDepthCueTable; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.lut.depth_cue;
-    rmask |= PEXRDLightTable; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.lut.light_source;
-    rmask |= PEXRDColourApproxTable; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.lut.colour_approx;
-    rmask |= PEXRDPatternTable; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.lut.pattern;
-    rmask |= PEXRDTextFontTable; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.lut.font;
-    rmask |= PEXRDHighlightIncl; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.nset.hlt_incl;
-    rmask |= PEXRDHighlightExcl; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.nset.hlt_excl;
-    rmask |= PEXRDInvisibilityIncl; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.nset.invis_incl;
-    rmask |= PEXRDInvisibilityExcl; size += sizeof(CARD32);
-	*rid_list++ = ws->out_ws.nset.invis_excl;
-    rmask |= PEXRDHlhsrMode; size += sizeof(CARD32);
-	*rid_list++ = (CARD32)PEX_CONV_PHIGS_HLHSR_MODE(PHIGS_HLHSR_MODE_NONE);
-    rmask |= PEXRDViewport; size += sizeof(pexViewport);
-	vp = (pexViewport *)rid_list++;
-	vp->minval.x = ws->out_ws.model.b.req_ws_viewport.x_min;
-	vp->minval.y = ws->out_ws.model.b.req_ws_viewport.y_min;
-	vp->minval.z = ws->out_ws.model.b.req_ws_viewport.z_min;
-	vp->maxval.x = ws->out_ws.model.b.req_ws_viewport.x_max;
-	vp->maxval.y = ws->out_ws.model.b.req_ws_viewport.y_max;
-	vp->maxval.z = ws->out_ws.model.b.req_ws_viewport.z_max;
-	vp->useDrawable = 0;
-    /* No need to set the NPC volume since the PEX default is correct. */
-    (void)PEXChangeRenderer( ws->display, ws->rid, rmask, size,
-	(char *)ws->scratch.buf );
-
-    return 1;
-}
-
-static int wsb_create_resources(Ws *ws)
-{
-    pexBitmask		pmask[PEXMSPipeline];
-    pexBitmask		dyn_tbls, dyn_nsets, dyn_attrs;
-    Pint		err;
-    CARD16		*card16_p;
-    Drawable            draw;
-    int                 numbufs, mbuf_event_base, mbuf_error_base;;
-
-
-    /* Create the LUTs, renderer and pipeline context. */
-    if ( !phg_wsx_create_LUTs( ws, 1, &err ) ) {
-	ERR_BUF( ws->erh, err );
-	return 0;
-    }
-
-    /* Create the pipeline context. */
-    ws->out_ws.model.b.pipeline = XAllocID(ws->display);
-    (void)PEXCreatePipelineContext( ws->display, ws->out_ws.model.b.pipeline,
-	(pexBitmask *)NULL, (CARD32)0, (char *)NULL );
-
-    /* Make an inquiry to see if the create worked. */
-    /* TODO: Remove when GetPipeline fixed.
-    bzero((char *)pmask, sizeof(pmask));
-    PEX_BITSET(pmask,PEXPCCullingMode);
-    if ( !PEXGetPipelineContext( ws->display, ws->out_ws.model.b.pipeline,
-	    pmask, (char **)&card16_p ) ) {
-	ERR_BUF( ws->erh, ERRN202 );
-	return 0;
-    }
-    */
-
-    /* Check the Workstation buffer mode and do the double buffer
-       create here if necessary This is simpler than on the workstation
-       since this PHIGS implementation only lets the Double Buffers
-       be created when the workstation is created, so no change action
-       need be done
-    */
-
-    /* initialize the local drawable variable */
-    draw = ws->drawable_id;
-    ws->out_ws.model.b.has_double_buffer = FALSE;
-
-    if (ws->type->desc_tbl.xwin_dt.buffer_mode == PHIGS_BUF_DOUBLE) {
-      if (XmbufQueryExtension(ws->display, &mbuf_event_base, &mbuf_error_base)){
-
-        /* the Multi-Buffer extension is there */
-        numbufs = XmbufCreateBuffers(ws->display, ws->drawable_id, 2,
-                     MultibufferUpdateActionBackground,
-                     MultibufferUpdateHintFrequent,
-                     &ws->out_ws.model.b.double_drawable[0]);
-        if  (numbufs == 2) {
-          /* got the buffers OK */
-          ws->out_ws.model.b.front = 0;
-          ws->out_ws.model.b.back = 1;
-          ws->out_ws.model.b.has_double_buffer = TRUE;
-          draw = ws->out_ws.model.b.double_drawable[1];
-          /* this isn't implemented yet
-            XmbufClearBufferArea(ws->display, draw, 0, 0, 0, 0, False);
-          */
-        } else
-          /* buffers didn't get created correctly, bag them  */
-          XmbufDestroyBuffers(ws->display, ws->drawable_id);
-      }
-    }
-
-
-    /* Create the renderer, initializing the necessary attributes. */
-    ws->rid = XAllocID(ws->display);
-    (void)PEXCreateRenderer( ws->display, ws->rid, draw,
-	(pexBitmask)0, (CARD32)0, (char *)NULL );
-
-    /* Make an inquiry to see if the create worked. */
-    if ( !PEXGetRendererDynamics( ws->display, ws->rid, &dyn_tbls,
-	    &dyn_nsets, &dyn_attrs ) ) {
-	ERR_BUF( ws->erh, ERRN202 );
-	return 0;
-    }
-
-    return 1;
-}
-
-static void wsb_update_wdt(Ws *ws)
-{
-    /* Update the dynamics flags -- everything IRG for client-side WSs. */
-    ws->type->desc_tbl.phigs_dt.out_dt.view_rep = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.polyline_bundle_rep = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.polymarker_bundle_rep = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.text_bundle_rep = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.interior_bundle_rep = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.edge_bundle_rep = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.pattern_rep = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.colour_rep = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.ws_xform = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.highlight_filter = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.invis_filter = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.hlhsr_mode = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.struct_content_mod = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.post = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.unpost = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.struct_delete = PDYN_IRG;
-    ws->type->desc_tbl.phigs_dt.out_dt.ref_mod = PDYN_IRG;
-}
-#endif /* UNUSED */
-
 Ws* phg_wsb_open_ws(
     Phg_args_open_ws *args,
     Phg_ret *ret
@@ -604,23 +386,19 @@ Ws* phg_wsb_open_ws(
 
     (void)XGetWindowAttributes( ws->display, ws->drawable_id, &wattr );
     WS_SET_WS_RECT( ws, &wattr )
-#ifdef TODO
 
-    ws->current_colour_model =
-	ws->type->desc_tbl.phigs_dt.out_dt.default_colour_model;
-    ws->category = ws->type->desc_tbl.phigs_dt.ws_category;
-    ws->out_ws.model.b.cssh = css_srvr->model.b.cssh;
-#endif
+    /* NOTE:
+     * Colour model filled in by wsgl
+     * Css filled in by popen_ws
+     */
+
     if ( !init_output_state( ws ) )
 	goto abort;
     init_update_state( ws );
 
-#if TODO
-    if ( !phg_wsx_setup_colormap( ws, &ret->err ) ) {
-	ERR_BUF(ws->erh, ret->err);
-	goto abort;
-    }
-#endif
+    /* NOTE:
+     * Setup colourmap if used here
+     */
 
     wsb_load_funcs( ws );
 
@@ -664,16 +442,13 @@ void wsb_destroy_ws(
 	if ( ws->display ) {
 	    if ( ws->drawable_id )
 		phg_wsgl_release_window( ws );
-#if TODO
-	    if ( ws->out_ws.model.b.pipeline )
-		PEXFreePipelineContext( ws->display,
-		    ws->out_ws.model.b.pipeline );
-	    if ( ws->rid )
-		PEXFreeRenderer( ws->display, ws->rid );
-	    phg_wsx_destroy_LUTs( ws );
+
+            /* NOTE:
+             * Free renderer resource here if needed
+             * Destroy colourmap here if needed
+             */
+
 	    XFlush( ws->display );
-	    phg_cpx_release_connection( ws->cph, ws->display );
-#endif
 	}
 	phg_wsgl_destroy( ws );
     }
@@ -769,33 +544,24 @@ void phg_wsb_make_requested_current(
 #ifdef DEBUG
 	    printf("wsb: Set pending view: %d\n", req_view->id);
 #endif
-#ifdef TODO
-	    (void)phg_utx_view_entry_to_pex( &req_view->view, &pex_view );
-	    (void)PEXSetTableEntries( ws->display, ws->out_ws.lut.view,
-		(pexTableIndex)req_view->id, (CARD16)1,
-		(CARD32)sizeof(pex_view), (char *)&pex_view );
-#endif
+            /* NOTE:
+             * Send view to renderer here if needed
+             */
 	    ++req_view;
 	    --owsb->num_pending_views;
 	}
     }
 
-#ifdef TODO
     /* Other pending data */
     if ( owsb->hlhsr_mode_pending == PUPD_PEND) {
-	 CARD32     new_mode;
 
 	 owsb->cur_hlhsr_mode = owsb->req_hlhsr_mode;
 	 owsb->hlhsr_mode_pending = PUPD_NOT_PEND;
 
-	 new_mode = (CARD32)PEX_CONV_PHIGS_HLHSR_MODE(owsb->cur_hlhsr_mode);
-         (void)PEXChangeRenderer( ws->display, ws->rid,
-                                 (pexBitmask)PEXRDHlhsrMode,
-                                 (CARD32)sizeof(CARD32), (char *)&new_mode);
-
+         /* NOTE:
+          * Change renderer hlhsr mode here if needed
+          */
     }
-
-#endif
 
 #ifdef DEBUG
     printf("wsb: Flush\n");
@@ -1934,23 +1700,22 @@ void phg_wsb_inq_rep(
     }
 }
 
-#if 0
-int
-phg_wsb_map_initial_points( ws, view_index, num_pts, wc_pts, dwbl_pts )
-    Ws		*ws;
-    Pint	view_index;
-    Pint	*num_pts;
-    Ppoint3	*wc_pts;
-    XPoint	*dwbl_pts;
+int phg_wsb_map_initial_points(
+    Ws *ws,
+    Pint view_index,
+    Pint *num_pts,
+    Ppoint3 *wc_pts,
+    XPoint *dwbl_pts
+    )
 {
-    Ppoint3	scratch[20];	/* enough for most cases */
-    Pmatrix3	wc_to_npc;
-    Ppoint3	dc_pt;
+    Ppoint3       scratch[20];  /* enough for most cases */
+    Pmatrix3      wc_to_npc;
+    Ppoint3       dc_pt;
 
-    register	Ppoint3		*npc_pts = (Ppoint3 *)NULL;
-    register	int		i;
-    register	Ws_view_entry	*view;
-    register	Ws_xform	*wsxf = &ws->out_ws.model.b.ws_xform;
+    Ppoint3       *npc_pts = (Ppoint3 *)NULL;
+    int           i;
+    Ws_view_entry *view;
+    Ws_xform      *wsxf = &ws->out_ws.model.b.ws_xform;
 
     /* Transform the initial points to NPC and check that they all fit
      * in the clip limits of the specified view.  Then transform and map
@@ -1992,7 +1757,9 @@ phg_wsb_map_initial_points( ws, view_index, num_pts, wc_pts, dwbl_pts )
     return ( *num_pts > 0 ? 1 : 0 );
 }
 
-static void update_inv_view_xform(Ws_view_entry *view)
+static void update_inv_view_xform(
+    Ws_view_entry *view
+    )
 {
      /* Calculate the inverse xform, if necessary. */
     if ( view->npc_to_wc_state == WS_INV_NOT_CURRENT ) {
@@ -2002,13 +1769,13 @@ static void update_inv_view_xform(Ws_view_entry *view)
     }
 }
 
-int
-phg_wsb_resolve_locator( ws, dc_pt, determine_z, view_index, wc_pt )
-    Ws			*ws;
-    pexDeviceCoord      *dc_pt;
-    int			determine_z;	/* ignored */
-    Pint		*view_index;
-    Ppoint3		*wc_pt;
+int phg_wsb_resolve_locator(
+    Ws *ws,
+    Ppoint3 *dc_pt,
+    int	determine_z,
+    Pint *view_index,
+    Ppoint3 *wc_pt
+    )
 {
     Ppoint3		npc_pt;
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
@@ -2017,7 +1784,7 @@ phg_wsb_resolve_locator( ws, dc_pt, determine_z, view_index, wc_pt )
     Plimit3		*ws_win = &owsb->ws_window;
     int			status = 0;
 
-    register Ws_view_entry	*view;
+    Ws_view_entry	*view;
 
     /* Apply the inverse WS transform and see if it's in the ws window.
      * Can't just check against the viewport boundaries because the
@@ -2052,12 +1819,13 @@ phg_wsb_resolve_locator( ws, dc_pt, determine_z, view_index, wc_pt )
     return status;
 }
 
-static int
-wsb_resolve_stroke( ws, two_d, dc_ll, dc_ur, view_index )
-    Ws			*ws;
-    int			two_d;	/* input points are 2D */
-    pexDeviceCoord	*dc_ll, *dc_ur;
-    Pint		*view_index;	/* resolved view index */
+static int wsb_resolve_stroke(
+    Ws *ws,
+    int	two_d,
+    Ppoint3 *dc_ll,
+    Ppoint3 *dc_ur,
+    Pint *view_index
+    )
 
     /* Returns 1 if stroke resolvable, else 0 */
 {
@@ -2068,7 +1836,7 @@ wsb_resolve_stroke( ws, two_d, dc_ll, dc_ur, view_index )
     Plimit3		*ws_win = &owsb->ws_window;
     int			status = 0, in_limit;
 
-    register Ws_view_entry	*view;
+    Ws_view_entry	*view;
 
     /* Apply the inverse WS transform and see if the bounding box is in
      * the ws window.  Can't just check against the viewport boundaries
@@ -2117,19 +1885,19 @@ wsb_resolve_stroke( ws, two_d, dc_ll, dc_ur, view_index )
     return status;
 }
 
-static void
-wsb_transform_stroke( ws, view_index, two_d, num_pts, dc_pts, wc_pts )
-		Ws		*ws;
-		Pint		view_index;
-		int		two_d;
-    register	int		num_pts;
-    register	pexDeviceCoord	*dc_pts;
-		Ppoint_list3	*wc_pts;
+static void wsb_transform_stroke(
+    Ws *ws,
+    Pint view_index,
+    int two_d,
+    int	num_pts,
+    Ppoint3 *dc_pts,
+    Ppoint_list3 *wc_pts
+    )
 {
-    register int		i;
-    register Ppoint3		*npc_pts;
-    register Ws_xform		*wsxf = &ws->out_ws.model.b.ws_xform;
-    register Ws_view_entry	*view = &ws->out_ws.model.b.views[view_index];
+    int			i;
+    Ppoint3		*npc_pts;
+    Ws_xform		*wsxf = &ws->out_ws.model.b.ws_xform;
+    Ws_view_entry	*view = &ws->out_ws.model.b.views[view_index];
 
     /* Shouldn't call this function with num_pts == 0. */
     if ( !(npc_pts = (Ppoint3 *)
@@ -2157,20 +1925,20 @@ wsb_transform_stroke( ws, view_index, two_d, num_pts, dc_pts, wc_pts )
     free( (char *)npc_pts );
 }
 
-int
-phg_wsb_resolve_stroke( ws, num_pts, dc_pts, determine_z, view_index, wc_pts )
-		Ws		*ws;
-    register	int		num_pts;
-		pexDeviceCoord	*dc_pts;
-		int		determine_z;	/* ignored */
-		Pint		*view_index;
-		Ppoint_list3	*wc_pts;
+int phg_wsb_resolve_stroke(
+    Ws *ws,
+    int num_pts,
+    Ppoint3 *dc_pts,
+    int determine_z,
+    Pint *view_index,
+    Ppoint_list3 *wc_pts
+    )
 {
-    pexDeviceCoord	ll, ur;
-    int			status = 0, two_d = determine_z;
+    Ppoint3	ll, ur;
+    int		status = 0, two_d = determine_z;
 
-    register pexDeviceCoord	*dp;
-    register int		i, xmin, xmax, ymin, ymax, zmin, zmax;
+    Ppoint3	*dp;
+    int		i, xmin, xmax, ymin, ymax, zmin, zmax;
 
     /* Get the bounding box of all the points. */
     xmin = dc_pts->x; xmax = dc_pts->x;
@@ -2213,23 +1981,24 @@ phg_wsb_resolve_stroke( ws, num_pts, dc_pts, determine_z, view_index, wc_pts )
     return status;
 }
 
-int
-phg_wsb_resolve_pick( ws, dev, echo, dc_pt, pick )
-    Ws			*ws;
-    Ws_inp_pick		*dev;
-    int			echo;
-    pexDeviceCoord      *dc_pt;
-    Ppick		*pick;
+#if 0
+int phg_wsb_resolve_pick(
+    Ws *ws,
+    Ws_inp_pick *dev,
+    int	echo,
+    Ppoint3 *dc_pt,
+    Ppick *pick
+    )
 {
-    register Wsb_output_ws	*owsb = &ws->out_ws.model.b;
-    register Ws_post_str	*post_str, *end;
-    pexDeviceCoord2D		dc_vol[2];
-    Ppoint			npc_pt[2];
-    pexPickElementRef		*pickPath;
-    int				pickDepth;
-    int				betterPick, i;
+    Wsb_output_ws	*owsb = &ws->out_ws.model.b;
+    Ws_post_str		*post_str, *end;
+    Ppoint		dc_vol[2];
+    Ppoint		npc_pt[2];
+    void		*pickPath;
+    int			pickDepth;
+    int			betterPick, i;
 
-    CARD32			pickDataBytes;
+    int			pickDataBytes;
 
     struct {
 	pexEnumTypeIndex pickType;
@@ -2363,20 +2132,20 @@ phg_wsb_resolve_pick( ws, dev, echo, dc_pt, pick )
     return 1;
 }
 
-void
-phg_wsb_inq_filter( ws, type, ret )
-    Ws			*ws;
-    Phg_args_flt_type	type;
-    Phg_ret		*ret;
+void phg_wsb_inq_filter(
+    Ws *ws,
+    Phg_args_flt_type type,
+    Phg_ret *ret
+    )
 {
     phg_wsx_inq_name_set( ws, type, (Pint)0, ret );
 }
 
-void
-phg_wsb_drawable_pick( ws, args, ret )
-    Ws				*ws;
-    Phg_args_drawable_pick	*args;
-    Phg_ret			*ret;
+void phg_wsb_drawable_pick(
+    Ws *ws,
+    Phg_args_drawable_pick *args,
+    Phg_ret *ret
+    )
 {
     ret->err = ERRN500;
     ERR_BUF( ws->erh, ret->err );
@@ -2385,13 +2154,13 @@ phg_wsb_drawable_pick( ws, args, ret )
     ret->data.drawable_pick.pick.path_list = (Ppick_path_elem *)NULL;
 }
 
-void
-phg_wsb_map_points( ws, args, ret )
-    Ws				*ws;
-    Phg_args_map_points		*args;
-    Phg_ret			*ret;
+void phg_wsb_map_points(
+    Ws *ws,
+    Phg_args_map_points *args,
+    Phg_ret *ret
+    )
 {
-    pexDeviceCoord	*dc_pts;
+    Ppoint3 *dc_pts;
 
     register int	i;
 
@@ -2427,10 +2196,10 @@ phg_wsb_map_points( ws, args, ret )
     }
 }
 
-void
-phg_wsb_redraw_regions( ws, args )
-    Ws				*ws;
-    Phg_args_redraw_regions	*args;
+void phg_wsb_redraw_regions(
+    Ws *ws,
+    Phg_args_redraw_regions *args
+    )
 {
     pexDeviceRect	*pex_rects;
     pexBitmask		rmask;

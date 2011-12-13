@@ -236,19 +236,28 @@ void phg_wsgl_flush(Ws *ws)
    if (wsgl.vp_changed)
    {
       wsgl.vp_changed = 0;
+
+      w = wsgl.curr_vp.x_max - wsgl.curr_vp.x_min;
+      h = wsgl.curr_vp.y_max - wsgl.curr_vp.y_min;
+
       XMoveResizeWindow(ws->display, ws->drawable_id,
-                    (int)  wsgl.curr_vp.x_min,
-                    (int)  wsgl.curr_vp.y_min,
-                    (int) (wsgl.curr_vp.x_max - wsgl.curr_vp.x_min),
-                    (int) (wsgl.curr_vp.y_max - wsgl.curr_vp.y_min));
+                    (int) wsgl.curr_vp.x_min,
+                    (int) wsgl.curr_vp.y_min,
+                    (int) w,
+                    (int) h);
+
+       ws->ws_rect.x      = (int) wsgl.curr_vp.x_min;
+       ws->ws_rect.y      = (int) wsgl.curr_vp.y_min;
+       ws->ws_rect.width  = (int) w;
+       ws->ws_rect.height = (int) h;
    }
 
    if (wsgl.win_changed)
    {
       wsgl.win_changed = 0;
 
-      w = ws->ws_rect.width;
-      h = ws->ws_rect.height;
+      w = (float) ws->ws_rect.width;
+      h = (float) ws->ws_rect.height;
 
       glViewport((GLint)   (wsgl.curr_win.x_min * w),
                  (GLint)   (wsgl.curr_win.y_min * h),
