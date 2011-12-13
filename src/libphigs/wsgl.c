@@ -247,8 +247,8 @@ void phg_wsgl_flush(Ws *ws)
    {
       wsgl.win_changed = 0;
 
-      w = wsgl.curr_vp.x_max - wsgl.curr_vp.x_min;
-      h = wsgl.curr_vp.y_max - wsgl.curr_vp.y_min;
+      w = ws->ws_rect.width;
+      h = ws->ws_rect.height;
 
       glViewport((GLint)   (wsgl.curr_win.x_min * w),
                  (GLint)   (wsgl.curr_win.y_min * h),
