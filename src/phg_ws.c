@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <phigs/phigs.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>
@@ -53,6 +54,74 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
       ws_list[ws_id]->out_ws.model.b.cssh = css;
       ws_list[ws_id]->id = ws_id;
    }
+}
+
+/*******************************************************************************
+ * pset_ws_vp
+ *
+ * DESCR:	Set workstation viewport
+ * RETURNS:	N/A
+ */
+
+void pset_ws_vp(Pint ws_id, Plimit *viewport)
+{
+   Plimit3 vp;
+   Ws_handle wsh = ws_list[ws_id];
+
+   vp.x_min = viewport->x_min;
+   vp.x_max = viewport->x_max;
+   vp.y_min = viewport->y_min;
+   vp.y_max = viewport->y_max;
+
+   (*wsh->set_ws_vp)(wsh, 1, &vp);
+}
+
+/*******************************************************************************
+ * pset_ws_vp3
+ *
+ * DESCR:	Set workstation viewport
+ * RETURNS:	N/A
+ */
+
+void pset_ws_vp3(Pint ws_id, Plimit3 *viewport)
+{
+   Ws_handle wsh = ws_list[ws_id];
+
+   (*wsh->set_ws_vp)(wsh, 0, viewport);
+}
+
+/*******************************************************************************
+ * pset_ws_win
+ *
+ * DESCR:	Set workstation window
+ * RETURNS:	N/A
+ */
+
+void pset_ws_win(Pint ws_id, Plimit *window)
+{
+   Plimit3 win;
+   Ws_handle wsh = ws_list[ws_id];
+
+   win.x_min = window->x_min;
+   win.x_max = window->x_max;
+   win.y_min = window->y_min;
+   win.y_max = window->y_max;
+
+   (*wsh->set_ws_window)(wsh, 1, &win);
+}
+
+/*******************************************************************************
+ * pset_ws_win3
+ *
+ * DESCR:	Set workstation window
+ * RETURNS:	N/A
+ */
+
+void pset_ws_win3(Pint ws_id, Plimit3 *window)
+{
+   Ws_handle wsh = ws_list[ws_id];
+
+   (*wsh->set_ws_window)(wsh, 0, window);
 }
 
 /*******************************************************************************

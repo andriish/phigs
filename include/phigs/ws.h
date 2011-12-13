@@ -338,8 +338,6 @@ typedef struct _Ws {
 
 extern Ws_handle  *ws_list;
 
-void popen_ws(Pint ws_id, void *conn_id, Pint ws_type);
-void ppost_struct(Pint ws_id, Pint struct_id, Pfloat priority);
 Ws* phg_wsb_open_ws(Phg_args_open_ws *args, Phg_ret *ret);
 void wsb_free_all_posted(Wsb_output_ws *owsb);
 void wsb_destroy_ws(Ws *ws);

@@ -23,6 +23,11 @@
 
 void popen_phigs(char *error_file, size_t memory);
 void popen_ws(Pint ws_id, void *conn_id, Pint ws_type);
+void pset_ws_vp(Pint ws_id, Plimit *viewport);
+void pset_ws_vp3(Pint ws_id, Plimit3 *viewport);
+void pset_ws_win(Pint ws_id, Plimit *window);
+void pset_ws_win3(Pint ws_id, Plimit3 *window);
+void ppost_struct(Pint ws_id, Pint struct_id, Pfloat priority);
 void popen_struct(Pint struct_id);
 void pclose_struct(void);
 void pset_elem_ptr(Pint elem_ptr_value);
