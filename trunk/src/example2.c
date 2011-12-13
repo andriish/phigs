@@ -52,7 +52,7 @@ int view_index;
 
 int main(int argc, char *argv[])
 {
-   Plimit3 vp, win;
+   Plimit vp, win;
    XEvent event;
 
    if (argc > 1) {
@@ -107,8 +107,8 @@ int main(int argc, char *argv[])
    win.x_max =  1.0;
    win.y_min =  0.0;
    win.y_max =  1.0;
-   (*ws_list[0]->set_ws_vp)(ws_list[0], 0, &vp);
-   (*ws_list[0]->set_ws_window)(ws_list[0], 0, &win);
+   pset_ws_vp(0, &vp);
+   pset_ws_win(0, &win);
 
    col_rep.rgb.red = 1.0;
    col_rep.rgb.green = 1.0;
@@ -129,8 +129,8 @@ int main(int argc, char *argv[])
    win.x_max =  1.0;
    win.y_min =  0.0;
    win.y_max =  1.0;
-   (*ws_list[1]->set_ws_vp)(ws_list[1], 0, &vp);
-   (*ws_list[1]->set_ws_window)(ws_list[1], 0, &win);
+   pset_ws_vp(1, &vp);
+   pset_ws_win(1, &win);
 
    col_rep.rgb.red = 0.0;
    col_rep.rgb.green = 1.0;

@@ -67,7 +67,7 @@ void struct_stat(void)
 int main(int argc, char *argv[])
 {
    XEvent event;
-   Plimit3 vp, win;
+   Plimit vp, win;
 
    if (argc > 1) {
       view_index = atoi(argv[1]);
@@ -113,15 +113,15 @@ int main(int argc, char *argv[])
 
    popen_ws(0, NULL, 0);
    vp.x_min = 100.0;
-   vp.x_max = 500.0;
+   vp.x_max = 600.0;
    vp.y_min = 100.0;
-   vp.y_max = 500.0;
+   vp.y_max = 600.0;
    win.x_min =  0.0;
    win.x_max =  1.0;
    win.y_min =  0.0;
    win.y_max =  1.0;
-   (*ws_list[0]->set_ws_vp)(ws_list[0], 0, &vp);
-   (*ws_list[0]->set_ws_window)(ws_list[0], 0, &win);
+   pset_ws_vp(0, &vp);
+   pset_ws_win(0, &win);
 
    col_rep.rgb.red = 0.0;
    col_rep.rgb.green = 0.25;
