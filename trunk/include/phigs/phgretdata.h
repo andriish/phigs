@@ -67,6 +67,10 @@ typedef struct {
    Pvisual_st       state;
 } Phg_ret_update_state;
 
+typedef union {
+   Pcolr_rep            corep;
+} Phg_ret_rep;
+
 typedef struct {
    Pupd_st state;
    Pint    cur_mode;
@@ -86,6 +90,7 @@ typedef union {
    Phg_ret_hierarchy    hierarchy;
    Phg_ret_view_rep     view_rep;
    Phg_ret_update_state update_state;
+   Phg_ret_rep          rep;
    Phg_ret_hlhsr_mode   hlhsr_mode;
 } Phg_ret_data;
 

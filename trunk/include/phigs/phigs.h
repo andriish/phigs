@@ -184,6 +184,11 @@ typedef enum {
    PUPD_PEND
 } Pupd_st;
 
+typedef enum {
+   PINQ_SET,
+   PINQ_REALIZED
+} Pinq_type;
+
 typedef int Pint;
 typedef long Plong;
 typedef float Pfloat;
