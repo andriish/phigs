@@ -332,6 +332,24 @@ typedef struct _Ws {
       phg_wsb_resolve_now_action(ws, now_action_ptr);		\
 }
 
+#define WS_DC_TO_NPC2(_wsxf, _dc, _npc) \
+    (_npc)->x = ( (_dc)->x - (_wsxf)->offset.x) / (_wsxf)->scale.x; \
+    (_npc)->y = ( (_dc)->y - (_wsxf)->offset.y) / (_wsxf)->scale.y;
+
+#define WS_DC_TO_NPC(_wsxf, _dc, _npc) \
+    (_npc)->x = ( (_dc)->x - (_wsxf)->offset.x) / (_wsxf)->scale.x; \
+    (_npc)->y = ( (_dc)->y - (_wsxf)->offset.y) / (_wsxf)->scale.y; \
+    (_npc)->z = ( (_dc)->z - (_wsxf)->offset.z) / (_wsxf)->scale.z;
+
+#define WS_PT_IN_LIMIT2( lim, pt) \
+    (  (pt)->x >= (lim)->x_min && (pt)->x <= (lim)->x_max \
+    && (pt)->y >= (lim)->y_min && (pt)->y <= (lim)->y_max)
+
+#define WS_PT_IN_LIMIT( lim, pt) \
+    (  (pt)->x >= (lim)->x_min && (pt)->x <= (lim)->x_max \
+    && (pt)->y >= (lim)->y_min && (pt)->y <= (lim)->y_max \
+    && (pt)->z >= (lim)->z_min && (pt)->z <= (lim)->z_max)
+
 #define WS_SET_WS_RECT(_wsh, _wattr)		\
 {						\
    (_wsh)->ws_rect.x = (_wattr)->x;		\
@@ -342,6 +360,20 @@ typedef struct _Ws {
 
 #define WS_ANY_INP_DEV_ACTIVE(_wsh) \
    ((_wsh)->num_active_input_devs > 0)
+
+#define WS_DC_TO_DRWBL2( _wsh, _dcp, _dwp ) \
+    ((_dwp)->x = (_dcp)->x, \
+     (_dwp)->y = (_wsh)->ws_rect.height - (_dcp)->y)
+
+#define WS_NPC_TO_DC(_wsxf, _npc, _dc) \
+    (_dc)->x = (_npc)->x * (_wsxf)->scale.x + (_wsxf)->offset.x; \
+    (_dc)->y = (_npc)->y * (_wsxf)->scale.y + (_wsxf)->offset.y; \
+    (_dc)->z = (_npc)->z * (_wsxf)->scale.z + (_wsxf)->offset.z;
+
+#define WS_PT_IN_LIMIT( lim, pt) \
+    (  (pt)->x >= (lim)->x_min && (pt)->x <= (lim)->x_max \
+    && (pt)->y >= (lim)->y_min && (pt)->y <= (lim)->y_max \
+    && (pt)->z >= (lim)->z_min && (pt)->z <= (lim)->z_max)
 
 extern Ws_handle  *ws_list;
 
@@ -538,6 +570,31 @@ void phg_wsb_inq_rep(
     Pinq_type how,
     Phg_args_rep_type rep_type,
     Phg_ret *ret
+    );
+
+int phg_wsb_map_initial_points(
+    Ws *ws,
+    Pint view_index,
+    Pint *num_pts,
+    Ppoint3 *wc_pts,
+    XPoint *dwbl_pts
+    );
+
+int phg_wsb_resolve_locator(
+    Ws *ws,
+    Ppoint3 *dc_pt,
+    int determine_z,
+    Pint *view_index,
+    Ppoint3 *wc_pt
+    );
+
+int phg_wsb_resolve_stroke(
+    Ws *ws,
+    int num_pts,
+    Ppoint3 *dc_pts,
+    int determine_z,
+    Pint *view_index,
+    Ppoint_list3 *wc_pts
     );
 
 #endif
