@@ -6,8 +6,8 @@
 #include <phigs/css.h>
 #include <phigs/ws.h>
 
-#define WIDTH  1.0
-#define HEIGHT 1.0
+#define WIDTH  0.5
+#define HEIGHT 0.5
 
 Ppoint pts_mark[] = {
    {WIDTH / 4, HEIGHT + HEIGHT / 4}

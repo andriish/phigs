@@ -267,9 +267,7 @@ void phg_wsgl_flush(Ws *ws)
 
    XMapWindow(ws->display, ws->drawable_id);
 
-#ifdef TODO
    glEnable(GL_DEPTH_TEST);
-#endif
 
    if (wsgl.curr_ws->has_double_buffer)
    {
