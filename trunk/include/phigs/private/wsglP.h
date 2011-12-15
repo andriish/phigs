@@ -19,6 +19,17 @@ typedef struct {
    Ws             *curr_ws;
 } Wsgl;
 
+/*******************************************************************************
+ * wsgl_init
+ *
+ * DESCR:       Initialize renderer
+ * RETURNS:     N/A
+ */
+
+void wsgl_init(
+   void
+   );
+
 Ws* phg_wsgl_create(Phg_args_open_ws *args);
 int phg_wsgl_open_window(Ws *ws);
 void phg_wsgl_release_window(Ws *ws);
