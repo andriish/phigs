@@ -69,6 +69,13 @@ static void phg_draw_fill_area3(Ppoint_list3 *point_list);
 static void phg_draw_text(Ppoint *pos, char *text);
 #endif /*NOT_YET*/
 
+/*******************************************************************************
+ * wsgl_init
+ *
+ * DESCR:	Initialize renderer
+ * RETURNS:	N/A
+ */
+
 void wsgl_init(
    void
    )
@@ -111,7 +118,6 @@ int phg_wsgl_open_window(Ws *ws)
    XSetWindowAttributes wattr;
    int screen_num;
 
-   wsgl_init();
    ws->display = XOpenDisplay(NULL);
    if (ws->display == NULL) {
       fprintf(stderr, "Error - Unable to open display\n");
@@ -271,6 +277,12 @@ void phg_wsgl_flush(Ws *ws)
                   (GLint)   0,
                   (GLsizei) ws->ws_rect.width,
                   (GLsizei) ws->ws_rect.height);
+
+       /* Why do I have to do this again on Radeon Mobility 7500? */
+       glViewport((GLint)   0,
+                  (GLint)   0,
+                  (GLsizei) ws->ws_rect.width,
+                  (GLsizei) ws->ws_rect.height);
    }
 
    if (wsgl.win_changed)
@@ -337,6 +349,10 @@ void phg_wsgl_compute_ws_transform(Plimit3 *ws_win,
 
 void phg_wsgl_begin_rendering(Ws *ws)
 {
+#ifdef DEBUG
+   printf("Begin rendering\n");
+#endif
+
    memcpy(&wsgl.attrs, phg_get_default_attr(), sizeof(attribute_group));
    phg_mat_identity(wsgl.local_tran);
    phg_set_view(ws, 0);
@@ -351,6 +367,10 @@ void phg_wsgl_begin_rendering(Ws *ws)
 
 void phg_wsgl_end_rendering(void)
 {
+#ifdef DEBUG
+   printf("End rendering\n");
+#endif
+
 }
 
 /*******************************************************************************
@@ -451,10 +471,7 @@ void phg_wsgl_render_element(El_handle el)
                phg_mat_copy(wsgl.local_tran, PHG_LOCAL_TRAN3(el)->matrix);
             break;
          }
-         phg_mat_mul(wsgl.total_tran,
-                     wsgl.curr_view_entry->vom,
-                     wsgl.local_tran);
-         phg_set_matrix(wsgl.total_tran);
+         phg_update_modelview();
       break;
 
       case PELEM_VIEW_IND:
@@ -545,9 +562,17 @@ static void phg_update_projection(
 {
    Pmatrix3 mat;
 
+#ifdef DEBUG
+   printf("Update projection\n");
+#endif
+
    glMatrixMode(GL_PROJECTION);
+#if 1
    phg_mat_mul(mat, wsgl.win_tran, wsgl.curr_view_entry->vmm);
    phg_set_matrix(mat);
+#else
+   glOrtho(-1.0, 1.0, -1.0, 1.0, 1.0, 10.0);
+#endif
 }
 
 /*******************************************************************************
@@ -561,7 +586,12 @@ static void phg_update_modelview(
    void
    )
 {
+#ifdef DEBUG
+   printf("Update modelview\n");
+#endif
+
    glMatrixMode(GL_MODELVIEW);
+   phg_mat_mul(wsgl.total_tran, wsgl.curr_view_entry->vom, wsgl.local_tran);
    phg_set_matrix(wsgl.total_tran);
 }
 
@@ -574,6 +604,10 @@ static void phg_update_modelview(
 
 static void phg_set_view(Ws *ws, Pint index)
 {
+#ifdef DEBUG
+   printf("Set view: %d\n", index);
+#endif
+
    wsgl.curr_view_entry = &ws->out_ws.model.b.views[index];
    wsgl.curr_view_index = index;
 

@@ -26,6 +26,7 @@
 #include <phigs/err.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
+#include <phigs/private/wsglP.h>
 #include <phigs/css.h>
 #include <phigs/ws.h>
 
@@ -57,5 +58,6 @@ void popen_phigs(char *error_file, size_t memory)
    }
 
    phg_init_default_views();
+   wsgl_init();
 }
 
