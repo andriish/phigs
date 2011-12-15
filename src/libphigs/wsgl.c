@@ -47,6 +47,12 @@ static int glConfig[] = {
 static Wsgl wsgl;
 
 static void phg_set_matrix(Pmatrix3 mat);
+static void phg_update_projection(
+   void
+   );
+static void phg_update_modelview(
+   void
+   );
 static void phg_set_view(Ws *ws, Pint index);
 static Colormap phg_get_sharable_colormap(XVisualInfo *vi, Display *dpy);
 static void phg_set_line_attr(Pline_bundle *attr);
@@ -62,6 +68,14 @@ static void phg_draw_fill_area3(Ppoint_list3 *point_list);
 #ifdef NOT_YET
 static void phg_draw_text(Ppoint *pos, char *text);
 #endif /*NOT_YET*/
+
+void wsgl_init(
+   void
+   )
+{
+   wsgl.curr_view_index = 0;
+   phg_mat_identity(wsgl.win_tran);
+}
 
 /*******************************************************************************
  * phg_wsgl_create
@@ -97,6 +111,7 @@ int phg_wsgl_open_window(Ws *ws)
    XSetWindowAttributes wattr;
    int screen_num;
 
+   wsgl_init();
    ws->display = XOpenDisplay(NULL);
    if (ws->display == NULL) {
       fprintf(stderr, "Error - Unable to open display\n");
@@ -228,6 +243,7 @@ void phg_wsgl_clear(void)
 void phg_wsgl_flush(Ws *ws)
 {
    float w, h;
+   Pmatrix3 mat1, mat2;
 
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
    wsgl.curr_ws = ws;
@@ -250,19 +266,25 @@ void phg_wsgl_flush(Ws *ws)
        ws->ws_rect.y      = (int) wsgl.curr_vp.y_min;
        ws->ws_rect.width  = (int) w;
        ws->ws_rect.height = (int) h;
+
+       glViewport((GLint)   0,
+                  (GLint)   0,
+                  (GLsizei) ws->ws_rect.width,
+                  (GLsizei) ws->ws_rect.height);
    }
 
    if (wsgl.win_changed)
    {
       wsgl.win_changed = 0;
-
-      w = (float) ws->ws_rect.width;
-      h = (float) ws->ws_rect.height;
-
-      glViewport((GLint)   (wsgl.curr_win.x_min * w),
-                 (GLint)   (wsgl.curr_win.y_min * h),
-                 (GLsizei) (wsgl.curr_win.x_max * w),
-                 (GLsizei) (wsgl.curr_win.y_max * h));
+      phg_mat_trans(mat1,
+                    wsgl.curr_win.x_min,
+                    wsgl.curr_win.y_min,
+                    wsgl.curr_win.z_min);
+      phg_mat_scale(mat2,
+                    wsgl.curr_win.x_max - wsgl.curr_win.x_min,
+                    wsgl.curr_win.y_max - wsgl.curr_win.y_min,
+                    wsgl.curr_win.z_max - wsgl.curr_win.z_min);
+      phg_mat_mul(wsgl.win_tran, mat1, mat2);
    }
 
    XMapWindow(ws->display, ws->drawable_id);
@@ -316,6 +338,8 @@ void phg_wsgl_compute_ws_transform(Plimit3 *ws_win,
 void phg_wsgl_begin_rendering(Ws *ws)
 {
    memcpy(&wsgl.attrs, phg_get_default_attr(), sizeof(attribute_group));
+   phg_mat_identity(wsgl.local_tran);
+   phg_set_view(ws, 0);
 }
 
 /*******************************************************************************
@@ -509,6 +533,39 @@ static void phg_set_matrix(Pmatrix3 mat)
 }
 
 /*******************************************************************************
+ * phg_update_projection
+ *
+ * DESCR:	Update projection matrix
+ * RETURNS:	N/A
+ */
+
+static void phg_update_projection(
+   void
+   )
+{
+   Pmatrix3 mat;
+
+   glMatrixMode(GL_PROJECTION);
+   phg_mat_mul(mat, wsgl.win_tran, wsgl.curr_view_entry->vmm);
+   phg_set_matrix(mat);
+}
+
+/*******************************************************************************
+ * phg_update_modelview
+ *
+ * DESCR:	Update modelview matrix
+ * RETURNS:	N/A
+ */
+
+static void phg_update_modelview(
+   void
+   )
+{
+   glMatrixMode(GL_MODELVIEW);
+   phg_set_matrix(wsgl.total_tran);
+}
+
+/*******************************************************************************
  * phg_set_view
  *
  * DESCR:	Setup view
@@ -520,12 +577,8 @@ static void phg_set_view(Ws *ws, Pint index)
    wsgl.curr_view_entry = &ws->out_ws.model.b.views[index];
    wsgl.curr_view_index = index;
 
-   glMatrixMode(GL_PROJECTION);
-   phg_set_matrix(wsgl.curr_view_entry->vmm);
-
-   glMatrixMode(GL_MODELVIEW);
-   phg_mat_copy(wsgl.total_tran, wsgl.curr_view_entry->vom);
-   phg_set_matrix(wsgl.total_tran);
+   phg_update_projection();
+   phg_update_modelview();
 }
 
 /*******************************************************************************

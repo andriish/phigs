@@ -12,7 +12,8 @@ typedef struct {
    Plimit3         curr_vp;
    Pint            vp_changed;
    Pgcolr          *colr_table;
-   Pmatrix3        total_tran, local_tran;
+   Pmatrix3        win_tran;
+   Pmatrix3        local_tran, total_tran;
    Ws_view_entry  *curr_view_entry;
    Pint            curr_view_index;
    Ws             *curr_ws;
