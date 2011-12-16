@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
    pexec_struct(0);
    pclose_struct();
 
-   popen_ws(0, NULL, 0);
+   popen_ws(0, NULL, phigs_ws_type_glx_drawable);
    vp.x_min = 100.0;
    vp.x_max = 600.0;
    vp.y_min = 100.0;

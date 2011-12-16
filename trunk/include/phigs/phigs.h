@@ -376,5 +376,7 @@ typedef union {
    Pint_style   int_style;
 } Pelem_data;
 
+extern Pint phigs_ws_type_glx_drawable;
+
 #endif
 

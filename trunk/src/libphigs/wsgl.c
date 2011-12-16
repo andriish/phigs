@@ -34,21 +34,6 @@
 #include <phigs/private/wsglP.h>
 #include <phigs/mat_utils.h>
 
-static int glConfig[] = {
-   GLX_DOUBLEBUFFER,
-   GLX_RGBA,
-   GLX_DEPTH_SIZE, 12,
-   GLX_RED_SIZE, 1,
-   GLX_GREEN_SIZE, 1,
-   GLX_BLUE_SIZE, 1,
-   None
-};
-
-//static Wsgl wsgl;
-//static Wsgl *curr_wsgl;
-
-static void phg_set_matrix(Pmatrix3 mat);
-
 static void phg_update_projection(
    Ws *ws,
    Pint view_index
@@ -59,8 +44,10 @@ static void phg_update_modelview(
    Pint view_index
    );
 
-static void phg_set_view(Ws *ws, Pint view_index);
-static Colormap phg_get_sharable_colormap(XVisualInfo *vi, Display *dpy);
+static void phg_set_view(
+   Ws *ws,
+   Pint view_index
+   );
 
 static void phg_set_line_attr(
    Ws *ws,
@@ -118,17 +105,22 @@ static void phg_draw_fill_area3(
    );
 
 #ifdef NOT_YET
-static void phg_draw_text(Ppoint *pos, char *text);
+static void phg_draw_text(
+   Ppoint *pos,
+   char *text
+   );
 #endif /*NOT_YET*/
 
 /*******************************************************************************
- * phg_wsgl_create
+ * wsgl_create
  *
  * DESCR:	Create renderer for workstation
  * RETURNS:	Pointer to workstation or NULL
  */
 
-Ws* phg_wsgl_create(Phg_args_open_ws *args)
+Ws* wsgl_create(
+   Phg_args_open_ws *args
+   )
 {
    Ws_handle wsh;
 
@@ -137,20 +129,20 @@ Ws* phg_wsgl_create(Phg_args_open_ws *args)
       return NULL;
 
    memset(wsh, 0, sizeof(Ws));
-   if (!phg_wsgl_init(wsh))
+   if (!wsgl_init(wsh))
       return NULL;
 
    return wsh;
 }
 
 /*******************************************************************************
- * phg_wsgl_init
+ * wsgl_init
  *
  * DESCR:	Initialize renderer
  * RETURNS:	Non zero or zero on error
  */
 
-int phg_wsgl_init(
+int wsgl_init(
    Ws *ws
    )
 {
@@ -169,112 +161,89 @@ int phg_wsgl_init(
 }
 
 /*******************************************************************************
- * phg_wsgl_open
+ * wsgl_open_window
  *
- * DESCR:	Open render window for workstation
- * RETURNS:	Zero on succcess, non zero on error
+ * DESCR:       Open render window for workstation
+ * RETURNS:     Zero on succcess, non zero on error
  */
 
-int phg_wsgl_open_window(Ws *ws)
+int wsgl_open_window(
+   Ws *ws,
+   Phg_args_open_ws *args
+   )
 {
-   XVisualInfo *vi;
-   Colormap cmap;
-   XSetWindowAttributes wattr;
-   int screen_num;
+   int ret;
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
-   ws->display = XOpenDisplay(NULL);
-   if (ws->display == NULL) {
-      fprintf(stderr, "Error - Unable to open display\n");
-      return 0;
+   wsgl->type = args->type;
+
+   if (args->type->base_type == WST_BASE_TYPE_GLX_DRAWABLE) {
+#ifdef DEBUG
+      printf("Open GLX drawable workstation\n");
+#endif
+      ret = wsx_gl_open_window(ws);
+   }
+   else {
+      ret = 0;
    }
 
-  screen_num = DefaultScreen(ws->display);
-
-  ws->ws_rect.x = 0;
-  ws->ws_rect.y = 0;
-  ws->ws_rect.width = DisplayWidth(ws->display, screen_num) / 2;
-  ws->ws_rect.height = ws->ws_rect.width;
-
-   if (!glXQueryExtension(ws->display, NULL, NULL)) {
-      fprintf(stderr, "No Open GL support\n");
-      return 0;
-   }
-
-   ws->has_double_buffer = TRUE;
-   ws->current_colour_model = PMODEL_RGB;
-   vi = glXChooseVisual(ws->display,
-                        DefaultScreen(ws->display),
-                        glConfig);
-   if (vi == NULL) {
-      vi = glXChooseVisual(ws->display,
-                           DefaultScreen(ws->display),
-                           &glConfig[1]);
-      fprintf(stderr, "No Open GL with double buffer found\n");
-      if (vi == NULL) {
-         fprintf(stderr, "No Open GL capable visual found\n");
-         return 0;
-      }
-      ws->has_double_buffer = FALSE;
-   }
-
-   cmap = phg_get_sharable_colormap(vi, ws->display);
-
-   wsgl->glx_context = glXCreateContext(ws->display, vi, NULL, True);
-   if (wsgl->glx_context == NULL) {
-      fprintf(stderr, "Unable to create Open GL context\n");
-      return 0;
-   }
-
-   wattr.colormap = cmap;
-   wattr.border_pixel = 0;
-   wattr.event_mask = ExposureMask | StructureNotifyMask | KeyPressMask;
-
-   ws->drawable_id = XCreateWindow(ws->display,
-                                   RootWindow(ws->display, vi->screen),
-                                   ws->ws_rect.x, ws->ws_rect.y,
-                                   ws->ws_rect.width, ws->ws_rect.height,
-                                   0, vi->depth,
-                                   InputOutput, vi->visual,
-                                   CWBorderPixel | CWColormap | CWEventMask,
-                                   &wattr);
-
-   return 1;
+   return ret;
 }
 
 /*******************************************************************************
- * phg_wsgl_release_window
+ * wsgl_release_window
  *
- * DESCR:	Close render window for workstation
- * RETURNS:	N/A
+ * DESCR:       Close render window for workstation
+ * RETURNS:     N/A
  */
 
-void phg_wsgl_release_window(Ws *ws)
+int wsgl_release_window(
+   Ws *ws
+   )
 {
-   XDestroyWindow(ws->display, ws->drawable_id);
+   int ret;
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
+
+   if (wsgl->type->base_type == WST_BASE_TYPE_GLX_DRAWABLE) {
+#ifdef DEBUG
+      printf("Close GLX drawable workstation\n");
+#endif
+      wsx_gl_release_window(ws);
+      ret = 1;
+   }
+   else {
+      ret = 0;
+   }
+
+   return ret;
 }
 
 /*******************************************************************************
- * phg_wsgl_release_window
+ * wsgl_destroy
  *
- * DESCR:	Release render storage for workstation
+ * DESCR:	Release workstation
  * RETURNS:	N/A
  */
 
-void phg_wsgl_destroy(Ws *ws)
+void wsgl_destroy(
+   Ws *ws
+   )
 {
    free(ws->render_context);
    free(ws);
 }
 
 /*******************************************************************************
- * phg_wsgl_set_window
+ * wsgl_set_window
  *
  * DESCR:	Set render window coordinates
  * RETURNS:	N/A
  */
 
-void phg_wsgl_set_window(Ws *ws, Plimit3 *win)
+void wsgl_set_window(
+   Ws *ws,
+   Plimit3 *win
+   )
 {
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
@@ -283,13 +252,16 @@ void phg_wsgl_set_window(Ws *ws, Plimit3 *win)
 }
 
 /*******************************************************************************
- * phg_wsgl_set_viewport
+ * wsgl_set_viewport
  *
  * DESCR:	Set render window viewport
  * RETURNS:	N/A
  */
 
-void phg_wsgl_set_viewport(Ws *ws, Plimit3 *vp)
+void wsgl_set_viewport(
+   Ws *ws,
+   Plimit3 *vp
+   )
 {
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
@@ -298,25 +270,29 @@ void phg_wsgl_set_viewport(Ws *ws, Plimit3 *vp)
 }
 
 /*******************************************************************************
- * phg_wsgl_set_clear
+ * wsgl_clear
  *
  * DESCR:	Clear render window
  * RETURNS:	N/A
  */
 
-void phg_wsgl_clear(void)
+void wsgl_clear(
+   void
+   )
 {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 /*******************************************************************************
- * phg_wsgl_flush
+ * wsgl_flush
  *
  * DESCR:	Flush settings to render window
  * RETURNS:	N/A
  */
 
-void phg_wsgl_flush(Ws *ws)
+void wsgl_flush(
+   Ws *ws
+   )
 {
    float w, h;
    Pmatrix3 mat1, mat2;
@@ -368,7 +344,12 @@ void phg_wsgl_flush(Ws *ws)
       phg_mat_mul(wsgl->win_tran, mat1, mat2);
    }
 
-   XMapWindow(ws->display, ws->drawable_id);
+   if (wsgl->type->base_type == WST_BASE_TYPE_GLX_DRAWABLE) {
+#ifdef DEBUG
+      printf("Flush GLX drawable workstation\n");
+#endif
+      wsx_gl_flush(ws);
+   }
 
    glEnable(GL_DEPTH_TEST);
 
@@ -383,15 +364,17 @@ void phg_wsgl_flush(Ws *ws)
 }
 
 /*******************************************************************************
- * phg_wsgl_compute_ws_transform
+ * wsgl_compute_ws_transform
  *
  * DESCR:	Compute workstation transform
  * RETURNS:	N/A
  */
 
-void phg_wsgl_compute_ws_transform(Plimit3 *ws_win,
-                                   Plimit3 *ws_vp,
-                                   Ws_xform *ws_xform)
+void wsgl_compute_ws_transform(
+   Plimit3 *ws_win,
+   Plimit3 *ws_vp,
+   Ws_xform *ws_xform
+   )
 {
    Pfloat sx, sy, sz, sxy;
 
@@ -410,13 +393,15 @@ void phg_wsgl_compute_ws_transform(Plimit3 *ws_win,
 }
 
 /*******************************************************************************
- * phg_wsgl_begin_rendering
+ * wsgl_begin_rendering
  *
  * DESCR:	Start a rendiering session for workstation
  * RETURNS:	N/A
  */
 
-void phg_wsgl_begin_rendering(Ws *ws)
+void wsgl_begin_rendering(
+   Ws *ws
+   )
 {
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
@@ -430,13 +415,15 @@ void phg_wsgl_begin_rendering(Ws *ws)
 }
 
 /*******************************************************************************
- * phg_wsgl_end_rendering
+ * wsgl_end_rendering
  *
  * DESCR:	End a rendiering session
  * RETURNS:	N/A
  */
 
-void phg_wsgl_end_rendering(void)
+void wsgl_end_rendering(
+   void
+   )
 {
 #ifdef DEBUG
    printf("End rendering\n");
@@ -445,13 +432,16 @@ void phg_wsgl_end_rendering(void)
 }
 
 /*******************************************************************************
- * phg_wsgl_render_element
+ * wsgl_render_element
  *
  * DESCR:	Render element to current workstation rendering window
  * RETURNS:	N/A
  */
 
-void phg_wsgl_render_element(Ws *ws, El_handle el)
+void wsgl_render_element(
+   Ws *ws,
+   El_handle el
+   )
 {
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
@@ -573,54 +563,15 @@ void phg_wsgl_render_element(Ws *ws, El_handle el)
 }
 
 /*******************************************************************************
- * phg_get_sharable_colormap
- *
- * DESCR:	Get sharable colormap
- * RETURNS:	Colormap
- */
-
-static Colormap phg_get_sharable_colormap(XVisualInfo *vi, Display *dpy)
-{
-  Status status;
-  XStandardColormap *standardCmaps;
-  Colormap cmap;
-  int i, numCmaps;
-
-  /* True color only */
-  if (vi->class != TrueColor) {
-    fprintf(stderr, "Only true color supported\n");
-    exit(1);
-  }
-
-  /* If no standard colormap but TrueColor make an unshared one */
-  status = XmuLookupStandardColormap(dpy, vi->screen, vi->visualid,
-                vi->depth, XA_RGB_DEFAULT_MAP, False, True);
-  if (status == 1) {
-    status = XGetRGBColormaps(dpy, RootWindow(dpy, vi->screen),
-                &standardCmaps, &numCmaps, XA_RGB_DEFAULT_MAP);
-
-    if (status == 1)
-      for (i = 0; i < numCmaps; i++)
-        if (standardCmaps[i].visualid == vi->visualid) {
-          cmap = standardCmaps[i].colormap;
-          XFree(standardCmaps);
-          return cmap;
-        }
-  }
-
-  cmap = XCreateColormap(dpy, RootWindow(dpy, vi->screen),
-                vi->visual, AllocNone);
-  return cmap;
-}
-
-/*******************************************************************************
  * phg_set_matrix
  *
  * DESCR:	Setup matrix
  * RETURNS:	N/A
  */
 
-static void phg_set_matrix(Pmatrix3 mat)
+static void phg_set_matrix(
+    Pmatrix3 mat
+    )
 {
    int i, j;
    GLfloat m[16];
@@ -692,12 +643,15 @@ static void phg_update_modelview(
  * RETURNS:	N/A
  */
 
-static void phg_set_view(Ws *ws, Pint view_index)
+static void phg_set_view(
+   Ws *ws,
+   Pint view_index
+   )
 {
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
 #ifdef DEBUG
-   printf("Set view: %d\n", index);
+   printf("Set view: %d\n", view_index);
 #endif
 
    wsgl->curr_view_index = view_index;
@@ -1140,7 +1094,10 @@ static void phg_draw_fill_area3(
  * RETURNS:	N/A
  */
 
-static void phg_draw_text(Ppoint *pos, char *text)
+static void phg_draw_text(
+   Ppoint *pos,
+   char *text
+   )
 {
    printf("Draw text: ");
    printf("%f %f: %s\n", pos->x, pos->y, text);

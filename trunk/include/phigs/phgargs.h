@@ -21,6 +21,8 @@
 #ifndef _phgargs_h
 #define _phgargs_h
 
+#include <phigs/ws_type.h>
+
 typedef enum {
     PHG_ARGS_LNREP,
     PHG_ARGS_EXTLNREP,
@@ -74,7 +76,7 @@ typedef struct {
 } Phg_args_change_struct;
 
 typedef struct {
-   int empty;
+   Wst *type;
 } Phg_args_open_ws;
 
 typedef struct {

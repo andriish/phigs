@@ -28,6 +28,14 @@
 #include <phigs/css.h>
 #include <phigs/ws.h>
 
+Pint phigs_ws_type_glx_drawable = 0;
+
+static Wst ws_types[] = {
+   {
+      WST_BASE_TYPE_GLX_DRAWABLE
+   }
+};
+
 /*******************************************************************************
  * popen_ws
  *
@@ -46,13 +54,18 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
    }
 
    if (ws_list[ws_id] == NULL) {
+
+      args.type = &ws_types[ws_type];
+
       ws_list[ws_id] = phg_wsb_open_ws(&args, &ret);
       if (ws_list[ws_id] == NULL) {
          fprintf(stderr, "Error unable to create workstation: %d\n", ws_id);
          return;
       }
+
       ws_list[ws_id]->out_ws.model.b.cssh = css;
       ws_list[ws_id]->id = ws_id;
+
    }
 }
 
