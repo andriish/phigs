@@ -44,45 +44,82 @@ static int glConfig[] = {
    None
 };
 
-static Wsgl wsgl;
+//static Wsgl wsgl;
+//static Wsgl *curr_wsgl;
 
 static void phg_set_matrix(Pmatrix3 mat);
+
 static void phg_update_projection(
-   void
+   Ws *ws,
+   Pint view_index
    );
+
 static void phg_update_modelview(
-   void
+   Ws *ws,
+   Pint view_index
    );
-static void phg_set_view(Ws *ws, Pint index);
+
+static void phg_set_view(Ws *ws, Pint view_index);
 static Colormap phg_get_sharable_colormap(XVisualInfo *vi, Display *dpy);
-static void phg_set_line_attr(Pline_bundle *attr);
-static void phg_set_int_attr(Pint_bundle *attr);
-static void phg_set_edge_attr(Pedge_bundle *attr);
-static void phg_set_marker_attr(Pmarker_bundle *attr);
-static void phg_draw_polymarker(Ppoint_list *point_list);
-static void phg_draw_polymarker3(Ppoint_list3 *point_list);
-static void phg_draw_polyline(Ppoint_list *point_list);
-static void phg_draw_polyline3(Ppoint_list3 *point_list);
-static void phg_draw_fill_area(Ppoint_list *point_list);
-static void phg_draw_fill_area3(Ppoint_list3 *point_list);
+
+static void phg_set_line_attr(
+   Ws *ws,
+   Pline_bundle *attr
+   );
+
+static void phg_set_int_attr(
+   Ws *ws,
+   Pint_bundle *attr
+   );
+
+static void phg_set_edge_attr(Ws *ws,
+   Pedge_bundle *attr
+   );
+
+static void phg_set_marker_attr(
+   Ws *ws,
+   Pmarker_bundle *attr
+   );
+
+static void phg_draw_polymarker(
+   Ws *ws,
+   Ppoint_list *point_list,
+   attribute_group *attr
+   );
+
+static void phg_draw_polymarker3(
+   Ws *ws,
+   Ppoint_list3 *point_list,
+   attribute_group *attr
+   );
+
+static void phg_draw_polyline(
+   Ws *ws,
+   Ppoint_list *point_list,
+   attribute_group *attr
+   );
+
+static void phg_draw_polyline3(
+   Ws *ws,
+   Ppoint_list3 *point_list,
+   attribute_group *attr
+   );
+
+static void phg_draw_fill_area(
+   Ws *ws,
+   Ppoint_list *point_list,
+   attribute_group *attr
+   );
+
+static void phg_draw_fill_area3(
+   Ws *ws,
+   Ppoint_list3 *point_list,
+   attribute_group *attr
+   );
+
 #ifdef NOT_YET
 static void phg_draw_text(Ppoint *pos, char *text);
 #endif /*NOT_YET*/
-
-/*******************************************************************************
- * wsgl_init
- *
- * DESCR:	Initialize renderer
- * RETURNS:	N/A
- */
-
-void wsgl_init(
-   void
-   )
-{
-   wsgl.curr_view_index = 0;
-   phg_mat_identity(wsgl.win_tran);
-}
 
 /*******************************************************************************
  * phg_wsgl_create
@@ -100,8 +137,35 @@ Ws* phg_wsgl_create(Phg_args_open_ws *args)
       return NULL;
 
    memset(wsh, 0, sizeof(Ws));
+   if (!phg_wsgl_init(wsh))
+      return NULL;
 
    return wsh;
+}
+
+/*******************************************************************************
+ * phg_wsgl_init
+ *
+ * DESCR:	Initialize renderer
+ * RETURNS:	Non zero or zero on error
+ */
+
+int phg_wsgl_init(
+   Ws *ws
+   )
+{
+   Wsgl *wsgl;
+
+   wsgl = (Wsgl *) malloc(sizeof(Wsgl));
+   if (wsgl == NULL)
+      return 0;
+
+   memset(wsgl, 0, sizeof(Wsgl));
+   phg_mat_identity(wsgl->win_tran);
+
+   ws->render_context = wsgl;
+
+   return 1;
 }
 
 /*******************************************************************************
@@ -117,6 +181,7 @@ int phg_wsgl_open_window(Ws *ws)
    Colormap cmap;
    XSetWindowAttributes wattr;
    int screen_num;
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
 
    ws->display = XOpenDisplay(NULL);
    if (ws->display == NULL) {
@@ -155,8 +220,8 @@ int phg_wsgl_open_window(Ws *ws)
 
    cmap = phg_get_sharable_colormap(vi, ws->display);
 
-   ws->glx_context = glXCreateContext(ws->display, vi, NULL, True);
-   if (ws->glx_context == NULL) {
+   wsgl->glx_context = glXCreateContext(ws->display, vi, NULL, True);
+   if (wsgl->glx_context == NULL) {
       fprintf(stderr, "Unable to create Open GL context\n");
       return 0;
    }
@@ -198,6 +263,7 @@ void phg_wsgl_release_window(Ws *ws)
 
 void phg_wsgl_destroy(Ws *ws)
 {
+   free(ws->render_context);
    free(ws);
 }
 
@@ -210,8 +276,10 @@ void phg_wsgl_destroy(Ws *ws)
 
 void phg_wsgl_set_window(Ws *ws, Plimit3 *win)
 {
-   wsgl.win_changed = 1;
-   memcpy(&wsgl.curr_win, win, sizeof(Plimit3));
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
+
+   wsgl->win_changed = 1;
+   memcpy(&wsgl->curr_win, win, sizeof(Plimit3));
 }
 
 /*******************************************************************************
@@ -223,8 +291,10 @@ void phg_wsgl_set_window(Ws *ws, Plimit3 *win)
 
 void phg_wsgl_set_viewport(Ws *ws, Plimit3 *vp)
 {
-   wsgl.vp_changed = 1;
-   memcpy(&wsgl.curr_vp, vp, sizeof(Plimit3));
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
+
+   wsgl->vp_changed = 1;
+   memcpy(&wsgl->curr_vp, vp, sizeof(Plimit3));
 }
 
 /*******************************************************************************
@@ -250,26 +320,25 @@ void phg_wsgl_flush(Ws *ws)
 {
    float w, h;
    Pmatrix3 mat1, mat2;
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
 
-   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
-   wsgl.curr_ws = ws;
-   wsgl.colr_table = ws->colr_table;
+   glXMakeCurrent(ws->display, ws->drawable_id, wsgl->glx_context);
 
-   if (wsgl.vp_changed)
+   if (wsgl->vp_changed)
    {
-      wsgl.vp_changed = 0;
+      wsgl->vp_changed = 0;
 
-      w = wsgl.curr_vp.x_max - wsgl.curr_vp.x_min;
-      h = wsgl.curr_vp.y_max - wsgl.curr_vp.y_min;
+      w = wsgl->curr_vp.x_max - wsgl->curr_vp.x_min;
+      h = wsgl->curr_vp.y_max - wsgl->curr_vp.y_min;
 
       XMoveResizeWindow(ws->display, ws->drawable_id,
-                    (int) wsgl.curr_vp.x_min,
-                    (int) wsgl.curr_vp.y_min,
+                    (int) wsgl->curr_vp.x_min,
+                    (int) wsgl->curr_vp.y_min,
                     (int) w,
                     (int) h);
 
-       ws->ws_rect.x      = (int) wsgl.curr_vp.x_min;
-       ws->ws_rect.y      = (int) wsgl.curr_vp.y_min;
+       ws->ws_rect.x      = (int) wsgl->curr_vp.x_min;
+       ws->ws_rect.y      = (int) wsgl->curr_vp.y_min;
        ws->ws_rect.width  = (int) w;
        ws->ws_rect.height = (int) h;
 
@@ -285,27 +354,27 @@ void phg_wsgl_flush(Ws *ws)
                   (GLsizei) ws->ws_rect.height);
    }
 
-   if (wsgl.win_changed)
+   if (wsgl->win_changed)
    {
-      wsgl.win_changed = 0;
+      wsgl->win_changed = 0;
       phg_mat_trans(mat1,
-                    wsgl.curr_win.x_min,
-                    wsgl.curr_win.y_min,
-                    wsgl.curr_win.z_min);
+                    wsgl->curr_win.x_min,
+                    wsgl->curr_win.y_min,
+                    wsgl->curr_win.z_min);
       phg_mat_scale(mat2,
-                    wsgl.curr_win.x_max - wsgl.curr_win.x_min,
-                    wsgl.curr_win.y_max - wsgl.curr_win.y_min,
-                    wsgl.curr_win.z_max - wsgl.curr_win.z_min);
-      phg_mat_mul(wsgl.win_tran, mat1, mat2);
+                    wsgl->curr_win.x_max - wsgl->curr_win.x_min,
+                    wsgl->curr_win.y_max - wsgl->curr_win.y_min,
+                    wsgl->curr_win.z_max - wsgl->curr_win.z_min);
+      phg_mat_mul(wsgl->win_tran, mat1, mat2);
    }
 
    XMapWindow(ws->display, ws->drawable_id);
 
    glEnable(GL_DEPTH_TEST);
 
-   if (wsgl.curr_ws->has_double_buffer)
+   if (ws->has_double_buffer)
    {
-      glXSwapBuffers(wsgl.curr_ws->display, wsgl.curr_ws->drawable_id);
+      glXSwapBuffers(ws->display, ws->drawable_id);
    }
    else
    {
@@ -349,12 +418,14 @@ void phg_wsgl_compute_ws_transform(Plimit3 *ws_win,
 
 void phg_wsgl_begin_rendering(Ws *ws)
 {
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
+
 #ifdef DEBUG
    printf("Begin rendering\n");
 #endif
 
-   memcpy(&wsgl.attrs, phg_get_default_attr(), sizeof(attribute_group));
-   phg_mat_identity(wsgl.local_tran);
+   memcpy(&wsgl->attrs, phg_get_default_attr(), sizeof(attribute_group));
+   phg_mat_identity(wsgl->local_tran);
    phg_set_view(ws, 0);
 }
 
@@ -380,102 +451,118 @@ void phg_wsgl_end_rendering(void)
  * RETURNS:	N/A
  */
 
-void phg_wsgl_render_element(El_handle el)
+void phg_wsgl_render_element(Ws *ws, El_handle el)
 {
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
+
    switch (el->eltype) {
       case PELEM_LABEL:
       case PELEM_PICK_ID:
       break;
 
       case PELEM_INT_COLR_IND:
-         wsgl.attrs.int_bundle.colr_ind = PHG_INT(el);
+         wsgl->attrs.int_bundle.colr_ind = PHG_INT(el);
       break;
       case PELEM_INT_STYLE:
-         wsgl.attrs.int_bundle.style = PHG_INT(el);
+         wsgl->attrs.int_bundle.style = PHG_INT(el);
       break;
 
       case PELEM_EDGE_COLR_IND:
-         wsgl.attrs.edge_bundle.colr_ind = PHG_INT(el);
+         wsgl->attrs.edge_bundle.colr_ind = PHG_INT(el);
       break;
       case PELEM_EDGEWIDTH:
-         wsgl.attrs.edge_bundle.width = PHG_FLOAT(el);
+         wsgl->attrs.edge_bundle.width = PHG_FLOAT(el);
       break;
       case PELEM_EDGETYPE:
-         wsgl.attrs.edge_bundle.type = PHG_INT(el);
+         wsgl->attrs.edge_bundle.type = PHG_INT(el);
       break;
       case PELEM_EDGE_FLAG:
-         wsgl.attrs.edge_bundle.flag = PHG_EDGE_FLAG(el);
+         wsgl->attrs.edge_bundle.flag = PHG_EDGE_FLAG(el);
       break;
 
       case PELEM_MARKER_COLR_IND:
-         wsgl.attrs.marker_bundle.colr_ind = PHG_INT(el);
+         wsgl->attrs.marker_bundle.colr_ind = PHG_INT(el);
       break;
       case PELEM_MARKER_SIZE:
-         wsgl.attrs.marker_bundle.size = PHG_FLOAT(el);
+         wsgl->attrs.marker_bundle.size = PHG_FLOAT(el);
       break;
       case PELEM_MARKER_TYPE:
-         wsgl.attrs.marker_bundle.type = PHG_INT(el);
+         wsgl->attrs.marker_bundle.type = PHG_INT(el);
       break;
 
       case PELEM_TEXT_COLR_IND:
-         wsgl.attrs.text_bundle.colr_ind = PHG_INT(el);
+         wsgl->attrs.text_bundle.colr_ind = PHG_INT(el);
       break;
       case PELEM_TEXT_FONT:
-         wsgl.attrs.text_bundle.font = PHG_INT(el);
+         wsgl->attrs.text_bundle.font = PHG_INT(el);
       break;
 
       case PELEM_LINE_COLR_IND:
-         wsgl.attrs.line_bundle.colr_ind = PHG_INT(el);
+         wsgl->attrs.line_bundle.colr_ind = PHG_INT(el);
       break;
       case PELEM_LINEWIDTH:
-         wsgl.attrs.line_bundle.width = PHG_FLOAT(el);
+         wsgl->attrs.line_bundle.width = PHG_FLOAT(el);
       break;
       case PELEM_LINETYPE:
-         wsgl.attrs.line_bundle.type = PHG_INT(el);
+         wsgl->attrs.line_bundle.type = PHG_INT(el);
       break;
 
       case PELEM_FILL_AREA:
-         phg_draw_fill_area(PHG_POINT_LIST(el));
+         phg_draw_fill_area(ws,
+                            PHG_POINT_LIST(el),
+                            &wsgl->attrs);
       break;
       case PELEM_POLYLINE:
-         phg_draw_polyline(PHG_POINT_LIST(el));
+         phg_draw_polyline(ws,
+                           PHG_POINT_LIST(el),
+                           &wsgl->attrs
+                           );
       break;
       case PELEM_POLYMARKER:
-         phg_draw_polymarker(PHG_POINT_LIST(el));
+         phg_draw_polymarker(ws,
+                             PHG_POINT_LIST(el),
+                             &wsgl->attrs);
       break;
 
       case PELEM_FILL_AREA3:
-         phg_draw_fill_area3(PHG_POINT_LIST3(el));
+         phg_draw_fill_area3(ws,
+                             PHG_POINT_LIST3(el),
+                             &wsgl->attrs);
       break;
       case PELEM_POLYLINE3:
-         phg_draw_polyline3(PHG_POINT_LIST3(el));
+         phg_draw_polyline3(ws,
+                            PHG_POINT_LIST3(el),
+                            &wsgl->attrs);
       break;
       case PELEM_POLYMARKER3:
-         phg_draw_polymarker3(PHG_POINT_LIST3(el));
+         phg_draw_polymarker3(ws,
+                              PHG_POINT_LIST3(el),
+                              &wsgl->attrs);
       break;
 
       case PELEM_LOCAL_MODEL_TRAN3:
          switch (PHG_LOCAL_TRAN3(el)->compose_type) {
             case PTYPE_PRECONCAT:
-               phg_mat_mul(wsgl.local_tran,
-                           wsgl.local_tran,
+               phg_mat_mul(wsgl->local_tran,
+                           wsgl->local_tran,
                            PHG_LOCAL_TRAN3(el)->matrix);
             break;
             case PTYPE_POSTCONCAT:
-               phg_mat_mul(wsgl.local_tran,
+               phg_mat_mul(wsgl->local_tran,
                            PHG_LOCAL_TRAN3(el)->matrix,
-                           wsgl.local_tran);
+                           wsgl->local_tran);
             break;
             case PTYPE_REPLACE:
             default:
-               phg_mat_copy(wsgl.local_tran, PHG_LOCAL_TRAN3(el)->matrix);
+               phg_mat_copy(wsgl->local_tran, PHG_LOCAL_TRAN3(el)->matrix);
             break;
          }
-         phg_update_modelview();
+         phg_update_modelview(ws,
+                              wsgl->curr_view_index);
       break;
 
       case PELEM_VIEW_IND:
-         phg_set_view(wsgl.curr_ws, PHG_INT(el));
+         phg_set_view(ws, PHG_INT(el));
       break;
 
       default:
@@ -557,22 +644,21 @@ static void phg_set_matrix(Pmatrix3 mat)
  */
 
 static void phg_update_projection(
-   void
+   Ws *ws,
+   Pint view_index
    )
 {
    Pmatrix3 mat;
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Ws_view_entry *view_entry = &ws->out_ws.model.b.views[view_index];
 
 #ifdef DEBUG
    printf("Update projection\n");
 #endif
 
    glMatrixMode(GL_PROJECTION);
-#if 1
-   phg_mat_mul(mat, wsgl.win_tran, wsgl.curr_view_entry->vmm);
+   phg_mat_mul(mat, wsgl->win_tran, view_entry->vmm);
    phg_set_matrix(mat);
-#else
-   glOrtho(-1.0, 1.0, -1.0, 1.0, 1.0, 10.0);
-#endif
 }
 
 /*******************************************************************************
@@ -583,16 +669,20 @@ static void phg_update_projection(
  */
 
 static void phg_update_modelview(
-   void
+   Ws *ws,
+   Pint view_index
    )
 {
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Ws_view_entry *view_entry = &ws->out_ws.model.b.views[view_index];
+
 #ifdef DEBUG
    printf("Update modelview\n");
 #endif
 
    glMatrixMode(GL_MODELVIEW);
-   phg_mat_mul(wsgl.total_tran, wsgl.curr_view_entry->vom, wsgl.local_tran);
-   phg_set_matrix(wsgl.total_tran);
+   phg_mat_mul(wsgl->total_tran, view_entry->vom, wsgl->local_tran);
+   phg_set_matrix(wsgl->total_tran);
 }
 
 /*******************************************************************************
@@ -602,17 +692,17 @@ static void phg_update_modelview(
  * RETURNS:	N/A
  */
 
-static void phg_set_view(Ws *ws, Pint index)
+static void phg_set_view(Ws *ws, Pint view_index)
 {
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
+
 #ifdef DEBUG
    printf("Set view: %d\n", index);
 #endif
 
-   wsgl.curr_view_entry = &ws->out_ws.model.b.views[index];
-   wsgl.curr_view_index = index;
-
-   phg_update_projection();
-   phg_update_modelview();
+   wsgl->curr_view_index = view_index;
+   phg_update_projection(ws, view_index);
+   phg_update_modelview(ws, view_index);
 }
 
 /*******************************************************************************
@@ -622,13 +712,16 @@ static void phg_set_view(Ws *ws, Pint index)
  * RETURNS:	N/A
  */
 
-static void phg_set_line_attr(Pline_bundle *attr)
+static void phg_set_line_attr(
+   Ws *ws,
+   Pline_bundle *attr
+   )
 {
    Pint index = attr->colr_ind;
 
-   glColor3f(wsgl.colr_table[index].val.general.x,
-             wsgl.colr_table[index].val.general.y,
-             wsgl.colr_table[index].val.general.z);
+   glColor3f(ws->colr_table[index].val.general.x,
+             ws->colr_table[index].val.general.y,
+             ws->colr_table[index].val.general.z);
 
    /* Line style */
    switch (attr->type) {
@@ -663,13 +756,16 @@ static void phg_set_line_attr(Pline_bundle *attr)
  * RETURNS:	N/A
  */
 
-static void phg_set_int_attr(Pint_bundle *attr)
+static void phg_set_int_attr(
+   Ws *ws,
+   Pint_bundle *attr
+   )
 {
    Pint index = attr->colr_ind;
 
-   glColor3f(wsgl.colr_table[index].val.general.x,
-             wsgl.colr_table[index].val.general.y,
-             wsgl.colr_table[index].val.general.z);
+   glColor3f(ws->colr_table[index].val.general.x,
+             ws->colr_table[index].val.general.y,
+             ws->colr_table[index].val.general.z);
 }
 
 /*******************************************************************************
@@ -679,13 +775,16 @@ static void phg_set_int_attr(Pint_bundle *attr)
  * RETURNS:	N/A
  */
 
-static void phg_set_edge_attr(Pedge_bundle *attr)
+static void phg_set_edge_attr(
+   Ws *ws,
+   Pedge_bundle *attr
+   )
 {
    Pint index = attr->colr_ind;
 
-   glColor3f(wsgl.colr_table[index].val.general.x,
-             wsgl.colr_table[index].val.general.y,
-             wsgl.colr_table[index].val.general.z);
+   glColor3f(ws->colr_table[index].val.general.x,
+             ws->colr_table[index].val.general.y,
+             ws->colr_table[index].val.general.z);
    glLineWidth(attr->width);
 }
 
@@ -696,13 +795,16 @@ static void phg_set_edge_attr(Pedge_bundle *attr)
  * RETURNS:	N/A
  */
 
-static void phg_set_marker_attr(Pmarker_bundle *attr)
+static void phg_set_marker_attr(
+   Ws *ws,
+   Pmarker_bundle *attr
+   )
 {
    Pint index = attr->colr_ind;
 
-   glColor3f(wsgl.colr_table[index].val.general.x,
-             wsgl.colr_table[index].val.general.y,
-             wsgl.colr_table[index].val.general.z);
+   glColor3f(ws->colr_table[index].val.general.x,
+             ws->colr_table[index].val.general.y,
+             ws->colr_table[index].val.general.z);
 }
 
 /*******************************************************************************
@@ -843,24 +945,28 @@ static void phg_draw_marker_cross(
  * RETURNS:	N/A
  */
 
-static void phg_draw_polymarker(Ppoint_list *point_list)
+static void phg_draw_polymarker(
+   Ws *ws,
+   Ppoint_list *point_list,
+   attribute_group *attr
+   )
 {
-   phg_set_marker_attr(&wsgl.attrs.marker_bundle);
-   switch (wsgl.attrs.marker_bundle.type) {
+   phg_set_marker_attr(ws, &attr->marker_bundle);
+   switch (attr->marker_bundle.type) {
       case PMARKER_DOT:
-         phg_draw_marker_dot(point_list, wsgl.attrs.marker_bundle.size);
+         phg_draw_marker_dot(point_list, attr->marker_bundle.size);
       break;
 
       case PMARKER_PLUS:
-         phg_draw_marker_plus(point_list, wsgl.attrs.marker_bundle.size);
+         phg_draw_marker_plus(point_list, attr->marker_bundle.size);
       break;
 
       case PMARKER_ASTERISK:
-         phg_draw_marker_asterisk(point_list, wsgl.attrs.marker_bundle.size);
+         phg_draw_marker_asterisk(point_list, attr->marker_bundle.size);
       break;
 
       case PMARKER_CROSS:
-         phg_draw_marker_cross(point_list, wsgl.attrs.marker_bundle.size);
+         phg_draw_marker_cross(point_list, attr->marker_bundle.size);
       break;
    }
 }
@@ -872,7 +978,11 @@ static void phg_draw_polymarker(Ppoint_list *point_list)
  * RETURNS:	N/A
  */
 
-static void phg_draw_polymarker3(Ppoint_list3 *point_list)
+static void phg_draw_polymarker3(
+   Ws *ws,
+   Ppoint_list3 *point_list,
+   attribute_group *attr
+   )
 {
    int i;
    Ppoint_list plist;
@@ -885,22 +995,22 @@ static void phg_draw_polymarker3(Ppoint_list3 *point_list)
       pts[i].y = point_list->points[i].y;
    }
 
-   phg_set_marker_attr(&wsgl.attrs.marker_bundle);
-   switch (wsgl.attrs.marker_bundle.type) {
+   phg_set_marker_attr(ws, &attr->marker_bundle);
+   switch (attr->marker_bundle.type) {
       case PMARKER_DOT:
-         phg_draw_marker_dot(&plist, wsgl.attrs.marker_bundle.size);
+         phg_draw_marker_dot(&plist, attr->marker_bundle.size);
       break;
 
       case PMARKER_PLUS:
-         phg_draw_marker_plus(&plist, wsgl.attrs.marker_bundle.size);
+         phg_draw_marker_plus(&plist, attr->marker_bundle.size);
       break;
 
       case PMARKER_ASTERISK:
-         phg_draw_marker_asterisk(&plist, wsgl.attrs.marker_bundle.size);
+         phg_draw_marker_asterisk(&plist, attr->marker_bundle.size);
       break;
 
       case PMARKER_CROSS:
-         phg_draw_marker_cross(&plist, wsgl.attrs.marker_bundle.size);
+         phg_draw_marker_cross(&plist, attr->marker_bundle.size);
       break;
    }
 }
@@ -912,11 +1022,15 @@ static void phg_draw_polymarker3(Ppoint_list3 *point_list)
  * RETURNS:	N/A
  */
 
-static void phg_draw_polyline(Ppoint_list *point_list)
+static void phg_draw_polyline(
+   Ws *ws,
+   Ppoint_list *point_list,
+   attribute_group *attr
+   )
 {
    int i;
 
-   phg_set_line_attr(&wsgl.attrs.line_bundle);
+   phg_set_line_attr(ws, &attr->line_bundle);
    glBegin(GL_LINES);
    for (i = 0; i < point_list->num_points; i++)
       glVertex2f(point_list->points[i].x,
@@ -931,11 +1045,15 @@ static void phg_draw_polyline(Ppoint_list *point_list)
  * RETURNS:	N/A
  */
 
-static void phg_draw_polyline3(Ppoint_list3 *point_list)
+static void phg_draw_polyline3(
+   Ws *ws,
+   Ppoint_list3 *point_list,
+   attribute_group *attr
+   )
 {
    int i;
 
-   phg_set_line_attr(&wsgl.attrs.line_bundle);
+   phg_set_line_attr(ws, &attr->line_bundle);
    glBegin(GL_LINES);
    for (i = 0; i < point_list->num_points; i++)
       glVertex3f(point_list->points[i].x,
@@ -951,12 +1069,16 @@ static void phg_draw_polyline3(Ppoint_list3 *point_list)
  * RETURNS:	N/A
  */
 
-static void phg_draw_fill_area(Ppoint_list *point_list)
+static void phg_draw_fill_area(
+   Ws *ws,
+   Ppoint_list *point_list,
+   attribute_group *attr
+   )
 {
    int i;
 
-   if (wsgl.attrs.int_bundle.style == PSTYLE_SOLID) {
-      phg_set_int_attr(&wsgl.attrs.int_bundle);
+   if (attr->int_bundle.style == PSTYLE_SOLID) {
+      phg_set_int_attr(ws, &attr->int_bundle);
       glBegin(GL_POLYGON);
       for (i = 0; i < point_list->num_points; i++)
          glVertex2f(point_list->points[i].x,
@@ -964,8 +1086,8 @@ static void phg_draw_fill_area(Ppoint_list *point_list)
       glEnd();
    }
 
-   if (wsgl.attrs.edge_bundle.flag == PEDGE_ON) {
-      phg_set_edge_attr(&wsgl.attrs.edge_bundle);
+   if (attr->edge_bundle.flag == PEDGE_ON) {
+      phg_set_edge_attr(ws, &attr->edge_bundle);
       glBegin(GL_LINE_LOOP);
       for (i = 0; i < point_list->num_points; i++)
          glVertex2f(point_list->points[i].x,
@@ -981,12 +1103,16 @@ static void phg_draw_fill_area(Ppoint_list *point_list)
  * RETURNS:	N/A
  */
 
-static void phg_draw_fill_area3(Ppoint_list3 *point_list)
+static void phg_draw_fill_area3(
+   Ws *ws,
+   Ppoint_list3 *point_list,
+   attribute_group *attr
+   )
 {
    int i;
 
-   if (wsgl.attrs.int_bundle.style == PSTYLE_SOLID) {
-      phg_set_int_attr(&wsgl.attrs.int_bundle);
+   if (attr->int_bundle.style == PSTYLE_SOLID) {
+      phg_set_int_attr(ws, &attr->int_bundle);
       glBegin(GL_POLYGON);
       for (i = 0; i < point_list->num_points; i++)
          glVertex3f(point_list->points[i].x,
@@ -995,8 +1121,8 @@ static void phg_draw_fill_area3(Ppoint_list3 *point_list)
       glEnd();
    }
 
-   if (wsgl.attrs.edge_bundle.flag == PEDGE_ON) {
-      phg_set_edge_attr(&wsgl.attrs.edge_bundle);
+   if (attr->edge_bundle.flag == PEDGE_ON) {
+      phg_set_edge_attr(ws, &attr->edge_bundle);
       glBegin(GL_LINE_LOOP);
       for (i = 0; i < point_list->num_points; i++)
          glVertex3f(point_list->points[i].x,
