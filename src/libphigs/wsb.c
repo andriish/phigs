@@ -340,7 +340,7 @@ static int init_output_state(
     owsb->req_ws_window.z_max = 1.0;
     owsb->ws_window = owsb->req_ws_window;
     owsb->ws_window_pending = PUPD_NOT_PEND;
-    phg_wsgl_set_window(ws, &owsb->ws_window);
+    wsgl_set_window(ws, &owsb->ws_window);
 
     owsb->req_ws_viewport.x_min = 0.0;
     owsb->req_ws_viewport.x_max = (float) ws->ws_rect.width;
@@ -350,9 +350,9 @@ static int init_output_state(
     owsb->req_ws_viewport.z_max = 1.0;
     owsb->ws_viewport = owsb->req_ws_viewport;
     owsb->ws_viewport_pending = PUPD_NOT_PEND;
-    phg_wsgl_set_viewport(ws, &owsb->ws_viewport);
+    wsgl_set_viewport(ws, &owsb->ws_viewport);
 
-    phg_wsgl_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
+    wsgl_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
 	&owsb->ws_xform );
 
     /* Initialize the list of posted structs. */
@@ -378,10 +378,10 @@ Ws* phg_wsb_open_ws(
     Ws			*ws;
 
     ret->err = -1;
-    if ( !(ws = phg_wsgl_create( args )) )
+    if ( !(ws = wsgl_create( args )) )
 	return ws;
 
-    if ( !phg_wsgl_open_window( ws ) )
+    if ( !wsgl_open_window( ws, args ) )
         goto abort;
 
     (void)XGetWindowAttributes( ws->display, ws->drawable_id, &wattr );
@@ -441,7 +441,7 @@ void wsb_destroy_ws(
 	    free( (char *)ws->out_ws.model.b.view_priorities );
 	if ( ws->display ) {
 	    if ( ws->drawable_id )
-		phg_wsgl_release_window( ws );
+		wsgl_release_window( ws );
 
             /* NOTE:
              * Free renderer resource here if needed
@@ -450,7 +450,7 @@ void wsb_destroy_ws(
 
 	    XFlush( ws->display );
 	}
-	phg_wsgl_destroy( ws );
+	wsgl_destroy( ws );
     }
 }
 
@@ -497,7 +497,7 @@ void phg_wsb_make_requested_current(
 #endif
 	    owsb->ws_window = owsb->req_ws_window;
 	    owsb->ws_window_pending = PUPD_NOT_PEND;
-            phg_wsgl_set_window(ws, &owsb->ws_window);
+            wsgl_set_window(ws, &owsb->ws_window);
 	}
 
 	if ( owsb->ws_viewport_pending == PUPD_PEND ) {
@@ -506,13 +506,13 @@ void phg_wsb_make_requested_current(
 #endif
 	    owsb->ws_viewport = owsb->req_ws_viewport;
 	    owsb->ws_viewport_pending = PUPD_NOT_PEND;
-            phg_wsgl_set_viewport(ws, &owsb->ws_viewport);
+            wsgl_set_viewport(ws, &owsb->ws_viewport);
 	}
 
 #ifdef DEBUG
             printf("wsb: Compute transform\n");
 #endif
-	phg_wsgl_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
+	wsgl_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
 	    &owsb->ws_xform );
     }
 
@@ -568,7 +568,7 @@ void phg_wsb_make_requested_current(
 #endif
 
     /* Make it all take effect. */
-    phg_wsgl_flush(ws);
+    wsgl_flush(ws);
 }
 
 void phg_wsb_repaint_all(
@@ -588,14 +588,14 @@ void phg_wsb_repaint_all(
         printf("wsb: Clear\n");
 #endif
 
-	phg_wsgl_clear();
+	wsgl_clear();
     }
     owsb->surf_state = PSURF_EMPTY;
 
     phg_wsb_traverse_all_postings(ws);
 
     /* now swap the buffers and update the drawable indices */
-    phg_wsgl_flush(ws);
+    wsgl_flush(ws);
 
 #if TODO
     /* Redraw input prompts & echos of any active input devices. */
@@ -616,12 +616,12 @@ void phg_wsb_traverse_all_postings(
 	/* Set up for complete traversal. */
 	post_str = owsb->posted.lowest.higher;
 	end = &(owsb->posted.highest);
-        phg_wsgl_begin_rendering(ws);
+        wsgl_begin_rendering(ws);
 	while ( post_str != end ) {
 	    phg_wsb_traverse_net( ws, post_str->structh );
 	    post_str = post_str->higher;
 	}
-        phg_wsgl_end_rendering();
+        wsgl_end_rendering();
 	owsb->surf_state = PSURF_NOT_EMPTY;
     }
 }
@@ -642,7 +642,7 @@ void phg_wsb_traverse_net(
 		phg_wsb_traverse_net( ws, (Struct_handle)el->eldata.ptr );
 		break;
 	    default:
-                phg_wsgl_render_element(ws, el);
+                wsgl_render_element(ws, el);
 		break;
 	}
 
