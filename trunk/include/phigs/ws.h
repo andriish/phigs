@@ -21,8 +21,6 @@
 #ifndef _ws_h
 #define _ws_h
 
-#include <GL/gl.h>
-#include <GL/glx.h>
 #include <X11/Xlib.h>
 #include <phigs/phg.h>
 
@@ -164,7 +162,7 @@ typedef struct _Ws {
    /* Window system variables */
    Display      *display;
    Drawable     drawable_id;
-   GLXContext   glx_context;
+   void         *render_context;
    int          has_double_buffer;
    XRectangle   ws_rect;
    Pgcolr       colr_table[256];

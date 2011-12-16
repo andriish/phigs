@@ -642,7 +642,7 @@ void phg_wsb_traverse_net(
 		phg_wsb_traverse_net( ws, (Struct_handle)el->eldata.ptr );
 		break;
 	    default:
-                phg_wsgl_render_element(el);
+                phg_wsgl_render_element(ws, el);
 		break;
 	}
 

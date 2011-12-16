@@ -125,9 +125,9 @@ int main(int argc, char *argv[])
    vp.x_max = 300.0;
    vp.y_min = 200.0;
    vp.y_max = 300.0;
-   win.x_min =  0.0;
+   win.x_min =  0.5;
    win.x_max =  1.0;
-   win.y_min =  0.0;
+   win.y_min =  0.5;
    win.y_max =  1.0;
    pset_ws_vp(1, &vp);
    pset_ws_win(1, &win);
