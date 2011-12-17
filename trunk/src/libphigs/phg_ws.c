@@ -51,7 +51,10 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
    Phg_args_open_ws args;
    Phg_ret ret;
 
-   if (phg_psl_inq_ws_open(psl, ws_id)) {
+   if ((ws_id < 0) || (ws_id > MAX_NO_OPEN_WS)) {
+      ERR_REPORT(erh, ERR63);
+   }
+   else if (phg_psl_inq_ws_open(psl, ws_id)) {
       ERR_REPORT(erh, ERR53);
    }
    else if (!phg_psl_ws_free_slot(psl)) {
@@ -80,6 +83,8 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
          ws_list[ws_id]->id = ws_id;
       }
    }
+
+   ERR_FLUSH(erh);
 }
 
 /*******************************************************************************
