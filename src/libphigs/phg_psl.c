@@ -216,6 +216,10 @@ int phg_psl_add_ws(
       }
    }
 
+   /* Update state list to reflect that at least one workstation is open */
+   if (status)
+      PSL_WS_STATE(psl) = PWS_ST_WSOP;
+
    return status;
 }
 
