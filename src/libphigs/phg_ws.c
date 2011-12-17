@@ -68,13 +68,23 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
       args.window_name = default_window_name;
       args.icon_name = default_icon_name;
 
+      /* Open workstation */
       ws_list[ws_id] = phg_wsb_open_ws(&args, &ret);
       if (ws_list[ws_id] == NULL) {
-         fprintf(stderr, "Error unable to create workstation: %d\n", ws_id);
+         fprintf(stderr, "Error unable to open workstation\n");
       }
       else {
+         /* Add workstation to info list */
+         phg_psl_add_ws(psl, ws_id, NULL, &ws_types[ws_type]);
+
+         /* Add workstation to global list of open workstations */
          ws_list[ws_id]->out_ws.model.b.cssh = css;
+
+         /* Store workstation id in workstation structure */
          ws_list[ws_id]->id = ws_id;
+
+         /* Update global state list to reflect that a workstation is open */
+         PSL_WS_STATE(psl) = PWS_ST_WSOP;
       }
    }
 }

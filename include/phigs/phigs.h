@@ -50,7 +50,7 @@ typedef enum {
 
 typedef enum {
    PWS_ST_WSCL,
-   PWS_WSOP
+   PWS_ST_WSOP
 } Pws_st;
 
 typedef enum {
