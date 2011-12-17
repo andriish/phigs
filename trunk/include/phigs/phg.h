@@ -32,11 +32,15 @@
 #include <phigs/css.h>
 #include <phigs/ws.h>
 #include <phigs/phigsfunc.h>
+#include <phigs/ws_type.h>
+#include <phigs/psl.h>
 
 #ifndef _ABS
 #define _ABS(val) \
    ((val >= 0) ? (val) : (val) * -1)
 #endif
+
+extern Psl_handle psl;
 
 #endif
 

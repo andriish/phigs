@@ -76,7 +76,10 @@ typedef struct {
 } Phg_args_change_struct;
 
 typedef struct {
-   Wst *type;
+   Pint wsid;
+   Wst  *type;
+   char *window_name;
+   char *icon_name;
 } Phg_args_open_ws;
 
 typedef struct {

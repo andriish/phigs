@@ -26,6 +26,7 @@ typedef enum {
 } Wst_base_type;
 
 typedef struct {
+   Pint          wsid;
    Wst_base_type base_type;
 } Wst;
 

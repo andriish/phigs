@@ -29,6 +29,7 @@
 #include <phigs/css.h>
 #include <phigs/ws.h>
 
+Psl_handle psl;
 Ws_handle  *ws_list;
 Css_handle css;
 Err_struct err_hdl;
@@ -42,8 +43,15 @@ Err_struct err_hdl;
 
 void popen_phigs(char *error_file, size_t memory)
 {
+   psl = phg_psl_create();
+   if (psl == NULL) {
+      fprintf(stderr, "Error unable to create state list\n");
+      return;
+   }
+
    ws_list = malloc(sizeof(Ws_handle) * MAX_NO_OPEN_WS);
    if (ws_list == NULL) {
+      phg_psl_destroy(psl);
       fprintf(stderr, "Error unable to create workstations storage\n");
       return;
    }
@@ -51,6 +59,7 @@ void popen_phigs(char *error_file, size_t memory)
 
    css = phg_css_init(&err_hdl, SSH_CSS);
    if (css == NULL) {
+      phg_psl_destroy(psl);
       free(ws_list);
       fprintf(stderr, "Error unable to create structure storage\n");
       return;

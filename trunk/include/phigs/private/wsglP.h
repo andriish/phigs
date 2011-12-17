@@ -195,7 +195,8 @@ void wsgl_render_element(
  */
 
 int wsx_gl_open_window(
-   Ws *ws
+   Ws *ws,
+   Phg_args_open_ws *args
    );
 
 /*******************************************************************************

@@ -42,6 +42,22 @@
 #define PHIGS_HLHSR_MODE_NONE  0
 #define PHIGS_HLHSR_MODE_ZBUFF 1
 
+/* PHIGS states */
+typedef enum {
+   PSYS_ST_PHCL,
+   PSYS_ST_PHOP
+} Psys_st;
+
+typedef enum {
+   PWS_ST_WSCL,
+   PWS_WSOP
+} Pws_st;
+
+typedef enum {
+   PSTRUCT_ST_STCL,
+   PSTRUCT_ST_STOP
+} Pstruct_st;
+
 typedef enum {
    PELEM_ALL,
    PELEM_NIL,

@@ -36,6 +36,9 @@ static Wst ws_types[] = {
    }
 };
 
+static char default_window_name[] = "Open PHIGS Workstation";
+static char default_icon_name[]    = "Open PHIGS";
+
 /*******************************************************************************
  * popen_ws
  *
@@ -48,24 +51,31 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
    Phg_args_open_ws args;
    Phg_ret ret;
 
-   if (ws_id < 0 || ws_id > MAX_NO_OPEN_WS) {
+   if ((ws_id < 0) ||
+       (ws_id > MAX_NO_OPEN_WS)) {
       fprintf(stderr, "Error invalid workstation: %d\n", ws_id);
-      return;
    }
-
-   if (ws_list[ws_id] == NULL) {
-
+   else if (phg_psl_inq_ws_open(psl, ws_id)) {
+      fprintf(stderr, "Error workstation %d already open\n", ws_id);
+   }
+   else if (!phg_psl_ws_free_slot(psl)) {
+      fprintf(stderr, "Error all workstations in use\n");
+   }
+   else {
+      memset(&args, 0, sizeof(Phg_args_open_ws));
+      args.wsid = ws_id;
       args.type = &ws_types[ws_type];
+      args.window_name = default_window_name;
+      args.icon_name = default_icon_name;
 
       ws_list[ws_id] = phg_wsb_open_ws(&args, &ret);
       if (ws_list[ws_id] == NULL) {
          fprintf(stderr, "Error unable to create workstation: %d\n", ws_id);
-         return;
       }
-
-      ws_list[ws_id]->out_ws.model.b.cssh = css;
-      ws_list[ws_id]->id = ws_id;
-
+      else {
+         ws_list[ws_id]->out_ws.model.b.cssh = css;
+         ws_list[ws_id]->id = ws_id;
+      }
    }
 }
 
