@@ -34,7 +34,6 @@ typedef struct {
    Pint            win_changed;
    Plimit3         curr_vp;
    Pint            vp_changed;
-   Pmatrix3        win_tran;
    Pmatrix3        local_tran, total_tran;
    Pint            curr_view_index;
 } Wsgl;

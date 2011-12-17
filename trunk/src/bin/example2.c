@@ -104,9 +104,9 @@ int main(int argc, char *argv[])
    vp.y_min =   0.0;
    vp.y_max = 200.0;
    win.x_min =  0.0;
-   win.x_max =  1.0;
+   win.x_max =  0.5;
    win.y_min =  0.0;
-   win.y_max =  1.0;
+   win.y_max =  0.5;
    pset_ws_vp(0, &vp);
    pset_ws_win(0, &win);
 
@@ -121,13 +121,13 @@ int main(int argc, char *argv[])
    pset_colr_rep(0, 1, &col_rep);
 
    popen_ws(1, NULL, phigs_ws_type_glx_drawable);
-   vp.x_min = 200.0;
+   vp.x_min =   0.0;
    vp.x_max = 300.0;
-   vp.y_min = 200.0;
+   vp.y_min =   0.0;
    vp.y_max = 300.0;
-   win.x_min =  0.5;
+   win.x_min =  0.0;
    win.x_max =  1.0;
-   win.y_min =  0.5;
+   win.y_min =  0.0;
    win.y_max =  1.0;
    pset_ws_vp(1, &vp);
    pset_ws_win(1, &win);
