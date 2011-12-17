@@ -30,6 +30,15 @@
 #define HEIGHT 0.9
 #define SPACE  1.0
 
+#define VP_X0    0.0
+#define VP_X1  500.0
+#define VP_Y0    0.0
+#define VP_Y1  500.0
+#define WIN_X0   0.0
+#define WIN_X1   1.0
+#define WIN_Y0   0.0
+#define WIN_Y1   1.0
+
 Ppoint3 pts_quad[] = {
    {0.0, 0.0, 0.0},
    {WIDTH, 0.0, 0.0},
@@ -112,14 +121,16 @@ int main(int argc, char *argv[])
    pclose_struct();
 
    popen_ws(0, NULL, phigs_ws_type_glx_drawable);
-   vp.x_min = 100.0;
-   vp.x_max = 600.0;
-   vp.y_min = 100.0;
-   vp.y_max = 600.0;
-   win.x_min = 0.0;
-   win.x_max = 1.0;
-   win.y_min = 0.0;
-   win.y_max = 1.0;
+   vp.x_min = VP_X0;
+   vp.x_max = VP_X1;
+   vp.y_min = VP_Y0;
+   vp.y_max = VP_Y1;
+   vp.z_min = 0.0;
+   vp.z_max = 1.0;
+   win.x_min = WIN_X0;
+   win.x_max = WIN_X1;
+   win.y_min = WIN_Y0;
+   win.y_max = WIN_Y1;
    win.z_min = 0.0;
    win.z_max = 1.0;
    pset_ws_vp3(0, &vp);

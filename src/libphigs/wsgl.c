@@ -153,7 +153,6 @@ int wsgl_init(
       return 0;
 
    memset(wsgl, 0, sizeof(Wsgl));
-   phg_mat_identity(wsgl->win_tran);
 
    ws->render_context = wsgl;
 
@@ -294,54 +293,43 @@ void wsgl_flush(
    Ws *ws
    )
 {
-   float w, h;
-   Pmatrix3 mat1, mat2;
+   Ws_xform ws_xform;
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
    glXMakeCurrent(ws->display, ws->drawable_id, wsgl->glx_context);
 
-   if (wsgl->vp_changed)
-   {
-      wsgl->vp_changed = 0;
+   if (wsgl->vp_changed || wsgl->win_changed) {
+      wsgl_compute_ws_transform(&wsgl->curr_win, &wsgl->curr_vp, &ws_xform);
+      glViewport((GLint)   ws_xform.offset.x,
+                 (GLint)   ws_xform.offset.y,
+                 (GLsizei) ws_xform.scale.x,
+                 (GLsizei) ws_xform.scale.y);
 
-      w = wsgl->curr_vp.x_max - wsgl->curr_vp.x_min;
-      h = wsgl->curr_vp.y_max - wsgl->curr_vp.y_min;
+      if (wsgl->vp_changed) {
+         wsgl->vp_changed = 0;
 
-      XMoveResizeWindow(ws->display, ws->drawable_id,
-                    (int) wsgl->curr_vp.x_min,
-                    (int) wsgl->curr_vp.y_min,
-                    (int) w,
-                    (int) h);
+         ws->ws_rect.x      = (int) wsgl->curr_vp.x_min;
+         ws->ws_rect.y      = (int) wsgl->curr_vp.y_min;
+         ws->ws_rect.width  = (int) wsgl->curr_vp.x_max - wsgl->curr_vp.x_min;
+         ws->ws_rect.height = (int) wsgl->curr_vp.y_max - wsgl->curr_vp.y_min;
 
-       ws->ws_rect.x      = (int) wsgl->curr_vp.x_min;
-       ws->ws_rect.y      = (int) wsgl->curr_vp.y_min;
-       ws->ws_rect.width  = (int) w;
-       ws->ws_rect.height = (int) h;
+#ifdef DEBUG
+         printf("Viewport changed: %d x %d\n",
+                ws->ws_rect.width,
+                ws->ws_rect.height);
+#endif
 
-       glViewport((GLint)   0,
-                  (GLint)   0,
-                  (GLsizei) ws->ws_rect.width,
-                  (GLsizei) ws->ws_rect.height);
+         XResizeWindow(ws->display,
+                       ws->drawable_id,
+                       wsgl->curr_vp.x_max,
+                       wsgl->curr_vp.y_max);
 
-       /* Why do I have to do this again on Radeon Mobility 7500? */
-       glViewport((GLint)   0,
-                  (GLint)   0,
-                  (GLsizei) ws->ws_rect.width,
-                  (GLsizei) ws->ws_rect.height);
-   }
+      }
 
-   if (wsgl->win_changed)
-   {
-      wsgl->win_changed = 0;
-      phg_mat_trans(mat1,
-                    wsgl->curr_win.x_min,
-                    wsgl->curr_win.y_min,
-                    wsgl->curr_win.z_min);
-      phg_mat_scale(mat2,
-                    wsgl->curr_win.x_max - wsgl->curr_win.x_min,
-                    wsgl->curr_win.y_max - wsgl->curr_win.y_min,
-                    wsgl->curr_win.z_max - wsgl->curr_win.z_min);
-      phg_mat_mul(wsgl->win_tran, mat1, mat2);
+      if (wsgl->win_changed) {
+         wsgl->win_changed = 0;
+      }
+
    }
 
    if (wsgl->type->base_type == WST_BASE_TYPE_GLX_DRAWABLE) {
@@ -390,6 +378,18 @@ void wsgl_compute_ws_transform(
    ws_xform->offset.x = ws_vp->x_min - (ws_win->x_min * sxy);
    ws_xform->offset.y = ws_vp->y_min - (ws_win->y_min * sxy);
    ws_xform->offset.z = ws_vp->z_min - (ws_win->z_min * sz);
+
+#ifdef DEBUG
+   printf("Ws transform:\n"
+          "%f %f %f\n"
+          "%f %f %f\n",
+          ws_xform->scale.x,
+          ws_xform->scale.y,
+          ws_xform->scale.z,
+          ws_xform->offset.x,
+          ws_xform->offset.y,
+          ws_xform->offset.z);
+#endif
 }
 
 /*******************************************************************************
@@ -599,8 +599,6 @@ static void phg_update_projection(
    Pint view_index
    )
 {
-   Pmatrix3 mat;
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
    Ws_view_entry *view_entry = &ws->out_ws.model.b.views[view_index];
 
 #ifdef DEBUG
@@ -608,8 +606,7 @@ static void phg_update_projection(
 #endif
 
    glMatrixMode(GL_PROJECTION);
-   phg_mat_mul(mat, wsgl->win_tran, view_entry->vmm);
-   phg_set_matrix(mat);
+   phg_set_matrix(view_entry->vmm);
 }
 
 /*******************************************************************************
