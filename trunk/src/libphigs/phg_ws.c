@@ -82,9 +82,6 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
 
          /* Store workstation id in workstation structure */
          ws_list[ws_id]->id = ws_id;
-
-         /* Update global state list to reflect that a workstation is open */
-         PSL_WS_STATE(psl) = PWS_ST_WSOP;
       }
    }
 }
