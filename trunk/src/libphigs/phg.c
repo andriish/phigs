@@ -29,10 +29,10 @@
 #include <phigs/css.h>
 #include <phigs/ws.h>
 
+Err_handle erh;
 Psl_handle psl;
-Ws_handle  *ws_list;
 Css_handle css;
-Err_struct err_hdl;
+Ws_handle  *ws_list;
 
 /*******************************************************************************
  * popen_phigs
@@ -43,6 +43,12 @@ Err_struct err_hdl;
 
 void popen_phigs(char *error_file, size_t memory)
 {
+   erh = phg_erh_create();
+   if (erh == NULL) {
+      fprintf(stderr, "Error unable to create error handler\n");
+      return;
+   }
+
    psl = phg_psl_create();
    if (psl == NULL) {
       fprintf(stderr, "Error unable to create state list\n");
@@ -57,7 +63,7 @@ void popen_phigs(char *error_file, size_t memory)
    }
    memset(ws_list, 0, sizeof(Ws_handle) * MAX_NO_OPEN_WS);
 
-   css = phg_css_init(&err_hdl, SSH_CSS);
+   css = phg_css_init(erh, SSH_CSS);
    if (css == NULL) {
       phg_psl_destroy(psl);
       free(ws_list);

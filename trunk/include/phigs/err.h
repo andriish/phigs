@@ -76,4 +76,37 @@ typedef Err_struct *Err_handle;
 #define ERR_DESTROY(erh) \
     if ((erh)->destroy_func) (*(erh)->destroy_func)(erh)
 
+/*******************************************************************************
+ * phg_erh_create
+ *
+ * DESCR:       Create error handler
+ * RETURNS:     Pointer to handler or NULL
+ */
+
+Err_handle phg_erh_create(
+   void
+   );
+
+/*******************************************************************************
+ * phg_erh_init
+ *
+ * DESCR:       Initialize error handler
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_erh_init(
+   Err_handle erh
+   );
+
+/*******************************************************************************
+ * phg_erh_destroy
+ * 
+ * DESCR:       Initialize error handler
+ * RETURNS:     TRUE or FALSE
+ */
+ 
+void phg_erh_destroy(
+   Err_handle erh
+   );
+
 #endif

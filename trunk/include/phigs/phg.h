@@ -40,7 +40,10 @@
    ((val >= 0) ? (val) : (val) * -1)
 #endif
 
+extern Err_handle erh;
 extern Psl_handle psl;
+extern Css_handle css;
+extern Ws_handle  *ws_list;
 
 #endif
 

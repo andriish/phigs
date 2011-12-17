@@ -373,8 +373,6 @@ typedef struct _Ws {
     && (pt)->y >= (lim)->y_min && (pt)->y <= (lim)->y_max \
     && (pt)->z >= (lim)->z_min && (pt)->z <= (lim)->z_max)
 
-extern Ws_handle  *ws_list;
-
 Ws* phg_wsb_open_ws(
     Phg_args_open_ws *args,
     Phg_ret *ret
