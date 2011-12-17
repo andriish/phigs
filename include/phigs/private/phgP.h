@@ -28,8 +28,6 @@
 #include <phigs/phg_el.h>
 #include <phigs/private/cssP.h>
 
-#define MAX_NO_OPEN_WS			20
-
 typedef struct {
    Pline_bundle   line_bundle;
    Pmarker_bundle marker_bundle;

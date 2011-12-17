@@ -180,7 +180,7 @@ int wsgl_open_window(
 #ifdef DEBUG
       printf("Open GLX drawable workstation\n");
 #endif
-      ret = wsx_gl_open_window(ws);
+      ret = wsx_gl_open_window(ws, args);
    }
    else {
       ret = 0;

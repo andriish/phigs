@@ -59,7 +59,8 @@ static Colormap wsx_gl_get_sharable_colormap(
  */
 
 int wsx_gl_open_window(
-   Ws *ws
+   Ws *ws,
+   Phg_args_open_ws *args
    )
 {
    XVisualInfo *vi;
@@ -67,6 +68,16 @@ int wsx_gl_open_window(
    XSetWindowAttributes wattr;
    int screen_num;
    Wsgl *wsgl = (Wsgl *) ws->render_context;
+
+#ifdef DEBUG
+   printf("Open workstation window:\n"
+          "wsid:                   %d\n"
+          "window name:            %s\n"
+          "icon name:              %s\n",
+          args->wsid,
+          args->window_name,
+          args->icon_name);
+#endif
 
    ws->display = XOpenDisplay(NULL);
    if (ws->display == NULL) {
@@ -126,8 +137,8 @@ int wsx_gl_open_window(
 
    XSetStandardProperties(ws->display,
                           ws->drawable_id,
-                          "Open PHIGS Workstation",
-                          "Open PHIGS",
+                          args->window_name,
+                          args->icon_name,
                           None,
                           arglist,
                           0,
