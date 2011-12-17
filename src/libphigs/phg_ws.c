@@ -51,15 +51,11 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
    Phg_args_open_ws args;
    Phg_ret ret;
 
-   if ((ws_id < 0) ||
-       (ws_id > MAX_NO_OPEN_WS)) {
-      fprintf(stderr, "Error invalid workstation: %d\n", ws_id);
-   }
-   else if (phg_psl_inq_ws_open(psl, ws_id)) {
-      fprintf(stderr, "Error workstation %d already open\n", ws_id);
+   if (phg_psl_inq_ws_open(psl, ws_id)) {
+      ERR_REPORT(erh, ERR53);
    }
    else if (!phg_psl_ws_free_slot(psl)) {
-      fprintf(stderr, "Error all workstations in use\n");
+      ERR_REPORT(erh, ERR63);
    }
    else {
       memset(&args, 0, sizeof(Phg_args_open_ws));
