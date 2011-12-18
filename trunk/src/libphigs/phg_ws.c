@@ -54,7 +54,7 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
    ERR_SET_CUR_FUNC(erh, Pfn_open_ws);
 
    if ((ws_id < 0) || (ws_id > MAX_NO_OPEN_WS)) {
-      ERR_REPORT(erh, ERR63);
+      ERR_REPORT(erh, ERR65);
    }
    else if (phg_psl_inq_ws_open(psl, ws_id)) {
       ERR_REPORT(erh, ERR53);

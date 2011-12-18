@@ -112,6 +112,7 @@
 #define	ERR62	  62
 #define	ERR63	  63
 #define	ERR64	  64
+#define	ERR65	  65
 #define	ERR100	 100
 #define	ERR101	 101
 #define	ERR102	 102
