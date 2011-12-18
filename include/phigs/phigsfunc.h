@@ -495,13 +495,13 @@ void pset_local_tran3(
    );
 
 /*******************************************************************************
- * pset_view_ind3
+ * pset_view_ind
  *
  * DESCR:       Creates a new element - Set view index
  * RETURNS:     N/A
  */
 
-void pset_view_ind3(
+void pset_view_ind(
    Pint index
    );
 
@@ -727,7 +727,7 @@ void pset_edge_flag(
    );
 
 /*******************************************************************************
- * pset_edgetwidth
+ * pset_edgewidth
  *
  * DESCR:       Creates a new element - Edge Width Attribute
  * RETURNS:     N/A

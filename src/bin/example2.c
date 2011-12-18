@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
    pclose_struct();
 
    popen_struct(3);
-   pset_view_ind3(view_index);
+   pset_view_ind(view_index);
    pset_int_colr_ind(0);
    pexec_struct(0);
    pexec_struct(1);
