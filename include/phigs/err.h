@@ -58,6 +58,7 @@ typedef struct {
 typedef Err_struct *Err_handle;
 
 extern void (*phg_errhandle)();
+extern char *phg_fn[];
 
 #define ERR_SET_CUR_FUNC(erh, funcnum) \
     ((erh)->cur_func_num = (funcnum))
