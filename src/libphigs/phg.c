@@ -43,7 +43,7 @@ Ws_handle  *ws_list;
 
 void popen_phigs(char *error_file, size_t memory)
 {
-   erh = phg_erh_create();
+   erh = phg_erh_create(error_file);
    if (erh == NULL) {
       fprintf(stderr, "Error unable to create error handler\n");
       return;

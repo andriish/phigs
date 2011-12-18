@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
       printf("Use view: %d\n", view_index);
    }
 
-   popen_phigs("", 0);
+   popen_phigs(NULL, 0);
 
    popen_struct(0);
    pset_linetype(PLINE_DASH);
