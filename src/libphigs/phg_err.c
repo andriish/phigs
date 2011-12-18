@@ -91,6 +91,7 @@ Err_handle phg_erh_create(
       return NULL;
 
    if (!phg_erh_init(erh, err_file)) {
+      ERR_HANDLE(ERR900, Pfn_open_phigs, err_file);
       free(erh);
       return NULL;
    }
@@ -110,17 +111,24 @@ int phg_erh_init(
    char *err_file
    )
 {
-   if (phg_err_store_name(erh, err_file, &erh->data.local.fname)) {
-      erh->mode          = PERR_ON;
-      erh->err_state     = PERR_ON;
-      erh->cur_func_num  = 0;
-      erh->buf_func      = err_buf_local;
-      erh->flush_func    = err_flush_local;
-      erh->report_func   = err_buf_local;
-      erh->destroy_func  = err_destroy_local;
+   int status;
+
+   erh->mode          = PERR_ON;
+   erh->err_state     = PERR_ON;
+   erh->cur_func_num  = Pfn_open_phigs;
+   erh->buf_func      = err_buf_local;
+   erh->flush_func    = err_flush_local;
+   erh->report_func   = err_buf_local;
+   erh->destroy_func  = err_destroy_local;
+
+   if (!phg_err_store_name(erh, err_file, &erh->data.local.fname)) {
+      status = FALSE;
+   }
+   else {
+      status = TRUE;
    }
 
-   return TRUE;
+   return status;
 }
 
 /*******************************************************************************
