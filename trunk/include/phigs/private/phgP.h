@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include <phigs/ws.h>
 #include <phigs/phg.h>
-#include <phigs/phg_el.h>
 #include <phigs/private/cssP.h>
 
 typedef struct {

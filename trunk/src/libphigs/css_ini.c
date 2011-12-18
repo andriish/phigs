@@ -70,6 +70,7 @@ SOFTWARE.
 #include <phigs/phg.h>
 #include <phigs/css.h>
 #include <phigs/private/phgP.h>
+#include <phigs/private/hdlP.h>
 #include <phigs/private/cssP.h>
 
 #define CSS_STAB_SIZE		1009

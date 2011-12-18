@@ -203,56 +203,572 @@
 #define		Pfn_set_err_hand_mode		(179)
 #define		Pfn_escape			(180)
 
-void popen_phigs(char *error_file, size_t memory);
-void popen_ws(Pint ws_id, void *conn_id, Pint ws_type);
-void pset_ws_vp(Pint ws_id, Plimit *viewport);
-void pset_ws_vp3(Pint ws_id, Plimit3 *viewport);
-void pset_ws_win(Pint ws_id, Plimit *window);
-void pset_ws_win3(Pint ws_id, Plimit3 *window);
-void ppost_struct(Pint ws_id, Pint struct_id, Pfloat priority);
-void popen_struct(Pint struct_id);
-void pclose_struct(void);
-void pset_elem_ptr(Pint elem_ptr_value);
-void poffset_elem_ptr(Pint elem_ptr_offset);
-void pset_elem_ptr_label(Pint label_id);
-void pdel_elem(void);
-void pdel_elem_range(Pint elem_ptr1_value, Pint elem_ptr2_value);
-void pdel_elems_labels(Pint label1_id, Pint label2_id);
-void pinq_elem_ptr(Pint *err_ind, Pint *elem_ptr_value);
-void pinq_open_struct(Pint *err_ind,
-    Popen_struct_status *status,
-    Pint *struct_id);
-void pcopy_all_elems_struct(Pint struct_id);
-void padd_names_set(Pint_list *names);
-void premove_names_set(Pint_list *names);
-void pset_local_tran(Pmatrix local_tran, Pcompose_type compose_type);
-void pset_local_tran3(Pmatrix3 local_tran, Pcompose_type compose_type);
-void pset_view_ind3(Pint index);
-void ptext(Ppoint *text_pos, char *char_string);
-void ppolyline(Ppoint_list *point_list);
-void ppolyline3(Ppoint_list3 *point_list);
-void ppolymarker(Ppoint_list *point_list);
-void ppolymarker3(Ppoint_list3 *point_list);
-void pfill_area(Ppoint_list *point_list);
-void pfill_area3(Ppoint_list3 *point_list);
-void plabel(Pint label_id);
-void pset_pick_id(Pint pick_id);
-void pset_int_colr_ind(Pint colr_ind);
-void pset_int_style(Pint_style int_style);
-void pset_line_colr_ind(Pint colr_ind);
-void pset_linewidth(Pfloat linewidth);
-void pset_linetype(Pint linetype);
-void pset_marker_colr_ind(Pint colr_ind);
-void pset_marker_size(Pfloat marker_size);
-void pset_marker_type(Pint marker_type);
-void pset_edge_colr_ind(Pint colr_ind);
-void pset_edgetype(Pint edgetype);
-void pset_edge_flag(Pedge_flag edge_flag);
-void pset_edgewidth(Pfloat edgewidth);
-void pset_text_font(Pint font);
-void pset_text_colr_ind(Pint colr_ind);
-void pexec_struct(Pint struct_id);
-void pset_colr_rep(Pint ws, Pint index, Pcolr_rep *rep);
+/*******************************************************************************
+ * popen_phigs
+ *
+ * DESCR:       Open phigs
+ * RETURNS:     N/A
+ */
+
+void popen_phigs(
+   char *error_file,
+   size_t memory
+   );
+
+/*******************************************************************************
+ * popen_ws
+ *
+ * DESCR:       Open workstation
+ * RETURNS:     N/A
+ */
+
+void popen_ws(
+   Pint ws_id,
+   void *conn_id,
+   Pint ws_type
+   );
+
+/*******************************************************************************
+ * pset_ws_vp
+ *
+ * DESCR:       Set workstation viewport
+ * RETURNS:     N/A
+ */
+
+void pset_ws_vp(
+   Pint ws_id,
+   Plimit *viewport
+   );
+
+/*******************************************************************************
+ * pset_ws_vp3
+ *
+ * DESCR:       Set workstation viewport
+ * RETURNS:     N/A
+ */
+
+void pset_ws_vp3(
+   Pint ws_id,
+   Plimit3 *viewport
+   );
+
+/*******************************************************************************
+ * pset_ws_win
+ *
+ * DESCR:       Set workstation window
+ * RETURNS:     N/A
+ */
+
+void pset_ws_win(
+   Pint ws_id,
+   Plimit *window
+   );
+
+/*******************************************************************************
+ * pset_ws_win3
+ *
+ * DESCR:       Set workstation window
+ * RETURNS:     N/A
+ */
+
+void pset_ws_win3(
+   Pint ws_id,
+   Plimit3 *window
+   );
+
+/*******************************************************************************
+ * pset_colr_rep
+ *
+ * DESCR:       Set workstation colour representation
+ * RETURNS:     N/A
+ */
+
+void pset_colr_rep(
+   Pint ws,
+   Pint index,
+   Pcolr_rep *rep
+   );
+
+/*******************************************************************************
+ * ppost_struct
+ *
+ * DESCR:       Post structure to workstation
+ * RETURNS:     N/A
+ */
+
+void ppost_struct(
+   Pint ws_id,
+   Pint struct_id,
+   Pfloat priority
+   );
+
+/*******************************************************************************
+ * popen_struct
+ *
+ * DESCR:       Opens a structure for appending or editing.
+ * RETURNS:     N/A
+ */
+
+void popen_struct(
+   Pint struct_id
+   );
+
+/*******************************************************************************
+ * pclose_struct
+ *
+ * DESCR:       Closes a previously opened structure.
+ * RETURNS:     N/A
+ */
+
+void pclose_struct(
+   void
+   );
+
+/*******************************************************************************
+ * pset_elem_ptr
+ *
+ * DESCR:       Make the requested index the "currently active element".
+ *              NOTE: 0 means set element to even before the very first
+ *              element; 1 means set elptr to very first element.
+ * RETURNS:     N/A
+ */
+
+void pset_elem_ptr(
+   Pint elem_ptr_value
+   );
+
+/*******************************************************************************
+ * poffset_elem_ptr
+ *
+ * DESCR:       Offsets the element pointer forward by the given number of
+ *              elements.
+ *              Internal call to pset_elem_ptr does the verification work
+ *              on the index.
+ * RETURNS:     N/A
+ */
+
+void poffset_elem_ptr(
+   Pint elem_ptr_offset
+   );
+
+/*******************************************************************************
+ * pset_elem_ptr_label
+ *
+ * DESCR:       Searches forward in the structure list for the specified
+ *              label, and makes that the current element.  Search begins
+ *              with the element after (to the right) of the current one.
+ *              Question: should I include the current element in the search?
+ *              Or does the search begin with the first element after the
+ *              current one?
+ *              This version gives fatal error if label not found.
+ * RETURNS:     N/A
+ */
+
+void pset_elem_ptr_label(
+   Pint label_id
+   );
+
+/*******************************************************************************
+ * pdel_elem
+ *
+ * DESCR:       Deletes the current element.  The element pointer is left
+ *              pointing to the element just before (to the left) the one to
+ *              be killed, if any.
+ * RETURNS:     N/A
+ */
+
+void pdel_elem(
+   void
+   );
+
+/*******************************************************************************
+ * pdel_elem_range
+ *
+ * DESCR:       Deletes all elements within and on the bounds of the given
+ *              range.  The element pointer is left pointing to the element
+ *              just prior to the first element deleted.
+ * RETURNS:     N/A
+ */
+
+void pdel_elem_range(
+   Pint elem_ptr1_value,
+   Pint elem_ptr2_value
+   );
+
+/*******************************************************************************
+ * pdel_elems_labels
+ *
+ * DESCR:       Deletes all elements in the structure that lie between the
+ *              given labels, but not the labels themselves.  The element
+ *              pointer is left pointing to the first label.
+ * RETURNS:     N/A
+ */
+
+void pdel_elems_labels(
+   Pint label1_id,
+   Pint label2_id
+   );
+
+/*******************************************************************************
+ * pcopy_all_elems_struct
+ *
+ * DESCR:       Copies the elements of another structure into the open
+ *              structure after the current element, which is updated to
+ *              point to the last element inserted.  A structure can be
+ *              copied into itself.
+ * RETURNS:     N/A
+ */
+
+void pcopy_all_elems_struct(
+   Pint struct_id
+   );
+
+/*******************************************************************************
+ * pinq_elem_ptr
+ *
+ * DESCR:       Returns the index of the current element.
+ * RETURNS:     N/A
+ */
+
+void pinq_elem_ptr(
+   Pint *err_ind,
+   Pint *elem_ptr_value
+   );
+
+/*******************************************************************************
+ * pinq_open_struct
+ *
+ * DESCR:       Check if a structure is open for appending or editing.
+ * RETURNS:     N/A
+ */
+
+void pinq_open_struct(
+   Pint *err_ind,
+   Popen_struct_status *status,
+   Pint *struct_id
+   );
+
+/*******************************************************************************
+ * padd_names_set
+ *
+ * DESCR:       Creates a new element - name set Inclusion
+ * RETURNS:     N/A
+ */
+
+void padd_names_set(
+   Pint_list *names
+   );
+
+/*******************************************************************************
+ * premove_names_set
+ *
+ * DESCR:       Creates a new element - name set Remover
+ * RETURNS:     N/A
+ */
+
+void premove_names_set(
+   Pint_list *names
+   );
+
+/*******************************************************************************
+ * pset_local_tran
+ *
+ * DESCR:       Creates a new element - Set local model space transofmation
+ * RETURNS:     N/A
+ */
+
+void pset_local_tran(
+   Pmatrix local_tran,
+   Pcompose_type compose_type
+   );
+
+/*******************************************************************************
+ * pset_local_tran3
+ *
+ * DESCR:       Creates a new element - Set local model space transofmation 3D
+ * RETURNS:     N/A
+ */
+
+void pset_local_tran3(
+   Pmatrix3 local_tran,
+   Pcompose_type compose_type
+   );
+
+/*******************************************************************************
+ * pset_view_ind3
+ *
+ * DESCR:       Creates a new element - Set view index
+ * RETURNS:     N/A
+ */
+
+void pset_view_ind3(
+   Pint index
+   );
+
+/*******************************************************************************
+ * ptext
+ *
+ * DESCR:       Creates a new element - Text
+ * RETURNS:     N/A
+ */
+
+void ptext(
+   Ppoint *text_pos,
+   char *char_string
+   );
+
+/*******************************************************************************
+ * ppolyline
+ *
+ * DESCR:       Creates a new element - Polyline
+ * RETURNS:     N/A
+ */
+
+void ppolyline(
+   Ppoint_list *point_list
+   );
+
+/*******************************************************************************
+ * ppolyline3
+ *
+ * DESCR:       Creates a new element - Polyline 3D
+ * RETURNS:     N/A
+ */
+
+void ppolyline3(
+   Ppoint_list3 *point_list
+   );
+
+/*******************************************************************************
+ * ppolymarker
+ *
+ * DESCR:       Creates a new element - Polymarker
+ * RETURNS:     N/A
+ */
+
+void ppolymarker(
+   Ppoint_list *point_list
+   );
+
+/*******************************************************************************
+ * ppolymarker3
+ *
+ * DESCR:       Creates a new element - Polymarker 3D
+ * RETURNS:     N/A
+ */
+
+void ppolymarker3(
+   Ppoint_list3 *point_list
+   );
+
+/*******************************************************************************
+ * pfill_area
+ *
+ * DESCR:       Creates a new element - Fill area
+ * RETURNS:     N/A
+ */
+
+void pfill_area(
+   Ppoint_list *point_list
+   );
+
+/*******************************************************************************
+ * pfill_area3
+ *
+ * DESCR:       Creates a new element - Fill area 3D
+ * RETURNS:     N/A
+ */
+
+void pfill_area3(
+   Ppoint_list3 *point_list
+   );
+
+/*******************************************************************************
+ * plabel
+ *
+ * DESCR:       Creates a new element - Label
+ * RETURNS:     N/A
+ */
+
+void plabel(
+   Pint label_id
+   );
+
+/*******************************************************************************
+ * pset_pick_id
+ *
+ * DESCR:       Creates a new element - Pick ID
+ * RETURNS:     N/A
+ */
+
+void pset_pick_id(
+   Pint pick_id
+   );
+
+/*******************************************************************************
+ * pset_int_colr_ind
+ *
+ * DESCR:       Creates a new element - Facet Color Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_int_colr_ind(
+   Pint colr_ind
+   );
+
+/*******************************************************************************
+ * pset_int_style
+ *
+ * DESCR:       Creates a new element - Face Interiour Style
+ * RETURNS:     N/A
+ */
+
+void pset_int_style(
+   Pint_style int_style
+   );
+
+/*******************************************************************************
+ * pset_line_colr_ind
+ *
+ * DESCR:       Creates a new element - Line Color Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_line_colr_ind(
+   Pint colr_ind
+   );
+
+/*******************************************************************************
+ * pset_linewidth
+ *
+ * DESCR:       Creates a new element - Line Width Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_linewidth(
+   Pfloat linewidth
+   );
+
+/*******************************************************************************
+ * pset_linetype
+ *
+ * DESCR:       Creates a new element - Line Type Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_linetype(
+   Pint linetype
+   );
+
+/*******************************************************************************
+ * pset_marker_colr_ind
+ *
+ * DESCR:       Creates a new element - Marker Color Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_marker_colr_ind(
+   Pint colr_ind
+   );
+
+/*******************************************************************************
+ * pset_marker_size
+ *
+ * DESCR:       Creates a new element - Marker Size Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_marker_size(
+   Pfloat marker_size
+   );
+
+/*******************************************************************************
+ * pset_marker_type
+ *
+ * DESCR:       Creates a new element - Marker Type Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_marker_type(
+   Pint marker_type
+   );
+
+/*******************************************************************************
+ * pset_edge_colr_ind
+ *
+ * DESCR:       Creates a new element - Edge Color Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_edge_colr_ind(
+   Pint colr_ind
+   );
+
+/*******************************************************************************
+ * pset_edgetype
+ *
+ * DESCR:       Creates a new element - Edge Type Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_edgetype(
+   Pint edgetype
+   );
+
+/*******************************************************************************
+ * pset_edge_flag
+ *
+ * DESCR:       Creates a new element - Edge Flag Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_edge_flag(
+   Pedge_flag edge_flag
+   );
+
+/*******************************************************************************
+ * pset_edgetwidth
+ *
+ * DESCR:       Creates a new element - Edge Width Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_edgewidth(
+   Pfloat edgewidth
+   );
+
+/*******************************************************************************
+ * pset_text_font
+ *
+ * DESCR:       Creates a new element - Text Font Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_text_font(
+   Pint font
+   );
+
+/*******************************************************************************
+ * pset_text_colr_ind
+ *
+ * DESCR:       Creates a new element - Text Color Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_text_colr_ind(
+   Pint colr_ind
+   );
+
+/*******************************************************************************
+ * pexec_struct
+ *
+ * DESCR:       Creates a new element - Nested Structure
+ * RETURNS:     N/A
+ */
+
+void pexec_struct(
+   Pint struct_id
+   );
 
 #endif /* _phigsfunc_h */
 

@@ -46,7 +46,11 @@ static char default_icon_name[]    = "Open PHIGS";
  * RETURNS:	N/A
  */
 
-void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
+void popen_ws(
+   Pint ws_id,
+   void *conn_id,
+   Pint ws_type
+   )
 {
    Phg_args_open_ws args;
    Phg_ret ret;
@@ -97,7 +101,10 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
  * RETURNS:	N/A
  */
 
-void pset_ws_vp(Pint ws_id, Plimit *viewport)
+void pset_ws_vp(
+   Pint ws_id,
+   Plimit *viewport
+   )
 {
    Plimit3 vp;
    Ws_handle wsh = ws_list[ws_id];
@@ -117,7 +124,10 @@ void pset_ws_vp(Pint ws_id, Plimit *viewport)
  * RETURNS:	N/A
  */
 
-void pset_ws_vp3(Pint ws_id, Plimit3 *viewport)
+void pset_ws_vp3(
+   Pint ws_id,
+   Plimit3 *viewport
+   )
 {
    Ws_handle wsh = ws_list[ws_id];
 
@@ -131,7 +141,10 @@ void pset_ws_vp3(Pint ws_id, Plimit3 *viewport)
  * RETURNS:	N/A
  */
 
-void pset_ws_win(Pint ws_id, Plimit *window)
+void pset_ws_win(
+   Pint ws_id,
+   Plimit *window
+   )
 {
    Plimit3 win;
    Ws_handle wsh = ws_list[ws_id];
@@ -151,7 +164,10 @@ void pset_ws_win(Pint ws_id, Plimit *window)
  * RETURNS:	N/A
  */
 
-void pset_ws_win3(Pint ws_id, Plimit3 *window)
+void pset_ws_win3(
+   Pint ws_id,
+   Plimit3 *window
+   )
 {
    Ws_handle wsh = ws_list[ws_id];
 
@@ -165,7 +181,11 @@ void pset_ws_win3(Pint ws_id, Plimit3 *window)
  * RETURNS:	N/A
  */
 
-void ppost_struct(Pint ws_id, Pint struct_id, Pfloat priority)
+void ppost_struct(
+   Pint ws_id,
+   Pint struct_id,
+   Pfloat priority
+   )
 {
    int status;
    Struct_handle structp;

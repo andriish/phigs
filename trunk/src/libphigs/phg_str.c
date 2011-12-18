@@ -31,7 +31,9 @@
  * RETURNS:	N/A
  */
 
-void popen_struct(Pint struct_id)
+void popen_struct(
+   Pint struct_id
+   )
 {
    phg_css_open_struct(css, struct_id);
 }
@@ -43,7 +45,9 @@ void popen_struct(Pint struct_id)
  * RETURNS:	N/A
  */
 
-void pclose_struct(void)
+void pclose_struct(
+   void
+   )
 {
    Struct_handle str;
    Css_ws_list   ws_list;
@@ -66,7 +70,9 @@ void pclose_struct(void)
  * RETURNS:	N/A
  */
 
-void pset_elem_ptr(Pint elem_ptr_value)
+void pset_elem_ptr(
+   Pint elem_ptr_value
+   )
 {
    El_handle   ep;
    Css_ws_list ws_list;
@@ -91,7 +97,9 @@ void pset_elem_ptr(Pint elem_ptr_value)
  * RETURNS:	N/A
  */
 
-void poffset_elem_ptr(Pint elem_ptr_offset)
+void poffset_elem_ptr(
+   Pint elem_ptr_offset
+   )
 {
    El_handle   ep;
    Css_ws_list ws_list;
@@ -119,7 +127,9 @@ void poffset_elem_ptr(Pint elem_ptr_offset)
  * RETURNS:	N/A
  */
 
-void pset_elem_ptr_label(Pint label_id)
+void pset_elem_ptr_label(
+   Pint label_id
+   )
 {
    El_handle   ep;
    Css_ws_list ws_list;
@@ -143,7 +153,9 @@ void pset_elem_ptr_label(Pint label_id)
  * RETURNS:	N/A
  */
 
-void pdel_elem(void)
+void pdel_elem(
+   void
+   )
 {
    El_handle            ep1, ep2;
    Phg_args_del_el_data data;
@@ -183,7 +195,10 @@ void pdel_elem(void)
  * RETURNS:	N/A
  */
 
-void pdel_elem_range(Pint elem_ptr1_value, Pint elem_ptr2_value)
+void pdel_elem_range(
+   Pint elem_ptr1_value,
+   Pint elem_ptr2_value
+   )
 {
    El_handle            ep1, ep2;
    Phg_args_del_el_data data;
@@ -225,7 +240,10 @@ void pdel_elem_range(Pint elem_ptr1_value, Pint elem_ptr2_value)
  * RETURNS:	N/A
  */
 
-void pdel_elems_labels(Pint label1_id, Pint label2_id)
+void pdel_elems_labels(
+   Pint label1_id,
+   Pint label2_id
+   )
 {
    El_handle            ep1, ep2;
    Phg_args_del_el_data data;
@@ -268,7 +286,9 @@ void pdel_elems_labels(Pint label1_id, Pint label2_id)
  * RETURNS:	N/A
  */
 
-void pcopy_all_elems_struct(Pint struct_id)
+void pcopy_all_elems_struct(
+   Pint struct_id
+   )
 {
    El_handle     ep;
    Struct_handle str;
