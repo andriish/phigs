@@ -41,7 +41,10 @@ Ws_handle  *ws_list;
  * RETURNS:     N/A
  */
 
-void popen_phigs(char *error_file, size_t memory)
+void popen_phigs(
+   char *error_file,
+   size_t memory
+   )
 {
    erh = phg_erh_create(error_file);
    if (erh == NULL) {

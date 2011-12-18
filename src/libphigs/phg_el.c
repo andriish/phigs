@@ -28,607 +28,16 @@
 #define UNDEF_COLR_IND         0
 
 /*******************************************************************************
- * phg_handle_names_set
- *
- * DESCR:	Handle nameset
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_names_set(Css_handle cssh,
-                         El_handle elmt,
-                         caddr_t argdata,
-                         Css_el_op op)
-{
-   int n;
-   Pint_list *data, *names;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         names = &ARGS_ELMT_DATA(argdata).names;
-         n = names->num_ints;
-         data = malloc(sizeof(Pint_list) + n * sizeof(Pint));
-         if (data == NULL)
-            return (FALSE);
-
-         data->num_ints = n;
-         data->ints = (Pint *) &data[1];
-         memcpy(data->ints, names->ints, sizeof(Pint) * n);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         names = &ARGS_ELMT_DATA(argdata).names;
-         n = names->num_ints;
-         data = realloc(ELMT_DATA_PTR(elmt),
-                        sizeof(Pint_list) + n * sizeof(Pint));
-         if (data == NULL)
-            return (FALSE);
-
-         data->num_ints = n;
-         data->ints = (Pint *) &data[1];
-         memcpy(data->ints, names->ints, sizeof(Pint) * n);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_COPY:
-         n = PHG_DATA_INT_LIST(argdata)->num_ints;
-         data = malloc(sizeof(Pint_list) + n * sizeof(Pint));
-         if (data == NULL)
-            return (FALSE);
-
-         data->num_ints = n;
-         data->ints = (Pint *) &data[1];
-         memcpy(data->ints,
-                PHG_DATA_INT_LIST(argdata)->ints,
-                sizeof(Pint) * n);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_local_tran
- *
- * DESCR:	Handle local transformation
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_local_tran(Css_handle cssh,
-                          El_handle elmt,
-                          caddr_t argdata,
-                          Css_el_op op)
-{
-   Plocal_tran *data;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         data = malloc(sizeof(Plocal_tran));
-         if (data == NULL)
-            return (FALSE);
-
-         data->compose_type = ARGS_ELMT_DATA(argdata).local_tran.compose_type;
-         phg_mat_copy_3x3(data->matrix,
-                          ARGS_ELMT_DATA(argdata).local_tran.matrix);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         data = (Plocal_tran *) elmt->eldata.ptr;
-         data->compose_type = ARGS_ELMT_DATA(argdata).local_tran.compose_type;
-         phg_mat_copy_3x3(data->matrix,
-                          ARGS_ELMT_DATA(argdata).local_tran.matrix);
-      break;
-
-      case CSS_EL_COPY:
-         data = malloc(sizeof(Plocal_tran));
-         if (data == NULL)
-            return (FALSE);
-
-         data->compose_type = PHG_DATA_LOCAL_TRAN(argdata)->compose_type;
-         phg_mat_copy_3x3(data->matrix, PHG_DATA_LOCAL_TRAN(argdata)->matrix);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_local_tran3
- *
- * DESCR:	Handle local transformation 3D
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_local_tran3(Css_handle cssh,
-                           El_handle elmt,
-                           caddr_t argdata,
-                           Css_el_op op)
-{
-   Plocal_tran3 *data;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         data = malloc(sizeof(Plocal_tran3));
-         if (data == NULL)
-            return (FALSE);
-
-         data->compose_type = ARGS_ELMT_DATA(argdata).local_tran3.compose_type;
-         phg_mat_copy(data->matrix, ARGS_ELMT_DATA(argdata).local_tran3.matrix);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         data = (Plocal_tran3 *) elmt->eldata.ptr;
-         data->compose_type = ARGS_ELMT_DATA(argdata).local_tran3.compose_type;
-         phg_mat_copy(data->matrix, ARGS_ELMT_DATA(argdata).local_tran3.matrix);
-      break;
-
-      case CSS_EL_COPY:
-         data = malloc(sizeof(Plocal_tran3));
-         if (data == NULL)
-            return (FALSE);
-
-         data->compose_type = PHG_DATA_LOCAL_TRAN3(argdata)->compose_type;
-         phg_mat_copy(data->matrix, PHG_DATA_LOCAL_TRAN3(argdata)->matrix);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_point_list
- *
- * DESCR:	Handle point list
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_point_list(Css_handle cssh,
-                          El_handle elmt,
-                          caddr_t argdata,
-                          Css_el_op op)
-{
-   int n;
-   Ppoint_list *data, *point_list;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         point_list = &ARGS_ELMT_DATA(argdata).point_list;
-         n = point_list->num_points;
-         data = malloc(sizeof(Ppoint_list) + n * sizeof(Ppoint));
-         if (data == NULL)
-            return (FALSE);
-
-         data->num_points = n;
-         data->points = (Ppoint *) &data[1];
-         memcpy(data->points, point_list->points, sizeof(Ppoint) * n);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         point_list = &ARGS_ELMT_DATA(argdata).point_list;
-         n = point_list->num_points;
-         data = realloc(ELMT_DATA_PTR(elmt),
-                        sizeof(Ppoint_list) + n * sizeof(Ppoint));
-         if (data == NULL)
-            return (FALSE);
-
-         data->num_points = n;
-         data->points = (Ppoint *) &data[1];
-         memcpy(data->points, point_list->points, sizeof(Ppoint) * n);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_COPY:
-         n = PHG_DATA_POINT_LIST(argdata)->num_points;
-         data = malloc(sizeof(Ppoint_list) + n * sizeof(Ppoint));
-         if (data == NULL)
-            return (FALSE);
-
-         data->num_points = n;
-         data->points = (Ppoint *) &data[1];
-         memcpy(data->points,
-                PHG_DATA_POINT_LIST(argdata)->points,
-                sizeof(Ppoint) * n);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_point_list3
- *
- * DESCR:	Handle point list 3D
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_point_list3(Css_handle cssh,
-                           El_handle elmt,
-                           caddr_t argdata,
-                           Css_el_op op)
-{
-   int n;
-   Ppoint_list3 *data, *point_list;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         point_list = &ARGS_ELMT_DATA(argdata).point_list3;
-         n = point_list->num_points;
-         data = malloc(sizeof(Ppoint_list3) + n * sizeof(Ppoint3));
-         if (data == NULL)
-            return (FALSE);
-
-         data->num_points = n;
-         data->points = (Ppoint3 *) &data[1];
-         memcpy(data->points, point_list->points, sizeof(Ppoint3) * n);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         point_list = &ARGS_ELMT_DATA(argdata).point_list3;
-         n = point_list->num_points;
-         data = realloc(ELMT_DATA_PTR(elmt),
-                        sizeof(Ppoint_list3) + n * sizeof(Ppoint3));
-         if (data == NULL)
-            return (FALSE);
-
-         data->num_points = n;
-         data->points = (Ppoint3 *) &data[1];
-         memcpy(data->points, point_list->points, sizeof(Ppoint3) * n);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_COPY:
-         n = PHG_DATA_POINT_LIST3(argdata)->num_points;
-         data = malloc(sizeof(Ppoint_list3) + n * sizeof(Ppoint3));
-         if (data == NULL)
-            return (FALSE);
-
-         data->num_points = n;
-         data->points = (Ppoint3 *) &data[1];
-         memcpy(data->points,
-                PHG_DATA_POINT_LIST3(argdata)->points,
-                sizeof(Ppoint3) * n);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_text
- *
- * DESCR:	Handle text
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_text(Css_handle cssh,
-                    El_handle elmt,
-                    caddr_t argdata,
-                    Css_el_op op)
-{
-   char  *str;
-   Ptext *data;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         str = ARGS_ELMT_DATA(argdata).text.char_string;
-         data = malloc(sizeof(Ptext) + strlen(str) + 1);
-         if (data == NULL)
-            return (FALSE);
-
-         memcpy(&data->pos, &ARGS_ELMT_DATA(argdata).text.pos, sizeof(Ppoint));
-         data->char_string = (char *) &data[1];
-         strcpy(data->char_string, str);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         str = ARGS_ELMT_DATA(argdata).text.char_string;
-         data = realloc(ELMT_DATA_PTR(elmt),
-                        sizeof(Ptext) + strlen(str) + 1);
-         if (data == NULL)
-            return (FALSE);
-
-         memcpy(&data->pos, &ARGS_ELMT_DATA(argdata).text.pos, sizeof(Ppoint));
-         data->char_string = (char *) &data[1];
-         strcpy(data->char_string, str);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_COPY:
-         str = PHG_DATA_TEXT(argdata)->char_string;
-         data = malloc(sizeof(Ptext) + strlen(str) + 1);
-         if (data == NULL)
-            return (FALSE);
-
-         memcpy(&data->pos, &PHG_DATA_TEXT(argdata)->pos, sizeof(Ppoint));
-         data->char_string = (char *) &data[1];
-         strcpy(data->char_string, str);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_int
- *
- * DESCR:	Handle integer data
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_int(Css_handle cssh,
-                   El_handle elmt,
-                   caddr_t argdata,
-                   Css_el_op op)
-{
-   Pint *data;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         data = malloc(sizeof(Pint));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = ARGS_ELMT_DATA(argdata).int_data;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         data = (Pint *) elmt->eldata.ptr;
-         *data = ARGS_ELMT_DATA(argdata).int_data;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_COPY:
-         data = malloc(sizeof(Pint));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = PHG_DATA_INT(argdata);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_float
- *
- * DESCR:	Handle float data
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_float(Css_handle cssh,
-                     El_handle elmt,
-                     caddr_t argdata,
-                     Css_el_op op)
-{
-   Pfloat *data;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         data = malloc(sizeof(Pfloat));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = ARGS_ELMT_DATA(argdata).float_data;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         data = (Pfloat *) elmt->eldata.ptr;
-         *data = ARGS_ELMT_DATA(argdata).float_data;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_COPY:
-         data = malloc(sizeof(Pfloat));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = PHG_DATA_FLOAT(argdata);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_edge_flag
- *
- * DESCR:	Handle edge flag
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_edge_flag(Css_handle cssh,
-                         El_handle elmt,
-                         caddr_t argdata,
-                         Css_el_op op)
-{
-   Pedge_flag *data;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         data = malloc(sizeof(Pedge_flag));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = ARGS_ELMT_DATA(argdata).edge_flag;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         data = (Pedge_flag *) elmt->eldata.ptr;
-         *data = ARGS_ELMT_DATA(argdata).edge_flag;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_COPY:
-         data = malloc(sizeof(Pedge_flag));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = PHG_DATA_EDGE_FLAG(argdata);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_int_style
- *
- * DESCR:	Handle interiour style
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_int_style(Css_handle cssh,
-                         El_handle elmt,
-                         caddr_t argdata,
-                         Css_el_op op)
-{
-   Pint_style *data;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         data = malloc(sizeof(Pint_style));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = ARGS_ELMT_DATA(argdata).int_style;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         data = (Pint_style *) elmt->eldata.ptr;
-         *data = ARGS_ELMT_DATA(argdata).int_style;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_COPY:
-         data = malloc(sizeof(Pint_style));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = PHG_DATA_INT_STYLE(argdata);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
  * phg_add_el
  *
  * DESCR:	Add an element and update workstations posted to
  * RETURNS:	N/A
  */
 
-static void phg_add_el(Css_handle cssh, Phg_args_add_el *args)
+static void phg_add_el(
+   Css_handle cssh,
+   Phg_args_add_el *args
+   )
 {
    Css_ws_list ws_list;
 
@@ -649,7 +58,9 @@ static void phg_add_el(Css_handle cssh, Phg_args_add_el *args)
  * RETURNS:	N/A
  */
 
-void padd_names_set(Pint_list *names)
+void padd_names_set(
+   Pint_list *names
+   )
 {
    Phg_args_add_el args;
 
@@ -666,7 +77,9 @@ void padd_names_set(Pint_list *names)
  * RETURNS:	N/A
  */
 
-void premove_names_set(Pint_list *names)
+void premove_names_set(
+   Pint_list *names
+   )
 {
    Phg_args_add_el args;
 
@@ -683,7 +96,10 @@ void premove_names_set(Pint_list *names)
  * RETURNS:	N/A
  */
 
-void pset_local_tran(Pmatrix local_tran, Pcompose_type compose_type)
+void pset_local_tran(
+   Pmatrix local_tran,
+   Pcompose_type compose_type
+   )
 {
    Phg_args_add_el args;
 
@@ -700,7 +116,10 @@ void pset_local_tran(Pmatrix local_tran, Pcompose_type compose_type)
  * RETURNS:	N/A
  */
 
-void pset_local_tran3(Pmatrix3 local_tran, Pcompose_type compose_type)
+void pset_local_tran3(
+   Pmatrix3 local_tran,
+   Pcompose_type compose_type
+   )
 {
    Phg_args_add_el args;
 
@@ -717,7 +136,9 @@ void pset_local_tran3(Pmatrix3 local_tran, Pcompose_type compose_type)
  * RETURNS:	N/A
  */
 
-void pset_view_ind3(Pint index)
+void pset_view_ind3(
+   Pint index
+   )
 {
    Phg_args_add_el args;
 
@@ -733,7 +154,10 @@ void pset_view_ind3(Pint index)
  * RETURNS:	N/A
  */
 
-void ptext(Ppoint *text_pos, char *char_string)
+void ptext(
+   Ppoint *text_pos,
+   char *char_string
+   )
 {
    Phg_args_add_el args;
 
@@ -750,7 +174,9 @@ void ptext(Ppoint *text_pos, char *char_string)
  * RETURNS:	N/A
  */
 
-void ppolyline(Ppoint_list *point_list)
+void ppolyline(
+   Ppoint_list *point_list
+   )
 {
    Phg_args_add_el args;
 
@@ -767,7 +193,9 @@ void ppolyline(Ppoint_list *point_list)
  * RETURNS:	N/A
  */
 
-void ppolyline3(Ppoint_list3 *point_list)
+void ppolyline3(
+   Ppoint_list3 *point_list
+   )
 {
    Phg_args_add_el args;
 
@@ -785,7 +213,9 @@ void ppolyline3(Ppoint_list3 *point_list)
  * RETURNS:	N/A
  */
 
-void ppolymarker(Ppoint_list *point_list)
+void ppolymarker(
+   Ppoint_list *point_list
+   )
 {
    Phg_args_add_el args;
 
@@ -802,7 +232,9 @@ void ppolymarker(Ppoint_list *point_list)
  * RETURNS:	N/A
  */
 
-void ppolymarker3(Ppoint_list3 *point_list)
+void ppolymarker3(
+   Ppoint_list3 *point_list
+   )
 {
    Phg_args_add_el args;
 
@@ -820,7 +252,9 @@ void ppolymarker3(Ppoint_list3 *point_list)
  * RETURNS:	N/A
  */
 
-void pfill_area(Ppoint_list *point_list)
+void pfill_area(
+   Ppoint_list *point_list
+   )
 {
    Phg_args_add_el args;
 
@@ -837,7 +271,9 @@ void pfill_area(Ppoint_list *point_list)
  * RETURNS:	N/A
  */
 
-void pfill_area3(Ppoint_list3 *point_list)
+void pfill_area3(
+   Ppoint_list3 *point_list
+   )
 {
    Phg_args_add_el args;
 
@@ -855,7 +291,9 @@ void pfill_area3(Ppoint_list3 *point_list)
  * RETURNS:	N/A
  */
 
-void plabel(Pint label_id)
+void plabel(
+   Pint label_id
+   )
 {
    Phg_args_add_el args;
 
@@ -871,7 +309,9 @@ void plabel(Pint label_id)
  * RETURNS:	N/A
  */
 
-void pset_pick_id(Pint pick_id)
+void pset_pick_id(
+   Pint pick_id
+   )
 {
    Phg_args_add_el args;
 
@@ -887,7 +327,9 @@ void pset_pick_id(Pint pick_id)
  * RETURNS:	N/A
  */
 
-void pset_int_colr_ind(Pint colr_ind)
+void pset_int_colr_ind(
+   Pint colr_ind
+   )
 {
    Phg_args_add_el args;
 
@@ -906,7 +348,9 @@ void pset_int_colr_ind(Pint colr_ind)
  * RETURNS:	N/A
  */
 
-void pset_int_style(Pint_style int_style)
+void pset_int_style(
+   Pint_style int_style
+   )
 {
    Phg_args_add_el args;
 
@@ -922,7 +366,9 @@ void pset_int_style(Pint_style int_style)
  * RETURNS:	N/A
  */
 
-void pset_line_colr_ind(Pint colr_ind)
+void pset_line_colr_ind(
+   Pint colr_ind
+   )
 {
    Phg_args_add_el args;
 
@@ -941,7 +387,9 @@ void pset_line_colr_ind(Pint colr_ind)
  * RETURNS:	N/A
  */
 
-void pset_linewidth(Pfloat linewidth)
+void pset_linewidth(
+   Pfloat linewidth
+   )
 {
    Phg_args_add_el args;
 
@@ -957,7 +405,9 @@ void pset_linewidth(Pfloat linewidth)
  * RETURNS:	N/A
  */
 
-void pset_linetype(Pint linetype)
+void pset_linetype(
+   Pint linetype
+   )
 {
    Phg_args_add_el args;
 
@@ -967,12 +417,15 @@ void pset_linetype(Pint linetype)
 }
 
 /*******************************************************************************
+ * pset_marker_colr_ind
  *
  * DESCR:	Creates a new element - Marker Color Attribute
  * RETURNS:	N/A
  */
 
-void pset_marker_colr_ind(Pint colr_ind)
+void pset_marker_colr_ind(
+   Pint colr_ind
+   )
 {
    Phg_args_add_el args;
 
@@ -991,7 +444,9 @@ void pset_marker_colr_ind(Pint colr_ind)
  * RETURNS:	N/A
  */
 
-void pset_marker_size(Pfloat marker_size)
+void pset_marker_size(
+   Pfloat marker_size
+   )
 {
    Phg_args_add_el args;
 
@@ -1007,7 +462,9 @@ void pset_marker_size(Pfloat marker_size)
  * RETURNS:	N/A
  */
 
-void pset_marker_type(Pint marker_type)
+void pset_marker_type(
+   Pint marker_type
+   )
 {
    Phg_args_add_el args;
 
@@ -1023,7 +480,9 @@ void pset_marker_type(Pint marker_type)
  * RETURNS:	N/A
  */
 
-void pset_edge_colr_ind(Pint colr_ind)
+void pset_edge_colr_ind(
+   Pint colr_ind
+   )
 {
    Phg_args_add_el args;
 
@@ -1042,7 +501,9 @@ void pset_edge_colr_ind(Pint colr_ind)
  * RETURNS:	N/A
  */
 
-void pset_edgetype(Pint edgetype)
+void pset_edgetype(
+   Pint edgetype
+   )
 {
    Phg_args_add_el args;
 
@@ -1058,7 +519,9 @@ void pset_edgetype(Pint edgetype)
  * RETURNS:	N/A
  */
 
-void pset_edge_flag(Pedge_flag edge_flag)
+void pset_edge_flag(
+   Pedge_flag edge_flag
+   )
 {
    Phg_args_add_el args;
 
@@ -1074,7 +537,9 @@ void pset_edge_flag(Pedge_flag edge_flag)
  * RETURNS:	N/A
  */
 
-void pset_edgewidth(Pfloat edgewidth)
+void pset_edgewidth(
+   Pfloat edgewidth
+   )
 {
    Phg_args_add_el args;
 
@@ -1090,7 +555,9 @@ void pset_edgewidth(Pfloat edgewidth)
  * RETURNS:	N/A
  */
 
-void pset_text_font(Pint font)
+void pset_text_font(
+   Pint font
+   )
 {
    Phg_args_add_el args;
 
@@ -1106,7 +573,9 @@ void pset_text_font(Pint font)
  * RETURNS:	N/A
  */
 
-void pset_text_colr_ind(Pint colr_ind)
+void pset_text_colr_ind(
+   Pint colr_ind
+   )
 {
    Phg_args_add_el args;
 
@@ -1125,7 +594,9 @@ void pset_text_colr_ind(Pint colr_ind)
  * RETURNS:	N/A
  */
 
-void pexec_struct(Pint struct_id)
+void pexec_struct(
+   Pint struct_id
+   )
 {
    Phg_args_add_el args;
 

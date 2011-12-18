@@ -25,7 +25,18 @@
 #include <phigs/ws.h>
 #include <phigs/private/phgP.h>
 
-void pset_colr_rep(Pint ws, Pint index, Pcolr_rep *rep)
+/*******************************************************************************
+ * pset_colr_rep
+ *
+ * DESCR:       Set workstation colour representation
+ * RETURNS:     N/A
+ */
+
+void pset_colr_rep(
+   Pint ws,
+   Pint index,
+   Pcolr_rep *rep
+   )
 {
    Ws *wsh;
    Phg_args_rep_data corep;
