@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
    phg_mat_rot_x(rot3, 3.14 / 4.0);
 
    popen_struct(1);
-   pset_view_ind3(view_index);
+   pset_view_ind(view_index);
    pset_edge_flag(PEDGE_ON);
    pset_edge_colr_ind(3);
    pset_edgewidth(2.0);

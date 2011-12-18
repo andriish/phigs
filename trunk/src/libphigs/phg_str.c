@@ -35,7 +35,18 @@ void popen_struct(
    Pint struct_id
    )
 {
-   phg_css_open_struct(css, struct_id);
+   ERR_SET_CUR_FUNC(erh, Pfn_open_struct);
+
+   if (PSL_STRUCT_STATE(psl) == PSTRUCT_ST_STCL) {
+      if (phg_css_open_struct(css, struct_id) != NULL) {
+         PSL_STRUCT_STATE(psl) = PSTRUCT_ST_STOP;
+         psl->open_struct = struct_id;
+      }
+      ERR_FLUSH(erh);
+   }
+   else {
+      ERR_REPORT(erh, ERR6);
+   }
 }
 
 /*******************************************************************************
@@ -52,12 +63,20 @@ void pclose_struct(
    Struct_handle str;
    Css_ws_list   ws_list;
 
-   ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(css));
-   str = phg_css_close_struct(css);
-   if (ws_list && str) {
-      for (; ws_list->wsh; ws_list++)
-         if (ws_list->wsh->close_struct)
-             (*ws_list->wsh->close_struct)(ws_list->wsh, str);
+   ERR_SET_CUR_FUNC(erh, Pfn_close_struct);
+
+   if (PSL_STRUCT_STATE(psl) == PSTRUCT_ST_STOP) {
+      ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(css));
+      str = phg_css_close_struct(css);
+      if (ws_list && str) {
+         for (; ws_list->wsh; ws_list++)
+            if (ws_list->wsh->close_struct)
+                (*ws_list->wsh->close_struct)(ws_list->wsh, str);
+      }
+      PSL_STRUCT_STATE(psl) = PSTRUCT_ST_STCL;
+   }
+   else {
+      ERR_REPORT(erh, ERR5);
    }
 }
 
