@@ -57,6 +57,8 @@ typedef struct {
 
 typedef Err_struct *Err_handle;
 
+extern void (*phg_errhandle)();
+
 #define ERR_SET_CUR_FUNC(erh, funcnum) \
     ((erh)->cur_func_num = (funcnum))
 
@@ -84,7 +86,7 @@ typedef Err_struct *Err_handle;
  */
 
 Err_handle phg_erh_create(
-   void
+   char *err_file
    );
 
 /*******************************************************************************
@@ -95,7 +97,8 @@ Err_handle phg_erh_create(
  */
 
 int phg_erh_init(
-   Err_handle erh
+   Err_handle erh,
+   char *err_file
    );
 
 /*******************************************************************************
@@ -107,6 +110,71 @@ int phg_erh_init(
  
 void phg_erh_destroy(
    Err_handle erh
+   );
+
+/*******************************************************************************
+ * phg_err_store_name
+ *
+ * DESCR:       Store error filename, err_file == NULL means stderr
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_err_store_name(
+   Err_handle erh,
+   char *err_file,
+   char **ptr
+   );
+
+/*******************************************************************************
+ * phg_format_err_msg
+ *
+ * DESCR:       Create error message and place it in buffer
+ * RETURNS:     N/A
+ */
+
+void phg_format_err_msg(
+   Pint binding,
+   Pint errnum,
+   Pint funcnum,
+   char *buf
+   );
+
+/*******************************************************************************
+ * perr_log
+ *
+ * DESCR:       Log error
+ * RETURNS:     N/A
+ */
+
+void perr_log(
+   Pint errnum,
+   Pint funcnum,
+   char *fname
+   );
+
+/*******************************************************************************
+ * pset_err_hand
+ *
+ * DESCR:       Set error handler
+ * RETURNS:     N/A
+ */
+
+void pset_err_hand(
+   void (*new_err_hand)(),
+   void (**old_err_hand)()
+   );
+
+/*******************************************************************************
+ * perr_hand
+ *
+ * DESCR:       Handle error
+ * RETURNS:     N/A
+ */
+
+void perr_hand(
+   Pint errnum,
+   Pint funcnum,
+   char *fname
    );
 
 #endif
