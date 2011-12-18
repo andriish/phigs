@@ -45,32 +45,36 @@ void popen_phigs(char *error_file, size_t memory)
 {
    erh = phg_erh_create(error_file);
    if (erh == NULL) {
-      fprintf(stderr, "Error unable to create error handler\n");
-      return;
+      goto abort;
    }
+
+   ERR_SET_CUR_FUNC(erh, Pfn_open_phigs);
 
    psl = phg_psl_create();
    if (psl == NULL) {
-      fprintf(stderr, "Error unable to create state list\n");
-      return;
+      ERR_REPORT(erh, ERR900);
+      goto abort;
    }
 
    ws_list = malloc(sizeof(Ws_handle) * MAX_NO_OPEN_WS);
    if (ws_list == NULL) {
+      ERR_REPORT(erh, ERR900);
       phg_psl_destroy(psl);
-      fprintf(stderr, "Error unable to create workstations storage\n");
-      return;
+      goto abort;
    }
    memset(ws_list, 0, sizeof(Ws_handle) * MAX_NO_OPEN_WS);
 
    css = phg_css_init(erh, SSH_CSS);
    if (css == NULL) {
+      ERR_REPORT(erh, ERR900);
       phg_psl_destroy(psl);
       free(ws_list);
-      fprintf(stderr, "Error unable to create structure storage\n");
-      return;
+      goto abort;
    }
 
    phg_init_default_views();
+
+abort:
+   ERR_FLUSH(erh);
 }
 

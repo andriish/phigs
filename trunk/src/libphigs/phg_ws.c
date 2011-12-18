@@ -51,6 +51,8 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
    Phg_args_open_ws args;
    Phg_ret ret;
 
+   ERR_SET_CUR_FUNC(erh, Pfn_open_ws);
+
    if ((ws_id < 0) || (ws_id > MAX_NO_OPEN_WS)) {
       ERR_REPORT(erh, ERR63);
    }
@@ -70,6 +72,7 @@ void popen_ws(Pint ws_id, void *conn_id, Pint ws_type)
       /* Open workstation */
       ws_list[ws_id] = phg_wsb_open_ws(&args, &ret);
       if (ws_list[ws_id] == NULL) {
+         ERR_REPORT(erh, ERR900);
          fprintf(stderr, "Error unable to open workstation\n");
       }
       else {
