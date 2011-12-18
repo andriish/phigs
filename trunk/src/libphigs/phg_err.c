@@ -195,7 +195,7 @@ void phg_format_err_msg(
    char *buf
    )
 {
-   sprintf(buf, "ERR%d, FUNC%d\n", errnum, funcnum);
+   sprintf(buf, "%s - ERR%d\n", phg_fn[funcnum], errnum);
 }
 
 /*******************************************************************************
