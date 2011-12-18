@@ -23,6 +23,8 @@
 #include <string.h>
 #include <phigs/phigs.h>
 #include <phigs/phg.h>
+#include <phigs/err.h>
+#include <phigs/private/errP.h>
 
 void (*phg_errhandle)() = perr_hand;
 
@@ -195,7 +197,21 @@ void phg_format_err_msg(
    char *buf
    )
 {
-   sprintf(buf, "%s - ERR%d\n", phg_fn[funcnum], errnum);
+   char *errmsg, *funcname;
+   char noerrmsg[] = "Unknown Error";
+   char nofuncname[] = "Unknown Function";
+
+   errmsg = phg_get_errmsg(errnum);
+   if (errmsg == NULL) {
+      errmsg = noerrmsg;
+   }
+
+   funcname = phg_get_funcname(funcnum);
+   if (funcname == NULL) {
+      funcname = nofuncname;
+   }
+
+   sprintf(buf, "%s: %s\n", funcname, errmsg);
 }
 
 /*******************************************************************************
