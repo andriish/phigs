@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
    pclose_struct();
 
    phg_mat_trans(tran3, 0.0, 0.0, 0.0);
-   phg_mat_rot_x(rot3, 3.14 / 4.0);
+   phg_mat_rot_x(rot3, -3.14 / 4.0);
 
    popen_struct(1);
    pset_view_ind(view_index);

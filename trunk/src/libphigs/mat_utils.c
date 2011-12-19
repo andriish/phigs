@@ -115,8 +115,8 @@ void phg_mat_rot_x(Pmatrix3 m, Pfloat theta)
     phg_mat_identity(m);
 
     m[1][1] = m[2][2] = cos_theta;
-    m[2][1] = sin_theta;
-    m[1][2] = -sin_theta;
+    m[1][2] = sin_theta;
+    m[2][1] = -sin_theta;
 }
 
 void phg_mat_rot_y(Pmatrix3 m, Pfloat theta)
@@ -128,8 +128,8 @@ void phg_mat_rot_y(Pmatrix3 m, Pfloat theta)
     phg_mat_identity(m);
 
     m[0][0] = m[2][2] = cos_theta;
-    m[2][0] = -sin_theta;
-    m[0][2] = sin_theta;
+    m[0][2] = -sin_theta;
+    m[2][0] = sin_theta;
 }
 
 void phg_mat_rot_z(Pmatrix3 m, Pfloat theta)
@@ -141,8 +141,8 @@ void phg_mat_rot_z(Pmatrix3 m, Pfloat theta)
     phg_mat_identity(m);
 
     m[1][1] = m[0][0] = cos_theta;
-    m[1][0] = sin_theta;
-    m[0][1] = -sin_theta;
+    m[0][1] = sin_theta;
+    m[1][0] = -sin_theta;
 }
 
 void phg_mat_transpose(Pmatrix3 m)
