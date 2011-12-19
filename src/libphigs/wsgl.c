@@ -332,13 +332,6 @@ void wsgl_flush(
 
    }
 
-   if (wsgl->type->base_type == WST_BASE_TYPE_GLX_DRAWABLE) {
-#ifdef DEBUG
-      printf("Flush GLX drawable workstation\n");
-#endif
-      wsx_gl_flush(ws);
-   }
-
    glEnable(GL_DEPTH_TEST);
 
    if (ws->has_double_buffer)

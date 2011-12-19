@@ -144,6 +144,12 @@ int wsx_gl_open_window(
                           0,
                           NULL);
 
+   XMapWindow(ws->display, ws->drawable_id);
+
+#ifdef DEBUG
+   printf("Opened GLX workstation window: %x\n", ws->drawable_id);
+#endif
+
    return 1;
 }
 
@@ -159,19 +165,6 @@ void wsx_gl_release_window(
    )
 {
    XDestroyWindow(ws->display, ws->drawable_id);
-}
-
-/*******************************************************************************
- * wsx_gl_flush
- *
- * DESCR:	Flush render window for workstation
- * RETURNS:	N/A
- */
-void wsx_gl_flush(
-   Ws *ws
-   )
-{
-   XMapWindow(ws->display, ws->drawable_id);
 }
 
 /*******************************************************************************
