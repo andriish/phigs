@@ -192,12 +192,14 @@ int main(int argc, char *argv[])
             //pdel_elem_range(19, 20);
             pdel_elems_labels(10, 20);
             css->edit_mode = PEDIT_INSERT;
-            phg_css_print_struct(css->open_struct, 0);
+            //phg_css_print_struct(css->open_struct, 0);
 #endif
             pset_elem_ptr(4);
             css->edit_mode = PEDIT_INSERT;
             phg_mat_trans(tran3, -SPACE, 0.0, 0.0);
             pset_local_tran3(tran3, PTYPE_REPLACE);
+            pset_int_style(PSTYLE_SOLID);
+            pset_int_colr_ind(4);
             pcopy_all_elems_struct(0);
             //phg_css_print_struct(css->open_struct, 0);
             pclose_struct();

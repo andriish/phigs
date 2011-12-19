@@ -135,7 +135,6 @@ void wsgl_clear(
  * DESCR:       Flush settings to render window
  * RETURNS:     N/A
  */
-
 void wsgl_flush(
    Ws *ws
    );
@@ -207,16 +206,6 @@ int wsx_gl_open_window(
  */
 
 void wsx_gl_release_window(
-   Ws *ws
-   );
-
-/*******************************************************************************
- * wsx_gl_flush
- *
- * DESCR:       Flush render window for workstation
- * RETURNS:     N/A
- */
-void wsx_gl_flush(
    Ws *ws
    );
 
