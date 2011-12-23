@@ -572,7 +572,7 @@ static void phg_set_matrix(
 
    for (i = 0; i < 4; i++) {
       for (j = 0; j < 4; j++) {
-         *mp = mat[i][j];
+         *mp = mat[j][i];
          mp++;
       }
    }
