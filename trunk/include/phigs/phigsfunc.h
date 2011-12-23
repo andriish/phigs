@@ -202,6 +202,7 @@
 #define		Pfn_interpret_item		(178)
 #define		Pfn_set_err_hand_mode		(179)
 #define		Pfn_escape			(180)
+#define         Pfn_INQUIRY                     (1000)
 
 /*******************************************************************************
  * popen_phigs
@@ -769,6 +770,110 @@ void pset_text_colr_ind(
 void pexec_struct(
    Pint struct_id
    );
+
+/*******************************************************************************
+ * ptranslate3
+ *
+ * DESCR:       Generate 3D translation matrix
+ * RETURNS:     N/A
+ */
+
+void ptranslate3(
+    Pvec3 *trans_vector,       /* translation vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 m                 /* OUT transformation matrix */
+    );
+
+/*******************************************************************************
+ * ptranslate
+ *
+ * DESCR:       Generate translation matrix
+ * RETURNS:     N/A
+ */
+
+void ptranslate(
+    Pvec *trans_vector,        /* translation vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix m                  /* OUT transformation matrix */
+    );
+
+/*******************************************************************************
+ * pscale3
+ *  
+ * DESCR:       Generate 3D scaling matrix
+ * RETURNS:     N/A
+ */
+    
+void pscale3(
+    Pvec3 *scale_vector,       /* scale factor vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 m                 /* OUT transformation matrix */
+    );
+
+/*******************************************************************************
+ * pscale
+ *
+ * DESCR:       Generate scaling matrix
+ * RETURNS:     N/A
+ */
+
+void pscale(
+    Pvec *scale_vector,        /* scale factor vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix m                  /* OUT transformation matrix */
+    );
+
+/*******************************************************************************
+ * protate_x 
+ *
+ * DESCR:       Generate matrix for rotation around x-axis
+ * RETURNS:     N/A
+ */
+
+void protate_x(
+    Pfloat angle,              /* rotation angle */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 m                 /* OUT transformation matrix */
+    );
+
+/*******************************************************************************
+ * protate_y
+ *
+ * DESCR:       Generate matrix for rotation around y-axis
+ * RETURNS:     N/A
+ */
+
+void protate_y(
+    Pfloat angle,              /* rotation angle */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 m                 /* OUT transformation matrix */
+    );
+
+/*******************************************************************************
+ * protate_z
+ *
+ * DESCR:       Generate matrix for rotation around z-axis
+ * RETURNS:     N/A
+ */
+
+void protate_z(
+    Pfloat angle,              /* rotation angle */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 m                 /* OUT transformation matrix */
+    );
+
+/*******************************************************************************
+ * protate
+ *  
+ * DESCR:       Generate rotation matrix
+ * RETURNS:     N/A
+ */
+
+void protate(
+    Pfloat angle,              /* rotation angle */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix m                  /* OUT transformation matrix */
+    );
 
 #endif /* _phigsfunc_h */
 

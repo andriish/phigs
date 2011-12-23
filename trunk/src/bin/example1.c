@@ -50,6 +50,8 @@ Ppoint_list3 plist_quad = {
    4, pts_quad
 };
 
+Pint errnum;
+Pvec3 tvec3;
 Pmatrix3 tran3;
 Pmatrix3 rot3;
 int view_index = 5;
@@ -90,8 +92,11 @@ int main(int argc, char *argv[])
    ppolymarker3(&plist_quad);
    pclose_struct();
 
-   phg_mat_trans(tran3, 0.0, 0.0, 0.0);
-   phg_mat_rot_x(rot3, -3.14 / 4.0);
+   tvec3.delta_x = 0.0;
+   tvec3.delta_y = 0.0;
+   tvec3.delta_z = 0.0;
+   ptranslate3(&tvec3, &errnum, tran3);
+   protate_x(-3.14 / 4.0, &errnum, rot3);
 
    popen_struct(1);
    pset_view_ind(view_index);
@@ -105,12 +110,14 @@ int main(int argc, char *argv[])
    pset_marker_colr_ind(4);
    pset_local_tran3(tran3, PTYPE_REPLACE);
    pexec_struct(0);
-   phg_mat_trans(tran3, 0.0, 0.0, SPACE);
+   tvec3.delta_z = SPACE;
+   ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    pset_local_tran3(tran3, PTYPE_POSTCONCAT);
    pset_int_colr_ind(1);
    pexec_struct(0);
-   phg_mat_trans(tran3, 0.0, 0.0, 2 * SPACE);
+   tvec3.delta_z = 2 * SPACE;
+   ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    pset_local_tran3(rot3, PTYPE_POSTCONCAT);
    plabel(10);
@@ -177,7 +184,9 @@ int main(int argc, char *argv[])
 
          case KeyPress:
             popen_struct(1);
-            phg_mat_trans(tran3, 0.0, -SPACE, 2 * SPACE);
+            tvec3.delta_y = -SPACE;
+            tvec3.delta_z = 2 * SPACE;
+            ptranslate3(&tvec3, &errnum, tran3);
             pset_elem_ptr(0);
             pset_elem_ptr_label(10);
             struct_stat();
@@ -196,7 +205,10 @@ int main(int argc, char *argv[])
 #endif
             pset_elem_ptr(4);
             css->edit_mode = PEDIT_INSERT;
-            phg_mat_trans(tran3, -SPACE, 0.0, 0.0);
+            tvec3.delta_x = -SPACE;
+            tvec3.delta_y = 0.0;
+            tvec3.delta_z = 0.0;
+            ptranslate3(&tvec3, &errnum, tran3);
             pset_local_tran3(tran3, PTYPE_REPLACE);
             pset_int_style(PSTYLE_SOLID);
             pset_int_colr_ind(4);

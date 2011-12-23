@@ -77,6 +77,8 @@ void popen_phigs(
 
    phg_init_default_views();
 
+   PSL_SYS_STATE(psl) = PSYS_ST_PHOP;
+
 abort:
    ERR_FLUSH(erh);
 }

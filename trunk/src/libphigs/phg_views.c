@@ -51,10 +51,10 @@ void phg_init_default_views(void)
      * view plane = 0.0, front plane = 1.0, back plane = 0.0
      * vp x limits = [.1,.4], vp y limits = [.1,.4], vp z limits = [0,1]
      */
-    view[1].map_matrix[0][0] =  1.0;
-    view[1].map_matrix[3][0] = -1.0;
-    view[1].map_matrix[1][1] =  1.0;
-    view[1].map_matrix[3][1] = -1.0;
+    view[1].map_matrix[0][0] = 0.3;
+    view[1].map_matrix[0][3] = 0.1;
+    view[1].map_matrix[1][1] = 0.3;
+    view[1].map_matrix[1][3] = 0.1;
 
     /* View 2: top view in upper left corner of ws window.
      * vrp = (0,0,0), vup = <0,0,-1>, vpn = <0,1,0>, prp = (0.5,-0.5,5.0)
@@ -63,12 +63,12 @@ void phg_init_default_views(void)
      * vp x limits = [.1,.4], vp y limits = [.6,.9], vp z limits = [0,1]
      */
     view[2].map_matrix[0][0] = 0.3;
-    view[2].map_matrix[3][0] = 0.1;
+    view[2].map_matrix[0][3] = 0.1;
     view[2].map_matrix[1][1] = 0.3;
-    view[2].map_matrix[3][1] = 0.9;
+    view[2].map_matrix[1][3] = 0.9;
     view[2].ori_matrix[1][1] =  0.0;
-    view[2].ori_matrix[2][1] = -1.0;
-    view[2].ori_matrix[1][2] =  1.0;
+    view[2].ori_matrix[1][2] = -1.0;
+    view[2].ori_matrix[2][1] =  1.0;
     view[2].ori_matrix[2][2] =  0.0;
 
     /* View 3: right side view in lower right corner of ws window.
@@ -78,12 +78,12 @@ void phg_init_default_views(void)
      * vp x limits = [.6,.9], vp y limits = [.1,.4], vp z limits = [0,1]
      */
     view[3].map_matrix[0][0] = 0.3;
-    view[3].map_matrix[3][0] = 0.9;
+    view[3].map_matrix[0][3] = 0.9;
     view[3].map_matrix[1][1] = 0.3;
-    view[3].map_matrix[3][1] = 0.1;
+    view[3].map_matrix[1][3] = 0.1;
     view[3].ori_matrix[0][0] =  0.0;
-    view[3].ori_matrix[2][0] = -1.0;
-    view[3].ori_matrix[0][2] =  1.0;
+    view[3].ori_matrix[0][2] = -1.0;
+    view[3].ori_matrix[2][0] =  1.0;
     view[3].ori_matrix[2][2] =  0.0;
 
     /* View 4: off-axis view in upper right corner of ws window.
@@ -94,17 +94,17 @@ void phg_init_default_views(void)
      */
     view[4].map_matrix[0][0] = 0.3 / sqrt(2.0);
     view[4].map_matrix[1][1] = 0.3 / sqrt(2.0);
-    view[4].map_matrix[2][2] = -1.0 / sqrt(3.0);
-    view[4].map_matrix[3][0] = 0.75;
-    view[4].map_matrix[3][1] = 0.75;
+    view[4].map_matrix[2][2] = -1.0 / sqrt(3.0); /* Why negative */
+    view[4].map_matrix[0][3] = 0.75;
+    view[4].map_matrix[1][3] = 0.75;
     view[4].ori_matrix[0][0] =
-	-(view[4].ori_matrix[2][0] = -1.0/sqrt(2.0));
-    view[4].ori_matrix[0][2] =
-	view[4].ori_matrix[1][2] =
-	view[4].ori_matrix[2][2] =  1.0/sqrt(3.0);
-    view[4].ori_matrix[0][1] =
-	view[4].ori_matrix[2][1] = -1.0/(sqrt(3.0) * sqrt(2.0));
-    view[4].ori_matrix[1][1] = -2.0 * view[4].ori_matrix[0][1];
+        -(view[4].ori_matrix[0][2] = -1.0/sqrt(2.0));
+    view[4].ori_matrix[2][0] =
+        view[4].ori_matrix[2][1] =
+        view[4].ori_matrix[2][2] =  1.0/sqrt(3.0);
+    view[4].ori_matrix[1][0] =
+        view[4].ori_matrix[1][2] = -1.0/(sqrt(3.0) * sqrt(2.0));
+    view[4].ori_matrix[1][1] = -2.0 * view[4].ori_matrix[1][0];
 
     /* View 5: off-axis perspective view in whole of ws window.
      * vrp = (0,0,0), vup = <0,1,0>, vpn = <1,1,1>, prp = (0,0,20)
@@ -115,12 +115,13 @@ void phg_init_default_views(void)
     memcpy(view[5].ori_matrix,
            view[4].ori_matrix,
 	   sizeof(Pmatrix3));
-    view[5].map_matrix[0][0] = 0.5 / sqrt(2.0);
-    view[5].map_matrix[1][1] = 0.5 / sqrt(2.0);
-    view[5].map_matrix[2][0] = 0.025;
-    view[5].map_matrix[2][1] = 0.025;
-    view[5].map_matrix[2][2] = -(1.0/sqrt(3.0) - 1.0/20.0);
-    view[5].map_matrix[3][2] = 1.0/20.0;
-    view[5].map_matrix[2][3] = -1.0/20.0;
+    view[5].map_matrix[0][0] =  0.5 / sqrt(2.0);
+    view[5].map_matrix[1][1] =  0.5 / sqrt(2.0);
+    view[5].map_matrix[0][2] = -0.025;
+    view[5].map_matrix[1][2] = -0.025;
+    view[5].map_matrix[2][2] = -(1.0/sqrt(3.0) - 1.0/20.0); /* Why negative */
+    view[5].map_matrix[0][3] = 0.5;
+    view[5].map_matrix[1][3] = 0.5;
+    view[5].map_matrix[3][2] = -1.0/20.0;
 }
 
