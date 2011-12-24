@@ -293,137 +293,166 @@ void protate(
     }
 }
 
-#if 0
-void
-pcompose_matrix3( a, b, error_ind, m)
-    Pmatrix3	a;		/* matrix a	*/
-    Pmatrix3	b;		/* matrix b	*/
-    Pint	*error_ind;	/* OUT error indicator	*/
-    Pmatrix3	m;		/* OUT result matrix	*/
+/*******************************************************************************
+ * pcompose_matrix3
+ *
+ * DESCR:       Generate combined 3D transformation matrix
+ * RETURNS:     N/A
+ */
+
+void pcompose_matrix3(
+    Pmatrix3 a,                /* matrix a */
+    Pmatrix3 b,                /* matrix b */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 m                 /* OUT result matrix */
+    )
 {
-    if ( !CB_ENTRY_CHECK( phg_cur_cph, 0, Pfn_INQUIRY)) {
-	*error_ind = ERR2;
-     
+    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+
+    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+        ERR_REPORT(erh, ERR2);
+        *error_ind = ERR2;
     } else {
-	*error_ind = 0;
-	phg_mat_mul(m, a, b);
+        *error_ind = 0;
+        phg_mat_mul(m, a, b);
     }
 }
-
 
 
-void
-pcompose_matrix( a, b, error_ind, m)
-    Pmatrix	a;		/* matrix a	*/
-    Pmatrix	b;		/* matrix b	*/
-    Pint	*error_ind;	/* OUT error indicator	*/
-    Pmatrix	m;		/* OUT result matrix	*/
+/*******************************************************************************
+ * pcompose_matrix
+ *
+ * DESCR:       Generate combined transformation matrix
+ * RETURNS:     N/A
+ */
+
+void pcompose_matrix(
+    Pmatrix a,                 /* matrix a */
+    Pmatrix b,                 /* matrix b */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix m                  /* OUT result matrix */
+    )
 {
-    if ( !CB_ENTRY_CHECK( phg_cur_cph, 0, Pfn_INQUIRY)) {
-	*error_ind = ERR2;
-     
+    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+
+    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+        ERR_REPORT(erh, ERR2);
+        *error_ind = ERR2;
     } else {
-	*error_ind = 0;
-	phg_mat_mul_3x3(m, a, b);
+        *error_ind = 0;
+        phg_mat_mul_3x3(m, a, b);
     }
 }
-
 
-void
-ptran_point3( p, m, error_ind, r)
-    register Ppoint3	*p;		/* point	*/
-    register Pmatrix3	m;		/* transformation matrix	*/
-    Pint		*error_ind;	/* OUT error indicator	*/
-    Ppoint3		*r;		/* OUT transformed point	*/
+/*******************************************************************************
+ * ptran_point3
+ *
+ * DESCR:       Translate 3D point using transformation matrix
+ * RETURNS:     N/A
+ */
+
+void ptran_point3(
+    Ppoint3 *p,                /* point */
+    Pmatrix3 m,                /* transformation matrix */
+    Pint *error_ind,           /* OUT error indicator */
+    Ppoint3 *r                 /* OUT transformed point */
+    )
 {
     /* TODO: need error code for w = 0. */
-    register float	w;	/* homogeneous coordinate */
+    float w;                   /* homogeneous coordinate */
+    Ppoint3 t;
 
-    if ( !CB_ENTRY_CHECK( phg_cur_cph, 0, Pfn_INQUIRY)) {
-	*error_ind = ERR2;
-    
+    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+
+    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+        ERR_REPORT(erh, ERR2);
+        *error_ind = ERR2;
     } else if (PHG_NEAR_ZERO( w = m[3][0]*p->x + m[3][1]*p->y
-	+ m[3][2]*p->z + m[3][3])) {
-	*error_ind = -999;
-     
+                  + m[3][2]*p->z + m[3][3])) {
+        *error_ind = -999;
     } else {
-	*error_ind = 0;
-	w = 1.0 / w;
-	if (r != p) {
-	    r->x = w * (m[0][0] * p->x +
-			m[0][1] * p->y +
-			m[0][2] * p->z +
-			m[0][3]);
-	    r->y = w * (m[1][0] * p->x +
-			m[1][1] * p->y +
-			m[1][2] * p->z +
-			m[1][3]);
-	    r->z = w * (m[2][0] * p->x +
-			m[2][1] * p->y +
-			m[2][2] * p->z +
-			m[2][3]);
-	} else {
-	    Ppoint3 t;
+        *error_ind = 0;
+        w = 1.0 / w;
+        if (r != p) {
+            r->x = w * (m[0][0] * p->x +
+                        m[0][1] * p->y +
+                        m[0][2] * p->z +
+                        m[0][3]);
+            r->y = w * (m[1][0] * p->x +
+                        m[1][1] * p->y +
+                        m[1][2] * p->z +
+                        m[1][3]);
+            r->z = w * (m[2][0] * p->x +
+                        m[2][1] * p->y +
+                        m[2][2] * p->z +
+                        m[2][3]);
+        } else {
+            t.x =  w * (m[0][0] * p->x +
+                        m[0][1] * p->y +
+                        m[0][2] * p->z +
+                        m[0][3]);
+            t.y =  w * (m[1][0] * p->x +
+                        m[1][1] * p->y +
+                        m[1][2] * p->z +
+                        m[1][3]);
+            t.z =  w * (m[2][0] * p->x +
+                        m[2][1] * p->y +
+                        m[2][2] * p->z +
+                        m[2][3]);
 
-	    t.x =  w * (m[0][0] * p->x +
-			m[0][1] * p->y +
-			m[0][2] * p->z +
-			m[0][3]);
-	    t.y =  w * (m[1][0] * p->x +
-			m[1][1] * p->y +
-			m[1][2] * p->z +
-			m[1][3]);
-	    t.z =  w * (m[2][0] * p->x +
-			m[2][1] * p->y +
-			m[2][2] * p->z +
-			m[2][3]);
-
-	    r->x = t.x;
-	    r->y = t.y;
-	    r->z = t.z;
-	}
+            r->x = t.x;
+            r->y = t.y;
+            r->z = t.z;
+        }
     }
 }
 
-void
-ptran_point( p, m, error_ind, r)
-    register Ppoint	*p;		/* point	*/
-    register Pmatrix	m;		/* transformation matrix	*/
-    Pint		*error_ind;	/* OUT error indicator	*/
-    Ppoint		*r;		/* OUT transformed point	*/
+/*******************************************************************************
+ * ptran_point
+ *
+ * DESCR:       Translate point using transformation matrix
+ * RETURNS:     N/A
+ */
+
+void ptran_point(
+    Ppoint *p,                 /* point */
+    Pmatrix m,                 /* transformation matrix */
+    Pint *error_ind,           /* OUT error indicator */
+    Ppoint *r                  /* OUT transformed point */
+    )
 {
     /* TODO: need error code for w = 0. */
-    register float	w;	/* homogenous coordinate */
+    float w;                   /* homogenous coordinate */
+    Ppoint t;
 
-    if ( !CB_ENTRY_CHECK( phg_cur_cph, 0, Pfn_INQUIRY)) {
-	*error_ind = ERR2;
+    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
+    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+        ERR_REPORT(erh, ERR2);
+        *error_ind = ERR2;
     } else if (PHG_NEAR_ZERO( w = m[2][0] * p->x + m[2][1] * p->y + m[2][2])) {
-	*error_ind = -999;
-     
+        *error_ind = -999;
     } else {
-	*error_ind = 0;
-	w = 1.0 / w;
-	if (p != r) {
-	    r->x = w * (m[0][0] * p->x +
-			m[0][1] * p->y + m[0][2]);
-	    r->y = w * (m[1][0] * p->x +
-			m[1][1] * p->y + m[1][2]);
-	} else {
-	    Ppoint t;
+        *error_ind = 0;
+        w = 1.0 / w;
+        if (p != r) {
+            r->x = w * (m[0][0] * p->x +
+                        m[0][1] * p->y + m[0][2]);
+            r->y = w * (m[1][0] * p->x +
+                        m[1][1] * p->y + m[1][2]);
+        } else {
+            t.x =  w * (m[0][0] * p->x +
+                        m[0][1] * p->y + m[0][2]);
+            t.y =  w * (m[1][0] * p->x +
+                        m[1][1] * p->y + m[1][2]);
 
-	    t.x =  w * (m[0][0] * p->x +
-		        m[0][1] * p->y + m[0][2]);
-	    t.y =  w * (m[1][0] * p->x +
-		        m[1][1] * p->y + m[1][2]);
-
-	    r->x = t.x;
-	    r->y = t.y;
-	}
+            r->x = t.x;
+            r->y = t.y;
+        }
     }
 }
-
 
+#if 0
 static void
 build_transform3( pt, shift, ax, ay, az, scl, m)
     register Ppoint3	*pt;		/* fixed point	*/
