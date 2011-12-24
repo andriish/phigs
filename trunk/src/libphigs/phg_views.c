@@ -94,7 +94,7 @@ void phg_init_default_views(void)
      */
     view[4].map_matrix[0][0] = 0.3 / sqrt(2.0);
     view[4].map_matrix[1][1] = 0.3 / sqrt(2.0);
-    view[4].map_matrix[2][2] = -1.0 / sqrt(3.0); /* Why negative */
+    view[4].map_matrix[2][2] = 1.0 / sqrt(3.0);
     view[4].map_matrix[0][3] = 0.75;
     view[4].map_matrix[1][3] = 0.75;
     view[4].ori_matrix[0][0] =
@@ -119,7 +119,7 @@ void phg_init_default_views(void)
     view[5].map_matrix[1][1] =  0.5 / sqrt(2.0);
     view[5].map_matrix[0][2] = -0.025;
     view[5].map_matrix[1][2] = -0.025;
-    view[5].map_matrix[2][2] = -(1.0/sqrt(3.0) - 1.0/20.0); /* Why negative */
+    view[5].map_matrix[2][2] = 1.0/sqrt(3.0) - 1.0/20.0;
     view[5].map_matrix[0][3] = 0.5;
     view[5].map_matrix[1][3] = 0.5;
     view[5].map_matrix[3][2] = -1.0/20.0;
