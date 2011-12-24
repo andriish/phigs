@@ -84,7 +84,6 @@ void ptranslate3(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -113,7 +112,6 @@ void ptranslate(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -140,7 +138,6 @@ void pscale3(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -171,7 +168,6 @@ void pscale(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -198,7 +194,6 @@ void protate_x(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -226,7 +221,6 @@ void protate_y(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -254,7 +248,6 @@ void protate_z(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -282,7 +275,6 @@ void protate(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -310,7 +302,6 @@ void pcompose_matrix3(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -336,7 +327,6 @@ void pcompose_matrix(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -365,7 +355,6 @@ void ptran_point3(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else if (PHG_NEAR_ZERO( w = m[3][0]*p->x + m[3][1]*p->y
                   + m[3][2]*p->z + m[3][3])) {
@@ -428,7 +417,6 @@ void ptran_point(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else if (PHG_NEAR_ZERO( w = m[2][0] * p->x + m[2][1] * p->y + m[2][2])) {
         *error_ind = -999;
@@ -455,7 +443,7 @@ void ptran_point(
 /*******************************************************************************
  * void build_transform3
  *
- * DESCR:       Generate transformation matrix helper function
+ * DESCR:       Generate 3D transformation matrix helper function
  * RETURNS:     N/A
  */
 
@@ -516,9 +504,9 @@ static void build_transform3(
 }
 
 /*******************************************************************************
- * void build_transform3
+ * pbuild_tran_matrix3
  *
- * DESCR:       Generate transformation matrix
+ * DESCR:       Generate 3D transformation matrix
  * RETURNS:     N/A
  */
 
@@ -536,7 +524,6 @@ void pbuild_tran_matrix3(
     ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
-        ERR_REPORT(erh, ERR2);
         *error_ind = ERR2;
     } else {
        *error_ind = 0;
@@ -544,14 +531,20 @@ void pbuild_tran_matrix3(
     }
 }
 
-#if 0
-static void
-build_transform( pt, shift, ang, scl, m)
-    Ppoint	*pt;		/* fixed point	*/
-    Pvec	*shift;		/* shift vector	*/
-    Pfloat	ang;		/* rotation angle	*/
-    Pvec	*scl;		/* scale vector	*/
-    Pmatrix	m;		/* OUT transformation matrix	*/
+/*******************************************************************************
+ * void build_transform
+ *
+ * DESCR:       Generate transformation matrix helper function
+ * RETURNS:     N/A
+ */
+
+static void build_transform(
+    Ppoint *pt,                /* fixed point */
+    Pvec *shift,               /* shift vector */
+    Pfloat ang,                /* rotation angle */
+    Pvec *scl,                 /* scale vector */
+    Pmatrix m                  /* OUT transformation matrix */
+    )
 {
     /* Translate pt to the origin, scale, rotate, translate back to pt,
      * shift:
@@ -563,99 +556,134 @@ build_transform( pt, shift, ang, scl, m)
      *			R is the rotation transform,
      *			S is the scaling transform.
      */
-    register float	*r;
-    register float	c, s;
+    float *r;
+    float c, s;
 
-    c = cos(ang); s = sin(ang);
+    c = cos(ang);
+    s = sin(ang);
 
     r = m[0];
     r[0] = c * scl->delta_x;
     r[1] = -s * scl->delta_y;
-    r[2] = shift->delta_x + pt->x - c * scl->delta_x * pt->x + s * scl->delta_y * pt->y;
+    r[2] = shift->delta_x + pt->x -
+           c * scl->delta_x * pt->x + s * scl->delta_y * pt->y;
+
     r = m[1];
     r[0] = s * scl->delta_x;
     r[1] = c * scl->delta_y;
-    r[2] = shift->delta_y + pt->y - (s * scl->delta_x * pt->x + c * scl->delta_y * pt->y);
+    r[2] = shift->delta_y + pt->y -
+           (s * scl->delta_x * pt->x + c * scl->delta_y * pt->y);
+
     r = m[2];
     r[0] = r[1] = 0.0;
     r[2] = 1.0;
 }
 
-void
-pbuild_tran_matrix( pt, shift, angle, scale, error_ind, matrix)
-    Ppoint	*pt;		/* fixed point	*/
-    Pvec	*shift;		/* shift vector	*/
-    Pfloat	angle;		/* rotation angle	*/
-    Pvec	*scale;		/* scale vector	*/
-    Pint	*error_ind;	/* OUT error indicator	*/
-    Pmatrix	matrix;		/* OUT transformation matrix	*/
-{
-    if ( !CB_ENTRY_CHECK( phg_cur_cph, 0, Pfn_INQUIRY)) {
-	*error_ind = ERR2;
-     
-    } else {
-	*error_ind = 0;
-	build_transform( pt, shift, angle, scale, matrix);
-    }
-}
-
+/*******************************************************************************
+ * void build_tran_matrix
+ *
+ * DESCR:       Generate transformation matrix
+ * RETURNS:     N/A
+ */
 
-void
-pcompose_tran_matrix3( m, pt, shift, x_ang, y_ang, z_ang, scale, error_ind, result)
-    Pmatrix3	m;		/* transformation matrix	*/
-    Ppoint3	*pt;		/* fixed point	*/
-    Pvec3	*shift;		/* shift vector	*/
-    Pfloat	x_ang;		/* rotation angle X	*/
-    Pfloat	y_ang;		/* rotation angle Y	*/
-    Pfloat	z_ang;		/* rotation angle Z	*/
-    Pvec3	*scale;		/* scale vector	*/
-    Pint	*error_ind;	/* OUT error indicator	*/
-    Pmatrix3	result;		/* OUT transformation matrix	*/
+void pbuild_tran_matrix(
+    Ppoint *pt,                /* fixed point */
+    Pvec *shift,               /* shift vector */
+    Pfloat angle,              /* rotation angle */
+    Pvec *scale,               /* scale vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix matrix             /* OUT transformation matrix */
+    )
 {
-    Pmatrix3	xform;
+    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
-    if ( !CB_ENTRY_CHECK( phg_cur_cph, 0, Pfn_INQUIRY)) {
-	*error_ind = ERR2;
-     
+    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+        *error_ind = ERR2;
     } else {
-	*error_ind = 0;
-	build_transform3( pt, shift, x_ang, y_ang, z_ang, scale, xform);
-	/* Assuming pre-multiplication of old by new. */
-	phg_mat_mul(result, xform, m);
+        *error_ind = 0;
+        build_transform(pt, shift, angle, scale, matrix);
     }
 }
 
-void
-pcompose_tran_matrix( m, pt, shift, angle, scale, error_ind, result)
-    Pmatrix	m;	/* transformation matrix	*/
-    Ppoint	*pt;	/* fixed point	*/
-    Pvec	*shift;	/* shift vector	*/
-    Pfloat	angle;	/* rotation angle	*/
-    Pvec	*scale;	/* scale vector	*/
-    Pint	*error_ind;	/* OUT error indicator	*/
-    Pmatrix	result;	/* OUT transformation matrix	*/
-{
-    Pmatrix	xform;
+/*******************************************************************************
+ * pcompose_tran_matrix3
+ *
+ * DESCR:       Combine 3D transformation with other transformation matrix
+ * RETURNS:     N/A
+ */
 
-    if ( !CB_ENTRY_CHECK( phg_cur_cph, 0, Pfn_INQUIRY)) {
-	*error_ind = ERR2;
-     
+void pcompose_tran_matrix3(
+    Pmatrix3 m,                /* transformation matrix */
+    Ppoint3 *pt,               /* fixed point */
+    Pvec3 *shift,              /* shift vector */
+    Pfloat x_ang,              /* rotation angle X */
+    Pfloat y_ang,              /* rotation angle Y */
+    Pfloat z_ang,              /* rotation angle Z */
+    Pvec3 *scale,              /* scale vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 result            /* OUT transformation matrix */
+    )
+{
+    Pmatrix3 xform;
+
+    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+
+    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+        *error_ind = ERR2;
     } else {
-	*error_ind = 0;
-	build_transform( pt, shift, angle, scale, xform);
-	/* Assuming pre-multiplication of old by new. */
-	phg_mat_mul_3x3(result, xform, m);
+        *error_ind = 0;
+        build_transform3(pt, shift, x_ang, y_ang, z_ang, scale, xform);
+        /* Assuming pre-multiplication of old by new. */
+        phg_mat_mul(result, xform, m);
     }
 }
-
 
-void
-peval_view_ori_matrix3( vrp, vpn, vup, error_ind, m)
-    Ppoint3		*vrp;		/* view reference point	*/
-    register Pvec3	*vpn;		/* view plane normal	*/
-    Pvec3		*vup;		/* view up vector	*/
-    Pint		*error_ind;	/* OUT error indicator	*/
-    Pmatrix3		m;		/* OUT view orientation matrix	*/
+/*******************************************************************************
+ * pcompose_tran_matrix
+ *
+ * DESCR:       Combine transformation with other transformation matrix
+ * RETURNS:     N/A
+ */
+
+void pcompose_tran_matrix(
+    Pmatrix m,                 /* transformation matrix */
+    Ppoint *pt,                /* fixed point */
+    Pvec *shift,               /* shift vector */
+    Pfloat angle,              /* rotation angle */
+    Pvec *scale,               /* scale vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix result             /* OUT transformation matrix */
+    )
+{
+    Pmatrix xform;
+
+    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+
+    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+        *error_ind = ERR2;
+    } else {
+        *error_ind = 0;
+        build_transform( pt, shift, angle, scale, xform);
+        /* Assuming pre-multiplication of old by new. */
+        phg_mat_mul_3x3(result, xform, m);
+    }
+}
+
+#if 0
+/*******************************************************************************
+ * peval_view_ori_matrix3
+ *
+ * DESCR:       Generate 3D view orientation matrix
+ * RETURNS:     N/A
+ */
+
+void peval_view_ori_matrix3(
+    Ppoint3 *vrp,              /* view reference point */
+    Pvec3 *vpn,                /* view plane normal */
+    Pvec3 *vup,                /* view up vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 m                 /* OUT view orientation matrix */
+    )
 {
     /*  Translate to VRP then change the basis.
      *  The old basis is: e1 = < 1, 0, 0>,  e2 = < 0, 1, 0>, e3 = < 0, 0, 1>.
@@ -675,65 +703,71 @@ peval_view_ori_matrix3( vrp, vpn, vup, error_ind, m)
      */
 
     /* These ei's are really ei primes. */
-    register Pfloat	*e1 = m[0], *e3 = m[2], *e2 = m[1];
-    register double	s, mag_vpn;
+    Pfloat *e1 = m[0], *e3 = m[2], *e2 = m[1];
+    double s, mag_vpn;
 
-    if ( !CB_ENTRY_CHECK( phg_cur_cph, 0, Pfn_INQUIRY)) {
-	*error_ind = ERR2;
+    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
+    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+        *error_ind = ERR2;
     } else if ( PHG_ZERO_MAG( mag_vpn = PHG_MAG_V3( vpn)) ) {
-	*error_ind = ERR159;
-
+        *error_ind = ERR159;
     } else if ( PHG_ZERO_MAG( PHG_MAG_V3(vup)) ) {
-	*error_ind = ERR160;
-    
+        *error_ind = ERR160;
     } else {
-	/* e1' = VUP x VPN / |VUP x VPN|, but do the division later. */
-	e1[0] = vup->delta_y * vpn->delta_z - vup->delta_z * vpn->delta_y;
-	e1[1] = vup->delta_z * vpn->delta_x - vup->delta_x * vpn->delta_z;
-	e1[2] = vup->delta_x * vpn->delta_y - vup->delta_y * vpn->delta_x;
-	s = sqrt( e1[0] * e1[0] + e1[1] * e1[1] + e1[2] * e1[2]);
+        /* e1' = VUP x VPN / |VUP x VPN|, but do the division later. */
+        e1[0] = vup->delta_y * vpn->delta_z - vup->delta_z * vpn->delta_y;
+        e1[1] = vup->delta_z * vpn->delta_x - vup->delta_x * vpn->delta_z;
+        e1[2] = vup->delta_x * vpn->delta_y - vup->delta_y * vpn->delta_x;
+        s = sqrt(e1[0] * e1[0] + e1[1] * e1[1] + e1[2] * e1[2]);
 
 	/* Check for vup and vpn colinear (zero dot product). */
-	if ( PHG_ZERO_MAG( s) ) {
-	    *error_ind = ERR161;
+        if ( PHG_ZERO_MAG(s) ) {
+            *error_ind = ERR161;
+        } else {
+            *error_ind = 0;
+            /* Normalize e1 */
+            s = 1.0 / s;
+            e1[0] *= s;
+            e1[1] *= s;
+            e1[2] *= s;
 
-	} else {
-	    *error_ind = 0;
+            /* e3 = VPN / |VPN| */
+            s = 1.0 / mag_vpn;
+            e3[0] = s * vpn->delta_x;
+            e3[1] = s * vpn->delta_y;
+            e3[2] = s * vpn->delta_z;
 
-	    /* Normalize e1 */
-	    s = 1.0 / s;
-	    e1[0] *= s; e1[1] *= s; e1[2] *= s;
+            /* e2 = e3 x e1 */
+            e2[0] = e3[1] * e1[2] - e3[2] * e1[1];
+            e2[1] = e3[2] * e1[0] - e3[0] * e1[2];
+            e2[2] = e3[0] * e1[1] - e3[1] * e1[0];
 
-	    /* e3 = VPN / |VPN| */
-	    s = 1.0 / mag_vpn;
-	    e3[0] = s * vpn->delta_x; e3[1] = s * vpn->delta_y; e3[2] = s * vpn->delta_z;
+            /* Add the translation */
+            e1[3] = -( e1[0] * vrp->x + e1[1] * vrp->y + e1[2] * vrp->z);
+            e2[3] = -( e2[0] * vrp->x + e2[1] * vrp->y + e2[2] * vrp->z);
+            e3[3] = -( e3[0] * vrp->x + e3[1] * vrp->y + e3[2] * vrp->z);
 
-
-	    /* e2 = e3 x e1 */
-	    e2[0] = e3[1] * e1[2] - e3[2] * e1[1];
-	    e2[1] = e3[2] * e1[0] - e3[0] * e1[2];
-	    e2[2] = e3[0] * e1[1] - e3[1] * e1[0];
-
-	    /* Add the translation */
-	    e1[3] = -( e1[0] * vrp->x + e1[1] * vrp->y + e1[2] * vrp->z);
-	    e2[3] = -( e2[0] * vrp->x + e2[1] * vrp->y + e2[2] * vrp->z);
-	    e3[3] = -( e3[0] * vrp->x + e3[1] * vrp->y + e3[2] * vrp->z);
-
-	    /* Homogeneous entries */
-	    m[3][0] = m[3][1] = m[3][2] = 0.0;
-	    m[3][3] = 1.0;
-	}
+            /* Homogeneous entries */
+            m[3][0] = m[3][1] = m[3][2] = 0.0;
+            m[3][3] = 1.0;
+        }
     }
 }
-
 
-void
-peval_view_ori_matrix( vrp, vup, error_ind, m)
-    Ppoint		*vrp;		/* view reference point	*/
-    register Pvec	*vup;		/* view up vector	*/
-    Pint		*error_ind;	/* OUT error indicator	*/
-    register Pmatrix	m;		/* OUT view orientation matrix	*/
+/*******************************************************************************
+ * peval_view_ori_matrix
+ *
+ * DESCR:       Generate view orientation matrix
+ * RETURNS:     N/A
+ */
+
+void peval_view_ori_matrix(
+    Ppoint *vrp,               /* view reference point */
+    Pvec *vup,                 /* view up vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix m                  /* OUT view orientation matrix */
+    )
 {
     /* The old basis is: e1 = < 1, 0>,  e2 = < 0, 1>
      * The new basis is: e1' = < vup.y, -vup.x> / |vup|,  e2' = vup / |vup|.
@@ -746,34 +780,33 @@ peval_view_ori_matrix( vrp, vup, error_ind, m)
 	     | -0-  1|
      */
 
-    register double	s;
+    double s;
 
-    if ( !CB_ENTRY_CHECK( phg_cur_cph, 0, Pfn_INQUIRY)) {
-	*error_ind = ERR2;
+    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
-    } else if ( PHG_ZERO_MAG( s = PHG_MAG_V2( vup)) ) {
-	*error_ind = ERR160;
-
+    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+        *error_ind = ERR2;
+    } else if ( PHG_ZERO_MAG(s = PHG_MAG_V2(vup)) ) {
+        *error_ind = ERR160;
     } else {
-	*error_ind = 0;
+        *error_ind = 0;
 
-	/* Compute the new basis, note that m[0] is e1' and m[1] is e2'. */
-	s = 1.0 / s;
-	m[0][0] = s * vup->delta_y;
-	m[0][1] = s * -vup->delta_x;
-	m[1][0] = s * vup->delta_x;
-	m[1][1] = s * vup->delta_y;
+        /* Compute the new basis, note that m[0] is e1' and m[1] is e2'. */
+        s = 1.0 / s;
+        m[0][0] = s * vup->delta_y;
+        m[0][1] = s * -vup->delta_x;
+        m[1][0] = s * vup->delta_x;
+        m[1][1] = s * vup->delta_y;
 
-	/* Add the translation */
-	m[0][2] = -( m[0][0] * vrp->x + m[0][1] * vrp->y);
-	m[1][2] = -( m[1][0] * vrp->x + m[1][1] * vrp->y);
+        /* Add the translation */
+        m[0][2] = -( m[0][0] * vrp->x + m[0][1] * vrp->y);
+        m[1][2] = -( m[1][0] * vrp->x + m[1][1] * vrp->y);
 
-	/* Homogeneous entries */
-	m[2][0] = m[2][1] = 0.0;
-	m[2][2] = 1.0;
+        /* Homogeneous entries */
+        m[2][0] = m[2][1] = 0.0;
+        m[2][2] = 1.0;
     }
 }
-
 
 /* 1. Translate window's lower-left-corner to 0,0.
  * 2. Scale size of window to size of viewport.

@@ -932,9 +932,9 @@ void ptran_point(
     );
 
 /*******************************************************************************
- * void build_transform3
+ * pbuild_tran_matrix3
  *
- * DESCR:       Generate transformation matrix
+ * DESCR:       Generate 3D transformation matrix
  * RETURNS:     N/A
  */
 
@@ -947,6 +947,58 @@ void pbuild_tran_matrix3(
     Pvec3 *scale,              /* scale vector */
     Pint *error_ind,           /* OUT error indicator */
     Pmatrix3 matrix            /* OUT transformation matrix */
+    );
+
+/*******************************************************************************
+ * void build_tran_matrix
+ *
+ * DESCR:       Generate transformation matrix
+ * RETURNS:     N/A
+ */
+
+void pbuild_tran_matrix(
+    Ppoint *pt,                /* fixed point */
+    Pvec *shift,               /* shift vector */
+    Pfloat angle,              /* rotation angle */
+    Pvec *scale,               /* scale vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix matrix             /* OUT transformation matrix */
+    );
+
+/*******************************************************************************
+ * pcompose_tran_matrix3
+ *
+ * DESCR:       Combine 3D transformation with other transformation matrix
+ * RETURNS:     N/A
+ */
+
+void pcompose_tran_matrix3(
+    Pmatrix3 m,                /* transformation matrix */
+    Ppoint3 *pt,               /* fixed point */
+    Pvec3 *shift,              /* shift vector */
+    Pfloat x_ang,              /* rotation angle X */
+    Pfloat y_ang,              /* rotation angle Y */
+    Pfloat z_ang,              /* rotation angle Z */
+    Pvec3 *scale,              /* scale vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 result            /* OUT transformation matrix */
+    );
+
+/*******************************************************************************
+ * pcompose_tran_matrix
+ *  
+ * DESCR:       Combine transformation with other transformation matrix
+ * RETURNS:     N/A            
+ */ 
+
+void pcompose_tran_matrix(
+    Pmatrix m,                 /* transformation matrix */
+    Ppoint *pt,                /* fixed point */
+    Pvec *shift,               /* shift vector */
+    Pfloat angle,              /* rotation angle */
+    Pvec *scale,               /* scale vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix result             /* OUT transformation matrix */
     );
 
 #endif /* _phigsfunc_h */
