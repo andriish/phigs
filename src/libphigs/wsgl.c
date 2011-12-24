@@ -333,6 +333,8 @@ void wsgl_flush(
    }
 
    glEnable(GL_DEPTH_TEST);
+   glDepthRange(1, 0);
+   glDepthFunc(GL_LESS);
 
    if (ws->has_double_buffer)
    {

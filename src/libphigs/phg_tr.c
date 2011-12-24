@@ -710,9 +710,9 @@ void peval_view_ori_matrix3(
 
     if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
-    } else if ( PHG_ZERO_MAG( mag_vpn = PHG_MAG_V3( vpn)) ) {
+    } else if ( PHG_ZERO_MAG(mag_vpn = PHG_MAG_V3(vpn)) ) {
         *error_ind = ERR159;
-    } else if ( PHG_ZERO_MAG( PHG_MAG_V3(vup)) ) {
+    } else if ( PHG_ZERO_MAG(PHG_MAG_V3(vup)) ) {
         *error_ind = ERR160;
     } else {
         /* e1' = VUP x VPN / |VUP x VPN|, but do the division later. */
