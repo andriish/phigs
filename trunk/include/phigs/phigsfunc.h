@@ -931,5 +931,23 @@ void ptran_point(
     Ppoint *r                  /* OUT transformed point */
     );
 
+/*******************************************************************************
+ * void build_transform3
+ *
+ * DESCR:       Generate transformation matrix
+ * RETURNS:     N/A
+ */
+
+void pbuild_tran_matrix3(
+    Ppoint3 *pt,               /* fixed point */
+    Pvec3 *shift,              /* shift vector */
+    Pfloat x_angle,            /* rotation angle X */
+    Pfloat y_angle,            /* rotation angle Y */
+    Pfloat z_angle,            /* rotation angle Z */
+    Pvec3 *scale,              /* scale vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 matrix            /* OUT transformation matrix */
+    );
+
 #endif /* _phigsfunc_h */
 

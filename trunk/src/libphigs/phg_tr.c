@@ -452,16 +452,22 @@ void ptran_point(
     }
 }
 
-#if 0
-static void
-build_transform3( pt, shift, ax, ay, az, scl, m)
-    register Ppoint3	*pt;		/* fixed point	*/
-    Pvec3		*shift;		/* shift vector	*/
-    Pfloat		ax;		/* rotation angle X	*/
-    Pfloat		ay;		/* rotation angle Y	*/
-    Pfloat		az;		/* rotation angle Z	*/
-    register Pvec3	*scl;		/* scale vector	*/
-    Pmatrix3		m;		/* OUT transformation matrix	*/
+/*******************************************************************************
+ * void build_transform3
+ *
+ * DESCR:       Generate transformation matrix helper function
+ * RETURNS:     N/A
+ */
+
+static void build_transform3(
+    Ppoint3 *pt,               /* fixed point */
+    Pvec3 *shift,              /* shift vector */
+    Pfloat ax,                 /* rotation angle X */
+    Pfloat ay,                 /* rotation angle Y */
+    Pfloat az,                 /* rotation angle Z */
+    Pvec3 *scl,                /* scale vector */
+    Pmatrix3 m                 /* OUT transformation matrix */
+    )
 {
     /* Translate pt to the origin, scale, rotate, translate back to pt,
      * shift:
@@ -473,55 +479,72 @@ build_transform3( pt, shift, ax, ay, az, scl, m)
      *			Ri is the rotation transform about the i'th axis,
      *			S is the scaling transform.
      */
-    register float	*r;
-    register float	cz, sz, cx, sx, cy, sy;
+    float *r;
+    float cz, sz, cx, sx, cy, sy;
 
-    cx = cos(ax); sx = sin(ax);
-    cy = cos(ay); sy = sin(ay);
-    cz = cos(az); sz = sin(az);
+    cx = cos(ax);
+    sx = sin(ax);
+    cy = cos(ay);
+    sy = sin(ay);
+    cz = cos(az);
+    sz = sin(az);
 
     r = m[0];
     r[0] = cz * cy * scl->delta_x;
     r[1] = (cz * sx * sy - sz * cx) * scl->delta_y;
     r[2] = (cz * sy * cx + sz * sx) * scl->delta_z;
-    r[3] = shift->delta_x + pt->x - (r[0] * pt->x + r[1] * pt->y + r[2] * pt->z);
+    r[3] = shift->delta_x + pt->x -
+        (r[0] * pt->x + r[1] * pt->y + r[2] * pt->z);
+
     r = m[1];
     r[0] = sz * cy * scl->delta_x;
     r[1] = (sz * sx * sy + cz * cx) * scl->delta_y;
     r[2] = (sz * sy * cx - cz * sx) * scl->delta_z;
-    r[3] = shift->delta_y + pt->y - (r[0] * pt->x + r[1] * pt->y + r[2] * pt->z);
+    r[3] = shift->delta_y + pt->y -
+        (r[0] * pt->x + r[1] * pt->y + r[2] * pt->z);
+
     r = m[2];
     r[0] = -sy * scl->delta_x;
     r[1] = cy * sx * scl->delta_y;
     r[2] = cy * cx * scl->delta_z;
-    r[3] = shift->delta_z + pt->z - (r[0] * pt->x + r[1] * pt->y + r[2] * pt->z);
+    r[3] = shift->delta_z + pt->z -
+        (r[0] * pt->x + r[1] * pt->y + r[2] * pt->z);
+
     r = m[3];
     r[0] = r[1] = r[2] = 0.0;
     r[3] = 1.0;
 }
-
 
-void
-pbuild_tran_matrix3( pt, shift, x_angle, y_angle, z_angle, scale, error_ind, matrix)
-    Ppoint3	*pt;		/* fixed point	*/
-    Pvec3	*shift;		/* shift vector	*/
-    Pfloat	x_angle;	/* rotation angle X	*/
-    Pfloat	y_angle;	/* rotation angle Y	*/
-    Pfloat	z_angle;	/* rotation angle Z	*/
-    Pvec3	*scale;		/* scale vector	*/
-    Pint	*error_ind;	/* OUT error indicator	*/
-    Pmatrix3	matrix;		/* OUT transformation matrix	*/
+/*******************************************************************************
+ * void build_transform3
+ *
+ * DESCR:       Generate transformation matrix
+ * RETURNS:     N/A
+ */
+
+void pbuild_tran_matrix3(
+    Ppoint3 *pt,               /* fixed point */
+    Pvec3 *shift,              /* shift vector */
+    Pfloat x_angle,            /* rotation angle X */
+    Pfloat y_angle,            /* rotation angle Y */
+    Pfloat z_angle,            /* rotation angle Z */
+    Pvec3 *scale,              /* scale vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 matrix            /* OUT transformation matrix */
+    )
 {
-    if ( !CB_ENTRY_CHECK( phg_cur_cph, 0, Pfn_INQUIRY)) {
-	*error_ind = ERR2;
-     
+    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+
+    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+        ERR_REPORT(erh, ERR2);
+        *error_ind = ERR2;
     } else {
-	*error_ind = 0;
-	build_transform3( pt, shift, x_angle, y_angle, z_angle, scale, matrix);
+       *error_ind = 0;
+       build_transform3(pt, shift, x_angle, y_angle, z_angle, scale, matrix);
     }
 }
-
 
+#if 0
 static void
 build_transform( pt, shift, ang, scl, m)
     Ppoint	*pt;		/* fixed point	*/
