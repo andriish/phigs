@@ -875,5 +875,61 @@ void protate(
     Pmatrix m                  /* OUT transformation matrix */
     );
 
+/*******************************************************************************
+ * pcompose_matrix3
+ *
+ * DESCR:       Generate combined 3D transformation matrix
+ * RETURNS:     N/A
+ */
+
+void pcompose_matrix3(
+    Pmatrix3 a,                /* matrix a */
+    Pmatrix3 b,                /* matrix b */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 m                 /* OUT result matrix */
+    );
+
+/*******************************************************************************
+ * pcompose_matrix
+ *
+ * DESCR:       Generate combined transformation matrix
+ * RETURNS:     N/A
+ */
+
+void pcompose_matrix(
+    Pmatrix a,                 /* matrix a */
+    Pmatrix b,                 /* matrix b */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix m                  /* OUT result matrix */
+    );
+
+/*******************************************************************************
+ * ptran_point3
+ *
+ * DESCR:       Translate 3D point using transformation matrix
+ * RETURNS:     N/A
+ */
+
+void ptran_point3(
+    Ppoint3 *p,                /* point */
+    Pmatrix3 m,                /* transformation matrix */
+    Pint *error_ind,           /* OUT error indicator */
+    Ppoint3 *r                 /* OUT transformed point */
+    );
+
+/*******************************************************************************
+ * ptran_point
+ *
+ * DESCR:       Translate point using transformation matrix
+ * RETURNS:     N/A
+ */
+
+void ptran_point(
+    Ppoint *p,                 /* point */
+    Pmatrix m,                 /* transformation matrix */
+    Pint *error_ind,           /* OUT error indicator */
+    Ppoint *r                  /* OUT transformed point */
+    );
+
 #endif /* _phigsfunc_h */
 
