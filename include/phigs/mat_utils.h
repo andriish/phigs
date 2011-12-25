@@ -25,12 +25,6 @@
    memcpy(to, from, sizeof(Pmatrix3));
 
 int phg_mat_equal(Pfloat *a, Pfloat *b);
-void phg_mat_scale(Pmatrix3 m, Pfloat x, Pfloat y, Pfloat z);
-void phg_mat_trans(Pmatrix3 m, Pfloat x, Pfloat y, Pfloat z);
-void phg_mat_shear_z(Pmatrix3 m, Pfloat a, Pfloat b);
-void phg_mat_rot_x(Pmatrix3 m, Pfloat theta);
-void phg_mat_rot_y(Pmatrix3 m, Pfloat theta);
-void phg_mat_rot_z(Pmatrix3 m, Pfloat theta);
 void phg_mat_transpose(Pmatrix3 m);
 Pfloat phg_mat_trace(Pmatrix3 m);
 void phg_mat_mul_pt(Pfloat *new_pt, Ppoint3 *opt, Pmatrix3 mat);

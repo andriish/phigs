@@ -69,7 +69,6 @@ SOFTWARE.
 #include <phigs/phg.h>
 #include <phigs/mat_utils.h>
 
-
 int phg_mat_equal(Pfloat *a, Pfloat *b)
 {
     int	i;
@@ -79,70 +78,6 @@ int phg_mat_equal(Pfloat *a, Pfloat *b)
 	    return 0;
 
     return 1;
-}
-
-void phg_mat_scale(Pmatrix3 m, Pfloat x, Pfloat y, Pfloat z)
-{
-    phg_mat_identity(m);
-    m[0][0] = x;
-    m[1][1] = y;
-    m[2][2] = z;
-}
-
-
-void phg_mat_trans(Pmatrix3 m, Pfloat x, Pfloat y, Pfloat z)
-{
-    phg_mat_identity(m);
-    m[3][0] = x;
-    m[3][1] = y;
-    m[3][2] = z;
-}
-
-
-void phg_mat_shear_z(Pmatrix3 m, Pfloat a, Pfloat b)
-{
-    phg_mat_identity(m);
-    m[2][0] = a;
-    m[2][1] = b;
-}
-
-void phg_mat_rot_x(Pmatrix3 m, Pfloat theta)
-{
-    Pfloat	sin_theta, cos_theta;
-
-    sin_theta = (Pfloat) sin(theta);
-    cos_theta = (Pfloat) cos(theta);
-    phg_mat_identity(m);
-
-    m[1][1] = m[2][2] = cos_theta;
-    m[1][2] = sin_theta;
-    m[2][1] = -sin_theta;
-}
-
-void phg_mat_rot_y(Pmatrix3 m, Pfloat theta)
-{
-    Pfloat	sin_theta, cos_theta;
-
-    sin_theta = (Pfloat) sin(theta);
-    cos_theta = (Pfloat) cos(theta);
-    phg_mat_identity(m);
-
-    m[0][0] = m[2][2] = cos_theta;
-    m[0][2] = -sin_theta;
-    m[2][0] = sin_theta;
-}
-
-void phg_mat_rot_z(Pmatrix3 m, Pfloat theta)
-{
-    Pfloat	sin_theta, cos_theta;
-
-    sin_theta = (Pfloat) sin(theta);
-    cos_theta = (Pfloat) cos(theta);
-    phg_mat_identity(m);
-
-    m[1][1] = m[0][0] = cos_theta;
-    m[0][1] = sin_theta;
-    m[1][0] = -sin_theta;
 }
 
 void phg_mat_transpose(Pmatrix3 m)
@@ -254,7 +189,7 @@ void phg_mat_mul_3x3(Pmatrix m, Pmatrix a, Pmatrix b)
     }
 }
 
-void phg_mat_identity (Pmatrix3 mat)
+void phg_mat_identity(Pmatrix3 mat)
 {
     int	i,j;
 
@@ -263,7 +198,7 @@ void phg_mat_identity (Pmatrix3 mat)
 	   mat[i][j] = ( (i == j) ? 1.0 : 0.0);
 }
 
-void phg_mat_zero (Pmatrix3 mat)
+void phg_mat_zero(Pmatrix3 mat)
 {
     int	i,j;
 
@@ -272,7 +207,7 @@ void phg_mat_zero (Pmatrix3 mat)
 	   mat[i][j] = 0.0;
 }
 
-void phg_mat_copy (Pmatrix3 m1, Pmatrix3 m2)
+void phg_mat_copy(Pmatrix3 m1, Pmatrix3 m2)
 {
     int	i,j;
 
@@ -281,7 +216,7 @@ void phg_mat_copy (Pmatrix3 m1, Pmatrix3 m2)
 	   m1[i][j] = m2[i][j];
 }
 
-void phg_mat_copy_3x3 (Pmatrix m1, Pmatrix m2)
+void phg_mat_copy_3x3(Pmatrix m1, Pmatrix m2)
 {
     int	i,j;
 
@@ -348,7 +283,7 @@ Pfloat phg_vector_length(Pvec3 *a)
 	return(sum);
     }
     else
-    	return( 0.0);
+    	return(0.0);
 
 }
 
