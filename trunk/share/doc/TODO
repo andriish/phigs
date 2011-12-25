@@ -7,6 +7,14 @@ ws.c: 57
 
 Noticed segmentation fault when using view zero for example1
 Noticed segmentation fault when using view zero for example2
+Fixed!
+
+--------------------------------------------------------------------------------
+
+phg_ws.c: all functions from popen_ws and ahead need to handler errors
+          by checking PHIGS stat list
+
+Need to add info in phg_dt?
 
 --------------------------------------------------------------------------------
 

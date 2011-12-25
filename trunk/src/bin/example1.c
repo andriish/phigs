@@ -110,13 +110,13 @@ int main(int argc, char *argv[])
    pset_marker_colr_ind(4);
    pset_local_tran3(tran3, PTYPE_REPLACE);
    pexec_struct(0);
-   tvec3.delta_z = SPACE;
+   tvec3.delta_z += SPACE;
    ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    pset_local_tran3(tran3, PTYPE_POSTCONCAT);
    pset_int_colr_ind(1);
    pexec_struct(0);
-   tvec3.delta_z = 2 * SPACE;
+   tvec3.delta_z += SPACE;
    ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    pset_local_tran3(rot3, PTYPE_POSTCONCAT);
@@ -185,7 +185,6 @@ int main(int argc, char *argv[])
          case KeyPress:
             popen_struct(1);
             tvec3.delta_y = -SPACE;
-            tvec3.delta_z = 2 * SPACE;
             ptranslate3(&tvec3, &errnum, tran3);
             pset_elem_ptr(0);
             pset_elem_ptr_label(10);
