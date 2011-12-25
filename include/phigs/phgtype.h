@@ -41,8 +41,41 @@ typedef struct _Css_ssl      *Struct_handle;
 typedef struct _Css_struct   *Css_handle;
 typedef struct _Ws           *Ws_handle;
 
+#define PHG_MIN(a, b) \
+   (((a) < (b)) ? (a) : (b))
+
+#define PHG_MAX(a, b) \
+   (((a) > (b)) ? (a) : (b))
+
+#define PHG_ABS(a) \
+   (((a) < 0.0) ? -(a) : (a))
+
 #define PHG_NEAR_ZERO(s) \
-   (_ABS(s) < PHG_ZERO_TOLERANCE)
+   (PHG_ABS(s) < PHG_ZERO_TOLERANCE)
+
+#define PHG_ZERO_MAG(s) \
+   ((s) < PHG_ZERO_TOLERANCE)
+
+#define PHG_MAG_V2(v)                  \
+   (sqrt((v)->delta_x * (v)->delta_x + \
+         (v)->delta_y * (v)->delta_y))
+
+#define PHG_MAG_V3(v)                  \
+   (sqrt((v)->delta_x * (v)->delta_x + \
+         (v)->delta_y * (v)->delta_y + \
+         (v)->delta_z * (v)->delta_z))
+
+#define PHG_DOT_PROD(v1, v2) \
+   ((v1)->x * (v2)->x + (v1)->y * (v2)->y + (v1)->z * (v2)->z)
+
+#define PHG_UNIT_VEC(v)                                               \
+   { double len;                                                      \
+     len = sqrt((v)->x * (v)->x + (v)->y * (v)->y + (v)->z * (v)->z); \
+     (v)->x /= len, (v)->y /= len, (v)->z /= len;                     \
+   }
+
+#define PHG_IN_RANGE(low, high, val) \
+   ((val) >= (low) && (val) <= (high))
 
 #define PHG_SCRATCH_SPACE(_sc, _size) \
     ((_sc)->size >= (_size) ? (_sc)->buf \

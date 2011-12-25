@@ -669,7 +669,6 @@ void pcompose_tran_matrix(
     }
 }
 
-#if 0
 /*******************************************************************************
  * peval_view_ori_matrix3
  *
@@ -808,58 +807,18 @@ void peval_view_ori_matrix(
     }
 }
 
-/* 1. Translate window's lower-left-corner to 0,0.
- * 2. Scale size of window to size of viewport.
- * 3. Translate 0,0 to viewport's lower-left-corner.
+/*******************************************************************************
+ * peval_view_map_matrix3
  *
- * Matrices are:
- * 1:	1 0 -win->xmin	2:	scale.x	0	0	3:	1 0  vp->xmin
- * 	0 1 -win->ymin		 0	scale.y	0		0 1  vp->ymin
- * 	0 0   1			 0	0	1		0 0   1
+ * DESCR:       Generate 3D view mapping matrix
+ * RETURNS:     N/A
  */
 
-void
-peval_view_map_matrix( map, error_ind, m)
-    Pview_map	*map;		/* view mapping	*/
-    Pint		*error_ind;	/* OUT error indicator	*/
-    register Pmatrix	m;		/* OUT view mapping matrix	*/
-{
-    register Plimit	*win = &map->win;
-    register Plimit	*vp = &map->proj_vp;
-
-    if ( !CB_ENTRY_CHECK( phg_cur_cph, 0, Pfn_INQUIRY)) {
-	*error_ind = ERR2;
-     
-    } else if ( !(win->x_min < win->x_max) || !(win->y_min < win->y_max)) {
-	*error_ind = ERR151;
-
-    } else if ( !(vp->x_min < vp->x_max) || !(vp->y_min < vp->y_max)) {
-	*error_ind = ERR152;
-
-    } else if ( !CB_IN_RANGE( PDT_NPC_XMIN, PDT_NPC_XMAX, vp->x_min)
-	|| !CB_IN_RANGE( PDT_NPC_XMIN, PDT_NPC_XMAX, vp->x_max)
-	|| !CB_IN_RANGE( PDT_NPC_YMIN, PDT_NPC_YMAX, vp->y_min)
-	|| !CB_IN_RANGE( PDT_NPC_YMIN, PDT_NPC_YMAX, vp->y_max)) {
-	*error_ind = ERR155;
-
-    } else {
-	register float	sx, sy;		/* scale factors: len(vp) / len(win) */
-
-	*error_ind = 0;
-	sx = (vp->x_max - vp->x_min) / (win->x_max - win->x_min);
-	sy = (vp->y_max - vp->y_min) / (win->y_max - win->y_min);
-	m[0][0] = sx;	m[0][1] = 0.0;	m[0][2] = sx * (-win->x_min) + vp->x_min;
-	m[1][0] = 0.0;	m[1][1] = sy;	m[1][2] = sy * (-win->y_min) + vp->y_min;
-	m[2][0] = 0.0;	m[2][1] = 0.0;	m[2][2] = 1.0;
-    }
-}
-
-
-void
-peval_view_map_matrix3( map, error_ind, m)
-    Pview_map3  	*map;		/* view mapping	*/
-    Pint		*error_ind;	/* OUT error indicator	*/
-    register Pmatrix3	m;		/* OUT view mapping matrix	*/
+void peval_view_map_matrix3(
+    Pview_map3 *map,           /* view mapping */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 m                 /* OUT view mapping matrix */
+    )
 {
     /* Procedure:
       (Perspective):
@@ -884,130 +843,182 @@ peval_view_map_matrix3( map, error_ind, m)
 	 See pevalviewmappingmatrix3_debug for the matrices.
      */
 
-    register Pfloat	*r;
-    register Ppoint3	*prp = &map->proj_ref_point;
-    register Plimit3	*vp = &map->proj_vp;
-    register Plimit	*win = &map->win;
+    Pfloat *r;
+    Ppoint3 *prp = &map->proj_ref_point;
+    Plimit3 *vp = &map->proj_vp;
+    Plimit3 *win = &map->win;
 
     /* These are ordered roughly by the number of times used, the most
      * used is first.  Those used twice or less aren't declared register.
      */
-    register double	sz, sx, sy;
-    register double	zf;
-    register double	dx = vp->x_max - vp->x_min;
-    register double	dy = vp->y_max - vp->y_min;
-    register double	hx, hy;
-    register double	d;
-    	     double	dz = vp->z_max - vp->z_min;
-    	     double	vvz = map->front_plane - map->back_plane;
+    double sz, sx, sy;
+    double zf;
+    double dx = vp->x_max - vp->x_min;
+    double dy = vp->y_max - vp->y_min;
+    double hx, hy;
+    double d;
+    double dz = vp->z_max - vp->z_min;
+    double vvz = map->front_plane - map->back_plane;
 
-    if ( !CB_ENTRY_CHECK( phg_cur_cph, 0, Pfn_INQUIRY)) {
-	*error_ind = ERR2;
+    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
 
+    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+        *error_ind = ERR2;
     } else if ( !(win->x_min < win->x_max) || !(win->y_min < win->y_max)) {
-	*error_ind = ERR151;
-
+        *error_ind = ERR151;
     } else if ( !(vp->x_min < vp->x_max) || !(vp->y_min < vp->y_max)
-	|| !(vp->z_min <= vp->z_max) ) {
-	*error_ind = ERR152;
-    
+        || !(vp->z_min <= vp->z_max) ) {
+        *error_ind = ERR152;
     } else if ( PHG_NEAR_ZERO( vvz) && vp->z_min != vp->z_max) {
-	*error_ind = ERR158;
-
+        *error_ind = ERR158;
     } else if ( map->proj_type == PTYPE_PERSPECT
-	&& prp->z < map->front_plane && prp->z > map->back_plane ) {
-	*error_ind = ERR162;
-
+        && prp->z < map->front_plane && prp->z > map->back_plane ) {
+        *error_ind = ERR162;
     } else if ( prp->z == map->view_plane) {
-	*error_ind = ERR163;
-    
+        *error_ind = ERR163;
     } else if ( map->front_plane < map->back_plane) {
-	*error_ind = ERR164;
-
-    } else if ( !CB_IN_RANGE( PDT_NPC_XMIN, PDT_NPC_XMAX, vp->x_min)
-	|| !CB_IN_RANGE( PDT_NPC_XMIN, PDT_NPC_XMAX, vp->x_max)
-	|| !CB_IN_RANGE( PDT_NPC_YMIN, PDT_NPC_YMAX, vp->y_min)
-	|| !CB_IN_RANGE( PDT_NPC_YMIN, PDT_NPC_YMAX, vp->y_max)
-	|| !CB_IN_RANGE( PDT_NPC_ZMIN, PDT_NPC_ZMAX, vp->z_min)
-	|| !CB_IN_RANGE( PDT_NPC_ZMIN, PDT_NPC_ZMAX, vp->z_max) ) {
-	*error_ind = ERR155;
-    
-
+        *error_ind = ERR164;
+    } else if ( !PHG_IN_RANGE( PDT_NPC_XMIN, PDT_NPC_XMAX, vp->x_min)
+        || !PHG_IN_RANGE( PDT_NPC_XMIN, PDT_NPC_XMAX, vp->x_max)
+        || !PHG_IN_RANGE( PDT_NPC_YMIN, PDT_NPC_YMAX, vp->y_min)
+        || !PHG_IN_RANGE( PDT_NPC_YMIN, PDT_NPC_YMAX, vp->y_max)
+        || !PHG_IN_RANGE( PDT_NPC_ZMIN, PDT_NPC_ZMAX, vp->z_min)
+        || !PHG_IN_RANGE( PDT_NPC_ZMIN, PDT_NPC_ZMAX, vp->z_max) ) {
+        *error_ind = ERR155;
     } else if ( map->proj_type == PTYPE_PERSPECT) {
-	*error_ind = 0;
-	d = prp->z - map->view_plane;
-	sz = 1.0 / (prp->z - map->back_plane);
-	sx = sz * d * 2.0 / (win->x_max - win->x_min);
-	sy = sz * d * 2.0 / (win->y_max - win->y_min);
-	hx = (prp->x - 0.5 * (win->x_min + win->x_max)) / d;
-	hy = (prp->y - 0.5 * (win->y_min + win->y_max)) / d;
+        *error_ind = 0;
+        d = prp->z - map->view_plane;
+        sz = 1.0 / (prp->z - map->back_plane);
+        sx = sz * d * 2.0 / (win->x_max - win->x_min);
+        sy = sz * d * 2.0 / (win->y_max - win->y_min);
+        hx = (prp->x - 0.5 * (win->x_min + win->x_max)) / d;
+        hy = (prp->y - 0.5 * (win->y_min + win->y_max)) / d;
 
-	r = m[0];
-	r[0] = 0.5 * dx * sx;
-	r[1] = 0.0;
-	r[2] = -(0.5 * dx * (sx * hx + sz) + sz * vp->x_min);
-	r[3] = -(0.5 * dx * sx * (prp->x - hx * prp->z)
-	    - sz * prp->z * (0.5 * dx + vp->x_min));
+        r = m[0];
+        r[0] = 0.5 * dx * sx;
+        r[1] = 0.0;
+        r[2] = -(0.5 * dx * (sx * hx + sz) + sz * vp->x_min);
+        r[3] = -(0.5 * dx * sx * (prp->x - hx * prp->z)
+            - sz * prp->z * (0.5 * dx + vp->x_min));
 
-	r = m[1];
-	r[0] = 0.0;
-	r[1] = 0.5 * dy * sy;
-	r[2] = -(0.5 * dy * (sy * hy + sz) + sz * vp->y_min);
-	r[3] = -(0.5 * dy * sy * (prp->y - hy * prp->z)
-	    - sz * prp->z * (0.5 * dy + vp->y_min));
+        r = m[1];
+        r[0] = 0.0;
+        r[1] = 0.5 * dy * sy;
+        r[2] = -(0.5 * dy * (sy * hy + sz) + sz * vp->y_min);
+        r[3] = -(0.5 * dy * sy * (prp->y - hy * prp->z)
+            - sz * prp->z * (0.5 * dy + vp->y_min));
 
-	r = m[2];
-	r[0] = r[1] = 0.0;
-	zf = (prp->z - map->front_plane) / (prp->z - map->back_plane);
-	if ( PHG_NEAR_ZERO( 1.0 - zf)) {
-	    r[2] = 0.0;
-	    r[3] = sz * prp->z * vp->z_max;
-	} else {
-	    r[2] = sz * ((dz / (1.0 - zf)) - vp->z_max);
-	    r[3] = sz * prp->z * vp->z_max - (dz/(1.0-zf)) * (sz * prp->z - zf);
-	}
+        r = m[2];
+        r[0] = r[1] = 0.0;
+        zf = (prp->z - map->front_plane) / (prp->z - map->back_plane);
+        if ( PHG_NEAR_ZERO( 1.0 - zf)) {
+            r[2] = 0.0;
+            r[3] = sz * prp->z * vp->z_max;
+        } else {
+            r[2] = sz * ((dz / (1.0 - zf)) - vp->z_max);
+            r[3] = sz * prp->z * vp->z_max - (dz/(1.0-zf)) * (sz * prp->z - zf);
+        }
 
-	r = m[3];
-	r[0] = r[1] = 0.0;
-	r[2] = -sz;
-	r[3] = sz * prp->z;
-
+        r = m[3];
+        r[0] = r[1] = 0.0;
+        r[2] = -sz;
+        r[3] = sz * prp->z;
     } else {	/* parallel */
-	*error_ind = 0;
-	sx = dx / (win->x_max - win->x_min);
-	sy = dy / (win->y_max - win->y_min);
-	hx = (prp->x - 0.5 * (win->x_min + win->x_max))
-	    / (map->view_plane - prp->z);
-	hy = (prp->y - 0.5 * (win->y_min + win->y_max))
-	    / (map->view_plane - prp->z);
+        *error_ind = 0;
+        sx = dx / (win->x_max - win->x_min);
+        sy = dy / (win->y_max - win->y_min);
+        hx = (prp->x - 0.5 * (win->x_min + win->x_max))
+            / (map->view_plane - prp->z);
+        hy = (prp->y - 0.5 * (win->y_min + win->y_max))
+            / (map->view_plane - prp->z);
 
-	r = m[0];
-	r[0] = sx;
-	r[1] = 0.0;
-	r[2] = sx * hx;
-	r[3] = vp->x_min - sx * (hx * map->view_plane + win->x_min);
+        r = m[0];
+        r[0] = sx;
+        r[1] = 0.0;
+        r[2] = sx * hx;
+        r[3] = vp->x_min - sx * (hx * map->view_plane + win->x_min);
 
-	r = m[1];
-	r[0] = 0.0;
-	r[1] = sy;
-	r[2] = sy * hy;
-	r[3] = vp->y_min - sy * (hy * map->view_plane + win->y_min);
+        r = m[1];
+        r[0] = 0.0;
+        r[1] = sy;
+        r[2] = sy * hy;
+        r[3] = vp->y_min - sy * (hy * map->view_plane + win->y_min);
 
-	r  = m[2];
-	r[0] = r[1] = 0.0;
-	if ( PHG_NEAR_ZERO(vvz))
-	    r[2] = 0.0;
-	else
-	    r[2] = dz / vvz;
-	r[3] = vp->z_min - r[2] * map->back_plane;
+        r  = m[2];
+        r[0] = r[1] = 0.0;
+        if ( PHG_NEAR_ZERO(vvz)) {
+            r[2] = 0.0;
+        }
+        else {
+            r[2] = dz / vvz;
+        }
+        r[3] = vp->z_min - r[2] * map->back_plane;
 
-	r = m[3];
-	r[0] = r[1] = r[2] = 0.0;
-	r[3] = 1.0;
+        r = m[3];
+        r[0] = r[1] = r[2] = 0.0;
+        r[3] = 1.0;
     }
 }
-
 
+/*******************************************************************************
+ * peval_view_map_matrix
+ *
+ * DESCR:       Generate view mapping matrix
+ * RETURNS:     N/A
+ */
+
+void peval_view_map_matrix(
+    Pview_map *map,            /* view mapping */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix m                  /* OUT view mapping matrix */
+    )
+{
+    /* 1. Translate window's lower-left-corner to 0,0.
+     * 2. Scale size of window to size of viewport.
+     * 3. Translate 0,0 to viewport's lower-left-corner.
+     *
+     * Matrices are:
+     * 1:  1 0 -win->xmin   2:  scale.x 0       0   3:  1 0  vp->xmin
+     *     0 1 -win->ymin        0      scale.y 0       0 1  vp->ymin
+     *     0 0   1               0      0       1       0 0   1
+     */
+
+    float sx, sy;              /* scale factors: len(vp) / len(win) */
+    Plimit *win = &map->win;
+    Plimit *vp = &map->proj_vp;
+
+    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+
+    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+        *error_ind = ERR2;
+    } else if ( !(win->x_min < win->x_max) || !(win->y_min < win->y_max)) {
+        *error_ind = ERR151;
+    } else if ( !(vp->x_min < vp->x_max) || !(vp->y_min < vp->y_max)) {
+        *error_ind = ERR152;
+    } else if ( !PHG_IN_RANGE( PDT_NPC_XMIN, PDT_NPC_XMAX, vp->x_min)
+        || !PHG_IN_RANGE( PDT_NPC_XMIN, PDT_NPC_XMAX, vp->x_max)
+        || !PHG_IN_RANGE( PDT_NPC_YMIN, PDT_NPC_YMAX, vp->y_min)
+        || !PHG_IN_RANGE( PDT_NPC_YMIN, PDT_NPC_YMAX, vp->y_max)) {
+        *error_ind = ERR155;
+    } else {
+        *error_ind = 0;
+        sx = (vp->x_max - vp->x_min) / (win->x_max - win->x_min);
+        sy = (vp->y_max - vp->y_min) / (win->y_max - win->y_min);
+        m[0][0] = sx;
+        m[0][1] = 0.0;
+        m[0][2] = sx * (-win->x_min) + vp->x_min;
+
+	m[1][0] = 0.0;
+        m[1][1] = sy;
+        m[1][2] = sy * (-win->y_min) + vp->y_min;
+
+	m[2][0] = 0.0;
+        m[2][1] = 0.0;
+        m[2][2] = 1.0;
+    }
+}
+
+#if 0
 #ifdef DEBUG
 void
 peval_view_map_matrix3_debug( map, error_ind, m)

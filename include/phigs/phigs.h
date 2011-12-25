@@ -205,6 +205,11 @@ typedef enum {
    PINQ_REALIZED
 } Pinq_type;
 
+typedef enum {
+   PTYPE_PARAL,
+   PTYPE_PERSPECT
+} Pproj_type;
+
 typedef int Pint;
 typedef long Plong;
 typedef float Pfloat;
@@ -391,6 +396,21 @@ typedef union {
    Pedge_flag   edge_flag;
    Pint_style   int_style;
 } Pelem_data;
+
+typedef struct {
+   Plimit win;
+   Plimit proj_vp;
+} Pview_map;
+
+typedef struct {
+   Plimit3    win;
+   Plimit3    proj_vp;
+   Pproj_type proj_type;
+   Ppoint3    proj_ref_point;
+   Pfloat     view_plane;
+   Pfloat     back_plane;
+   Pfloat     front_plane;
+} Pview_map3;
 
 extern Pint phigs_ws_type_glx_drawable;
 

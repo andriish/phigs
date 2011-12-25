@@ -1001,5 +1001,60 @@ void pcompose_tran_matrix(
     Pmatrix result             /* OUT transformation matrix */
     );
 
+/*******************************************************************************
+ * peval_view_ori_matrix3
+ *
+ * DESCR:       Generate 3D view orientation matrix
+ * RETURNS:     N/A
+ */
+
+void peval_view_ori_matrix3(
+    Ppoint3 *vrp,              /* view reference point */
+    Pvec3 *vpn,                /* view plane normal */
+    Pvec3 *vup,                /* view up vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 m                 /* OUT view orientation matrix */
+    );
+
+/*******************************************************************************
+ * peval_view_ori_matrix
+ *
+ * DESCR:       Generate view orientation matrix
+ * RETURNS:     N/A
+ */
+
+void peval_view_ori_matrix(
+    Ppoint *vrp,               /* view reference point */
+    Pvec *vup,                 /* view up vector */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix m                  /* OUT view orientation matrix */
+    );
+
+/*******************************************************************************
+ * peval_view_map_matrix3
+ *
+ * DESCR:       Generate 3D view mapping matrix
+ * RETURNS:     N/A
+ */
+
+void peval_view_map_matrix3(
+    Pview_map3 *map,           /* view mapping */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix3 m                 /* OUT view mapping matrix */
+    );
+
+/*******************************************************************************
+ * peval_view_map_matrix
+ *
+ * DESCR:       Generate view mapping matrix
+ * RETURNS:     N/A
+ */
+
+void peval_view_map_matrix(
+    Pview_map *map,            /* view mapping */
+    Pint *error_ind,           /* OUT error indicator */
+    Pmatrix m                  /* OUT view mapping matrix */
+    );
+
 #endif /* _phigsfunc_h */
 

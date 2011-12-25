@@ -18,28 +18,15 @@
 *   along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#ifndef _phg_h
-#define _phg_h
+#ifndef _phg_dt_h
+#define _phg_dt_h
 
-#include <phigs/phgtype.h>
-#include <phigs/util.h>
-#include <phigs/phigs.h>
-#include <phigs/phgargs.h>
-#include <phigs/phgretdata.h>
-#include <phigs/mat_utils.h>
-#include <phigs/err.h>
-#include <phigs/errnum.h>
-#include <phigs/css.h>
-#include <phigs/ws.h>
-#include <phigs/phigsfunc.h>
-#include <phigs/ws_type.h>
-#include <phigs/psl.h>
-#include <phigs/phg_dt.h>
+#define PDT_NPC_XMIN           0.0
+#define PDT_NPC_YMIN           0.0
+#define PDT_NPC_ZMIN           0.0
+#define PDT_NPC_XMAX           1.0
+#define PDT_NPC_YMAX           1.0
+#define PDT_NPC_ZMAX           1.0
 
-extern Err_handle erh;
-extern Psl_handle psl;
-extern Css_handle css;
-extern Ws_handle  *ws_list;
-
-#endif
+#endif /* _phg_dt_h */
 
