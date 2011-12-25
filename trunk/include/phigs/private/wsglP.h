@@ -199,6 +199,19 @@ int wsx_gl_open_window(
    );
 
 /*******************************************************************************
+ * wsx_gl_resize_window
+ *
+ * DESCR:       Resize render window for workstation
+ * RETURNS:     N/A
+ */
+
+void wsx_gl_resize_window(
+   Ws *ws,
+   int w,
+   int h
+   );
+
+/*******************************************************************************
  * wsx_gl_release_window
  *
  * DESCR:       Close render window for workstation

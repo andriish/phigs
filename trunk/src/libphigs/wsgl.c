@@ -300,10 +300,26 @@ void wsgl_flush(
 
    if (wsgl->vp_changed || wsgl->win_changed) {
       wsgl_compute_ws_transform(&wsgl->curr_win, &wsgl->curr_vp, &ws_xform);
+
+#ifdef DEBUG
+      printf("View: %f %f %f\n"
+             "      %f %f %f\n",
+             ws_xform.offset.x,
+             ws_xform.offset.y,
+             ws_xform.offset.z,
+             ws_xform.scale.x,
+             ws_xform.scale.y,
+             ws_xform.scale.z);
+#endif
+
       glViewport((GLint)   ws_xform.offset.x,
                  (GLint)   ws_xform.offset.y,
                  (GLsizei) ws_xform.scale.x,
                  (GLsizei) ws_xform.scale.y);
+
+      glEnable(GL_DEPTH_TEST);
+      glDepthRange(ws_xform.scale.z, ws_xform.offset.z);
+      glDepthFunc(GL_LESS);
 
       if (wsgl->vp_changed) {
          wsgl->vp_changed = 0;
@@ -319,11 +335,12 @@ void wsgl_flush(
                 ws->ws_rect.height);
 #endif
 
-         XResizeWindow(ws->display,
-                       ws->drawable_id,
-                       wsgl->curr_vp.x_max,
-                       wsgl->curr_vp.y_max);
-
+         if (wsgl->type->base_type == WST_BASE_TYPE_GLX_DRAWABLE) {
+#ifdef DEBUG
+            printf("Resize GLX drawable workstation\n");
+#endif
+            wsx_gl_resize_window(ws, wsgl->curr_vp.x_max, wsgl->curr_vp.y_max);
+         }
       }
 
       if (wsgl->win_changed) {
@@ -331,10 +348,6 @@ void wsgl_flush(
       }
 
    }
-
-   glEnable(GL_DEPTH_TEST);
-   glDepthRange(1, 0);
-   glDepthFunc(GL_LESS);
 
    if (ws->has_double_buffer)
    {
