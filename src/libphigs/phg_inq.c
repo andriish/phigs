@@ -36,8 +36,18 @@ void pinq_elem_ptr(
    Pint *elem_ptr_value
    )
 {
-   *elem_ptr_value = CSS_INQ_EL_INDEX(css);
-   *err_ind = 0;
+   ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+
+   if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+      *err_ind = ERR5;
+   }
+   else if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
+      *err_ind = ERR5;
+   }
+   else {
+      *err_ind = 0;
+      *elem_ptr_value = CSS_INQ_EL_INDEX(css);
+   }
 }
 
 /*******************************************************************************
@@ -53,14 +63,19 @@ void pinq_open_struct(
    Pint *struct_id
    )
 {
-   if (CSS_CUR_STRUCTP(css)) {
-      *struct_id = CSS_CUR_STRUCT_ID(css);
-      *status = PSTRUCT_OPEN;
+   ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+
+   if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+      *err_ind = ERR2;
+   }
+   else if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
+      *status = PSTRUCT_NONE;
+      *err_ind = 0;
    }
    else {
-      *status = PSTRUCT_NONE;
+      *err_ind = 0;
+      *status = PSTRUCT_OPEN;
+      *struct_id = CSS_CUR_STRUCT_ID(css);
    }
-
-   *err_ind = 0;
 }
 
