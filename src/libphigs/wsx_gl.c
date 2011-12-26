@@ -46,6 +46,21 @@ static int glConfig[] = {
 
 static char *arglist[] = {""};
 
+static int wsx_gl_open_window(
+   Ws *ws,
+   Phg_args_open_ws *args
+   );
+
+static void wsx_gl_resize_window(
+   Ws *ws,
+   int w,
+   int h
+   );
+
+static void wsx_gl_release_window(
+   Ws *ws
+   );
+
 static Colormap wsx_gl_get_sharable_colormap(
    XVisualInfo *vi,
    Display *dpy
@@ -121,6 +136,10 @@ int wsx_gl_init(
       wst->desc_tbl.phigs_dt.dev_coords[2]);
 #endif
 
+   wst->open_window = wsx_gl_open_window;
+   wst->resize_window = wsx_gl_resize_window;
+   wst->release_window = wsx_gl_release_window;
+
    return TRUE;
 }
 
@@ -131,7 +150,7 @@ int wsx_gl_init(
  * RETURNS:	TRUE or FALSE
  */
 
-int wsx_gl_open_window(
+static int wsx_gl_open_window(
    Ws *ws,
    Phg_args_open_ws *args
    )
@@ -243,7 +262,7 @@ int wsx_gl_open_window(
  * RETURNS:	N/A
  */
 
-void wsx_gl_resize_window(
+static void wsx_gl_resize_window(
    Ws *ws,
    int w,
    int h
@@ -262,7 +281,7 @@ void wsx_gl_resize_window(
  * RETURNS:	N/A
  */
 
-void wsx_gl_release_window(
+static void wsx_gl_release_window(
    Ws *ws
    )
 {

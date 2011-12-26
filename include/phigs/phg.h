@@ -31,8 +31,8 @@
 #include <phigs/errnum.h>
 #include <phigs/css.h>
 #include <phigs/ws.h>
-#include <phigs/phigsfunc.h>
 #include <phigs/ws_type.h>
+#include <phigs/phigsfunc.h>
 #include <phigs/psl.h>
 #include <phigs/phg_dt.h>
 

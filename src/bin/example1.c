@@ -211,6 +211,7 @@ int main(int argc, char *argv[])
             tvec3.delta_z = 0.0;
             ptranslate3(&tvec3, &errnum, tran3);
             pset_local_tran3(tran3, PTYPE_REPLACE);
+            pset_hlhsr_id(PHIGS_HLHSR_ID_OFF);
             pset_int_style(PSTYLE_SOLID);
             pset_int_colr_ind(4);
             pcopy_all_elems_struct(0);

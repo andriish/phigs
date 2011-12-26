@@ -36,10 +36,26 @@ typedef struct {
    Wst_phigs_dt phigs_dt;
 } Wst_dt;
 
+struct _Ws;
+struct _Phg_args_open_ws;
+
 typedef struct {
    Pint          wsid;
    Wst_base_type base_type;
    Wst_dt        desc_tbl;
+   int           (*open_window)(
+                    struct _Ws *ws,
+                    struct _Phg_args_open_ws *args
+                 );
+   void          (*resize_window)(
+                    struct _Ws *ws,
+                    int w,
+                    int h
+                 );
+   void          (*release_window)(
+                    struct _Ws *ws
+                 );
+
 } Wst;
 
 /*******************************************************************************

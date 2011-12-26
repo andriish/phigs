@@ -222,41 +222,5 @@ int wsx_gl_init(
    Wst *wst
    );
 
-/*******************************************************************************
- * wsx_gl_open_window
- *
- * DESCR:       Open render window for workstation
- * RETURNS:     Zero on succcess, non zero on error
- */
-
-int wsx_gl_open_window(
-   Ws *ws,
-   Phg_args_open_ws *args
-   );
-
-/*******************************************************************************
- * wsx_gl_resize_window
- *
- * DESCR:       Resize render window for workstation
- * RETURNS:     N/A
- */
-
-void wsx_gl_resize_window(
-   Ws *ws,
-   int w,
-   int h
-   );
-
-/*******************************************************************************
- * wsx_gl_release_window
- *
- * DESCR:       Close render window for workstation
- * RETURNS:     N/A
- */
-
-void wsx_gl_release_window(
-   Ws *ws
-   );
-
 #endif /* _wsglP_h */
 

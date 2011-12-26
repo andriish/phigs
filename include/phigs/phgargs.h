@@ -75,7 +75,7 @@ typedef struct {
    int  posted;
 } Phg_args_change_struct;
 
-typedef struct {
+typedef struct _Phg_args_open_ws {
    Pint wsid;
    Wst  *type;
    char *window_name;
