@@ -180,15 +180,7 @@ int wsgl_open_window(
 
    wsgl->type = args->type;
 
-   if (args->type->base_type == WST_BASE_TYPE_GLX_DRAWABLE) {
-#ifdef DEBUG
-      printf("Open GLX drawable workstation\n");
-#endif
-      ret = wsx_gl_open_window(ws, args);
-   }
-   else {
-      ret = 0;
-   }
+   ret = (*wsgl->type->open_window)(ws, args);
 
    return ret;
 }
@@ -204,21 +196,11 @@ int wsgl_release_window(
    Ws *ws
    )
 {
-   int ret;
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
-   if (wsgl->type->base_type == WST_BASE_TYPE_GLX_DRAWABLE) {
-#ifdef DEBUG
-      printf("Close GLX drawable workstation\n");
-#endif
-      wsx_gl_release_window(ws);
-      ret = 1;
-   }
-   else {
-      ret = 0;
-   }
+   (*wsgl->type->release_window)(ws);
 
-   return ret;
+   return 1;
 }
 
 /*******************************************************************************
@@ -355,12 +337,9 @@ void wsgl_flush(
                 ws->ws_rect.height);
 #endif
 
-         if (wsgl->type->base_type == WST_BASE_TYPE_GLX_DRAWABLE) {
-#ifdef DEBUG
-            printf("Resize GLX drawable workstation\n");
-#endif
-            wsx_gl_resize_window(ws, wsgl->curr_vp.x_max, wsgl->curr_vp.y_max);
-         }
+         (*wsgl->type->resize_window)(ws,
+                                      wsgl->curr_vp.x_max,
+                                      wsgl->curr_vp.y_max);
       }
 
       if (wsgl->win_changed) {
