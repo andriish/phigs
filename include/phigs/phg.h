@@ -30,6 +30,7 @@
 #include <phigs/err.h>
 #include <phigs/errnum.h>
 #include <phigs/css.h>
+#include <phigs/attr.h>
 #include <phigs/ws.h>
 #include <phigs/ws_type.h>
 #include <phigs/phigsfunc.h>

@@ -29,7 +29,7 @@
 typedef struct {
    GLXContext      glx_context;
    Wst             *type;
-   attribute_group attrs;
+   Pattr_group     *attr_group;
    Plimit3         curr_win;
    Pint            win_changed;
    Plimit3         curr_vp;

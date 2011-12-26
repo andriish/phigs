@@ -265,14 +265,21 @@ typedef struct {
 
 typedef struct {
    Pint   type;
+   Pfloat width;
+   Pgcolr colr;
+} Pline_bundle_plus;
+
+typedef struct {
+   Pint   type;
    Pfloat size;
    Pint   colr_ind;
 } Pmarker_bundle;
 
 typedef struct {
-   Pint font;
-   Pint colr_ind;
-} Ptext_bundle;
+   Pint   type;
+   Pfloat size;
+   Pgcolr colr;
+} Pmarker_bundle_plus;
 
 typedef struct {
    Pedge_flag flag;
@@ -282,9 +289,31 @@ typedef struct {
 } Pedge_bundle;
 
 typedef struct {
+   Pedge_flag flag;
+   Pint       type;
+   Pfloat     width;
+   Pgcolr     colr;
+} Pedge_bundle_plus;
+
+typedef struct {
    Pint_style style;
    Pint       colr_ind;
 } Pint_bundle;
+
+typedef struct {
+   Pint_style style;
+   Pgcolr     colr;
+} Pint_bundle_plus;
+
+typedef struct {
+   Pint font;
+   Pint colr_ind;
+} Ptext_bundle;
+
+typedef struct {
+   Pint   font;
+   Pgcolr colr;
+} Ptext_bundle_plus;
 
 typedef struct {
    Pint num_ints;

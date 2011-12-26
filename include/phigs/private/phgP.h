@@ -27,14 +27,6 @@
 #include <phigs/phg.h>
 #include <phigs/private/cssP.h>
 
-typedef struct {
-   Pline_bundle   line_bundle;
-   Pmarker_bundle marker_bundle;
-   Pint_bundle    int_bundle;
-   Pedge_bundle   edge_bundle;
-   Ptext_bundle   text_bundle;
-} attribute_group;
-
 #define ARGS_ELMT_SIZE(ARG) \
    ((Phg_args_add_el *) (ARG))->el_size
 
@@ -107,10 +99,8 @@ typedef struct {
 #define PHG_DATA_INT_STYLE(ELMT) \
    *((Pint_style *) (((Css_eldata *) (ELMT))->ptr))
 
-attribute_group* phg_get_default_attr(void);
 void phg_traverse(Css_handle css, Struct_handle structp);
 
-extern Css_handle css;
 extern Pview_rep3 default_views[];
 
 void phg_init_default_views(void);
