@@ -74,6 +74,7 @@ void popen_phigs(
       ERR_REPORT(PHG_ERH, ERR900);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
+      goto abort;
    }
 
    PHG_WS_LIST = (Ws_handle *) malloc(sizeof(Ws_handle) * MAX_NO_OPEN_WS);
