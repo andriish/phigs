@@ -28,6 +28,8 @@ typedef enum {
 typedef struct {
    Pws_cat ws_category;
    Pfloat  dev_coords[3];
+   Pint    num_hlhsr_modes;
+   Pint    *hlhsr_modes;
 } Wst_phigs_dt;
 
 typedef struct {

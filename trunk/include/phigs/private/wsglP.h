@@ -34,6 +34,8 @@ typedef struct {
    Pint            win_changed;
    Plimit3         curr_vp;
    Pint            vp_changed;
+   Pint            hlhsr_changed;
+   Pint            hlhsr_mode;
    Pmatrix3        local_tran, total_tran;
    Pint            curr_view_index;
 } Wsgl;
@@ -116,6 +118,18 @@ void wsgl_set_window(
 void wsgl_set_viewport(
    Ws *ws,
    Plimit3 *vp
+   );
+
+/*******************************************************************************
+ * wsgl_set_hlhsr_mode
+ *
+ * DESCR:       Set render depth mode
+ * RETURNS:     N/A
+ */
+
+void wsgl_set_hlhsr_mode(
+   Ws *ws,
+   Pint hlhsr_mode
    );
 
 /*******************************************************************************
