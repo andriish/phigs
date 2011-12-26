@@ -51,7 +51,6 @@ void popen_phigs(
 
    PHG_ERH = phg_erh_create(error_file);
    if (PHG_ERH == NULL) {
-      free(phg);
       goto abort;
    }
 
@@ -60,7 +59,6 @@ void popen_phigs(
    PHG_PSL = phg_psl_create();
    if (PHG_PSL == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
-      free(phg);
       goto abort;
    }
 
@@ -68,7 +66,6 @@ void popen_phigs(
    if (PHG_CSS == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
       phg_psl_destroy(PHG_PSL);
-      free(phg);
       goto abort;
    }
 
@@ -77,7 +74,6 @@ void popen_phigs(
       ERR_REPORT(PHG_ERH, ERR900);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
-      free(phg);
    }
 
    PHG_WS_LIST = (Ws_handle *) malloc(sizeof(Ws_handle) * MAX_NO_OPEN_WS);
@@ -86,7 +82,6 @@ void popen_phigs(
       phg_wst_destroy(PHG_WSTID(phigs_ws_type_glx_drawable));
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
-      free(phg);
       goto abort;
    }
    memset(PHG_WS_LIST, 0, sizeof(Ws_handle) * MAX_NO_OPEN_WS);
