@@ -100,6 +100,7 @@ int main(int argc, char *argv[])
 
    popen_struct(1);
    pset_view_ind(view_index);
+   pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
    pset_edge_flag(PEDGE_ON);
    pset_edge_colr_ind(3);
    pset_edgewidth(2.0);
@@ -142,6 +143,7 @@ int main(int argc, char *argv[])
    win.z_max = 1.0;
    pset_ws_vp3(0, &vp);
    pset_ws_win3(0, &win);
+   pset_hlhsr_mode(0, PHIGS_HLHSR_MODE_ZBUFF);
 
    col_rep.rgb.red = 0.0;
    col_rep.rgb.green = 0.25;

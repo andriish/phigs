@@ -42,6 +42,9 @@
 #define PHIGS_HLHSR_MODE_NONE  0
 #define PHIGS_HLHSR_MODE_ZBUFF 1
 
+#define PHIGS_HLHSR_ID_OFF     0
+#define PHIGS_HLHSR_ID_ON      1
+
 /* PHIGS states */
 typedef enum {
    PSYS_ST_PHCL,
@@ -99,6 +102,7 @@ typedef enum {
    PELEM_EXEC_STRUCT,
    PELEM_LABEL,
    PELEM_PICK_ID,
+   PELEM_HLHSR_ID,
    PELEM_NUM_EL_TYPES
 } Pelem_type;
 

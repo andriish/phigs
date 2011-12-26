@@ -554,13 +554,12 @@ void phg_wsb_make_requested_current(
 
     /* Other pending data */
     if ( owsb->hlhsr_mode_pending == PUPD_PEND) {
-
+#ifdef DEBUG
+         printf("wsb: Set hlhsr mode\n");
+#endif
 	 owsb->cur_hlhsr_mode = owsb->req_hlhsr_mode;
 	 owsb->hlhsr_mode_pending = PUPD_NOT_PEND;
-
-         /* NOTE:
-          * Change renderer hlhsr mode here if needed
-          */
+         wsgl_set_hlhsr_mode(ws, owsb->req_hlhsr_mode);
     }
 
 #ifdef DEBUG

@@ -278,16 +278,15 @@ void pset_ws_win3(
    );
 
 /*******************************************************************************
- * pset_colr_rep
+ * pset_hlhsr_mode
  *
- * DESCR:       Set workstation colour representation
+ * DESCR:       Set workstation hlhsr mode
  * RETURNS:     N/A
  */
 
-void pset_colr_rep(
+void pset_hlhsr_mode(
    Pint ws_id,
-   Pint index,
-   Pcolr_rep *rep
+   Pint hlhsr_mode
    );
 
 /*******************************************************************************
@@ -301,6 +300,19 @@ void ppost_struct(
    Pint ws_id,
    Pint struct_id,
    Pfloat priority
+   );
+
+/*******************************************************************************
+ * pset_colr_rep
+ *
+ * DESCR:       Set workstation colour representation
+ * RETURNS:     N/A
+ */
+
+void pset_colr_rep(
+   Pint ws_id,
+   Pint index,
+   Pcolr_rep *rep
    );
 
 /*******************************************************************************
@@ -615,6 +627,17 @@ void plabel(
 
 void pset_pick_id(
    Pint pick_id
+   );
+
+/*******************************************************************************
+ * pset_hlhsr_id
+ *
+ * DESCR:       Create hidden lines, surface removal flag element
+ * RETURNS:     N/A
+ */
+
+void pset_hlhsr_id(
+   Pint hlhsr_id
    );
 
 /*******************************************************************************

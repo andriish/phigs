@@ -120,6 +120,7 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_EXEC_STRUCT] = phg_css_struct_ref;
     fptr[(int)PELEM_LABEL] = phg_handle_int;
     fptr[(int)PELEM_PICK_ID] = phg_handle_int;
+    fptr[(int)PELEM_HLHSR_ID] = phg_handle_int;
 
     if ( !(cssh->stab = phg_css_stab_init(CSS_STAB_SIZE)) ) {
 	free((char *)cssh);

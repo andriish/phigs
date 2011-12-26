@@ -87,6 +87,7 @@ int wsx_gl_init(
 {
    Display *display;
    int screen_num;
+   Wst_phigs_dt *dt;
 
    display = XOpenDisplay(NULL);
    if (display == NULL) {
@@ -96,12 +97,22 @@ int wsx_gl_init(
 
    screen_num = DefaultScreen(display);
 
-   wst->desc_tbl.phigs_dt.ws_category = PCAT_OUT;
-   wst->desc_tbl.phigs_dt.dev_coords[0] =
-      (float) DisplayWidth(display, screen_num);
-   wst->desc_tbl.phigs_dt.dev_coords[1] =
-      (float) DisplayHeight(display, screen_num);
-   wst->desc_tbl.phigs_dt.dev_coords[2] = 1.0;
+   dt = &wst->desc_tbl.phigs_dt;
+
+   dt->ws_category = PCAT_OUT;
+   dt->dev_coords[0] = (float) DisplayWidth(display, screen_num);
+   dt->dev_coords[1] = (float) DisplayHeight(display, screen_num);
+   dt->dev_coords[2] = 1.0;
+
+   XCloseDisplay(display);
+
+   dt->num_hlhsr_modes = 2;
+   dt->hlhsr_modes = (Pint *) malloc(sizeof(Pint) * dt->num_hlhsr_modes);
+   if (dt->hlhsr_modes == NULL) {
+      return FALSE;
+   }
+   dt->hlhsr_modes[0] = PHIGS_HLHSR_MODE_NONE;
+   dt->hlhsr_modes[1] = PHIGS_HLHSR_MODE_ZBUFF;
 
 #ifdef DEBUG
    printf("Added wsx_gl with coords: %f %f %f\n",
@@ -109,8 +120,6 @@ int wsx_gl_init(
       wst->desc_tbl.phigs_dt.dev_coords[1],
       wst->desc_tbl.phigs_dt.dev_coords[2]);
 #endif
-
-   XCloseDisplay(display);
 
    return TRUE;
 }
@@ -130,7 +139,11 @@ int wsx_gl_open_window(
    XVisualInfo *vi;
    Colormap cmap;
    XSetWindowAttributes wattr;
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Wst_phigs_dt *dt;
+   Wsgl *wsgl;
+
+   wsgl = ws->render_context;
+   dt = &args->type->desc_tbl.phigs_dt;
 
 #ifdef DEBUG
    printf("Open workstation window:\n"
@@ -150,7 +163,7 @@ int wsx_gl_open_window(
 
   ws->ws_rect.x      = 0;
   ws->ws_rect.y      = 0;
-  ws->ws_rect.width  = (int) args->type->desc_tbl.phigs_dt.dev_coords[0] / 2;
+  ws->ws_rect.width  = (int) dt->dev_coords[0] / 2;
   ws->ws_rect.height = ws->ws_rect.width;
 
 #ifdef DEBUG

@@ -419,6 +419,31 @@ void pset_pick_id(
 }
 
 /*******************************************************************************
+ * pset_hlhsr_id
+ *
+ * DESCR:	Create hidden lines, surface removal flag element
+ * RETURNS:	N/A
+ */
+
+void pset_hlhsr_id(
+   Pint hlhsr_id
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_hlhsr_id);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_HLHSR_ID;
+      ARGS_ELMT_DATA(&args).int_data = hlhsr_id;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_int_colr_ind
  *
  * DESCR:	Creates a new element - Facet Color Attribute

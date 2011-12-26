@@ -187,6 +187,7 @@ void css_print_eltype(Pelem_type eltype)
         case PELEM_EXEC_STRUCT: name = "PELEM_EXEC_STRUCT"; break;
         case PELEM_LABEL: name = "PELEM_LABEL"; break;
         case PELEM_PICK_ID: name = "PELEM_PICK_ID"; break;
+        case PELEM_HLHSR_ID: name = "PELEM_HLHSR_ID"; break;
 
       default:
 	fprintf(stderr, "UNKNOWN TYPE: %d", eltype);

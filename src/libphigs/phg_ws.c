@@ -289,6 +289,49 @@ void pset_ws_win3(
 }
 
 /*******************************************************************************
+ * pset_hlhsr_mode
+ *
+ * DESCR:	Set workstation hlhsr mode
+ * RETURNS:	N/A
+ */
+
+void pset_hlhsr_mode(
+   Pint ws_id,
+   Pint hlhsr_mode
+   )
+{
+   int i;
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+   Ws_handle wsh;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_hlhsr_mode);
+
+   if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      ERR_REPORT(PHG_ERH, ERR3);
+   }
+   else if ((wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id)) == NULL) {
+      ERR_REPORT(PHG_ERH, ERR54);
+   }
+   else {
+      dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+      if (!(dt->ws_category == PCAT_OUT ||
+            dt->ws_category == PCAT_OUTIN ||
+            dt->ws_category == PCAT_MO)) {
+         ERR_REPORT(PHG_ERH, ERR59);
+      }
+      for (i = 0; i < dt->num_hlhsr_modes; i++) {
+         if (hlhsr_mode == dt->hlhsr_modes[i]) {
+            wsh = PHG_WSID(ws_id);
+            (*wsh->set_hlhsr_mode)(wsh, hlhsr_mode);
+            return;
+         }
+      }
+      ERR_REPORT(PHG_ERH, ERR111);
+   }
+}
+
+/*******************************************************************************
  * ppost_struct
  *
  * DESCR:	Post structure to workstation

@@ -49,6 +49,10 @@ static void phg_set_view(
    Pint view_index
    );
 
+void phg_set_hlhsr_id(
+   Pint hlhsr_id
+   );
+
 static void phg_set_line_attr(
    Ws *ws,
    Pline_bundle *attr
@@ -269,6 +273,24 @@ void wsgl_set_viewport(
 }
 
 /*******************************************************************************
+ * wsgl_set_hlhsr_mode
+ *
+ * DESCR:	Set render depth mode
+ * RETURNS:	N/A
+ */
+
+void wsgl_set_hlhsr_mode(
+   Ws *ws,
+   Pint hlhsr_mode
+   )
+{
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
+
+   wsgl->hlhsr_mode = hlhsr_mode;
+   wsgl->hlhsr_changed = 1;
+}
+
+/*******************************************************************************
  * wsgl_clear
  *
  * DESCR:	Clear render window
@@ -317,9 +339,7 @@ void wsgl_flush(
                  (GLsizei) ws_xform.scale.x,
                  (GLsizei) ws_xform.scale.y);
 
-      glEnable(GL_DEPTH_TEST);
       glDepthRange(ws_xform.scale.z, ws_xform.offset.z);
-      glDepthFunc(GL_LESS);
 
       if (wsgl->vp_changed) {
          wsgl->vp_changed = 0;
@@ -347,6 +367,22 @@ void wsgl_flush(
          wsgl->win_changed = 0;
       }
 
+   }
+
+   if (wsgl->hlhsr_changed) {
+      if (wsgl->hlhsr_mode == PHIGS_HLHSR_MODE_ZBUFF) {
+#ifdef DEBUG
+         printf("Enable z-buffer\n");
+#endif
+         glEnable(GL_DEPTH_TEST);
+      }
+      else if (wsgl->hlhsr_mode == PHIGS_HLHSR_MODE_NONE) {
+#ifdef DEBUG
+         printf("Disable z-buffer\n");
+#endif
+         glDisable(GL_DEPTH_TEST);
+      }
+      wsgl->hlhsr_changed = 0;
    }
 
    if (ws->has_double_buffer)
@@ -418,6 +454,7 @@ void wsgl_begin_rendering(
 #endif
 
    memcpy(&wsgl->attrs, phg_get_default_attr(), sizeof(attribute_group));
+   phg_set_hlhsr_id(PHIGS_HLHSR_ID_OFF);
    phg_mat_identity(wsgl->local_tran);
    phg_set_view(ws, 0);
 }
@@ -455,88 +492,107 @@ void wsgl_render_element(
 
    switch (el->eltype) {
       case PELEM_LABEL:
+         break;
+
       case PELEM_PICK_ID:
-      break;
+         break;
+
+      case PELEM_HLHSR_ID:
+         phg_set_hlhsr_id(PHG_INT(el));
+         break;
 
       case PELEM_INT_COLR_IND:
          wsgl->attrs.int_bundle.colr_ind = PHG_INT(el);
-      break;
+         break;
+
       case PELEM_INT_STYLE:
          wsgl->attrs.int_bundle.style = PHG_INT(el);
-      break;
+         break;
 
       case PELEM_EDGE_COLR_IND:
          wsgl->attrs.edge_bundle.colr_ind = PHG_INT(el);
-      break;
+         break;
+
       case PELEM_EDGEWIDTH:
          wsgl->attrs.edge_bundle.width = PHG_FLOAT(el);
-      break;
+         break;
+
       case PELEM_EDGETYPE:
          wsgl->attrs.edge_bundle.type = PHG_INT(el);
-      break;
+         break;
+
       case PELEM_EDGE_FLAG:
          wsgl->attrs.edge_bundle.flag = PHG_EDGE_FLAG(el);
-      break;
+         break;
 
       case PELEM_MARKER_COLR_IND:
          wsgl->attrs.marker_bundle.colr_ind = PHG_INT(el);
-      break;
+         break;
+
       case PELEM_MARKER_SIZE:
          wsgl->attrs.marker_bundle.size = PHG_FLOAT(el);
-      break;
+         break;
+
       case PELEM_MARKER_TYPE:
          wsgl->attrs.marker_bundle.type = PHG_INT(el);
-      break;
+         break;
 
       case PELEM_TEXT_COLR_IND:
          wsgl->attrs.text_bundle.colr_ind = PHG_INT(el);
-      break;
+         break;
+
       case PELEM_TEXT_FONT:
          wsgl->attrs.text_bundle.font = PHG_INT(el);
-      break;
+         break;
 
       case PELEM_LINE_COLR_IND:
          wsgl->attrs.line_bundle.colr_ind = PHG_INT(el);
-      break;
+         break;
+
       case PELEM_LINEWIDTH:
          wsgl->attrs.line_bundle.width = PHG_FLOAT(el);
-      break;
+         break;
+
       case PELEM_LINETYPE:
          wsgl->attrs.line_bundle.type = PHG_INT(el);
-      break;
+         break;
 
       case PELEM_FILL_AREA:
          phg_draw_fill_area(ws,
                             PHG_POINT_LIST(el),
                             &wsgl->attrs);
-      break;
+         break;
+
       case PELEM_POLYLINE:
          phg_draw_polyline(ws,
                            PHG_POINT_LIST(el),
                            &wsgl->attrs
                            );
-      break;
+         break;
+
       case PELEM_POLYMARKER:
          phg_draw_polymarker(ws,
                              PHG_POINT_LIST(el),
                              &wsgl->attrs);
-      break;
+         break;
 
       case PELEM_FILL_AREA3:
          phg_draw_fill_area3(ws,
                              PHG_POINT_LIST3(el),
                              &wsgl->attrs);
-      break;
+         break;
+
       case PELEM_POLYLINE3:
          phg_draw_polyline3(ws,
                             PHG_POINT_LIST3(el),
                             &wsgl->attrs);
-      break;
+         break;
+
       case PELEM_POLYMARKER3:
          phg_draw_polymarker3(ws,
                               PHG_POINT_LIST3(el),
                               &wsgl->attrs);
-      break;
+         break;
 
       case PELEM_LOCAL_MODEL_TRAN3:
          switch (PHG_LOCAL_TRAN3(el)->compose_type) {
@@ -557,16 +613,16 @@ void wsgl_render_element(
          }
          phg_update_modelview(ws,
                               wsgl->curr_view_index);
-      break;
+         break;
 
       case PELEM_VIEW_IND:
          phg_set_view(ws, PHG_INT(el));
-      break;
+         break;
 
       default:
          css_print_eltype(el->eltype);
          printf(" not processed\n");
-      break;
+         break;
    }
 }
 
@@ -662,6 +718,31 @@ static void phg_set_view(
    wsgl->curr_view_index = view_index;
    phg_update_projection(ws, view_index);
    phg_update_modelview(ws, view_index);
+}
+
+/*******************************************************************************
+ * phg_set_hlhsr_id
+ *
+ * DESCR:	Setup depth buffer checking
+ * RETURNS:	N/A
+ */
+
+void phg_set_hlhsr_id(
+   Pint hlhsr_id
+   )
+{
+   switch(hlhsr_id) {
+      case PHIGS_HLHSR_ID_OFF:
+         glDepthFunc(GL_ALWAYS);
+      break;
+
+      case PHIGS_HLHSR_ID_ON:
+         glDepthFunc(GL_LESS);
+      break;
+
+      default:
+      break;
+   }
 }
 
 /*******************************************************************************
