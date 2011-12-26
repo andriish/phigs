@@ -64,16 +64,16 @@ void padd_names_set(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_add_names_set);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_add_names_set);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_ADD_NAMES_SET;
       ARGS_ELMT_DATA(&args).names.num_ints = names->num_ints;
       ARGS_ELMT_DATA(&args).names.ints = names->ints;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -90,16 +90,16 @@ void premove_names_set(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_remove_names_set);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_remove_names_set);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_REMOVE_NAMES_SET;
       ARGS_ELMT_DATA(&args).names.num_ints = names->num_ints;
       ARGS_ELMT_DATA(&args).names.ints = names->ints;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -117,16 +117,16 @@ void pset_local_tran(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_local_tran);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_local_tran);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LOCAL_MODEL_TRAN;
       ARGS_ELMT_DATA(&args).local_tran.compose_type = compose_type;
       phg_mat_copy_3x3(ARGS_ELMT_DATA(&args).local_tran.matrix, local_tran);
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -144,16 +144,16 @@ void pset_local_tran3(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_local_tran3);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_local_tran3);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LOCAL_MODEL_TRAN3;
       ARGS_ELMT_DATA(&args).local_tran3.compose_type = compose_type;
       phg_mat_copy(ARGS_ELMT_DATA(&args).local_tran3.matrix, local_tran);
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -170,15 +170,15 @@ void pset_view_ind(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_view_ind);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_view_ind);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_VIEW_IND;
       ARGS_ELMT_DATA(&args).int_data = index;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -196,16 +196,16 @@ void ptext(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_text);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_text);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_TEXT;
       memcpy(&ARGS_ELMT_DATA(&args).text.pos, text_pos, sizeof(Ppoint));
       ARGS_ELMT_DATA(&args).text.char_string = char_string;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -222,16 +222,16 @@ void ppolyline(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_polyline);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_polyline);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_POLYLINE;
       ARGS_ELMT_DATA(&args).point_list.num_points = point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list.points = point_list->points;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -248,17 +248,17 @@ void ppolyline3(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_polyline3);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_polyline3);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_POLYLINE3;
       ARGS_ELMT_DATA(&args).point_list3.num_points =
          point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list3.points = point_list->points;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -275,16 +275,16 @@ void ppolymarker(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_polymarker);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_polymarker);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_POLYMARKER;
       ARGS_ELMT_DATA(&args).point_list.num_points = point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list.points = point_list->points;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -301,17 +301,17 @@ void ppolymarker3(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_polymarker3);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_polymarker3);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_POLYMARKER3;
       ARGS_ELMT_DATA(&args).point_list3.num_points =
          point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list3.points = point_list->points;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -328,16 +328,16 @@ void pfill_area(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_fill_area);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_fill_area);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA;
       ARGS_ELMT_DATA(&args).point_list.num_points = point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list.points = point_list->points;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -354,17 +354,17 @@ void pfill_area3(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_fill_area3);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_fill_area3);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA3;
       ARGS_ELMT_DATA(&args).point_list3.num_points =
          point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list3.points = point_list->points;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -381,15 +381,15 @@ void plabel(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_label);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_label);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LABEL;
       ARGS_ELMT_DATA(&args).int_data = label_id;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -406,15 +406,15 @@ void pset_pick_id(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_pick_id);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_pick_id);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_PICK_ID;
       ARGS_ELMT_DATA(&args).int_data = pick_id;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -431,18 +431,18 @@ void pset_int_colr_ind(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_int_colr_ind);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_int_colr_ind);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else if (colr_ind < 0) {
-      ERR_REPORT(erh, ERR113);
+      ERR_REPORT(PHG_ERH, ERR113);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_INT_COLR_IND;
       ARGS_ELMT_DATA(&args).int_data = colr_ind;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -459,15 +459,15 @@ void pset_int_style(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_int_style);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_int_style);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_INT_STYLE;
       ARGS_ELMT_DATA(&args).int_style = int_style;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -484,18 +484,18 @@ void pset_line_colr_ind(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_line_colr_ind);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_line_colr_ind);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else if (colr_ind < 0) {
-      ERR_REPORT(erh, ERR113);
+      ERR_REPORT(PHG_ERH, ERR113);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LINE_COLR_IND;
       ARGS_ELMT_DATA(&args).int_data = colr_ind;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -512,15 +512,15 @@ void pset_linewidth(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_linewidth);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_linewidth);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LINEWIDTH;
       ARGS_ELMT_DATA(&args).float_data = linewidth;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -537,15 +537,15 @@ void pset_linetype(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_linetype);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_linetype);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LINETYPE;
       ARGS_ELMT_DATA(&args).int_data = linetype;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -562,18 +562,18 @@ void pset_marker_colr_ind(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_marker_colr_ind);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_marker_colr_ind);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else if (colr_ind < 0) {
-      ERR_REPORT(erh, ERR113);
+      ERR_REPORT(PHG_ERH, ERR113);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_MARKER_COLR_IND;
       ARGS_ELMT_DATA(&args).int_data = colr_ind;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -590,15 +590,15 @@ void pset_marker_size(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_marker_size);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_marker_size);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_MARKER_SIZE;
       ARGS_ELMT_DATA(&args).float_data = marker_size;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -615,15 +615,15 @@ void pset_marker_type(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_marker_type);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_marker_type);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_MARKER_TYPE;
       ARGS_ELMT_DATA(&args).int_data = marker_type;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -640,18 +640,18 @@ void pset_edge_colr_ind(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_edge_colr_ind);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_edge_colr_ind);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else if (colr_ind < 0) {
-      ERR_REPORT(erh, ERR113);
+      ERR_REPORT(PHG_ERH, ERR113);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_EDGE_COLR_IND;
       ARGS_ELMT_DATA(&args).int_data = colr_ind;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -668,15 +668,15 @@ void pset_edgetype(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_edgetype);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_edgetype);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_EDGETYPE;
       ARGS_ELMT_DATA(&args).int_data = edgetype;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -693,15 +693,15 @@ void pset_edge_flag(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_edge_flag);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_edge_flag);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_EDGE_FLAG;
       ARGS_ELMT_DATA(&args).edge_flag = edge_flag;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -718,15 +718,15 @@ void pset_edgewidth(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_edgewidth);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_edgewidth);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_EDGEWIDTH;
       ARGS_ELMT_DATA(&args).float_data = edgewidth;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -743,15 +743,15 @@ void pset_text_font(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_text_font);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_text_font);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_TEXT_FONT;
       ARGS_ELMT_DATA(&args).int_data = font;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -768,18 +768,18 @@ void pset_text_colr_ind(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_text_colr_ind);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_text_colr_ind);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else if (colr_ind < 0) {
-      ERR_REPORT(erh, ERR113);
+      ERR_REPORT(PHG_ERH, ERR113);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_TEXT_COLR_IND;
       ARGS_ELMT_DATA(&args).int_data = colr_ind;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 
@@ -796,15 +796,15 @@ void pexec_struct(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_exec_struct);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_exec_struct);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_EXEC_STRUCT;
       ARGS_ELMT_DATA(&args).int_data = struct_id;
-      phg_add_el(css, &args);
+      phg_add_el(PHG_CSS, &args);
    }
 }
 

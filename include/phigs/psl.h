@@ -32,6 +32,12 @@
 #define PSL_STRUCT_STATE(psl) \
    ((psl)->phg_struct_state)
 
+#define PSL_OPEN_STRUCT(psl) \
+   ((psl)->open_struct)
+
+#define PSL_EDIT_MODE(psl) \
+   ((psl)->edit_mode)
+
 typedef struct {
    Pint       used;                            /* Mark if workstation is used */
    Pint       wsid;                            /* Workstation id */

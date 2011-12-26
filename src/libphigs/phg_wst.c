@@ -21,61 +21,62 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <phigs/phg.h>
-#include <phigs/css.h>
-#include <phigs/private/phgP.h>
 
 /*******************************************************************************
- * pinq_elem_ptr
+ * phg_wst_create
  *
- * DESCR:	Returns the index of the current element.
- * RETURNS:	N/A
+ * DESCR:       Create workstation type structure
+ * RETURNS:     Pointer to workstation type or NULL
  */
 
-void pinq_elem_ptr(
-   Pint *err_ind,
-   Pint *elem_ptr_value
+Wst* phg_wst_create(
+   Wst_base_type base_type
    )
 {
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
+   Wst *wst;
 
-   if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
-      *err_ind = ERR5;
+   wst = (Wst *) malloc(sizeof(Wst));
+   if (wst == NULL) {
+      ERR_REPORT(PHG_ERH, ERR900);
    }
-   else if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      *err_ind = ERR5;
+   else if (!phg_wst_init(wst, base_type)) {
+      ERR_REPORT(PHG_ERH, ERR900);
    }
-   else {
-      *err_ind = 0;
-      *elem_ptr_value = CSS_INQ_EL_INDEX(PHG_CSS);
-   }
+
+   return wst;
 }
 
 /*******************************************************************************
- * pinq_open_struct
+ * phg_wst_init
  *
- * DESCR:	Check if a structure is open for appending or editing.
- * RETURNS:	N/A
+ * DESCR:       Initialize workstation type structure
+ * RETURNS:     TRUE or FALSE
  */
 
-void pinq_open_struct(
-   Pint *err_ind,
-   Popen_struct_status *status,
-   Pint *struct_id
+int phg_wst_init(
+   Wst *wst,
+   Wst_base_type base_type
    )
 {
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
+   wst->wsid = -1;
+   wst->base_type = base_type;
 
-   if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
-      *err_ind = ERR2;
-   }
-   else if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      *status = PSTRUCT_NONE;
-      *err_ind = 0;
-   }
-   else {
-      *err_ind = 0;
-      *status = PSTRUCT_OPEN;
-      *struct_id = CSS_CUR_STRUCT_ID(PHG_CSS);
+   return TRUE;
+}
+
+/*******************************************************************************
+ * phg_wst_destroy
+ *
+ * DESCR:       Destroy workstation type structure
+ * RETURNS:     N/A
+ */
+
+void phg_wst_destroy(
+   Wst *wst
+   )
+{
+   if (wst != NULL) {
+      free(wst);
    }
 }
 

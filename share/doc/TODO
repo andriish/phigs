@@ -13,8 +13,12 @@ Fixed!
 
 phg_ws.c: all functions from popen_ws and ahead need to handler errors
           by checking PHIGS stat list
+Added checks for all functions
+Fixed!
 
-Need to add info in phg_dt?
+Need to add info in phg_dt? Yes! Added to ws_type.
+
+phg_col: Add error checks
 
 --------------------------------------------------------------------------------
 

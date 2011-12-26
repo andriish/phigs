@@ -170,16 +170,16 @@ int main(int argc, char *argv[])
 
    ppost_struct(0, 1, 0);
 
-   XSelectInput(ws_list[0]->display,
-                ws_list[0]->drawable_id,
+   XSelectInput(PHG_WSID(0)->display,
+                PHG_WSID(0)->drawable_id,
                 ExposureMask | KeyPressMask);
    while (1) {
-      XNextEvent(ws_list[0]->display, &event);
+      XNextEvent(PHG_WSID(0)->display, &event);
       switch(event.type) {
 
          case Expose:
-            while (XCheckTypedEvent(ws_list[0]->display, Expose, &event));
-            (*ws_list[0]->redraw_all)(ws_list[0], PFLAG_ALWAYS);
+            while (XCheckTypedEvent(PHG_WSID(0)->display, Expose, &event));
+            (*PHG_WSID(0)->redraw_all)(PHG_WSID(0), PFLAG_ALWAYS);
          break;
 
          case KeyPress:
@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
             pset_elem_ptr(0);
             pset_elem_ptr_label(10);
             struct_stat();
-            css->edit_mode = PEDIT_REPLACE;
+            pset_edit_mode(PEDIT_REPLACE);
             poffset_elem_ptr(1);
             pset_local_tran3(tran3, PTYPE_POSTCONCAT);
             poffset_elem_ptr(1);
@@ -199,11 +199,11 @@ int main(int argc, char *argv[])
             pset_elem_ptr(0);
             //pdel_elem_range(19, 20);
             pdel_elems_labels(10, 20);
-            css->edit_mode = PEDIT_INSERT;
-            //phg_css_print_struct(css->open_struct, 0);
+            pset_edit_mode(PEDIT_INSERT);
+            //phg_css_print_struct(PHG_CSS->open_struct, 0);
 #endif
             pset_elem_ptr(4);
-            css->edit_mode = PEDIT_INSERT;
+            pset_edit_mode(PEDIT_INSERT);
             tvec3.delta_x = -SPACE;
             tvec3.delta_y = 0.0;
             tvec3.delta_z = 0.0;
@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
             pset_int_style(PSTYLE_SOLID);
             pset_int_colr_ind(4);
             pcopy_all_elems_struct(0);
-            //phg_css_print_struct(css->open_struct, 0);
+            //phg_css_print_struct(PHG_CSS->open_struct, 0);
             pclose_struct();
          break;
 
@@ -221,8 +221,7 @@ int main(int argc, char *argv[])
       }
    }
 
-   (*ws_list[0]->close)(ws_list[0]);
-   phg_css_destroy(css);
+   (*PHG_WSID(0)->close)(PHG_WSID(0));
 
    return 0;
 }

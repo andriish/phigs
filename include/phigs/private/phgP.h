@@ -107,7 +107,6 @@ typedef struct {
 #define PHG_DATA_INT_STYLE(ELMT) \
    *((Pint_style *) (((Css_eldata *) (ELMT))->ptr))
 
-void phg_init_default_attr(void);
 attribute_group* phg_get_default_attr(void);
 void phg_traverse(Css_handle css, Struct_handle structp);
 

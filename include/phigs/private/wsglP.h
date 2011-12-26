@@ -187,6 +187,28 @@ void wsgl_render_element(
    );
 
 /*******************************************************************************
+ * wsx_gl_create
+ *
+ * DESCR:       Create workstation type
+ * RETURNS:     Pointer to workstation type or NULL
+ */
+
+Wst* wsx_gl_create(
+   void
+   );
+
+/*******************************************************************************
+ * wsx_gl_init
+ *
+ * DESCR:       Initialize workstation type
+ * RETURNS:     TRUE or FALSE
+ */
+
+int wsx_gl_init(
+   Wst *wst
+   );
+
+/*******************************************************************************
  * wsx_gl_open_window
  *
  * DESCR:       Open render window for workstation

@@ -36,10 +36,24 @@
 #include <phigs/psl.h>
 #include <phigs/phg_dt.h>
 
-extern Err_handle erh;
-extern Psl_handle psl;
-extern Css_handle css;
-extern Ws_handle  *ws_list;
+typedef struct {
+   Psl_handle psl;
+   Err_handle erh;
+   Css_handle css;
+   Wst        *wst_list[1];
+   Ws_handle  *ws_list;
+} Phg_struct;
+
+typedef Phg_struct *Phg_handle;
+
+extern Phg_handle phg;
+
+#define PHG_ERH (phg->erh)
+#define PHG_PSL (phg->psl)
+#define PHG_CSS (phg->css)
+#define PHG_WSTID(n) (phg->wst_list[n])
+#define PHG_WS_LIST (phg->ws_list)
+#define PHG_WSID(n) (phg->ws_list[(n)])
 
 #endif
 

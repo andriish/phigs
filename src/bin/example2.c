@@ -145,16 +145,16 @@ int main(int argc, char *argv[])
    ppost_struct(0, 3, 0);
    ppost_struct(1, 3, 0);
 
-   XSelectInput(ws_list[0]->display,
-                ws_list[0]->drawable_id,
+   XSelectInput(PHG_WSID(0)->display,
+                PHG_WSID(0)->drawable_id,
                 ExposureMask | KeyPressMask);
    while (1) {
-      XNextEvent(ws_list[0]->display, &event);
+      XNextEvent(PHG_WSID(0)->display, &event);
       switch(event.type) {
          case Expose:
-            while (XCheckTypedEvent(ws_list[0]->display, Expose, &event));
-            (*ws_list[0]->redraw_all)(ws_list[0], PFLAG_ALWAYS);
-            (*ws_list[1]->redraw_all)(ws_list[1], PFLAG_ALWAYS);
+            while (XCheckTypedEvent(PHG_WSID(0)->display, Expose, &event));
+            (*PHG_WSID(0)->redraw_all)(PHG_WSID(0), PFLAG_ALWAYS);
+            (*PHG_WSID(1)->redraw_all)(PHG_WSID(1), PFLAG_ALWAYS);
          break;
 
          case KeyPress:
@@ -168,8 +168,8 @@ int main(int argc, char *argv[])
       }
    }
 
-   (*ws_list[0]->close)(ws_list[0]);
-   (*ws_list[1]->close)(ws_list[1]);
+   (*PHG_WSID(0)->close)(PHG_WSID(0));
+   (*PHG_WSID(1)->close)(PHG_WSID(1));
    phg_css_destroy(css);
 
    return 0;

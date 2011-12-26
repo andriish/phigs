@@ -26,9 +26,53 @@ typedef enum {
 } Wst_base_type;
 
 typedef struct {
+   Pws_cat ws_category;
+   Pfloat  dev_coords[3];
+} Wst_phigs_dt;
+
+typedef struct {
+   Wst_phigs_dt phigs_dt;
+} Wst_dt;
+
+typedef struct {
    Pint          wsid;
    Wst_base_type base_type;
+   Wst_dt        desc_tbl;
 } Wst;
+
+/*******************************************************************************
+ * phg_wst_create
+ *
+ * DESCR:       Create workstation type structure
+ * RETURNS:	Pointer to workstation type or NULL
+ */
+
+Wst* phg_wst_create(
+   Wst_base_type base_type
+   );
+
+/*******************************************************************************
+ * phg_wst_init
+ *
+ * DESCR:       Initialize workstation type structure
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wst_init(
+   Wst *wst,
+   Wst_base_type base_type
+   );
+
+/*******************************************************************************
+ * phg_wst_destroy
+ * 
+ * DESCR:       Destroy workstation type structure
+ * RETURNS:     N/A
+ */
+ 
+void phg_wst_destroy(
+   Wst *wst
+   );
 
 #endif /* _ws_type_h */
 
