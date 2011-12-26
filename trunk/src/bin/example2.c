@@ -170,7 +170,6 @@ int main(int argc, char *argv[])
 
    (*PHG_WSID(0)->close)(PHG_WSID(0));
    (*PHG_WSID(1)->close)(PHG_WSID(1));
-   phg_css_destroy(css);
 
    return 0;
 }

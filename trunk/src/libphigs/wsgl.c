@@ -75,37 +75,37 @@ static void phg_set_marker_attr(
 static void phg_draw_polymarker(
    Ws *ws,
    Ppoint_list *point_list,
-   attribute_group *attr
+   Pattr_group *attr
    );
 
 static void phg_draw_polymarker3(
    Ws *ws,
    Ppoint_list3 *point_list,
-   attribute_group *attr
+   Pattr_group *attr
    );
 
 static void phg_draw_polyline(
    Ws *ws,
    Ppoint_list *point_list,
-   attribute_group *attr
+   Pattr_group *attr
    );
 
 static void phg_draw_polyline3(
    Ws *ws,
    Ppoint_list3 *point_list,
-   attribute_group *attr
+   Pattr_group *attr
    );
 
 static void phg_draw_fill_area(
    Ws *ws,
    Ppoint_list *point_list,
-   attribute_group *attr
+   Pattr_group *attr
    );
 
 static void phg_draw_fill_area3(
    Ws *ws,
    Ppoint_list3 *point_list,
-   attribute_group *attr
+   Pattr_group *attr
    );
 
 #ifdef NOT_YET
@@ -157,6 +157,12 @@ int wsgl_init(
       return 0;
 
    memset(wsgl, 0, sizeof(Wsgl));
+
+   wsgl->attr_group = phg_attr_group_create();
+   if (wsgl->attr_group == NULL) {
+      free(wsgl);
+      return 0;
+   }
 
    ws->render_context = wsgl;
 
@@ -214,6 +220,9 @@ void wsgl_destroy(
    Ws *ws
    )
 {
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
+
+   phg_attr_group_destroy(wsgl->attr_group);
    free(ws->render_context);
    free(ws);
 }
@@ -432,7 +441,7 @@ void wsgl_begin_rendering(
    printf("Begin rendering\n");
 #endif
 
-   memcpy(&wsgl->attrs, phg_get_default_attr(), sizeof(attribute_group));
+   //memcpy(&wsgl->attrs, phg_get_default_attr(), sizeof(attribute_group));
    phg_set_hlhsr_id(PHIGS_HLHSR_ID_OFF);
    phg_mat_identity(wsgl->local_tran);
    phg_set_view(ws, 0);
@@ -481,96 +490,96 @@ void wsgl_render_element(
          break;
 
       case PELEM_INT_COLR_IND:
-         wsgl->attrs.int_bundle.colr_ind = PHG_INT(el);
+         wsgl->attr_group->int_bundle.colr_ind = PHG_INT(el);
          break;
 
       case PELEM_INT_STYLE:
-         wsgl->attrs.int_bundle.style = PHG_INT(el);
+         wsgl->attr_group->int_bundle.style = PHG_INT(el);
          break;
 
       case PELEM_EDGE_COLR_IND:
-         wsgl->attrs.edge_bundle.colr_ind = PHG_INT(el);
+         wsgl->attr_group->edge_bundle.colr_ind = PHG_INT(el);
          break;
 
       case PELEM_EDGEWIDTH:
-         wsgl->attrs.edge_bundle.width = PHG_FLOAT(el);
+         wsgl->attr_group->edge_bundle.width = PHG_FLOAT(el);
          break;
 
       case PELEM_EDGETYPE:
-         wsgl->attrs.edge_bundle.type = PHG_INT(el);
+         wsgl->attr_group->edge_bundle.type = PHG_INT(el);
          break;
 
       case PELEM_EDGE_FLAG:
-         wsgl->attrs.edge_bundle.flag = PHG_EDGE_FLAG(el);
+         wsgl->attr_group->edge_bundle.flag = PHG_EDGE_FLAG(el);
          break;
 
       case PELEM_MARKER_COLR_IND:
-         wsgl->attrs.marker_bundle.colr_ind = PHG_INT(el);
+         wsgl->attr_group->marker_bundle.colr_ind = PHG_INT(el);
          break;
 
       case PELEM_MARKER_SIZE:
-         wsgl->attrs.marker_bundle.size = PHG_FLOAT(el);
+         wsgl->attr_group->marker_bundle.size = PHG_FLOAT(el);
          break;
 
       case PELEM_MARKER_TYPE:
-         wsgl->attrs.marker_bundle.type = PHG_INT(el);
+         wsgl->attr_group->marker_bundle.type = PHG_INT(el);
          break;
 
       case PELEM_TEXT_COLR_IND:
-         wsgl->attrs.text_bundle.colr_ind = PHG_INT(el);
+         wsgl->attr_group->text_bundle.colr_ind = PHG_INT(el);
          break;
 
       case PELEM_TEXT_FONT:
-         wsgl->attrs.text_bundle.font = PHG_INT(el);
+         wsgl->attr_group->text_bundle.font = PHG_INT(el);
          break;
 
       case PELEM_LINE_COLR_IND:
-         wsgl->attrs.line_bundle.colr_ind = PHG_INT(el);
+         wsgl->attr_group->line_bundle.colr_ind = PHG_INT(el);
          break;
 
       case PELEM_LINEWIDTH:
-         wsgl->attrs.line_bundle.width = PHG_FLOAT(el);
+         wsgl->attr_group->line_bundle.width = PHG_FLOAT(el);
          break;
 
       case PELEM_LINETYPE:
-         wsgl->attrs.line_bundle.type = PHG_INT(el);
+         wsgl->attr_group->line_bundle.type = PHG_INT(el);
          break;
 
       case PELEM_FILL_AREA:
          phg_draw_fill_area(ws,
                             PHG_POINT_LIST(el),
-                            &wsgl->attrs);
+                            wsgl->attr_group);
          break;
 
       case PELEM_POLYLINE:
          phg_draw_polyline(ws,
                            PHG_POINT_LIST(el),
-                           &wsgl->attrs
+                           wsgl->attr_group
                            );
          break;
 
       case PELEM_POLYMARKER:
          phg_draw_polymarker(ws,
                              PHG_POINT_LIST(el),
-                             &wsgl->attrs);
+                             wsgl->attr_group);
          break;
 
       case PELEM_FILL_AREA3:
          phg_draw_fill_area3(ws,
                              PHG_POINT_LIST3(el),
-                             &wsgl->attrs);
+                             wsgl->attr_group);
          break;
 
       case PELEM_POLYLINE3:
          phg_draw_polyline3(ws,
                             PHG_POINT_LIST3(el),
-                            &wsgl->attrs);
+                            wsgl->attr_group);
          break;
 
       case PELEM_POLYMARKER3:
          phg_draw_polymarker3(ws,
                               PHG_POINT_LIST3(el),
-                              &wsgl->attrs);
+                              wsgl->attr_group);
          break;
 
       case PELEM_LOCAL_MODEL_TRAN3:
@@ -967,7 +976,7 @@ static void phg_draw_marker_cross(
 static void phg_draw_polymarker(
    Ws *ws,
    Ppoint_list *point_list,
-   attribute_group *attr
+   Pattr_group *attr
    )
 {
    phg_set_marker_attr(ws, &attr->marker_bundle);
@@ -1000,7 +1009,7 @@ static void phg_draw_polymarker(
 static void phg_draw_polymarker3(
    Ws *ws,
    Ppoint_list3 *point_list,
-   attribute_group *attr
+   Pattr_group *attr
    )
 {
    int i;
@@ -1044,7 +1053,7 @@ static void phg_draw_polymarker3(
 static void phg_draw_polyline(
    Ws *ws,
    Ppoint_list *point_list,
-   attribute_group *attr
+   Pattr_group *attr
    )
 {
    int i;
@@ -1067,7 +1076,7 @@ static void phg_draw_polyline(
 static void phg_draw_polyline3(
    Ws *ws,
    Ppoint_list3 *point_list,
-   attribute_group *attr
+   Pattr_group *attr
    )
 {
    int i;
@@ -1091,7 +1100,7 @@ static void phg_draw_polyline3(
 static void phg_draw_fill_area(
    Ws *ws,
    Ppoint_list *point_list,
-   attribute_group *attr
+   Pattr_group *attr
    )
 {
    int i;
@@ -1125,7 +1134,7 @@ static void phg_draw_fill_area(
 static void phg_draw_fill_area3(
    Ws *ws,
    Ppoint_list3 *point_list,
-   attribute_group *attr
+   Pattr_group *attr
    )
 {
    int i;
