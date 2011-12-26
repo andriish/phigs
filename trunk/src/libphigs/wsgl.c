@@ -441,7 +441,6 @@ void wsgl_begin_rendering(
    printf("Begin rendering\n");
 #endif
 
-   //memcpy(&wsgl->attrs, phg_get_default_attr(), sizeof(attribute_group));
    phg_set_hlhsr_id(PHIGS_HLHSR_ID_OFF);
    phg_mat_identity(wsgl->local_tran);
    phg_set_view(ws, 0);
