@@ -285,7 +285,7 @@ void pset_ws_win3(
  */
 
 void pset_colr_rep(
-   Pint ws,
+   Pint ws_id,
    Pint index,
    Pcolr_rep *rep
    );
@@ -323,6 +323,17 @@ void popen_struct(
 
 void pclose_struct(
    void
+   );
+
+/*******************************************************************************
+ * pset_edit_mode
+ *
+ * DESCR:       Set structure edit mode
+ * RETURNS:     N/A
+ */
+
+void pset_edit_mode(
+   Pedit_mode mode
    );
 
 /*******************************************************************************

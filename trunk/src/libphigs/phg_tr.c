@@ -81,9 +81,9 @@ void ptranslate3(
     Pmatrix3 m                 /* OUT transformation matrix */
     )
 {
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -109,9 +109,9 @@ void ptranslate(
     Pmatrix m                  /* OUT transformation matrix */
     )
 {
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -135,9 +135,9 @@ void pscale3(
     Pmatrix3 m                 /* OUT transformation matrix */
     )
 {
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -165,9 +165,9 @@ void pscale(
     Pmatrix m                  /* OUT transformation matrix */
     )
 {
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -191,9 +191,9 @@ void protate_x(
     Pmatrix3 m                 /* OUT transformation matrix */
     )
 {
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -218,9 +218,9 @@ void protate_y(
     Pmatrix3 m                 /* OUT transformation matrix */
     )
 {
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -245,9 +245,9 @@ void protate_z(
     Pmatrix3 m                 /* OUT transformation matrix */
     )
 {
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -272,9 +272,9 @@ void protate(
     Pmatrix m                  /* OUT transformation matrix */
     )
 {
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -299,9 +299,9 @@ void pcompose_matrix3(
     Pmatrix3 m                 /* OUT result matrix */
     )
 {
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -324,9 +324,9 @@ void pcompose_matrix(
     Pmatrix m                  /* OUT result matrix */
     )
 {
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -352,9 +352,9 @@ void ptran_point3(
     float w;                   /* homogeneous coordinate */
     Ppoint3 t;
 
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else if (PHG_NEAR_ZERO( w = m[3][0]*p->x + m[3][1]*p->y
                   + m[3][2]*p->z + m[3][3])) {
@@ -414,9 +414,9 @@ void ptran_point(
     float w;                   /* homogenous coordinate */
     Ppoint t;
 
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else if (PHG_NEAR_ZERO( w = m[2][0] * p->x + m[2][1] * p->y + m[2][2])) {
         *error_ind = -999;
@@ -521,9 +521,9 @@ void pbuild_tran_matrix3(
     Pmatrix3 matrix            /* OUT transformation matrix */
     )
 {
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
        *error_ind = 0;
@@ -595,9 +595,9 @@ void pbuild_tran_matrix(
     Pmatrix matrix             /* OUT transformation matrix */
     )
 {
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -626,9 +626,9 @@ void pcompose_tran_matrix3(
 {
     Pmatrix3 xform;
 
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -657,9 +657,9 @@ void pcompose_tran_matrix(
 {
     Pmatrix xform;
 
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else {
         *error_ind = 0;
@@ -705,9 +705,9 @@ void peval_view_ori_matrix3(
     Pfloat *e1 = m[0], *e3 = m[2], *e2 = m[1];
     double s, mag_vpn;
 
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else if ( PHG_ZERO_MAG(mag_vpn = PHG_MAG_V3(vpn)) ) {
         *error_ind = ERR159;
@@ -781,9 +781,9 @@ void peval_view_ori_matrix(
 
     double s;
 
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else if ( PHG_ZERO_MAG(s = PHG_MAG_V2(vup)) ) {
         *error_ind = ERR160;
@@ -860,9 +860,9 @@ void peval_view_map_matrix3(
     double dz = vp->z_max - vp->z_min;
     double vvz = map->front_plane - map->back_plane;
 
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else if ( !(win->x_min < win->x_max) || !(win->y_min < win->y_max)) {
         *error_ind = ERR151;
@@ -987,9 +987,9 @@ void peval_view_map_matrix(
     Plimit *win = &map->win;
     Plimit *vp = &map->proj_vp;
 
-    ERR_SET_CUR_FUNC(erh, Pfn_INQUIRY);
+    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
 
-    if (PSL_SYS_STATE(psl) != PSYS_ST_PHOP) {
+    if (PSL_SYS_STATE(PHG_PSL) != PSYS_ST_PHOP) {
         *error_ind = ERR2;
     } else if ( !(win->x_min < win->x_max) || !(win->y_min < win->y_max)) {
         *error_ind = ERR151;

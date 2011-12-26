@@ -64,25 +64,6 @@ static attribute_group default_attr = {
 };
 
 /*******************************************************************************
- * phg_init_default_attr
- *
- * DESCR:	Completes initialization of default attribute colors
- * 		Can't assign colors until after X11 has been init'ed
- * RETURNS:	N/A
- */
-
-void phg_init_default_attr(void)
-{
-#if 0
-   default_attr.line_bundle.colr_ind     = ws->black_color;
-   default_attr.marker_bundle.colr_ind   = ws->black_color;
-   default_attr.text_bundle.colr_ind     = ws->black_color;
-   default_attr.edge_bundle.colr_ind     = ws->black_color;
-   default_attr.int_bundle.colr_ind      = ws->white_color;
-#endif
-}
-
-/*******************************************************************************
  * phg_get_default_attr
  *
  * DESCR:	Get default attribute group

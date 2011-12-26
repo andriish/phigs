@@ -52,10 +52,74 @@ static Colormap wsx_gl_get_sharable_colormap(
    );
 
 /*******************************************************************************
+ * wsx_gl_create
+ *
+ * DESCR:	Create workstation type
+ * RETURNS:	Pointer to workstation type or NULL
+ */
+
+Wst* wsx_gl_create(
+   void
+   )
+{
+   Wst *wst;
+
+   wst = phg_wst_create(WST_BASE_TYPE_GLX_DRAWABLE);
+   if (wst != NULL) {
+      if (!wsx_gl_init(wst)) {
+         wst = NULL;
+      }
+   }
+
+   return wst;
+}
+
+/*******************************************************************************
+ * wsx_gl_init
+ *
+ * DESCR:	Initialize workstation type
+ * RETURNS:	TRUE or FALSE
+ */
+
+int wsx_gl_init(
+   Wst *wst
+   )
+{
+   Display *display;
+   int screen_num;
+
+   display = XOpenDisplay(NULL);
+   if (display == NULL) {
+      fprintf(stderr, "Error - Unable to open display\n");
+      return FALSE;
+   }
+
+   screen_num = DefaultScreen(display);
+
+   wst->desc_tbl.phigs_dt.ws_category = PCAT_OUT;
+   wst->desc_tbl.phigs_dt.dev_coords[0] =
+      (float) DisplayWidth(display, screen_num);
+   wst->desc_tbl.phigs_dt.dev_coords[1] =
+      (float) DisplayHeight(display, screen_num);
+   wst->desc_tbl.phigs_dt.dev_coords[2] = 1.0;
+
+#ifdef DEBUG
+   printf("Added wsx_gl with coords: %f %f %f\n",
+      wst->desc_tbl.phigs_dt.dev_coords[0],
+      wst->desc_tbl.phigs_dt.dev_coords[1],
+      wst->desc_tbl.phigs_dt.dev_coords[2]);
+#endif
+
+   XCloseDisplay(display);
+
+   return TRUE;
+}
+
+/*******************************************************************************
  * wsx_gl_open_window
  *
  * DESCR:	Open render window for workstation
- * RETURNS:	Zero on succcess, non zero on error
+ * RETURNS:	TRUE or FALSE
  */
 
 int wsx_gl_open_window(
@@ -66,7 +130,6 @@ int wsx_gl_open_window(
    XVisualInfo *vi;
    Colormap cmap;
    XSetWindowAttributes wattr;
-   int screen_num;
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
 #ifdef DEBUG
@@ -85,16 +148,23 @@ int wsx_gl_open_window(
       return 0;
    }
 
-  screen_num = DefaultScreen(ws->display);
-
-  ws->ws_rect.x = 0;
-  ws->ws_rect.y = 0;
-  ws->ws_rect.width = DisplayWidth(ws->display, screen_num) / 2;
+  ws->ws_rect.x      = 0;
+  ws->ws_rect.y      = 0;
+  ws->ws_rect.width  = (int) args->type->desc_tbl.phigs_dt.dev_coords[0] / 2;
   ws->ws_rect.height = ws->ws_rect.width;
+
+#ifdef DEBUG
+   printf("Window dimensions: %d %d\n"
+          "                   %d %d\n",
+          ws->ws_rect.x,
+          ws->ws_rect.y,
+          ws->ws_rect.width,
+          ws->ws_rect.height);
+#endif
 
    if (!glXQueryExtension(ws->display, NULL, NULL)) {
       fprintf(stderr, "No Open GL support\n");
-      return 0;
+      return FALSE;
    }
 
    ws->has_double_buffer = TRUE;
@@ -109,7 +179,7 @@ int wsx_gl_open_window(
       fprintf(stderr, "No Open GL with double buffer found\n");
       if (vi == NULL) {
          fprintf(stderr, "No Open GL capable visual found\n");
-         return 0;
+         return FALSE;
       }
       ws->has_double_buffer = FALSE;
    }
@@ -119,7 +189,7 @@ int wsx_gl_open_window(
    wsgl->glx_context = glXCreateContext(ws->display, vi, NULL, True);
    if (wsgl->glx_context == NULL) {
       fprintf(stderr, "Unable to create Open GL context\n");
-      return 0;
+      return FALSE;
    }
 
    wattr.colormap = cmap;
@@ -147,10 +217,10 @@ int wsx_gl_open_window(
    XMapWindow(ws->display, ws->drawable_id);
 
 #ifdef DEBUG
-   printf("Opened GLX workstation window: %x\n", ws->drawable_id);
+   printf("Opened GLX workstation window: %x\n", (unsigned) ws->drawable_id);
 #endif
 
-   return 1;
+   return TRUE;
 }
 
 /*******************************************************************************

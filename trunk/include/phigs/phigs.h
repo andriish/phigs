@@ -58,6 +58,15 @@ typedef enum {
    PSTRUCT_ST_STOP
 } Pstruct_st;
 
+/* Workstation related */
+typedef enum {
+   PCAT_OUT,
+   PCAT_IN,
+   PCAT_OUTIN,
+   PCAT_MO,
+   PCAT_MI
+} Pws_cat;
+
 typedef enum {
    PELEM_ALL,
    PELEM_NIL,

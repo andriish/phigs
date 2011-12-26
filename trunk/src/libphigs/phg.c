@@ -28,11 +28,9 @@
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>
 #include <phigs/ws.h>
+#include <phigs/private/wsglP.h>
 
-Err_handle erh;
-Psl_handle psl;
-Css_handle css;
-Ws_handle  *ws_list;
+Phg_handle phg;
 
 /*******************************************************************************
  * popen_phigs
@@ -46,40 +44,58 @@ void popen_phigs(
    size_t memory
    )
 {
-   erh = phg_erh_create(error_file);
-   if (erh == NULL) {
+   phg = (Phg_handle) malloc(sizeof(Phg_struct));
+   if (phg == NULL) {
       goto abort;
    }
 
-   ERR_SET_CUR_FUNC(erh, Pfn_open_phigs);
-
-   psl = phg_psl_create();
-   if (psl == NULL) {
-      ERR_REPORT(erh, ERR900);
+   PHG_ERH = phg_erh_create(error_file);
+   if (PHG_ERH == NULL) {
+      free(phg);
       goto abort;
    }
 
-   ws_list = malloc(sizeof(Ws_handle) * MAX_NO_OPEN_WS);
-   if (ws_list == NULL) {
-      ERR_REPORT(erh, ERR900);
-      phg_psl_destroy(psl);
-      goto abort;
-   }
-   memset(ws_list, 0, sizeof(Ws_handle) * MAX_NO_OPEN_WS);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_open_phigs);
 
-   css = phg_css_init(erh, SSH_CSS);
-   if (css == NULL) {
-      ERR_REPORT(erh, ERR900);
-      phg_psl_destroy(psl);
-      free(ws_list);
+   PHG_PSL = phg_psl_create();
+   if (PHG_PSL == NULL) {
+      ERR_REPORT(PHG_ERH, ERR900);
+      free(phg);
       goto abort;
    }
+
+   PHG_CSS = phg_css_init(PHG_ERH, SSH_CSS);
+   if (PHG_CSS == NULL) {
+      ERR_REPORT(PHG_ERH, ERR900);
+      phg_psl_destroy(PHG_PSL);
+      free(phg);
+      goto abort;
+   }
+
+   PHG_WSTID(phigs_ws_type_glx_drawable) = wsx_gl_create();
+   if (PHG_WSTID(phigs_ws_type_glx_drawable) == NULL) {
+      ERR_REPORT(PHG_ERH, ERR900);
+      phg_css_destroy(PHG_CSS);
+      phg_psl_destroy(PHG_PSL);
+      free(phg);
+   }
+
+   PHG_WS_LIST = (Ws_handle *) malloc(sizeof(Ws_handle) * MAX_NO_OPEN_WS);
+   if (PHG_WS_LIST == NULL) {
+      ERR_REPORT(PHG_ERH, ERR900);
+      phg_wst_destroy(PHG_WSTID(phigs_ws_type_glx_drawable));
+      phg_css_destroy(PHG_CSS);
+      phg_psl_destroy(PHG_PSL);
+      free(phg);
+      goto abort;
+   }
+   memset(PHG_WS_LIST, 0, sizeof(Ws_handle) * MAX_NO_OPEN_WS);
 
    phg_init_default_views();
 
-   PSL_SYS_STATE(psl) = PSYS_ST_PHOP;
+   PSL_SYS_STATE(PHG_PSL) = PSYS_ST_PHOP;
 
 abort:
-   ERR_FLUSH(erh);
+   ERR_FLUSH(PHG_ERH);
 }
 

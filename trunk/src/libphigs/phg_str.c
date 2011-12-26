@@ -35,17 +35,17 @@ void popen_struct(
    Pint struct_id
    )
 {
-   ERR_SET_CUR_FUNC(erh, Pfn_open_struct);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_open_struct);
 
-   if (PSL_STRUCT_STATE(psl) == PSTRUCT_ST_STCL) {
-      if (phg_css_open_struct(css, struct_id) != NULL) {
-         PSL_STRUCT_STATE(psl) = PSTRUCT_ST_STOP;
-         psl->open_struct = struct_id;
+   if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STCL) {
+      if (phg_css_open_struct(PHG_CSS, struct_id) != NULL) {
+         PSL_STRUCT_STATE(PHG_PSL) = PSTRUCT_ST_STOP;
+         PSL_OPEN_STRUCT(PHG_PSL) = struct_id;
       }
-      ERR_FLUSH(erh);
+      ERR_FLUSH(PHG_ERH);
    }
    else {
-      ERR_REPORT(erh, ERR6);
+      ERR_REPORT(PHG_ERH, ERR6);
    }
 }
 
@@ -63,11 +63,11 @@ void pclose_struct(
    Struct_handle str;
    Css_ws_list   ws_list;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_close_struct);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_close_struct);
 
-   if (PSL_STRUCT_STATE(psl) == PSTRUCT_ST_STOP) {
-      ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(css));
-      str = phg_css_close_struct(css);
+   if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STOP) {
+      ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(PHG_CSS));
+      str = phg_css_close_struct(PHG_CSS);
       if (ws_list && str) {
          for (; ws_list->wsh; ws_list++) {
             if (ws_list->wsh->close_struct) {
@@ -75,11 +75,28 @@ void pclose_struct(
             }
          }
       }
-      PSL_STRUCT_STATE(psl) = PSTRUCT_ST_STCL;
+      PSL_STRUCT_STATE(PHG_PSL) = PSTRUCT_ST_STCL;
    }
    else {
-      ERR_REPORT(erh, ERR5);
+      ERR_REPORT(PHG_ERH, ERR5);
    }
+}
+
+/*******************************************************************************
+ * pset_edit_mode
+ *
+ * DESCR:	Set structure edit mode
+ * RETURNS:	N/A
+ */
+
+void pset_edit_mode(
+   Pedit_mode mode
+   )
+{
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_edit_mode);
+
+   CSS_EDIT_MODE(PHG_CSS) = mode;
+   PSL_EDIT_MODE(PHG_PSL) = mode;
 }
 
 /*******************************************************************************
@@ -98,11 +115,11 @@ void pset_elem_ptr(
    El_handle   ep;
    Css_ws_list ws_list;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_elem_ptr);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_elem_ptr);
 
-   if (PSL_STRUCT_STATE(psl) == PSTRUCT_ST_STOP) {
-      ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(css));
-      ep = phg_css_set_ep(css, PHG_ARGS_SETEP_ABS, elem_ptr_value);
+   if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STOP) {
+      ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(PHG_CSS));
+      ep = phg_css_set_ep(PHG_CSS, PHG_ARGS_SETEP_ABS, elem_ptr_value);
       if (ws_list && ep) {
          for (; ws_list->wsh; ws_list++) {
             if (ws_list->wsh->move_ep) {
@@ -112,7 +129,7 @@ void pset_elem_ptr(
       }
    }
    else {
-      ERR_REPORT(erh, ERR5);
+      ERR_REPORT(PHG_ERH, ERR5);
    }
 }
 
@@ -133,11 +150,11 @@ void poffset_elem_ptr(
    El_handle   ep;
    Css_ws_list ws_list;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_elem_ptr);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_elem_ptr);
 
-   if (PSL_STRUCT_STATE(psl) == PSTRUCT_ST_STOP) {
-      ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(css));
-      ep = phg_css_set_ep(css, PHG_ARGS_SETEP_REL, elem_ptr_offset);
+   if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STOP) {
+      ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(PHG_CSS));
+      ep = phg_css_set_ep(PHG_CSS, PHG_ARGS_SETEP_REL, elem_ptr_offset);
       if (ws_list && ep) {
          for (; ws_list->wsh; ws_list++) {
             if (ws_list->wsh->move_ep) {
@@ -147,7 +164,7 @@ void poffset_elem_ptr(
       }
    }
    else {
-      ERR_REPORT(erh, ERR5);
+      ERR_REPORT(PHG_ERH, ERR5);
    }
 }
 
@@ -171,11 +188,11 @@ void pset_elem_ptr_label(
    El_handle   ep;
    Css_ws_list ws_list;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_set_elem_ptr_label);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_elem_ptr_label);
 
-   if (PSL_STRUCT_STATE(psl) == PSTRUCT_ST_STOP) {
-      ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(css));
-      ep = phg_css_set_ep(css, PHG_ARGS_SETEP_LABEL, label_id);
+   if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STOP) {
+      ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(PHG_CSS));
+      ep = phg_css_set_ep(PHG_CSS, PHG_ARGS_SETEP_LABEL, label_id);
       if (ws_list && ep) {
          for (; ws_list->wsh; ws_list++) {
             if (ws_list->wsh->move_ep) {
@@ -185,7 +202,7 @@ void pset_elem_ptr_label(
       }
    }
    else {
-      ERR_REPORT(erh, ERR5);
+      ERR_REPORT(PHG_ERH, ERR5);
    }
 }
 
@@ -209,16 +226,16 @@ void pdel_elem(
    Ws_handle            callback_list[MAX_NO_OPEN_WS];
    Ws_handle            *wsp = callback_list;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_del_elem);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_del_elem);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
-      structh = CSS_CUR_STRUCTP(css);
+      structh = CSS_CUR_STRUCTP(PHG_CSS);
       ws_list = CSS_GET_WS_ON(structh);
       data.struct_id = structh->struct_id;
-      phg_css_el_delete_list(css, PHG_ARGS_DEL_CURRENT, &data, &ep1, &ep2);
+      phg_css_el_delete_list(PHG_CSS, PHG_ARGS_DEL_CURRENT, &data, &ep1, &ep2);
       if (ep1 && ep2) {
          if (ws_list) {
             for (; ws_list->wsh; ws_list++) {
@@ -231,7 +248,7 @@ void pdel_elem(
             }
          }
 
-         phg_css_delete_el(css, PHG_ARGS_DEL_CURRENT, &data, ep1, ep2);
+         phg_css_delete_el(PHG_CSS, PHG_ARGS_DEL_CURRENT, &data, ep1, ep2);
 
          while (wsp-- != callback_list) {
             (void)(*(*wsp)->delete_el)((*wsp), structh, ep1, ep2,
@@ -262,18 +279,18 @@ void pdel_elem_range(
    Ws_handle            callback_list[MAX_NO_OPEN_WS];
    Ws_handle            *wsp = callback_list;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_del_elem_range);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_del_elem_range);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
-      structh = CSS_CUR_STRUCTP(css);
+      structh = CSS_CUR_STRUCTP(PHG_CSS);
       ws_list = CSS_GET_WS_ON(structh);
       data.struct_id = structh->struct_id;
       data.ep_values.ep1 = elem_ptr1_value;
       data.ep_values.ep2 = elem_ptr2_value;
-      phg_css_el_delete_list(css, PHG_ARGS_DEL_RANGE, &data, &ep1, &ep2);
+      phg_css_el_delete_list(PHG_CSS, PHG_ARGS_DEL_RANGE, &data, &ep1, &ep2);
       if (ep1 && ep2) {
          if (ws_list) {
             for (; ws_list->wsh; ws_list++) {
@@ -286,7 +303,7 @@ void pdel_elem_range(
             }
          }
 
-         phg_css_delete_el(css, PHG_ARGS_DEL_RANGE, &data, ep1, ep2);
+         phg_css_delete_el(PHG_CSS, PHG_ARGS_DEL_RANGE, &data, ep1, ep2);
 
          while (wsp-- != callback_list) {
             (void)(*(*wsp)->delete_el)((*wsp),
@@ -319,18 +336,18 @@ void pdel_elems_labels(
    Ws_handle            callback_list[MAX_NO_OPEN_WS];
    Ws_handle            *wsp = callback_list;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_del_elems_labels);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_del_elems_labels);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
-      structh = CSS_CUR_STRUCTP(css);
+      structh = CSS_CUR_STRUCTP(PHG_CSS);
       ws_list = CSS_GET_WS_ON(structh);
       data.struct_id = structh->struct_id;
       data.label_range.label1 = label1_id;
       data.label_range.label2 = label2_id;
-      phg_css_el_delete_list(css, PHG_ARGS_DEL_LABEL, &data, &ep1, &ep2);
+      phg_css_el_delete_list(PHG_CSS, PHG_ARGS_DEL_LABEL, &data, &ep1, &ep2);
       if (ep1 && ep2) {
          if (ws_list) {
             for (; ws_list->wsh; ws_list++) {
@@ -343,7 +360,7 @@ void pdel_elems_labels(
             }
          }
 
-         phg_css_delete_el(css, PHG_ARGS_DEL_LABEL, &data, ep1, ep2);
+         phg_css_delete_el(PHG_CSS, PHG_ARGS_DEL_LABEL, &data, ep1, ep2);
 
          while (wsp-- != callback_list) {
             (void)(*(*wsp)->delete_el)((*wsp),
@@ -373,17 +390,17 @@ void pcopy_all_elems_struct(
    Struct_handle str;
    Css_ws_list   ws_list;
 
-   ERR_SET_CUR_FUNC(erh, Pfn_copy_all_elems_struct);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_copy_all_elems_struct);
 
-   if (PSL_STRUCT_STATE(psl) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(erh, ERR5);
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
-      if ((str = CSS_STRUCT_EXISTS(css, struct_id)) != NULL) {
-         ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(css));
+      if ((str = CSS_STRUCT_EXISTS(PHG_CSS, struct_id)) != NULL) {
+         ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(PHG_CSS));
          /* Get the element pointer before it changes. */
-         ep = CSS_CUR_ELP(css);
-         if (phg_css_copy_struct(css, str) && ep && ws_list) {
+         ep = CSS_CUR_ELP(PHG_CSS);
+         if (phg_css_copy_struct(PHG_CSS, str) && ep && ws_list) {
             for (; ws_list->wsh; ws_list++) {
                  (*ws_list->wsh->copy_struct)(ws_list->wsh, ep);
             }

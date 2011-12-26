@@ -33,7 +33,7 @@
  */
 
 void pset_colr_rep(
-   Pint ws,
+   Pint ws_id,
    Pint index,
    Pcolr_rep *rep
    )
@@ -41,7 +41,7 @@ void pset_colr_rep(
    Ws *wsh;
    Phg_args_rep_data corep;
 
-   wsh = ws_list[ws];
+   wsh = PHG_WSID(ws_id);
    corep.index = index;
    memcpy(&corep.bundl.corep, rep, sizeof(Pcolr_rep));
 
