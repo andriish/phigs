@@ -164,6 +164,10 @@ int wsgl_init(
       return 0;
    }
 
+   wsgl->background.val.general.x = 0.0;
+   wsgl->background.val.general.y = 0.0;
+   wsgl->background.val.general.z = 0.0;
+
    ws->render_context = wsgl;
 
    return 1;
@@ -372,6 +376,11 @@ void wsgl_flush(
       }
       wsgl->hlhsr_changed = 0;
    }
+
+   glClearColor(wsgl->background.val.general.x,
+                wsgl->background.val.general.y,
+                wsgl->background.val.general.z,
+                0.0);
 
    if (ws->has_double_buffer)
    {
@@ -812,7 +821,44 @@ static void phg_set_edge_attr(
    glColor3f(ws->colr_table[index].val.general.x,
              ws->colr_table[index].val.general.y,
              ws->colr_table[index].val.general.z);
+
    glLineWidth(attr->width);
+
+   /* Line style */
+   switch (attr->type) {
+      case PLINE_DASH:
+         glLineStipple(1, 0x00ff);
+         glEnable(GL_LINE_STIPPLE);
+      break;
+
+      case PLINE_DOT:
+         glLineStipple(1, 0x0101);
+         glEnable(GL_LINE_STIPPLE);
+      break;
+
+      case PLINE_DASH_DOT:
+         glLineStipple(1, 0x1c47);
+         glEnable(GL_LINE_STIPPLE);
+      break;
+
+      default:
+         glDisable(GL_LINE_STIPPLE);
+      break;
+   }
+}
+
+/*******************************************************************************
+ * phg_set_polygon_offset
+ *
+ * DESCR:	Setup polygon offset
+ * RETURNS:	N/A
+ */
+
+static void phg_set_polygon_offset(
+   float w
+   )
+{
+   glPolygonOffset(w, w);
 }
 
 /*******************************************************************************
@@ -1138,24 +1184,81 @@ static void phg_draw_fill_area3(
 {
    int i;
 
-   if (attr->int_bundle.style == PSTYLE_SOLID) {
-      phg_set_int_attr(ws, &attr->int_bundle);
-      glBegin(GL_POLYGON);
-      for (i = 0; i < point_list->num_points; i++)
-         glVertex3f(point_list->points[i].x,
-                    point_list->points[i].y,
-                    point_list->points[i].z);
-      glEnd();
-   }
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
 
-   if (attr->edge_bundle.flag == PEDGE_ON) {
-      phg_set_edge_attr(ws, &attr->edge_bundle);
-      glBegin(GL_LINE_LOOP);
-      for (i = 0; i < point_list->num_points; i++)
-         glVertex3f(point_list->points[i].x,
-                    point_list->points[i].y,
-                    point_list->points[i].z);
-      glEnd();
+   if (wsgl->hlhsr_mode == PHIGS_HLHSR_MODE_NONE) {
+      if (attr->int_bundle.style == PSTYLE_SOLID) {
+         phg_set_int_attr(ws, &attr->int_bundle);
+         glBegin(GL_POLYGON);
+         for (i = 0; i < point_list->num_points; i++)
+            glVertex3f(point_list->points[i].x,
+                       point_list->points[i].y,
+                       point_list->points[i].z);
+         glEnd();
+      }
+
+      if (attr->edge_bundle.flag == PEDGE_ON) {
+         phg_set_edge_attr(ws, &attr->edge_bundle);
+         glBegin(GL_LINE_LOOP);
+         for (i = 0; i < point_list->num_points; i++)
+            glVertex3f(point_list->points[i].x,
+                       point_list->points[i].y,
+                       point_list->points[i].z);
+         glEnd();
+      }
+   }
+   else {
+      if ((attr->int_bundle.style == PSTYLE_HOLLOW) &&
+          (attr->edge_bundle.flag == PEDGE_ON)) {
+         phg_set_polygon_offset(attr->edge_bundle.width);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+         glEnable(GL_POLYGON_OFFSET_FILL);
+         glColor3f(wsgl->background.val.general.x,
+                   wsgl->background.val.general.y,
+                   wsgl->background.val.general.z);
+         glBegin(GL_POLYGON);
+         for (i = 0; i < point_list->num_points; i++)
+            glVertex3f(point_list->points[i].x,
+                       point_list->points[i].y,
+                       point_list->points[i].z);
+         glEnd();
+         glDisable(GL_POLYGON_OFFSET_FILL);
+
+         phg_set_edge_attr(ws, &attr->edge_bundle);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+         glBegin(GL_POLYGON);
+         for (i = 0; i < point_list->num_points; i++)
+            glVertex3f(point_list->points[i].x,
+                       point_list->points[i].y,
+                       point_list->points[i].z);
+         glEnd();
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+      }
+      else if ((attr->int_bundle.style == PSTYLE_SOLID) &&
+               (attr->edge_bundle.flag == PEDGE_ON)) {
+         phg_set_int_attr(ws, &attr->int_bundle);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+         glEnable(GL_POLYGON_OFFSET_FILL);
+         phg_set_polygon_offset(attr->edge_bundle.width);
+         glBegin(GL_POLYGON);
+         for (i = 0; i < point_list->num_points; i++)
+            glVertex3f(point_list->points[i].x,
+                       point_list->points[i].y,
+                       point_list->points[i].z);
+         glEnd();
+         glDisable(GL_POLYGON_OFFSET_FILL);
+
+         phg_set_edge_attr(ws, &attr->edge_bundle);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+         glBegin(GL_POLYGON);
+         for (i = 0; i < point_list->num_points; i++)
+            glVertex3f(point_list->points[i].x,
+                       point_list->points[i].y,
+                       point_list->points[i].z);
+         glEnd();
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      }
    }
 }
 
