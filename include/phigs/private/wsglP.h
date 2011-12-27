@@ -36,6 +36,7 @@ typedef struct {
    Pint            vp_changed;
    Pint            hlhsr_changed;
    Pint            hlhsr_mode;
+   Pgcolr          background;
    Pmatrix3        local_tran, total_tran;
    Pint            curr_view_index;
 } Wsgl;

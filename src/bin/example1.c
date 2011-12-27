@@ -30,6 +30,9 @@
 #define HEIGHT 0.9
 #define SPACE  1.0
 
+#define FILL_STYLE PSTYLE_SOLID
+#define EDGE_WIDTH 2.0
+
 #define VP_X0    0.0
 #define VP_X1  500.0
 #define VP_Y0    0.0
@@ -103,9 +106,10 @@ int main(int argc, char *argv[])
    pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
    pset_edge_flag(PEDGE_ON);
    pset_edge_colr_ind(3);
-   pset_edgewidth(2.0);
+   pset_edgewidth(EDGE_WIDTH);
+   pset_edgetype(PLINE_SOLID);
    pset_int_colr_ind(0);
-   pset_int_style(PSTYLE_SOLID);
+   pset_int_style(FILL_STYLE);
    pset_marker_type(PMARKER_CROSS);
    pset_marker_size(0.1);
    pset_marker_colr_ind(4);

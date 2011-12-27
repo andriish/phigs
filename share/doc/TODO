@@ -22,3 +22,13 @@ phg_col: Add error checks
 
 --------------------------------------------------------------------------------
 
+HLHSR ID:
+Use glReadPixels and glDrawPixels with format GL_DEPTH_COMPONENT
+to safe/load depth buffer
+
+Use glClear(GL_DEPTH_BUFFER_BIT) to clear
+
+Use scratch buffer for storing z-buffer.
+
+--------------------------------------------------------------------------------
+

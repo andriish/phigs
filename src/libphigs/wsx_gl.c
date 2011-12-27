@@ -37,7 +37,7 @@
 static int glConfig[] = {
    GLX_DOUBLEBUFFER,
    GLX_RGBA,
-   GLX_DEPTH_SIZE, 12,
+   GLX_DEPTH_SIZE, 16,
    GLX_RED_SIZE, 1,
    GLX_GREEN_SIZE, 1,
    GLX_BLUE_SIZE, 1,
