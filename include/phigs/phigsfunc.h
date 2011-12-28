@@ -202,6 +202,13 @@
 #define		Pfn_interpret_item		(178)
 #define		Pfn_set_err_hand_mode		(179)
 #define		Pfn_escape			(180)
+
+#define         Pfn_set_line_colr               (310)
+#define         Pfn_set_marker_colr             (312)
+#define         Pfn_set_text_colr               (313)
+#define         Pfn_set_int_colr                (316)
+#define         Pfn_set_edge_colr               (327)
+
 #define         Pfn_INQUIRY                     (1000)
 
 /*******************************************************************************
@@ -792,6 +799,50 @@ void pset_text_font(
 
 void pset_text_colr_ind(
    Pint colr_ind
+   );
+
+/*******************************************************************************
+ * pset_int_colr
+ *
+ * DESCR:       Creates a new element - Facet Color Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_int_colr(
+   Pgcolr *colr
+   );
+
+/*******************************************************************************
+ * pset_line_colr
+ *
+ * DESCR:       Creates a new element - Line Color Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_line_colr(
+   Pgcolr *colr
+   );
+
+/*******************************************************************************
+ * pset_marker_colr
+ *
+ * DESCR:       Creates a new element - Marker Color Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_marker_colr(
+   Pgcolr *colr
+   );
+
+/*******************************************************************************
+ * pset_edge_colr
+ *
+ * DESCR:       Creates a new element - Edge Color Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_edge_colr(
+   Pgcolr *colr
    );
 
 /*******************************************************************************

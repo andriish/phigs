@@ -103,6 +103,11 @@ typedef enum {
    PELEM_LABEL,
    PELEM_PICK_ID,
    PELEM_HLHSR_ID,
+   PELEM_INT_COLR,
+   PELEM_LINE_COLR,
+   PELEM_MARKER_COLR,
+   PELEM_EDGE_COLR,
+   PELEM_TEXT_COLR,
    PELEM_NUM_EL_TYPES
 } Pelem_type;
 
@@ -437,6 +442,7 @@ typedef union {
    Pint_list    names;
    Pedge_flag   edge_flag;
    Pint_style   int_style;
+   Pgcolr       colr;
 } Pelem_data;
 
 typedef struct {

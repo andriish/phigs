@@ -59,6 +59,7 @@ Pmatrix3 tran3;
 Pmatrix3 rot3;
 int view_index = 5;
 Pcolr_rep col_rep;
+Pgcolr green, yellow;
 
 void struct_stat(void)
 {
@@ -88,6 +89,16 @@ int main(int argc, char *argv[])
       printf("Use view: %d\n", view_index);
    }
 
+   green.type = PMODEL_RGB;
+   green.val.general.x = 0.0;
+   green.val.general.y = 1.0;
+   green.val.general.z = 0.0;
+
+   yellow.type = PMODEL_RGB;
+   yellow.val.general.x = 1.0;
+   yellow.val.general.y = 1.0;
+   yellow.val.general.z = 0.0;
+
    popen_phigs(NULL, 0);
 
    popen_struct(0);
@@ -107,6 +118,7 @@ int main(int argc, char *argv[])
    pset_edge_flag(PEDGE_ON);
    pset_edge_colr_ind(3);
    pset_edgewidth(EDGE_WIDTH);
+   //pset_edge_colr_ind(3);
    pset_edgetype(PLINE_SOLID);
    pset_int_colr_ind(0);
    pset_int_style(FILL_STYLE);
@@ -130,6 +142,7 @@ int main(int argc, char *argv[])
    pset_int_colr_ind(2);
    plabel(20);
    pexec_struct(0);
+   plabel(30);
    pclose_struct();
 
    popen_ws(0, NULL, phigs_ws_type_glx_drawable);
@@ -208,7 +221,8 @@ int main(int argc, char *argv[])
             pset_edit_mode(PEDIT_INSERT);
             //phg_css_print_struct(PHG_CSS->open_struct, 0);
 #endif
-            pset_elem_ptr(4);
+            pset_elem_ptr(0);
+            pset_elem_ptr_label(30);
             pset_edit_mode(PEDIT_INSERT);
             tvec3.delta_x = -SPACE;
             tvec3.delta_y = 0.0;
@@ -217,9 +231,9 @@ int main(int argc, char *argv[])
             pset_local_tran3(tran3, PTYPE_REPLACE);
             //pset_hlhsr_id(PHIGS_HLHSR_ID_OFF);
             pset_int_style(PSTYLE_SOLID);
-            pset_int_colr_ind(4);
+            pset_int_colr(&green);
+            pset_edge_colr(&yellow);
             pcopy_all_elems_struct(0);
-            //phg_css_print_struct(PHG_CSS->open_struct, 0);
             pclose_struct();
          break;
 

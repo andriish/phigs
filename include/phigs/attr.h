@@ -24,11 +24,11 @@
 #include <phigs/phigs.h>
 
 typedef struct {
-   Pline_bundle   line_bundle;
-   Pmarker_bundle marker_bundle;
-   Pint_bundle    int_bundle;
-   Pedge_bundle   edge_bundle;
-   Ptext_bundle   text_bundle;
+   Pline_bundle_plus   line_bundle;
+   Pmarker_bundle_plus marker_bundle;
+   Pint_bundle_plus    int_bundle;
+   Pedge_bundle_plus   edge_bundle;
+   Ptext_bundle_plus   text_bundle;
 } Pattr_group;
 
 /*******************************************************************************

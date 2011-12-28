@@ -99,6 +99,12 @@
 #define PHG_DATA_INT_STYLE(ELMT) \
    *((Pint_style *) (((Css_eldata *) (ELMT))->ptr))
 
+#define PHG_COLR(ELMT) \
+   ((Pgcolr *) ((ELMT)->eldata.ptr))
+
+#define PHG_DATA_COLR(ELMT) \
+   ((Pgcolr *) (((Css_eldata *) (ELMT))->ptr))
+
 void phg_traverse(Css_handle css, Struct_handle structp);
 
 extern Pview_rep3 default_views[];

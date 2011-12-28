@@ -121,6 +121,11 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_LABEL] = phg_handle_int;
     fptr[(int)PELEM_PICK_ID] = phg_handle_int;
     fptr[(int)PELEM_HLHSR_ID] = phg_handle_int;
+    fptr[(int)PELEM_INT_COLR] = phg_handle_colr;
+    fptr[(int)PELEM_LINE_COLR] = phg_handle_colr;
+    fptr[(int)PELEM_MARKER_COLR] = phg_handle_colr;
+    fptr[(int)PELEM_EDGE_COLR] = phg_handle_colr;
+    fptr[(int)PELEM_TEXT_COLR] = phg_handle_colr;
 
     if ( !(cssh->stab = phg_css_stab_init(CSS_STAB_SIZE)) ) {
 	free((char *)cssh);

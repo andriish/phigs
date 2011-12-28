@@ -188,6 +188,11 @@ void css_print_eltype(Pelem_type eltype)
         case PELEM_LABEL: name = "PELEM_LABEL"; break;
         case PELEM_PICK_ID: name = "PELEM_PICK_ID"; break;
         case PELEM_HLHSR_ID: name = "PELEM_HLHSR_ID"; break;
+        case PELEM_INT_COLR: name = "PELEM_INT_COLR"; break;
+        case PELEM_LINE_COLR: name = "PELEM_LINE_COLR"; break;
+        case PELEM_MARKER_COLR: name = "PELEM_MARKER_COLR"; break;
+        case PELEM_EDGE_COLR: name = "PELEM_EDGE_COLR"; break;
+        case PELEM_TEXT_COLR: name = "PELEM_TEXT_COLR"; break;
 
       default:
 	fprintf(stderr, "UNKNOWN TYPE: %d", eltype);
