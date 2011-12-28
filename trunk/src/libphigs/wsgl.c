@@ -53,23 +53,29 @@ void phg_set_hlhsr_id(
    Pint hlhsr_id
    );
 
+static void phg_get_gcolr_ind(
+   Ws *ws,
+   Pgcolr *gcolr,
+   Pint ind
+   );
+
 static void phg_set_line_attr(
    Ws *ws,
-   Pline_bundle *attr
+   Pline_bundle_plus *attr
    );
 
 static void phg_set_int_attr(
    Ws *ws,
-   Pint_bundle *attr
+   Pint_bundle_plus *attr
    );
 
 static void phg_set_edge_attr(Ws *ws,
-   Pedge_bundle *attr
+   Pedge_bundle_plus *attr
    );
 
 static void phg_set_marker_attr(
    Ws *ws,
-   Pmarker_bundle *attr
+   Pmarker_bundle_plus *attr
    );
 
 static void phg_draw_polymarker(
@@ -498,7 +504,15 @@ void wsgl_render_element(
          break;
 
       case PELEM_INT_COLR_IND:
-         wsgl->attr_group->int_bundle.colr_ind = PHG_INT(el);
+         phg_get_gcolr_ind(ws,
+                           &wsgl->attr_group->int_bundle.colr,
+                           PHG_INT(el));
+         break;
+
+      case PELEM_INT_COLR:
+         memcpy(&wsgl->attr_group->int_bundle.colr,
+                PHG_COLR(el),
+                sizeof(Pgcolr));
          break;
 
       case PELEM_INT_STYLE:
@@ -506,7 +520,15 @@ void wsgl_render_element(
          break;
 
       case PELEM_EDGE_COLR_IND:
-         wsgl->attr_group->edge_bundle.colr_ind = PHG_INT(el);
+         phg_get_gcolr_ind(ws,
+                           &wsgl->attr_group->edge_bundle.colr,
+                           PHG_INT(el));
+         break;
+
+      case PELEM_EDGE_COLR:
+         memcpy(&wsgl->attr_group->edge_bundle.colr,
+                PHG_COLR(el),
+                sizeof(Pgcolr));
          break;
 
       case PELEM_EDGEWIDTH:
@@ -522,7 +544,15 @@ void wsgl_render_element(
          break;
 
       case PELEM_MARKER_COLR_IND:
-         wsgl->attr_group->marker_bundle.colr_ind = PHG_INT(el);
+         phg_get_gcolr_ind(ws,
+                           &wsgl->attr_group->marker_bundle.colr,
+                           PHG_INT(el));
+         break;
+
+      case PELEM_MARKER_COLR:
+         memcpy(&wsgl->attr_group->marker_bundle.colr,
+                PHG_COLR(el),
+                sizeof(Pgcolr));
          break;
 
       case PELEM_MARKER_SIZE:
@@ -534,7 +564,15 @@ void wsgl_render_element(
          break;
 
       case PELEM_TEXT_COLR_IND:
-         wsgl->attr_group->text_bundle.colr_ind = PHG_INT(el);
+         phg_get_gcolr_ind(ws,
+                           &wsgl->attr_group->text_bundle.colr,
+                           PHG_INT(el));
+         break;
+
+      case PELEM_TEXT_COLR:
+         memcpy(&wsgl->attr_group->text_bundle.colr,
+                PHG_COLR(el),
+                sizeof(Pgcolr));
          break;
 
       case PELEM_TEXT_FONT:
@@ -542,7 +580,15 @@ void wsgl_render_element(
          break;
 
       case PELEM_LINE_COLR_IND:
-         wsgl->attr_group->line_bundle.colr_ind = PHG_INT(el);
+         phg_get_gcolr_ind(ws,
+                           &wsgl->attr_group->line_bundle.colr,
+                           PHG_INT(el));
+         break;
+
+      case PELEM_LINE_COLR:
+         memcpy(&wsgl->attr_group->line_bundle.colr,
+                PHG_COLR(el),
+                sizeof(Pgcolr));
          break;
 
       case PELEM_LINEWIDTH:
@@ -742,6 +788,63 @@ void phg_set_hlhsr_id(
 }
 
 /*******************************************************************************
+ * phg_get_gcolr_ind
+ *
+ * DESCR:	Get colour from index
+ * RETURNS:	N/A
+ */
+
+static void phg_get_gcolr_ind(
+   Ws *ws,
+   Pgcolr *gcolr,
+   Pint ind
+   )
+{
+   gcolr->type = ws->current_colour_model;
+   switch(gcolr->type) {
+      case PINDIRECT:
+         gcolr->val.ind = ws->colr_table[ind].val.ind;
+         break;
+
+      case PMODEL_RGB:
+         gcolr->val.general.x = ws->colr_table[ind].val.general.x;
+         gcolr->val.general.y = ws->colr_table[ind].val.general.y;
+         gcolr->val.general.z = ws->colr_table[ind].val.general.z;
+         break;
+
+      default:
+         break;
+   }
+}
+
+/*******************************************************************************
+ * phg_set_gcolr
+ *
+ * DESCR:	Setup colour
+ * RETURNS:	N/A
+ */
+
+static void phg_set_gcolr(
+   Pgcolr *gcolr
+   )
+{
+   switch(gcolr->type) {
+      case PINDIRECT:
+         glIndexi(gcolr->val.ind);
+         break;
+
+      case PMODEL_RGB:
+         glColor3f(gcolr->val.general.x,
+                   gcolr->val.general.y,
+                   gcolr->val.general.z);
+         break;
+
+      default:
+         break;
+   }
+}
+
+/*******************************************************************************
  * phg_set_line_attr
  *
  * DESCR:	Setup line attributes
@@ -750,14 +853,11 @@ void phg_set_hlhsr_id(
 
 static void phg_set_line_attr(
    Ws *ws,
-   Pline_bundle *attr
+   Pline_bundle_plus *attr
    )
 {
-   Pint index = attr->colr_ind;
-
-   glColor3f(ws->colr_table[index].val.general.x,
-             ws->colr_table[index].val.general.y,
-             ws->colr_table[index].val.general.z);
+   /* Colour */
+   phg_set_gcolr(&attr->colr);
 
    /* Line style */
    switch (attr->type) {
@@ -794,14 +894,11 @@ static void phg_set_line_attr(
 
 static void phg_set_int_attr(
    Ws *ws,
-   Pint_bundle *attr
+   Pint_bundle_plus *attr
    )
 {
-   Pint index = attr->colr_ind;
-
-   glColor3f(ws->colr_table[index].val.general.x,
-             ws->colr_table[index].val.general.y,
-             ws->colr_table[index].val.general.z);
+   /* Colour */
+   phg_set_gcolr(&attr->colr);
 }
 
 /*******************************************************************************
@@ -813,15 +910,13 @@ static void phg_set_int_attr(
 
 static void phg_set_edge_attr(
    Ws *ws,
-   Pedge_bundle *attr
+   Pedge_bundle_plus *attr
    )
 {
-   Pint index = attr->colr_ind;
+   /* Colour */
+   phg_set_gcolr(&attr->colr);
 
-   glColor3f(ws->colr_table[index].val.general.x,
-             ws->colr_table[index].val.general.y,
-             ws->colr_table[index].val.general.z);
-
+   /* Edge width */
    glLineWidth(attr->width);
 
    /* Line style */
@@ -848,20 +943,6 @@ static void phg_set_edge_attr(
 }
 
 /*******************************************************************************
- * phg_set_polygon_offset
- *
- * DESCR:	Setup polygon offset
- * RETURNS:	N/A
- */
-
-static void phg_set_polygon_offset(
-   float w
-   )
-{
-   glPolygonOffset(w, w);
-}
-
-/*******************************************************************************
  * phg_set_marker_attr
  *
  * DESCR:	Setup marker attributes
@@ -870,14 +951,11 @@ static void phg_set_polygon_offset(
 
 static void phg_set_marker_attr(
    Ws *ws,
-   Pmarker_bundle *attr
+   Pmarker_bundle_plus *attr
    )
 {
-   Pint index = attr->colr_ind;
-
-   glColor3f(ws->colr_table[index].val.general.x,
-             ws->colr_table[index].val.general.y,
-             ws->colr_table[index].val.general.z);
+   /* Colour */
+   phg_set_gcolr(&attr->colr);
 }
 
 /*******************************************************************************
@@ -1133,6 +1211,20 @@ static void phg_draw_polyline3(
                  point_list->points[i].y,
                  point_list->points[i].z);
    glEnd();
+}
+
+/*******************************************************************************
+ * phg_set_polygon_offset
+ *
+ * DESCR:	Setup polygon offset
+ * RETURNS:	N/A
+ */
+
+static void phg_set_polygon_offset(
+   float w
+   )
+{
+   glPolygonOffset(w, w);
 }
 
 /*******************************************************************************

@@ -166,5 +166,19 @@ int phg_handle_int_style(
    Css_el_op op
    );
 
+/*******************************************************************************
+ * phg_handle_colr
+ *
+ * DESCR:       Handle colour
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_colr(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
 #endif /* _hdlP_h */
 

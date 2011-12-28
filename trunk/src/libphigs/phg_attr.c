@@ -63,19 +63,19 @@ int phg_attr_group_init(
 {
    attr_group->line_bundle.type       = PLINE_SOLID;
    attr_group->line_bundle.width      = 1.0;
-   attr_group->line_bundle.colr_ind   = 0;
+   //attr_group->line_bundle.colr_ind   = 0;
 
    attr_group->marker_bundle.type     = PMARKER_DOT;
    attr_group->marker_bundle.size     = 1.0;
-   attr_group->marker_bundle.colr_ind = 0;
+   //attr_group->marker_bundle.colr_ind = 0;
 
    attr_group->int_bundle.style       = PSTYLE_SOLID;
-   attr_group->int_bundle.colr_ind    = 0;
+   //attr_group->int_bundle.colr_ind    = 0;
 
    attr_group->edge_bundle.flag       = PEDGE_ON;
    attr_group->edge_bundle.type       = PLINE_SOLID;
    attr_group->edge_bundle.width      = 1.0;
-   attr_group->edge_bundle.colr_ind   = 0;
+   //attr_group->edge_bundle.colr_ind   = 0;
 
    return TRUE;
 }

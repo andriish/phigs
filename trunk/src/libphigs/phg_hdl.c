@@ -640,3 +640,72 @@ int phg_handle_int_style(
    return (TRUE);
 }
 
+/*******************************************************************************
+ * phg_handle_colr
+ *
+ * DESCR:	Handler colour
+ * RETURNS:	TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_colr(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   Pgcolr *data;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         data = malloc(sizeof(Pgcolr));
+         if (data == NULL)
+            return (FALSE);
+
+         data->type = ARGS_ELMT_DATA(argdata).colr.type;
+         if (data->type == PINDIRECT) {
+            data->val.ind = ARGS_ELMT_DATA(argdata).colr.val.ind;
+         }
+         else {
+            data->val.general.x = ARGS_ELMT_DATA(argdata).colr.val.general.x;
+            data->val.general.y = ARGS_ELMT_DATA(argdata).colr.val.general.y;
+            data->val.general.z = ARGS_ELMT_DATA(argdata).colr.val.general.z;
+         }
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_REPLACE:
+         data->type = ARGS_ELMT_DATA(argdata).colr.type;
+         if (data->type == PINDIRECT) {
+            data->val.ind = ARGS_ELMT_DATA(argdata).colr.val.ind;
+         }
+         else {
+            data->val.general.x = ARGS_ELMT_DATA(argdata).colr.val.general.x;
+            data->val.general.y = ARGS_ELMT_DATA(argdata).colr.val.general.y;
+            data->val.general.z = ARGS_ELMT_DATA(argdata).colr.val.general.z;
+         }
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_COPY:
+         data = malloc(sizeof(Pgcolr));
+         if (data == NULL)
+            return (FALSE);
+
+         memcpy(&data, PHG_DATA_COLR(argdata), sizeof(Pgcolr));
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_FREE:
+         free(ELMT_DATA_PTR(elmt));
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
+   }
+
+   return (TRUE);
+}
+

@@ -809,6 +809,106 @@ void pset_text_colr_ind(
 }
 
 /*******************************************************************************
+ * pset_int_colr
+ *
+ * DESCR:	Creates a new element - Facet Color Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_int_colr(
+   Pgcolr *colr
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_int_colr);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_INT_COLR;
+      memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_line_colr
+ *
+ * DESCR:	Creates a new element - Line Color Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_line_colr(
+   Pgcolr *colr
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_line_colr);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_LINE_COLR;
+      memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_marker_colr
+ *
+ * DESCR:	Creates a new element - Marker Color Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_marker_colr(
+   Pgcolr *colr
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_marker_colr);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_MARKER_COLR;
+      memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_edge_colr
+ *
+ * DESCR:	Creates a new element - Edge Color Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_edge_colr(
+   Pgcolr *colr
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_edge_colr);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_EDGE_COLR;
+      memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pexec_struct
  *
  * DESCR:	Creates a new element - Nested Structure
