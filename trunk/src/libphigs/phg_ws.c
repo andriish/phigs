@@ -28,10 +28,8 @@
 #include <phigs/css.h>
 #include <phigs/ws.h>
 
-Pint phigs_ws_type_glx_drawable = 0;
-
 static char default_window_name[] = "Open PHIGS Workstation";
-static char default_icon_name[]    = "Open PHIGS";
+static char default_icon_name[]   = "Open PHIGS";
 
 /*******************************************************************************
  * popen_ws
@@ -46,6 +44,7 @@ void popen_ws(
    Pint ws_type
    )
 {
+   Wst *wst;
    Phg_args_open_ws args;
    Phg_ret ret;
 
@@ -61,27 +60,33 @@ void popen_ws(
       ERR_REPORT(PHG_ERH, ERR63);
    }
    else {
-      memset(&args, 0, sizeof(Phg_args_open_ws));
-      args.wsid = ws_id;
-      args.type = PHG_WSTID(ws_type);
-      args.window_name = default_window_name;
-      args.icon_name = default_icon_name;
+      wst = phg_wst_find(&PHG_WST_LIST, ws_type);
 
-      /* Open workstation */
-      PHG_WSID(ws_id) = phg_wsb_open_ws(&args, &ret);
-      if (PHG_WSID(ws_id) == NULL) {
-         ERR_REPORT(PHG_ERH, ERR900);
-         fprintf(stderr, "Error unable to open workstation\n");
+      if (wst == NULL) {
+         ERR_REPORT(PHG_ERH, ERR52);
       }
       else {
-         /* Add workstation to info list */
-         phg_psl_add_ws(PHG_PSL, ws_id, NULL, PHG_WSTID(ws_type));
+         memset(&args, 0, sizeof(Phg_args_open_ws));
+         args.wsid = ws_id;
+         args.type = wst;
+         args.window_name = default_window_name;
+         args.icon_name = default_icon_name;
 
-         /* Add workstation to global list of open workstations */
-         PHG_WSID(ws_id)->out_ws.model.b.cssh = PHG_CSS;
+         /* Open workstation */
+         PHG_WSID(ws_id) = phg_wsb_open_ws(&args, &ret);
+         if (PHG_WSID(ws_id) == NULL) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            /* Add workstation to info list */
+            phg_psl_add_ws(PHG_PSL, ws_id, NULL, wst);
 
-         /* Store workstation id in workstation structure */
-         PHG_WSID(ws_id)->id = ws_id;
+            /* Add workstation to global list of open workstations */
+            PHG_WSID(ws_id)->out_ws.model.b.cssh = PHG_CSS;
+
+            /* Store workstation id in workstation structure */
+            PHG_WSID(ws_id)->id = ws_id;
+         }
       }
    }
 

@@ -21,9 +21,10 @@
 #ifndef _ws_type_h
 #define _ws_type_h
 
-typedef enum {
-   WST_BASE_TYPE_GLX_DRAWABLE
-} Wst_base_type;
+#include <phigs/list.h>
+
+/* Workstation types */
+#define PWST_OUTPUT_TRUE       0
 
 typedef struct {
    Pws_cat ws_category;
@@ -40,8 +41,9 @@ struct _Ws;
 struct _Phg_args_open_ws;
 
 typedef struct {
+   Node          node;
    Pint          wsid;
-   Wst_base_type base_type;
+   Pint          ws_type;
    Wst_dt        desc_tbl;
    int           (*open_window)(
                     struct _Ws *ws,
@@ -66,7 +68,7 @@ typedef struct {
  */
 
 Wst* phg_wst_create(
-   Wst_base_type base_type
+   Pint ws_type
    );
 
 /*******************************************************************************
@@ -78,7 +80,19 @@ Wst* phg_wst_create(
 
 int phg_wst_init(
    Wst *wst,
-   Wst_base_type base_type
+   Pint ws_type
+   );
+
+/*******************************************************************************
+ * phg_wst_find
+ *
+ * DESCR:       Find workstation type 
+ * RETURNS:     Pointer to workstation type or NULL
+ */
+
+Wst* phg_wst_find(
+   List *list,
+   Pint ws_type
    );
 
 /*******************************************************************************

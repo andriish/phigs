@@ -18,44 +18,20 @@
 *   along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#ifndef _phg_h
-#define _phg_h
+#ifndef _node_h
+#define _node_h
 
-#include <phigs/phgtype.h>
-#include <phigs/list.h>
-#include <phigs/util.h>
-#include <phigs/phigs.h>
-#include <phigs/phgargs.h>
-#include <phigs/phgretdata.h>
-#include <phigs/mat_utils.h>
-#include <phigs/err.h>
-#include <phigs/errnum.h>
-#include <phigs/css.h>
-#include <phigs/attr.h>
-#include <phigs/ws.h>
-#include <phigs/ws_type.h>
-#include <phigs/phigsfunc.h>
-#include <phigs/psl.h>
-#include <phigs/phg_dt.h>
+/* Macros */
+#define NODE_NEXT(pNode) ( ((Node *)(pNode))->pNext)
+#define NODE_PREV(pNode) ( ((Node *)(pNode))->pPrev)
 
-typedef struct {
-   Psl_handle psl;
-   Err_handle erh;
-   Css_handle css;
-   List       wst_list;
-   Ws_handle  *ws_list;
-} Phg_struct;
+/* Node type */
+typedef struct nodeType
+{
+    struct nodeType *pNext;
+    struct nodeType *pPrev;
+    int             key;
+} Node;
 
-typedef Phg_struct *Phg_handle;
-
-extern Phg_handle phg;
-
-#define PHG_ERH (phg->erh)
-#define PHG_PSL (phg->psl)
-#define PHG_CSS (phg->css)
-#define PHG_WST_LIST (phg->wst_list)
-#define PHG_WS_LIST (phg->ws_list)
-#define PHG_WSID(n) (phg->ws_list[(n)])
-
-#endif
+#endif /* _node_h */
 

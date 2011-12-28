@@ -44,6 +44,8 @@ void popen_phigs(
    size_t memory
    )
 {
+   Wst *wst;
+
    phg = (Phg_handle) malloc(sizeof(Phg_struct));
    if (phg == NULL) {
       goto abort;
@@ -69,18 +71,20 @@ void popen_phigs(
       goto abort;
    }
 
-   PHG_WSTID(phigs_ws_type_glx_drawable) = wsx_gl_create();
-   if (PHG_WSTID(phigs_ws_type_glx_drawable) == NULL) {
+   list_init(&PHG_WST_LIST);
+   wst = wsx_gl_create();
+   if (wst == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
       goto abort;
    }
+   list_add(&PHG_WST_LIST, &wst->node);
 
    PHG_WS_LIST = (Ws_handle *) malloc(sizeof(Ws_handle) * MAX_NO_OPEN_WS);
    if (PHG_WS_LIST == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
-      phg_wst_destroy(PHG_WSTID(phigs_ws_type_glx_drawable));
+      phg_wst_destroy(wst);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
       goto abort;

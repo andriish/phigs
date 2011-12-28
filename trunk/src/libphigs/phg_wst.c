@@ -30,7 +30,7 @@
  */
 
 Wst* phg_wst_create(
-   Wst_base_type base_type
+   Pint ws_type
    )
 {
    Wst *wst;
@@ -39,7 +39,7 @@ Wst* phg_wst_create(
    if (wst == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
    }
-   else if (!phg_wst_init(wst, base_type)) {
+   else if (!phg_wst_init(wst, ws_type)) {
       ERR_REPORT(PHG_ERH, ERR900);
    }
 
@@ -55,13 +55,38 @@ Wst* phg_wst_create(
 
 int phg_wst_init(
    Wst *wst,
-   Wst_base_type base_type
+   Pint ws_type
    )
 {
    wst->wsid = -1;
-   wst->base_type = base_type;
+   wst->ws_type = ws_type;
 
    return TRUE;
+}
+
+/*******************************************************************************
+ * phg_wst_find
+ *
+ * DESCR:       Find workstation type
+ * RETURNS:     Pointer to workstation type or NULL
+ */
+
+Wst* phg_wst_find(
+   List *list,
+   Pint ws_type
+   )
+{
+   Wst *wst;
+
+   for (wst = (Wst *) LIST_HEAD(list);
+        wst != NULL;
+        wst = (Wst *) NODE_NEXT(&wst->node)) {
+      if (wst->ws_type == ws_type) {
+         return wst;
+      }
+   }
+
+   return NULL;
 }
 
 /*******************************************************************************
