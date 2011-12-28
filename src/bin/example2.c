@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
    pexec_struct(1);
    pclose_struct();
 
-   popen_ws(0, NULL, phigs_ws_type_glx_drawable);
+   popen_ws(0, NULL, PWST_OUTPUT_TRUE);
    vp.x_min =   0.0;
    vp.x_max = 200.0;
    vp.y_min =   0.0;
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
    col_rep.rgb.blue = 0.0;
    pset_colr_rep(0, 1, &col_rep);
 
-   popen_ws(1, NULL, phigs_ws_type_glx_drawable);
+   popen_ws(1, NULL, PWST_OUTPUT_TRUE);
    vp.x_min =   0.0;
    vp.x_max = 300.0;
    vp.y_min =   0.0;

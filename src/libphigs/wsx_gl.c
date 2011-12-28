@@ -79,7 +79,7 @@ Wst* wsx_gl_create(
 {
    Wst *wst;
 
-   wst = phg_wst_create(WST_BASE_TYPE_GLX_DRAWABLE);
+   wst = phg_wst_create(PWST_OUTPUT_TRUE);
    if (wst != NULL) {
       if (!wsx_gl_init(wst)) {
          wst = NULL;
