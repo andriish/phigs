@@ -84,6 +84,7 @@ typedef enum {
    PELEM_TEXT,
    PELEM_INT_COLR_IND,
    PELEM_INT_STYLE,
+   PELEM_INT_STYLE_IND,
    PELEM_LINE_COLR_IND,
    PELEM_LINEWIDTH,
    PELEM_LINETYPE,
@@ -159,7 +160,9 @@ typedef enum {
 
 typedef enum {
    PSTYLE_HOLLOW,
-   PSTYLE_SOLID
+   PSTYLE_SOLID,
+   PSTYLE_PAT,
+   PSTYLE_HATCH
 } Pint_style;
 
 typedef enum {
@@ -302,11 +305,13 @@ typedef struct {
 
 typedef struct {
    Pint_style style;
+   Pint       style_ind;
    Pint       colr_ind;
 } Pint_bundle;
 
 typedef struct {
    Pint_style style;
+   Pint       style_ind;
    Pgcolr     colr;
 } Pint_bundle_plus;
 

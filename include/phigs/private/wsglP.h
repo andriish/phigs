@@ -223,5 +223,7 @@ int wsx_gl_init(
    Wst *wst
    );
 
+extern unsigned char *wsgl_hatch_tbl[];
+
 #endif /* _wsglP_h */
 

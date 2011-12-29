@@ -516,7 +516,11 @@ void wsgl_render_element(
          break;
 
       case PELEM_INT_STYLE:
-         wsgl->attr_group->int_bundle.style = PHG_INT(el);
+         wsgl->attr_group->int_bundle.style = PHG_INT_STYLE(el);
+         break;
+
+      case PELEM_INT_STYLE_IND:
+         wsgl->attr_group->int_bundle.style_ind = PHG_INT(el);
          break;
 
       case PELEM_EDGE_COLR_IND:
@@ -899,6 +903,14 @@ static void phg_set_int_attr(
 {
    /* Colour */
    phg_set_gcolr(&attr->colr);
+
+   if (attr->style == PSTYLE_HATCH) {
+      glEnable(GL_POLYGON_STIPPLE);
+      glPolygonStipple(wsgl_hatch_tbl[attr->style_ind]);
+   }
+   else {
+      glDisable(GL_POLYGON_STIPPLE);
+   }
 }
 
 /*******************************************************************************
@@ -1279,7 +1291,8 @@ static void phg_draw_fill_area3(
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
    if (wsgl->hlhsr_mode == PHIGS_HLHSR_MODE_NONE) {
-      if (attr->int_bundle.style == PSTYLE_SOLID) {
+      if ((attr->int_bundle.style == PSTYLE_SOLID) ||
+          (attr->int_bundle.style == PSTYLE_HATCH)) {
          phg_set_int_attr(ws, &attr->int_bundle);
          glBegin(GL_POLYGON);
          for (i = 0; i < point_list->num_points; i++)
@@ -1327,7 +1340,8 @@ static void phg_draw_fill_area3(
          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
       }
-      else if ((attr->int_bundle.style == PSTYLE_SOLID) &&
+      else if (((attr->int_bundle.style == PSTYLE_SOLID) ||
+                (attr->int_bundle.style == PSTYLE_HATCH)) &&
                (attr->edge_bundle.flag == PEDGE_ON)) {
          phg_set_int_attr(ws, &attr->int_bundle);
          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -1342,6 +1356,7 @@ static void phg_draw_fill_area3(
          glDisable(GL_POLYGON_OFFSET_FILL);
 
          phg_set_edge_attr(ws, &attr->edge_bundle);
+         glDisable(GL_POLYGON_STIPPLE);
          glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
          glBegin(GL_POLYGON);
          for (i = 0; i < point_list->num_points; i++)

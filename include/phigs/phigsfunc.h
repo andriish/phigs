@@ -670,6 +670,17 @@ void pset_int_style(
    );
 
 /*******************************************************************************
+ * pset_int_style_index
+ *
+ * DESCR:       Creates a new element - Face Interiour Pattern Index
+ * RETURNS:     N/A
+ */
+
+void pset_int_style_ind(
+   Pint int_style_ind
+   );
+
+/*******************************************************************************
  * pset_line_colr_ind
  *
  * DESCR:       Creates a new element - Line Color Attribute
