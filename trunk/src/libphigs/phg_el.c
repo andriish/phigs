@@ -497,7 +497,7 @@ void pset_int_style(
 }
 
 /*******************************************************************************
- * pset_int_style_index
+ * pset_int_style_ind
  *
  * DESCR:	Creates a new element - Face Interiour Pattern Index
  * RETURNS:	N/A
