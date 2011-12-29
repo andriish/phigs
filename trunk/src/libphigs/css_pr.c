@@ -174,6 +174,7 @@ void css_print_eltype(Pelem_type eltype)
         case PELEM_TEXT_FONT: name = "PELEM_TEXT_FONT"; break;
         case PELEM_TEXT_COLR_IND: name = "PELEM_TEXT_COLR_IND"; break;
         case PELEM_INT_STYLE: name = "PELEM_INT_STYLE"; break;
+        case PELEM_INT_STYLE_IND: name = "PELEM_INT_STYLE_IND"; break;
         case PELEM_INT_COLR_IND: name = "PELEM_INT_COLR_IND"; break;
         case PELEM_EDGE_FLAG: name = "PELEM_EDGE_FLAG"; break;
         case PELEM_EDGETYPE: name = "PELEM_EDGETYPE"; break;

@@ -497,6 +497,31 @@ void pset_int_style(
 }
 
 /*******************************************************************************
+ * pset_int_style_index
+ *
+ * DESCR:	Creates a new element - Face Interiour Pattern Index
+ * RETURNS:	N/A
+ */
+
+void pset_int_style_ind(
+   Pint int_style_ind
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_int_style);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_INT_STYLE_IND;
+      ARGS_ELMT_DATA(&args).int_data = int_style_ind;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_line_colr_ind
  *
  * DESCR:	Creates a new element - Line Color Attribute

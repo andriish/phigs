@@ -102,6 +102,7 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_TEXT] = phg_handle_text;
     fptr[(int)PELEM_INT_COLR_IND] = phg_handle_int;
     fptr[(int)PELEM_INT_STYLE] = phg_handle_int_style;
+    fptr[(int)PELEM_INT_STYLE_IND] = phg_handle_int;
     fptr[(int)PELEM_LINE_COLR_IND] = phg_handle_int;
     fptr[(int)PELEM_LINEWIDTH] = phg_handle_float;
     fptr[(int)PELEM_LINETYPE] = phg_handle_int;
