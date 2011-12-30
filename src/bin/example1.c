@@ -31,7 +31,7 @@
 #define SPACE  1.0
 
 #define FILL_STYLE PSTYLE_SOLID
-#define FILL_STYLE_IND 1
+#define FILL_STYLE_IND 4
 #define EDGE_WIDTH 2.0
 
 #define VP_X0    0.0
