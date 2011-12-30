@@ -61,6 +61,7 @@ Pmatrix3 rot3;
 int view_index = 5;
 Pcolr_rep col_rep;
 Pgcolr green, yellow;
+Pline_bundle lnrep = { PLINE_DASH, 1.0,  3 };
 
 void struct_stat(void)
 {
@@ -162,6 +163,7 @@ int main(int argc, char *argv[])
    pset_ws_vp3(0, &vp);
    pset_ws_win3(0, &win);
    pset_hlhsr_mode(0, PHIGS_HLHSR_MODE_ZBUFF);
+   pset_line_rep(0, 0, &lnrep);
 
    col_rep.rgb.red = 0.0;
    col_rep.rgb.green = 0.25;

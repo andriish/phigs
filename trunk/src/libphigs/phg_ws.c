@@ -337,6 +337,29 @@ void pset_hlhsr_mode(
 }
 
 /*******************************************************************************
+ * pset_line_rep
+ *
+ * DESCR:	Set workstation line represenation
+ * RETURNS:	N/A
+ */
+
+void pset_line_rep(
+   Pint ws_id,
+   Pint line_ind,
+   Pline_bundle *line_bundle
+   )
+{
+   Ws *wsh;
+   Phg_args_rep_data lnrep;
+
+   wsh = PHG_WSID(ws_id);
+   lnrep.index = line_ind;
+   memcpy(&lnrep.bundl.lnrep, line_bundle, sizeof(Pline_bundle));
+
+   (*wsh->set_rep)(wsh, PHG_ARGS_LNREP, &lnrep);
+}
+
+/*******************************************************************************
  * ppost_struct
  *
  * DESCR:	Post structure to workstation

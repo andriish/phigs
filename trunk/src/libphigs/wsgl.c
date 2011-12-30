@@ -53,12 +53,6 @@ void phg_set_hlhsr_id(
    Pint hlhsr_id
    );
 
-static void phg_get_gcolr_ind(
-   Ws *ws,
-   Pgcolr *gcolr,
-   Pint ind
-   );
-
 static void phg_set_line_attr(
    Ws *ws,
    Pline_bundle_plus *attr
@@ -504,9 +498,9 @@ void wsgl_render_element(
          break;
 
       case PELEM_INT_COLR_IND:
-         phg_get_gcolr_ind(ws,
-                           &wsgl->attr_group->int_bundle.colr,
-                           PHG_INT(el));
+         phg_get_colr_ind(ws,
+                          &wsgl->attr_group->int_bundle.colr,
+                          PHG_INT(el));
          break;
 
       case PELEM_INT_COLR:
@@ -524,9 +518,9 @@ void wsgl_render_element(
          break;
 
       case PELEM_EDGE_COLR_IND:
-         phg_get_gcolr_ind(ws,
-                           &wsgl->attr_group->edge_bundle.colr,
-                           PHG_INT(el));
+         phg_get_colr_ind(ws,
+                          &wsgl->attr_group->edge_bundle.colr,
+                          PHG_INT(el));
          break;
 
       case PELEM_EDGE_COLR:
@@ -548,9 +542,9 @@ void wsgl_render_element(
          break;
 
       case PELEM_MARKER_COLR_IND:
-         phg_get_gcolr_ind(ws,
-                           &wsgl->attr_group->marker_bundle.colr,
-                           PHG_INT(el));
+         phg_get_colr_ind(ws,
+                          &wsgl->attr_group->marker_bundle.colr,
+                          PHG_INT(el));
          break;
 
       case PELEM_MARKER_COLR:
@@ -568,9 +562,9 @@ void wsgl_render_element(
          break;
 
       case PELEM_TEXT_COLR_IND:
-         phg_get_gcolr_ind(ws,
-                           &wsgl->attr_group->text_bundle.colr,
-                           PHG_INT(el));
+         phg_get_colr_ind(ws,
+                          &wsgl->attr_group->text_bundle.colr,
+                          PHG_INT(el));
          break;
 
       case PELEM_TEXT_COLR:
@@ -584,9 +578,9 @@ void wsgl_render_element(
          break;
 
       case PELEM_LINE_COLR_IND:
-         phg_get_gcolr_ind(ws,
-                           &wsgl->attr_group->line_bundle.colr,
-                           PHG_INT(el));
+         phg_get_colr_ind(ws,
+                          &wsgl->attr_group->line_bundle.colr,
+                          PHG_INT(el));
          break;
 
       case PELEM_LINE_COLR:
@@ -788,36 +782,6 @@ void phg_set_hlhsr_id(
 
       default:
       break;
-   }
-}
-
-/*******************************************************************************
- * phg_get_gcolr_ind
- *
- * DESCR:	Get colour from index
- * RETURNS:	N/A
- */
-
-static void phg_get_gcolr_ind(
-   Ws *ws,
-   Pgcolr *gcolr,
-   Pint ind
-   )
-{
-   gcolr->type = ws->current_colour_model;
-   switch(gcolr->type) {
-      case PINDIRECT:
-         gcolr->val.ind = ws->colr_table[ind].val.ind;
-         break;
-
-      case PMODEL_RGB:
-         gcolr->val.general.x = ws->colr_table[ind].val.general.x;
-         gcolr->val.general.y = ws->colr_table[ind].val.general.y;
-         gcolr->val.general.z = ws->colr_table[ind].val.general.z;
-         break;
-
-      default:
-         break;
    }
 }
 

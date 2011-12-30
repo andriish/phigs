@@ -105,6 +105,19 @@
 #define PHG_DATA_COLR(ELMT) \
    ((Pgcolr *) (((Css_eldata *) (ELMT))->ptr))
 
+/*******************************************************************************
+ * phg_get_colr_ind
+ *
+ * DESCR:       Get colour from index
+ * RETURNS:     N/A
+ */
+
+void phg_get_colr_ind(
+   Ws *ws,
+   Pgcolr *gcolr,
+   Pint ind
+   );
+
 void phg_traverse(Css_handle css, Struct_handle structp);
 
 extern Pview_rep3 default_views[];

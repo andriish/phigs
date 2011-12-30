@@ -25,8 +25,6 @@
 #include <phigs/mat_utils.h>
 #include <phigs/private/phgP.h>
 
-#define UNDEF_COLR_IND         0
-
 /*******************************************************************************
  * phg_add_el
  *
