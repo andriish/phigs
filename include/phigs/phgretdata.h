@@ -68,7 +68,12 @@ typedef struct {
 } Phg_ret_update_state;
 
 typedef union {
-   Pcolr_rep            corep;
+   Pline_bundle_plus   extlnrep;
+   Pmarker_bundle_plus extmkrep;
+   Ptext_bundle_plus   exttxrep;
+   Pint_bundle_plus    extinterrep;
+   Pedge_bundle_plus   extedgerep;
+   Pcolr_rep           corep;
 } Phg_ret_rep;
 
 typedef struct {

@@ -546,7 +546,7 @@ void pset_local_tran3(
  */
 
 void pset_view_ind(
-   Pint index
+   Pint view_ind
    );
 
 /*******************************************************************************
@@ -661,6 +661,17 @@ void pset_hlhsr_id(
    );
 
 /*******************************************************************************
+ * pset_int_ind
+ *
+ * DESCR:       Creates a new element - Facet Interiour Attribute Index
+ * RETURNS:     N/A
+ */
+
+void pset_int_ind(
+   Pint int_ind
+   );
+
+/*******************************************************************************
  * pset_int_colr_ind
  *
  * DESCR:       Creates a new element - Facet Color Attribute
@@ -691,6 +702,17 @@ void pset_int_style(
 
 void pset_int_style_ind(
    Pint int_style_ind
+   );
+
+/*******************************************************************************
+ * pset_line_ind
+ *
+ * DESCR:       Creates a new element - Line Attribute Index
+ * RETURNS:     N/A
+ */
+
+void pset_line_ind(
+   Pint line_ind
    );
 
 /*******************************************************************************
@@ -727,6 +749,17 @@ void pset_linetype(
    );
 
 /*******************************************************************************
+ * pset_marker_ind
+ *
+ * DESCR:       Creates a new element - Marker Attribute Index
+ * RETURNS:     N/A
+ */
+
+void pset_marker_ind(
+   Pint marker_ind
+   );
+
+/*******************************************************************************
  * pset_marker_colr_ind
  *
  * DESCR:       Creates a new element - Marker Color Attribute
@@ -757,6 +790,17 @@ void pset_marker_size(
 
 void pset_marker_type(
    Pint marker_type
+   );
+
+/*******************************************************************************
+ * pset_edge_ind
+ *
+ * DESCR:       Creates a new element - Edge Attribute Index
+ * RETURNS:     N/A
+ */
+
+void pset_edge_ind(
+   Pint edge_ind
    );
 
 /*******************************************************************************
@@ -812,6 +856,17 @@ void pset_edgewidth(
 
 void pset_text_font(
    Pint font
+   );
+
+/*******************************************************************************
+ * pset_text_ind
+ *
+ * DESCR:       Creates a new element - Text Attribute Index
+ * RETURNS:     N/A
+ */
+
+void pset_text_ind(
+   Pint text_ind
    );
 
 /*******************************************************************************

@@ -1661,10 +1661,8 @@ void phg_wsb_inq_rep(
 	case PHG_ARGS_LIGHTSRCREP:
 	case PHG_ARGS_COLRMAPREP:
 	/* View rep is done elsewhere. */
-#ifdef TODO
-	    phg_wsx_inq_LUT_entry( ws, index, how, rep_type, ret,
+	    phg_wsb_inq_LUT_entry( ws, index, how, rep_type, ret,
 		(Pgcolr *)NULL, (Pview_rep3 *)NULL );
-#endif
 	    break;
 
 	case PHG_ARGS_COREP:

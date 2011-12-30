@@ -639,5 +639,22 @@ void phg_wsb_set_LUT_entry(
     Pgcolr *gcolr
     );
 
+/*******************************************************************************
+ * phg_wsb_inq_LUT_entry
+ *
+ * DESCR:       Get workstation table entry
+ * RETURNS:     N/A
+ */
+
+void phg_wsb_inq_LUT_entry(
+    Ws *ws,
+    Pint index,
+    Pinq_type type,
+    Phg_args_rep_type rep_type,
+    Phg_ret *ret,
+    Pgcolr *gcolr,
+    Pview_rep3 *vrep
+    );
+
 #endif
 

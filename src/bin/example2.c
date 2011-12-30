@@ -48,7 +48,9 @@ Ppoint_list plist_quad = {
 };
 
 Pcolr_rep col_rep;
-int view_index = 1;
+int view_index = 0;
+
+Pline_bundle lnrep = { PLINE_DASH_DOT, 2.0,  0 };
 
 int main(int argc, char *argv[])
 {
@@ -63,9 +65,7 @@ int main(int argc, char *argv[])
    popen_phigs(NULL, 0);
 
    popen_struct(0);
-   pset_linetype(PLINE_DASH);
-   pset_linewidth(4.0);
-   pset_line_colr_ind(0);
+   pset_line_ind(0);
    ppolyline(&plist_line);
    pset_marker_type(PMARKER_ASTERISK);
    pset_marker_size(0.1);
@@ -100,13 +100,13 @@ int main(int argc, char *argv[])
 
    popen_ws(0, NULL, PWST_OUTPUT_TRUE);
    vp.x_min =   0.0;
-   vp.x_max = 200.0;
+   vp.x_max = 400.0;
    vp.y_min =   0.0;
-   vp.y_max = 200.0;
+   vp.y_max = 400.0;
    win.x_min =  0.0;
-   win.x_max =  0.5;
+   win.x_max =  1.0;
    win.y_min =  0.0;
-   win.y_max =  0.5;
+   win.y_max =  1.0;
    pset_ws_vp(0, &vp);
    pset_ws_win(0, &win);
 
@@ -119,6 +119,8 @@ int main(int argc, char *argv[])
    col_rep.rgb.green = 1.0;
    col_rep.rgb.blue = 0.0;
    pset_colr_rep(0, 1, &col_rep);
+
+   pset_line_rep(0, 0, &lnrep);
 
    popen_ws(1, NULL, PWST_OUTPUT_TRUE);
    vp.x_min =   0.0;
@@ -141,6 +143,8 @@ int main(int argc, char *argv[])
    col_rep.rgb.green = 0.0;
    col_rep.rgb.blue = 1.0;
    pset_colr_rep(1, 1, &col_rep);
+
+   pset_line_rep(1, 0, &lnrep);
 
    ppost_struct(0, 3, 0);
    ppost_struct(1, 3, 0);

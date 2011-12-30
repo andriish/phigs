@@ -163,7 +163,7 @@ void pset_local_tran3(
  */
 
 void pset_view_ind(
-   Pint index
+   Pint view_ind
    )
 {
    Phg_args_add_el args;
@@ -173,9 +173,12 @@ void pset_view_ind(
    if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
       ERR_REPORT(PHG_ERH, ERR5);
    }
+   else if (view_ind < 0) {
+      ERR_REPORT(PHG_ERH, ERR114);
+   }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_VIEW_IND;
-      ARGS_ELMT_DATA(&args).int_data = index;
+      ARGS_ELMT_DATA(&args).int_data = view_ind;
       phg_add_el(PHG_CSS, &args);
    }
 }
@@ -442,6 +445,34 @@ void pset_hlhsr_id(
 }
 
 /*******************************************************************************
+ * pset_int_ind
+ *
+ * DESCR:	Creates a new element - Facet Interiour Attribute Index
+ * RETURNS:	N/A
+ */
+
+void pset_int_ind(
+   Pint int_ind
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_int_ind);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else if (int_ind < 0) {
+      ERR_REPORT(PHG_ERH, ERR100);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_INT_IND;
+      ARGS_ELMT_DATA(&args).int_data = int_ind;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_int_colr_ind
  *
  * DESCR:	Creates a new element - Facet Color Attribute
@@ -512,9 +543,40 @@ void pset_int_style_ind(
    if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
       ERR_REPORT(PHG_ERH, ERR5);
    }
+   else if (int_style_ind < 1) {
+      ERR_REPORT(PHG_ERH, ERR112);
+   }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_INT_STYLE_IND;
       ARGS_ELMT_DATA(&args).int_data = int_style_ind;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_line_ind
+ *
+ * DESCR:	Creates a new element - Line Attribute Index
+ * RETURNS:	N/A
+ */
+
+void pset_line_ind(
+   Pint line_ind
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_line_ind);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else if (line_ind < 0) {
+      ERR_REPORT(PHG_ERH, ERR100);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_LINE_IND;
+      ARGS_ELMT_DATA(&args).int_data = line_ind;
       phg_add_el(PHG_CSS, &args);
    }
 }
@@ -598,6 +660,34 @@ void pset_linetype(
 }
 
 /*******************************************************************************
+ * pset_marker_ind
+ *
+ * DESCR:	Creates a new element - Marker Attribute Index
+ * RETURNS:	N/A
+ */
+
+void pset_marker_ind(
+   Pint marker_ind
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_marker_ind);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else if (marker_ind < 0) {
+      ERR_REPORT(PHG_ERH, ERR100);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_MARKER_IND;
+      ARGS_ELMT_DATA(&args).int_data = marker_ind;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_marker_colr_ind
  *
  * DESCR:	Creates a new element - Marker Color Attribute
@@ -671,6 +761,34 @@ void pset_marker_type(
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_MARKER_TYPE;
       ARGS_ELMT_DATA(&args).int_data = marker_type;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_edge_ind
+ *
+ * DESCR:	Creates a new element - Edge Attribute Index
+ * RETURNS:	N/A
+ */
+
+void pset_edge_ind(
+   Pint edge_ind
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_edge_ind);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else if (edge_ind < 0) {
+      ERR_REPORT(PHG_ERH, ERR100);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_EDGE_IND;
+      ARGS_ELMT_DATA(&args).int_data = edge_ind;
       phg_add_el(PHG_CSS, &args);
    }
 }
@@ -799,6 +917,34 @@ void pset_text_font(
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_TEXT_FONT;
       ARGS_ELMT_DATA(&args).int_data = font;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_text_ind
+ *
+ * DESCR:	Creates a new element - Text Attribute Index
+ * RETURNS:	N/A
+ */
+
+void pset_text_ind(
+   Pint text_ind
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_text_ind);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else if (text_ind < 0) {
+      ERR_REPORT(PHG_ERH, ERR100);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_TEXT_IND;
+      ARGS_ELMT_DATA(&args).int_data = text_ind;
       phg_add_el(PHG_CSS, &args);
    }
 }
