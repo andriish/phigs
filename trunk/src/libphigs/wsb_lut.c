@@ -27,8 +27,6 @@
 #include <phigs/css.h>
 #include <phigs/alloc.h>
 
-#define DEBUG
-
 /*******************************************************************************
  * phg_create_table
  *
@@ -145,7 +143,7 @@ void phg_wsb_set_LUT_entry(
     Pgcolr *gcolr
     )
 {
-    void *data;
+    caddr_t data;
     Ws_output_ws *ows = &ws->out_ws;
 
     switch(type) {
@@ -164,9 +162,44 @@ void phg_wsb_set_LUT_entry(
             else {
                 ERR_BUF(ws->erh, ERR900);
             }
-#ifdef DEBUG
-            printf("LNREP(s): %d\n", phg_htab_num_entries(ows->htab.line));
-#endif
+            break;
+
+        default:
+            break;
+    }
+}
+
+/*******************************************************************************
+ * phg_wsb_inq_LUT_entry
+ *
+ * DESCR:	Get workstation table entry
+ * RETURNS:	N/A
+ */
+
+void phg_wsb_inq_LUT_entry(
+    Ws *ws,
+    Pint index,
+    Pinq_type type,
+    Phg_args_rep_type rep_type,
+    Phg_ret *ret,
+    Pgcolr *gcolr,
+    Pview_rep3 *vrep
+    )
+{
+    caddr_t data;
+    Phg_ret_rep *rep = &ret->data.rep;
+    Ws_output_ws *ows = &ws->out_ws;
+
+    switch(rep_type) {
+        case PHG_ARGS_LNREP:
+        case PHG_ARGS_EXTLNREP:
+            if (!phg_htab_get_entry(ows->htab.line, index, &data)) {
+                ret->err = ERR101;
+            }
+            else {
+                memcpy(&rep->extlnrep, data, sizeof(Pline_bundle_plus));
+                ret->err = 0;
+            }
             break;
 
         default:

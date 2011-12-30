@@ -484,6 +484,7 @@ void wsgl_render_element(
    El_handle el
    )
 {
+   Phg_ret ret;
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
    switch (el->eltype) {
@@ -495,6 +496,19 @@ void wsgl_render_element(
 
       case PELEM_HLHSR_ID:
          phg_set_hlhsr_id(PHG_INT(el));
+         break;
+
+      case PELEM_INT_IND:
+         (*ws->inq_representation)(ws,
+                                   PHG_INT(el),
+                                   0,
+                                   PHG_ARGS_EXTINTERREP,
+                                   &ret);
+         if (ret.err == 0) {
+            memcpy(&wsgl->attr_group->int_bundle,
+                   &ret.data.rep.extinterrep,
+                   sizeof(Pint_bundle_plus));
+         }
          break;
 
       case PELEM_INT_COLR_IND:
@@ -515,6 +529,19 @@ void wsgl_render_element(
 
       case PELEM_INT_STYLE_IND:
          wsgl->attr_group->int_bundle.style_ind = PHG_INT(el);
+         break;
+
+      case PELEM_EDGE_IND:
+         (*ws->inq_representation)(ws,
+                                   PHG_INT(el),
+                                   0,
+                                   PHG_ARGS_EXTEDGEREP,
+                                   &ret);
+         if (ret.err == 0) {
+            memcpy(&wsgl->attr_group->edge_bundle,
+                   &ret.data.rep.extedgerep,
+                   sizeof(Pedge_bundle_plus));
+         }
          break;
 
       case PELEM_EDGE_COLR_IND:
@@ -541,6 +568,19 @@ void wsgl_render_element(
          wsgl->attr_group->edge_bundle.flag = PHG_EDGE_FLAG(el);
          break;
 
+      case PELEM_MARKER_IND:
+         (*ws->inq_representation)(ws,
+                                   PHG_INT(el),
+                                   0,
+                                   PHG_ARGS_EXTMKREP,
+                                   &ret);
+         if (ret.err == 0) {
+            memcpy(&wsgl->attr_group->marker_bundle,
+                   &ret.data.rep.extmkrep,
+                   sizeof(Pmarker_bundle_plus));
+         }
+         break;
+
       case PELEM_MARKER_COLR_IND:
          phg_get_colr_ind(ws,
                           &wsgl->attr_group->marker_bundle.colr,
@@ -561,6 +601,19 @@ void wsgl_render_element(
          wsgl->attr_group->marker_bundle.type = PHG_INT(el);
          break;
 
+      case PELEM_TEXT_IND:
+         (*ws->inq_representation)(ws,
+                                   PHG_INT(el),
+                                   0,
+                                   PHG_ARGS_EXTTXREP,
+                                   &ret);
+         if (ret.err == 0) {
+            memcpy(&wsgl->attr_group->text_bundle,
+                   &ret.data.rep.exttxrep,
+                   sizeof(Ptext_bundle_plus));
+         }
+         break;
+
       case PELEM_TEXT_COLR_IND:
          phg_get_colr_ind(ws,
                           &wsgl->attr_group->text_bundle.colr,
@@ -575,6 +628,19 @@ void wsgl_render_element(
 
       case PELEM_TEXT_FONT:
          wsgl->attr_group->text_bundle.font = PHG_INT(el);
+         break;
+
+      case PELEM_LINE_IND:
+         (*ws->inq_representation)(ws,
+                                   PHG_INT(el),
+                                   0,
+                                   PHG_ARGS_EXTLNREP,
+                                   &ret);
+         if (ret.err == 0) {
+            memcpy(&wsgl->attr_group->line_bundle,
+                   &ret.data.rep.extlnrep,
+                   sizeof(Pline_bundle_plus));
+         }
          break;
 
       case PELEM_LINE_COLR_IND:
