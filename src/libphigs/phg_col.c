@@ -26,6 +26,36 @@
 #include <phigs/private/phgP.h>
 
 /*******************************************************************************
+ * phg_get_colr_ind
+ *
+ * DESCR:       Get colour from index
+ * RETURNS:     N/A
+ */
+
+void phg_get_colr_ind(
+   Ws *ws,
+   Pgcolr *gcolr,
+   Pint ind
+   )
+{
+   gcolr->type = ws->current_colour_model;
+   switch(gcolr->type) {
+      case PINDIRECT:
+         gcolr->val.ind = ws->colr_table[ind].val.ind;
+         break;
+
+      case PMODEL_RGB:
+         gcolr->val.general.x = ws->colr_table[ind].val.general.x;
+         gcolr->val.general.y = ws->colr_table[ind].val.general.y;
+         gcolr->val.general.z = ws->colr_table[ind].val.general.z;
+         break;
+
+      default:
+         break;
+   }
+}
+
+/*******************************************************************************
  * pset_colr_rep
  *
  * DESCR:       Set workstation colour representation

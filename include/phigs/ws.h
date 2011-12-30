@@ -23,6 +23,7 @@
 
 #include <X11/Xlib.h>
 #include <phigs/phg.h>
+#include <phigs/private/htabP.h>
 
 #define NUM_DEFERRAL            5
 #define NUM_MODIFICATION        3
@@ -144,6 +145,15 @@ typedef struct {
 typedef struct {
    Pdefer_mode      def_mode;
    Pmod_mode        mod_mode;
+
+   struct {
+      Hash_table    marker;
+      Hash_table    line;
+      Hash_table    text;
+      Hash_table    interiour;
+      Hash_table    edge;
+   } htab;
+
    union {
       Wsa_output_ws a;
       Wsb_output_ws b;
@@ -591,6 +601,42 @@ int phg_wsb_resolve_stroke(
     int determine_z,
     Pint *view_index,
     Ppoint_list3 *wc_pts
+    );
+
+/*******************************************************************************
+ * phg_wsb_create_LUTs
+ *  
+ * DESCR:       Create workstation lookup tables
+ * RETURNS:     Non-zero on success
+ */
+
+int phg_wsb_create_LUTs(
+    Ws *ws
+    );
+
+/*******************************************************************************
+ * phg_wsb_destroy_LUTs
+ *
+ * DESCR:       Destroy workstation lookup tables
+ * RETURNS:     N/A
+ */
+
+void phg_wsb_destroy_LUTs(
+    Ws *ws
+    );
+
+/*******************************************************************************
+ * phg_wsb_set_LUT_entry
+ *
+ * DESCR:       Set workstation table entry
+ * RETURNS:     N/A
+ */
+
+void phg_wsb_set_LUT_entry(
+    Ws *ws,
+    Phg_args_rep_type type,
+    Phg_args_rep_data *rep,
+    Pgcolr *gcolr
     );
 
 #endif

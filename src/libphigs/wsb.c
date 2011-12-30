@@ -399,6 +399,8 @@ Ws* phg_wsb_open_ws(
     /* NOTE:
      * Setup colourmap if used here
      */
+    if (!phg_wsb_create_LUTs(ws))
+        goto abort;
 
     wsb_load_funcs( ws );
 
@@ -1392,9 +1394,7 @@ void phg_wsb_set_rep(
 	case PHG_ARGS_DCUEREP:
 	case PHG_ARGS_LIGHTSRCREP:
 	case PHG_ARGS_COLRMAPREP:
-#if TODO
-	    phg_wsx_set_LUT_entry( ws, type, rep, (Pgcolr*)NULL );
-#endif
+            phg_wsb_set_LUT_entry(ws, type, rep, NULL);
 	    break;
 
 	case PHG_ARGS_VIEWREP:
