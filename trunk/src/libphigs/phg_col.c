@@ -38,20 +38,29 @@ void phg_get_colr_ind(
    Pint ind
    )
 {
-   gcolr->type = ws->current_colour_model;
-   switch(gcolr->type) {
-      case PINDIRECT:
-         gcolr->val.ind = ws->colr_table[ind].val.ind;
-         break;
+   Phg_ret ret;
 
-      case PMODEL_RGB:
-         gcolr->val.general.x = ws->colr_table[ind].val.general.x;
-         gcolr->val.general.y = ws->colr_table[ind].val.general.y;
-         gcolr->val.general.z = ws->colr_table[ind].val.general.z;
-         break;
+   (*ws->inq_representation)(ws,
+                             ind,
+                             PINQ_REALIZED,
+                             PHG_ARGS_COREP,
+                             &ret);
+   if (ret.err == 0) {
+      gcolr->type = ws->current_colour_model;
+      switch(gcolr->type) {
+         case PINDIRECT:
+            gcolr->val.ind = ind;
+            break;
 
-      default:
-         break;
+         case PMODEL_RGB:
+            gcolr->val.general.x = ret.data.rep.corep.rgb.red;
+            gcolr->val.general.y = ret.data.rep.corep.rgb.green;
+            gcolr->val.general.z = ret.data.rep.corep.rgb.blue;
+            break;
+
+         default:
+            break;
+      }
    }
 }
 

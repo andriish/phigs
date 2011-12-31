@@ -152,6 +152,7 @@ typedef struct {
       Hash_table    text;
       Hash_table    interiour;
       Hash_table    edge;
+      Hash_table    colour;
    } htab;
 
    union {
@@ -175,7 +176,6 @@ typedef struct _Ws {
    void         *render_context;
    int          has_double_buffer;
    XRectangle   ws_rect;
-   Pgcolr       colr_table[256];
 
    int          black_color;
    int          white_color;

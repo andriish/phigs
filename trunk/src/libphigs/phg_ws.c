@@ -350,13 +350,115 @@ void pset_line_rep(
    )
 {
    Ws *wsh;
-   Phg_args_rep_data lnrep;
+   Phg_args_rep_data rep;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_line_rep);
 
    wsh = PHG_WSID(ws_id);
-   lnrep.index = line_ind;
-   memcpy(&lnrep.bundl.lnrep, line_bundle, sizeof(Pline_bundle));
+   rep.index = line_ind;
+   memcpy(&rep.bundl.lnrep, line_bundle, sizeof(Pline_bundle));
 
-   (*wsh->set_rep)(wsh, PHG_ARGS_LNREP, &lnrep);
+   (*wsh->set_rep)(wsh, PHG_ARGS_LNREP, &rep);
+}
+
+/*******************************************************************************
+ * pset_marker_rep
+ *
+ * DESCR:	Set workstation marker represenation
+ * RETURNS:	N/A
+ */
+
+void pset_marker_rep(
+   Pint ws_id,
+   Pint marker_ind,
+   Pmarker_bundle *marker_bundle
+   )
+{
+   Ws *wsh;
+   Phg_args_rep_data rep;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_marker_rep);
+
+   wsh = PHG_WSID(ws_id);
+   rep.index = marker_ind;
+   memcpy(&rep.bundl.lnrep, marker_bundle, sizeof(Pmarker_bundle));
+
+   (*wsh->set_rep)(wsh, PHG_ARGS_MKREP, &rep);
+}
+
+/*******************************************************************************
+ * pset_text_rep
+ *
+ * DESCR:	Set workstation text represenation
+ * RETURNS:	N/A
+ */
+
+void pset_text_rep(
+   Pint ws_id,
+   Pint text_ind,
+   Ptext_bundle *text_bundle
+   )
+{
+   Ws *wsh;
+   Phg_args_rep_data rep;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_text_rep);
+
+   wsh = PHG_WSID(ws_id);
+   rep.index = text_ind;
+   memcpy(&rep.bundl.lnrep, text_bundle, sizeof(Ptext_bundle));
+
+   (*wsh->set_rep)(wsh, PHG_ARGS_TXREP, &rep);
+}
+
+/*******************************************************************************
+ * pset_edge_rep
+ *
+ * DESCR:	Set workstation edge represenation
+ * RETURNS:	N/A
+ */
+
+void pset_edge_rep(
+   Pint ws_id,
+   Pint edge_ind,
+   Pedge_bundle *edge_bundle
+   )
+{
+   Ws *wsh;
+   Phg_args_rep_data rep;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_edge_rep);
+
+   wsh = PHG_WSID(ws_id);
+   rep.index = edge_ind;
+   memcpy(&rep.bundl.lnrep, edge_bundle, sizeof(Pedge_bundle));
+
+   (*wsh->set_rep)(wsh, PHG_ARGS_EDGEREP, &rep);
+}
+
+/*******************************************************************************
+ * pset_int_rep
+ *
+ * DESCR:	Set workstation interiour represenation
+ * RETURNS:	N/A
+ */
+
+void pset_int_rep(
+   Pint ws_id,
+   Pint int_ind,
+   Pint_bundle *int_bundle
+   )
+{
+   Ws *wsh;
+   Phg_args_rep_data rep;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_int_rep);
+
+   wsh = PHG_WSID(ws_id);
+   rep.index = int_ind;
+   memcpy(&rep.bundl.lnrep, int_bundle, sizeof(Pint_bundle));
+
+   (*wsh->set_rep)(wsh, PHG_ARGS_INTERREP, &rep);
 }
 
 /*******************************************************************************

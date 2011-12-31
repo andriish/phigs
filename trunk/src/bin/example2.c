@@ -50,7 +50,10 @@ Ppoint_list plist_quad = {
 Pcolr_rep col_rep;
 int view_index = 0;
 
-Pline_bundle lnrep = { PLINE_DASH_DOT, 2.0,  0 };
+Pline_bundle   lnrep = { PLINE_DASH_DOT, 2.0,  0 };
+Pmarker_bundle mkrep = { PMARKER_ASTERISK, 0.1, 0 };
+Pedge_bundle   edgerep = { PEDGE_ON, PLINE_SOLID, 2.0, 1 };
+Pint_bundle    interrep = { PSTYLE_SOLID, 1, 0 };
 
 int main(int argc, char *argv[])
 {
@@ -67,27 +70,19 @@ int main(int argc, char *argv[])
    popen_struct(0);
    pset_line_ind(0);
    ppolyline(&plist_line);
-   pset_marker_type(PMARKER_ASTERISK);
-   pset_marker_size(0.1);
-   pset_marker_colr_ind(0);
+   pset_marker_ind(0);
    ppolymarker(&plist_mark);
    pclose_struct();
 
    popen_struct(1);
-   pset_edge_flag(PEDGE_ON);
-   pset_edge_colr_ind(1);
-   pset_edgewidth(2.0);
-   pset_int_colr_ind(0);
-   pset_int_style(PSTYLE_SOLID);
+   pset_edge_ind(0);
+   pset_int_ind(0);
    pfill_area(&plist_quad);
    pclose_struct();
 
    popen_struct(2);
-   pset_edge_flag(PEDGE_ON);
-   pset_edge_colr_ind(1);
-   pset_edgewidth(2.0);
-   pset_int_colr_ind(0);
-   pset_int_style(PSTYLE_SOLID);
+   pset_edge_ind(0);
+   pset_int_ind(0);
    pfill_area(&plist_tri);
    pclose_struct();
 
@@ -110,6 +105,9 @@ int main(int argc, char *argv[])
    pset_ws_vp(0, &vp);
    pset_ws_win(0, &win);
    pset_line_rep(0, 0, &lnrep);
+   pset_marker_rep(0, 0, &mkrep);
+   pset_edge_rep(0, 0, &edgerep);
+   pset_int_rep(0, 0, &interrep);
 
    col_rep.rgb.red = 1.0;
    col_rep.rgb.green = 1.0;
@@ -133,6 +131,9 @@ int main(int argc, char *argv[])
    pset_ws_vp(1, &vp);
    pset_ws_win(1, &win);
    pset_line_rep(1, 0, &lnrep);
+   pset_marker_rep(1, 0, &mkrep);
+   pset_edge_rep(1, 0, &edgerep);
+   pset_int_rep(1, 0, &interrep);
 
    col_rep.rgb.red = 0.0;
    col_rep.rgb.green = 1.0;

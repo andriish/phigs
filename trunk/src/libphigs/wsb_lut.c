@@ -95,6 +95,11 @@ int phg_wsb_create_LUTs(
         goto end;
     }
 
+    if (phg_create_table(&ows->htab.colour, &err, 100) == 0) {
+        status = 0;
+        goto end;
+    }
+
 end:
 
     if (!status) {
@@ -127,6 +132,8 @@ void phg_wsb_destroy_LUTs(
        phg_htab_destroy(ows->htab.interiour, (void(*)())NULL);
     if (ows->htab.edge)
        phg_htab_destroy(ows->htab.edge, (void(*)())NULL);
+    if (ows->htab.colour)
+       phg_htab_destroy(ows->htab.colour, (void(*)())NULL);
 }
 
 /*******************************************************************************
@@ -150,12 +157,170 @@ void phg_wsb_set_LUT_entry(
         case PHG_ARGS_LNREP:
             data = malloc(sizeof(Pline_bundle_plus));
             if (data != NULL) {
+                memset(data, 0, sizeof(Pline_bundle_plus));
                 ((Pline_bundle_plus *) data)->type = rep->bundl.lnrep.type;
                 ((Pline_bundle_plus *) data)->width = rep->bundl.lnrep.width;
                 ((Pline_bundle_plus *) data)->colr.type = PINDIRECT;
                 ((Pline_bundle_plus *) data)->colr.val.ind =
                     rep->bundl.lnrep.colr_ind;
                 if (!phg_htab_add_entry(ows->htab.line, rep->index, data)) {
+                    ERR_BUF(ws->erh, ERR900);
+                }
+            }
+            else {
+                ERR_BUF(ws->erh, ERR900);
+            }
+            break;
+
+        case PHG_ARGS_EXTLNREP:
+            data = malloc(sizeof(Pline_bundle_plus));
+            if (data != NULL) {
+                memcpy(data, &rep->bundl.extlnrep, sizeof(Pline_bundle_plus));
+                if (!phg_htab_add_entry(ows->htab.line, rep->index, data)) {
+                    ERR_BUF(ws->erh, ERR900);
+                }
+            }
+            else {
+                ERR_BUF(ws->erh, ERR900);
+            }
+            break;
+
+        case PHG_ARGS_MKREP:
+            data = malloc(sizeof(Pmarker_bundle_plus));
+            if (data != NULL) {
+                memset(data, 0, sizeof(Pmarker_bundle_plus));
+                ((Pmarker_bundle_plus *) data)->type = rep->bundl.mkrep.type;
+                ((Pmarker_bundle_plus *) data)->size = rep->bundl.mkrep.size;
+                ((Pmarker_bundle_plus *) data)->colr.type = PINDIRECT;
+                ((Pmarker_bundle_plus *) data)->colr.val.ind =
+                    rep->bundl.mkrep.colr_ind;
+                if (!phg_htab_add_entry(ows->htab.marker, rep->index, data)) {
+                    ERR_BUF(ws->erh, ERR900);
+                }
+            }
+            else {
+                ERR_BUF(ws->erh, ERR900);
+            }
+            break;
+
+        case PHG_ARGS_EXTMKREP:
+            data = malloc(sizeof(Pmarker_bundle_plus));
+            if (data != NULL) {
+                memcpy(data, &rep->bundl.extmkrep, sizeof(Pmarker_bundle_plus));
+                if (!phg_htab_add_entry(ows->htab.marker, rep->index, data)) {
+                    ERR_BUF(ws->erh, ERR900);
+                }
+            }
+            else {
+                ERR_BUF(ws->erh, ERR900);
+            }
+            break;
+
+        case PHG_ARGS_TXREP:
+            data = malloc(sizeof(Ptext_bundle_plus));
+            if (data != NULL) {
+                memset(data, 0, sizeof(Ptext_bundle_plus));
+                ((Ptext_bundle_plus *) data)->font = rep->bundl.txrep.font;
+                ((Ptext_bundle_plus *) data)->colr.type = PINDIRECT;
+                ((Ptext_bundle_plus *) data)->colr.val.ind =
+                    rep->bundl.txrep.colr_ind;
+                if (!phg_htab_add_entry(ows->htab.text, rep->index, data)) {
+                    ERR_BUF(ws->erh, ERR900);
+                }
+            }
+            else {
+                ERR_BUF(ws->erh, ERR900);
+            }
+            break;
+
+        case PHG_ARGS_EXTTXREP:
+            data = malloc(sizeof(Ptext_bundle_plus));
+            if (data != NULL) {
+                memcpy(data, &rep->bundl.exttxrep, sizeof(Ptext_bundle_plus));
+                if (!phg_htab_add_entry(ows->htab.text, rep->index, data)) {
+                    ERR_BUF(ws->erh, ERR900);
+                }
+            }
+            else {
+                ERR_BUF(ws->erh, ERR900);
+            }
+            break;
+
+        case PHG_ARGS_INTERREP:
+            data = malloc(sizeof(Pint_bundle_plus));
+            if (data != NULL) {
+                memset(data, 0, sizeof(Pint_bundle_plus));
+                ((Pint_bundle_plus *) data)->style = rep->bundl.interrep.style;
+                ((Pint_bundle_plus *) data)->style_ind =
+                    rep->bundl.interrep.style_ind;
+                ((Pint_bundle_plus *) data)->colr.type = PINDIRECT;
+                ((Pint_bundle_plus *) data)->colr.val.ind =
+                    rep->bundl.interrep.colr_ind;
+                if (!phg_htab_add_entry(ows->htab.interiour,
+                                        rep->index,
+                                        data)) {
+                    ERR_BUF(ws->erh, ERR900);
+                }
+            }
+            else {
+                ERR_BUF(ws->erh, ERR900);
+            }
+            break;
+
+        case PHG_ARGS_EXTINTERREP:
+            data = malloc(sizeof(Pint_bundle_plus));
+            if (data != NULL) {
+                memcpy(data,
+                       &rep->bundl.extinterrep,
+                       sizeof(Pint_bundle_plus));
+                if (!phg_htab_add_entry(ows->htab.interiour,
+                                        rep->index,
+                                        data)) {
+                    ERR_BUF(ws->erh, ERR900);
+                }
+            }
+            else {
+                ERR_BUF(ws->erh, ERR900);
+            }
+            break;
+
+        case PHG_ARGS_EDGEREP:
+            data = malloc(sizeof(Pedge_bundle_plus));
+            if (data != NULL) {
+                memset(data, 0, sizeof(Pedge_bundle_plus));
+                ((Pedge_bundle_plus *) data)->flag = rep->bundl.edgerep.flag;
+                ((Pedge_bundle_plus *) data)->type = rep->bundl.edgerep.type;
+                ((Pedge_bundle_plus *) data)->width = rep->bundl.edgerep.width;
+                ((Pedge_bundle_plus *) data)->colr.type = PINDIRECT;
+                ((Pedge_bundle_plus *) data)->colr.val.ind =
+                    rep->bundl.edgerep.colr_ind;
+                if (!phg_htab_add_entry(ows->htab.edge, rep->index, data)) {
+                    ERR_BUF(ws->erh, ERR900);
+                }
+            }
+            else {
+                ERR_BUF(ws->erh, ERR900);
+            }
+            break;
+
+        case PHG_ARGS_EXTEDGEREP:
+            data = malloc(sizeof(Pedge_bundle_plus));
+            if (data != NULL) {
+                memcpy(data, &rep->bundl.extedgerep, sizeof(Pedge_bundle_plus));
+                if (!phg_htab_add_entry(ows->htab.edge, rep->index, data)) {
+                    ERR_BUF(ws->erh, ERR900);
+                }
+            }
+            else {
+                ERR_BUF(ws->erh, ERR900);
+            }
+            break;
+
+        case PHG_ARGS_COREP:
+            data = malloc(sizeof(Pgcolr));
+            if (data != NULL) {
+                memcpy(data, gcolr, sizeof(Pgcolr));
+                if (!phg_htab_add_entry(ows->htab.colour, rep->index, data)) {
                     ERR_BUF(ws->erh, ERR900);
                 }
             }
@@ -198,6 +363,60 @@ void phg_wsb_inq_LUT_entry(
             }
             else {
                 memcpy(&rep->extlnrep, data, sizeof(Pline_bundle_plus));
+                ret->err = 0;
+            }
+            break;
+
+        case PHG_ARGS_MKREP:
+        case PHG_ARGS_EXTMKREP:
+            if (!phg_htab_get_entry(ows->htab.marker, index, &data)) {
+                ret->err = ERR101;
+            }
+            else {
+                memcpy(&rep->extmkrep, data, sizeof(Pmarker_bundle_plus));
+                ret->err = 0;
+            }
+            break;
+
+        case PHG_ARGS_TXREP:
+        case PHG_ARGS_EXTTXREP:
+            if (!phg_htab_get_entry(ows->htab.text, index, &data)) {
+                ret->err = ERR101;
+            }
+            else {
+                memcpy(&rep->exttxrep, data, sizeof(Ptext_bundle_plus));
+                ret->err = 0;
+            }
+            break;
+
+        case PHG_ARGS_INTERREP:
+        case PHG_ARGS_EXTINTERREP:
+            if (!phg_htab_get_entry(ows->htab.interiour, index, &data)) {
+                ret->err = ERR101;
+            }
+            else {
+                memcpy(&rep->extinterrep, data, sizeof(Pint_bundle_plus));
+                ret->err = 0;
+            }
+            break;
+
+        case PHG_ARGS_EDGEREP:
+        case PHG_ARGS_EXTEDGEREP:
+            if (!phg_htab_get_entry(ows->htab.edge, index, &data)) {
+                ret->err = ERR101;
+            }
+            else {
+                memcpy(&rep->extedgerep, data, sizeof(Pedge_bundle_plus));
+                ret->err = 0;
+            }
+            break;
+
+        case PHG_ARGS_COREP:
+            if (!phg_htab_get_entry(ows->htab.colour, index, &data)) {
+                ret->err = ERR101;
+            }
+            else {
+                memcpy(gcolr, data, sizeof(Pgcolr));
                 ret->err = 0;
             }
             break;
