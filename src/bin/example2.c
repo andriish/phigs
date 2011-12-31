@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
    win.y_max =  1.0;
    pset_ws_vp(0, &vp);
    pset_ws_win(0, &win);
+   pset_line_rep(0, 0, &lnrep);
 
    col_rep.rgb.red = 1.0;
    col_rep.rgb.green = 1.0;
@@ -119,8 +120,6 @@ int main(int argc, char *argv[])
    col_rep.rgb.green = 1.0;
    col_rep.rgb.blue = 0.0;
    pset_colr_rep(0, 1, &col_rep);
-
-   pset_line_rep(0, 0, &lnrep);
 
    popen_ws(1, NULL, PWST_OUTPUT_TRUE);
    vp.x_min =   0.0;
@@ -133,6 +132,7 @@ int main(int argc, char *argv[])
    win.y_max =  1.0;
    pset_ws_vp(1, &vp);
    pset_ws_win(1, &win);
+   pset_line_rep(1, 0, &lnrep);
 
    col_rep.rgb.red = 0.0;
    col_rep.rgb.green = 1.0;
@@ -143,8 +143,6 @@ int main(int argc, char *argv[])
    col_rep.rgb.green = 0.0;
    col_rep.rgb.blue = 1.0;
    pset_colr_rep(1, 1, &col_rep);
-
-   pset_line_rep(1, 0, &lnrep);
 
    ppost_struct(0, 3, 0);
    ppost_struct(1, 3, 0);
