@@ -501,13 +501,18 @@ void wsgl_render_element(
       case PELEM_INT_IND:
          (*ws->inq_representation)(ws,
                                    PHG_INT(el),
-                                   0,
+                                   PINQ_REALIZED,
                                    PHG_ARGS_EXTINTERREP,
                                    &ret);
          if (ret.err == 0) {
             memcpy(&wsgl->attr_group->int_bundle,
                    &ret.data.rep.extinterrep,
                    sizeof(Pint_bundle_plus));
+            if (wsgl->attr_group->int_bundle.colr.type == PINDIRECT) {
+               phg_get_colr_ind(ws,
+                                &wsgl->attr_group->int_bundle.colr,
+                                wsgl->attr_group->int_bundle.colr.val.ind);
+            }
          }
          break;
 
@@ -534,13 +539,18 @@ void wsgl_render_element(
       case PELEM_EDGE_IND:
          (*ws->inq_representation)(ws,
                                    PHG_INT(el),
-                                   0,
+                                   PINQ_REALIZED,
                                    PHG_ARGS_EXTEDGEREP,
                                    &ret);
          if (ret.err == 0) {
             memcpy(&wsgl->attr_group->edge_bundle,
                    &ret.data.rep.extedgerep,
                    sizeof(Pedge_bundle_plus));
+            if (wsgl->attr_group->edge_bundle.colr.type == PINDIRECT) {
+               phg_get_colr_ind(ws,
+                                &wsgl->attr_group->edge_bundle.colr,
+                                wsgl->attr_group->edge_bundle.colr.val.ind);
+            }
          }
          break;
 
@@ -571,13 +581,18 @@ void wsgl_render_element(
       case PELEM_MARKER_IND:
          (*ws->inq_representation)(ws,
                                    PHG_INT(el),
-                                   0,
+                                   PINQ_REALIZED,
                                    PHG_ARGS_EXTMKREP,
                                    &ret);
          if (ret.err == 0) {
             memcpy(&wsgl->attr_group->marker_bundle,
                    &ret.data.rep.extmkrep,
                    sizeof(Pmarker_bundle_plus));
+            if (wsgl->attr_group->marker_bundle.colr.type == PINDIRECT) {
+               phg_get_colr_ind(ws,
+                                &wsgl->attr_group->marker_bundle.colr,
+                                wsgl->attr_group->marker_bundle.colr.val.ind);
+            }
          }
          break;
 
@@ -604,13 +619,18 @@ void wsgl_render_element(
       case PELEM_TEXT_IND:
          (*ws->inq_representation)(ws,
                                    PHG_INT(el),
-                                   0,
+                                   PINQ_REALIZED,
                                    PHG_ARGS_EXTTXREP,
                                    &ret);
          if (ret.err == 0) {
             memcpy(&wsgl->attr_group->text_bundle,
                    &ret.data.rep.exttxrep,
                    sizeof(Ptext_bundle_plus));
+            if (wsgl->attr_group->text_bundle.colr.type == PINDIRECT) {
+               phg_get_colr_ind(ws,
+                                &wsgl->attr_group->text_bundle.colr,
+                                wsgl->attr_group->text_bundle.colr.val.ind);
+            }
          }
          break;
 
@@ -633,13 +653,18 @@ void wsgl_render_element(
       case PELEM_LINE_IND:
          (*ws->inq_representation)(ws,
                                    PHG_INT(el),
-                                   0,
+                                   PINQ_REALIZED,
                                    PHG_ARGS_EXTLNREP,
                                    &ret);
          if (ret.err == 0) {
             memcpy(&wsgl->attr_group->line_bundle,
                    &ret.data.rep.extlnrep,
                    sizeof(Pline_bundle_plus));
+            if (wsgl->attr_group->line_bundle.colr.type == PINDIRECT) {
+               phg_get_colr_ind(ws,
+                                &wsgl->attr_group->line_bundle.colr,
+                                wsgl->attr_group->line_bundle.colr.val.ind);
+            }
          }
          break;
 

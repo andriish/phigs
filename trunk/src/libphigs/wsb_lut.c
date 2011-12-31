@@ -149,12 +149,12 @@ void phg_wsb_set_LUT_entry(
     switch(type) {
         case PHG_ARGS_LNREP:
             data = malloc(sizeof(Pline_bundle_plus));
-            ((Pline_bundle_plus *) data)->type = rep->bundl.lnrep.type;
-            ((Pline_bundle_plus *) data)->width = rep->bundl.lnrep.width;
-            phg_get_colr_ind(ws,
-                             &((Pline_bundle_plus *) data)->colr,
-                             rep->bundl.lnrep.colr_ind);
             if (data != NULL) {
+                ((Pline_bundle_plus *) data)->type = rep->bundl.lnrep.type;
+                ((Pline_bundle_plus *) data)->width = rep->bundl.lnrep.width;
+                ((Pline_bundle_plus *) data)->colr.type = PINDIRECT;
+                ((Pline_bundle_plus *) data)->colr.val.ind =
+                    rep->bundl.lnrep.colr_ind;
                 if (!phg_htab_add_entry(ows->htab.line, rep->index, data)) {
                     ERR_BUF(ws->erh, ERR900);
                 }
