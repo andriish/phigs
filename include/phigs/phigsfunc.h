@@ -310,6 +310,58 @@ void pset_line_rep(
    );
 
 /*******************************************************************************
+ * pset_marker_rep
+ *
+ * DESCR:       Set workstation marker represenation
+ * RETURNS:     N/A
+ */
+
+void pset_marker_rep(
+   Pint ws_id,
+   Pint marker_ind,
+   Pmarker_bundle *marker_bundle
+   );
+
+/*******************************************************************************
+ * pset_text_rep
+ *
+ * DESCR:       Set workstation text represenation
+ * RETURNS:     N/A
+ */
+
+void pset_text_rep(
+   Pint ws_id,
+   Pint text_ind,
+   Ptext_bundle *text_bundle
+   );
+
+/*******************************************************************************
+ * pset_edge_rep
+ *
+ * DESCR:       Set workstation edge represenation
+ * RETURNS:     N/A
+ */
+
+void pset_edge_rep(
+   Pint ws_id,
+   Pint edge_ind,
+   Pedge_bundle *edge_bundle
+   );
+
+/*******************************************************************************
+ * pset_int_rep
+ *
+ * DESCR:       Set workstation interiour represenation
+ * RETURNS:     N/A
+ */
+
+void pset_int_rep(
+   Pint ws_id,
+   Pint int_ind,
+   Pint_bundle *int_bundle
+   );
+
+/*******************************************************************************
  * ppost_struct
  *
  * DESCR:       Post structure to workstation

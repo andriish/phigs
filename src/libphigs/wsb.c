@@ -1418,7 +1418,7 @@ void phg_wsb_set_rep(
 	    gcolr.val.general.x = rep->bundl.corep.rgb.red;
 	    gcolr.val.general.y = rep->bundl.corep.rgb.green;
 	    gcolr.val.general.z = rep->bundl.corep.rgb.blue;
-            memcpy(&ws->colr_table[rep->index], &gcolr, sizeof(Pgcolr));
+            phg_wsb_set_LUT_entry(ws, type, rep, &gcolr);
 	    break;
     }
 
@@ -1661,15 +1661,14 @@ void phg_wsb_inq_rep(
 	case PHG_ARGS_LIGHTSRCREP:
 	case PHG_ARGS_COLRMAPREP:
 	/* View rep is done elsewhere. */
-	    phg_wsb_inq_LUT_entry( ws, index, how, rep_type, ret,
-		(Pgcolr *)NULL, (Pview_rep3 *)NULL );
+	    phg_wsb_inq_LUT_entry( ws, index, how, rep_type, ret, NULL, NULL);
 	    break;
 
 	case PHG_ARGS_COREP:
 	    cb = &ret->data.rep.corep;
 
 	    /* Need to convert to current colour model. */
-            memcpy(&gcolr, &ws->colr_table[index], sizeof(Pgcolr));
+            phg_wsb_inq_LUT_entry(ws, index, how, rep_type, ret, &gcolr, NULL);
 
             /* NOTE:
              * Convert to correct colour model here if needed
