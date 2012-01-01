@@ -50,12 +50,6 @@ typedef enum {
 } Ws_update_action;
 
 typedef enum {
-   WS_INV_NOT_CURRENT,
-   WS_INV_CURRENT,
-   WS_INV_NOT_INVERTIBLE
-} Ws_inverse_state;
-
-typedef enum {
    WS_PRE_CSS_DELETE,
    WS_POST_CSS_DELETE
 } Ws_delete_flag;
@@ -146,9 +140,6 @@ typedef struct _Ws {
    void         *render_context;
    int          has_double_buffer;
    XRectangle   ws_rect;
-
-   int          black_color;
-   int          white_color;
 
    void         (*close)(
                    struct _Ws *ws
