@@ -1,3 +1,23 @@
+/******************************************************************************
+*   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
+*
+*   This file is part of Open PHIGS
+*   Copyright (C) 2011 - 2012 Surplus Users Ham Society
+*
+*   Open PHIGS is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Lesser General Public License as published by
+*   the Free Software Foundation, either version 2.1 of the License, or
+*   (at your option) any later version.
+*
+*   Open PHIGS is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Lesser General Public License for more details.
+*
+*   You should have received a copy of the GNU Lesser General Public License
+*   along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
+******************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,8 +26,10 @@
 #include <phigs/css.h>
 #include <phigs/ws.h>
 
-#define WIDTH  0.5
-#define HEIGHT 0.5
+#define WIDTH     0.5
+#define HEIGHT    0.5
+#define ATTR_NO   1
+#define HATCH_IND 4
 
 Ppoint pts_mark[] = {
    {WIDTH / 4, HEIGHT + HEIGHT / 4}
@@ -68,21 +90,23 @@ int main(int argc, char *argv[])
    popen_phigs(NULL, 0);
 
    popen_struct(0);
-   pset_line_ind(0);
+   pset_line_ind(ATTR_NO);
    ppolyline(&plist_line);
-   pset_marker_ind(0);
+   pset_marker_ind(ATTR_NO);
    ppolymarker(&plist_mark);
    pclose_struct();
 
    popen_struct(1);
-   pset_edge_ind(0);
-   pset_int_ind(0);
+   pset_edge_ind(ATTR_NO);
+   pset_int_ind(ATTR_NO);
    pfill_area(&plist_quad);
    pclose_struct();
 
    popen_struct(2);
    pset_edge_ind(0);
-   pset_int_ind(0);
+   pset_int_ind(ATTR_NO);
+   pset_int_style(PSTYLE_HATCH);
+   pset_int_style_ind(HATCH_IND);
    pfill_area(&plist_tri);
    pclose_struct();
 
@@ -104,10 +128,10 @@ int main(int argc, char *argv[])
    win.y_max =  1.0;
    pset_ws_vp(0, &vp);
    pset_ws_win(0, &win);
-   pset_line_rep(0, 0, &lnrep);
-   pset_marker_rep(0, 0, &mkrep);
-   pset_edge_rep(0, 0, &edgerep);
-   pset_int_rep(0, 0, &interrep);
+   pset_line_rep(0, ATTR_NO, &lnrep);
+   pset_marker_rep(0, ATTR_NO, &mkrep);
+   pset_edge_rep(0, ATTR_NO, &edgerep);
+   pset_int_rep(0, ATTR_NO, &interrep);
 
    col_rep.rgb.red = 1.0;
    col_rep.rgb.green = 1.0;
@@ -130,10 +154,10 @@ int main(int argc, char *argv[])
    win.y_max =  1.0;
    pset_ws_vp(1, &vp);
    pset_ws_win(1, &win);
-   pset_line_rep(1, 0, &lnrep);
-   pset_marker_rep(1, 0, &mkrep);
-   pset_edge_rep(1, 0, &edgerep);
-   pset_int_rep(1, 0, &interrep);
+   pset_line_rep(1, ATTR_NO, &lnrep);
+   pset_marker_rep(1, ATTR_NO, &mkrep);
+   pset_edge_rep(1, ATTR_NO, &edgerep);
+   pset_int_rep(1, ATTR_NO, &interrep);
 
    col_rep.rgb.red = 0.0;
    col_rep.rgb.green = 1.0;

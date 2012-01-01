@@ -2,7 +2,7 @@
 *   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
 *
 *   This file is part of Open PHIGS
-*   Copyright (C) 2011 Surplus Users Ham Society
+*   Copyright (C) 2011 - 2012 Surplus Users Ham Society
 *
 *   Open PHIGS is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU Lesser General Public License as published by
@@ -67,6 +67,7 @@ SOFTWARE.
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <phigs/phg.h>
 #include <phigs/private/htabP.h>
@@ -107,7 +108,7 @@ static Htab_entry** get_entry(
     entry_p = &htab->tbl[PHG_ABS(key) % htab->hash_size];
     for (; (*entry_p != NULL) && ((*entry_p)->key != key);
            entry_p = &(*entry_p)->next)
-	;
+        ;
 
     return entry_p;
 }
@@ -132,6 +133,7 @@ Hash_table phg_htab_create(
 
     htab = (Hash_table) malloc(sizeof(Htab) +
 	                       sizeof(Htab_entry *) * (unsigned) hash_size);
+    memset(htab, 0, sizeof(Htab_entry *) * (unsigned) hash_size);
     if (htab != NULL) {
 	htab->tbl = (Htab_entry **) (htab + 1);
 	/* Initialize the table. */
@@ -220,10 +222,11 @@ int phg_htab_add_entry(
     int ret;
     Htab_entry **entry_p;
 
-    /* If found, just replace the client data. */
-    if (*(entry_p = get_entry(htab, key)) != NULL) {
-	(*entry_p)->cdata = cdata;
+    entry_p = get_entry(htab, key);
 
+    /* If found, just replace the client data. */
+    if (*entry_p != NULL) {
+	(*entry_p)->cdata = cdata;
     }
     else {
 	/* Create the entry and link it into the table. */
