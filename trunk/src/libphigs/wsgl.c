@@ -35,18 +35,16 @@
 #include <phigs/mat_utils.h>
 
 static void phg_update_projection(
-   Ws *ws,
-   Pint view_index
+   Ws *ws
    );
 
 static void phg_update_modelview(
-   Ws *ws,
-   Pint view_index
+   Ws *ws
    );
 
-static void phg_set_view(
+static void phg_set_view_ind(
    Ws *ws,
-   Pint view_index
+   Pint ind
    );
 
 void phg_set_hlhsr_id(
@@ -487,7 +485,7 @@ void wsgl_begin_rendering(
    phg_set_text_ind(ws, wsgl->attr_group, 0);
    phg_set_edge_ind(ws, wsgl->attr_group, 0);
    phg_set_int_ind(ws, wsgl->attr_group, 0);
-   phg_set_view(ws, 0);
+   phg_set_view_ind(ws, 0);
 }
 
 /*******************************************************************************
@@ -706,12 +704,11 @@ void wsgl_render_element(
                phg_mat_copy(wsgl->local_tran, PHG_LOCAL_TRAN3(el)->matrix);
             break;
          }
-         phg_update_modelview(ws,
-                              wsgl->curr_view_index);
+         phg_update_modelview(ws);
          break;
 
       case PELEM_VIEW_IND:
-         phg_set_view(ws, PHG_INT(el));
+         phg_set_view_ind(ws, PHG_INT(el));
          break;
 
       default:
@@ -754,18 +751,17 @@ static void phg_set_matrix(
  */
 
 static void phg_update_projection(
-   Ws *ws,
-   Pint view_index
+   Ws *ws
    )
 {
-   Ws_view_entry *view_entry = &ws->out_ws.model.b.views[view_index];
+   Wsgl *wsgl = (Wsgl *) ws->render_context;
 
 #ifdef DEBUG
    printf("Update projection\n");
 #endif
 
    glMatrixMode(GL_PROJECTION);
-   phg_set_matrix(view_entry->vmm);
+   phg_set_matrix(wsgl->view_rep.map_matrix);
 }
 
 /*******************************************************************************
@@ -776,43 +772,50 @@ static void phg_update_projection(
  */
 
 static void phg_update_modelview(
-   Ws *ws,
-   Pint view_index
+   Ws *ws
    )
 {
    Wsgl *wsgl = (Wsgl *) ws->render_context;
-   Ws_view_entry *view_entry = &ws->out_ws.model.b.views[view_index];
 
 #ifdef DEBUG
    printf("Update modelview\n");
 #endif
 
    glMatrixMode(GL_MODELVIEW);
-   phg_mat_mul(wsgl->total_tran, view_entry->vom, wsgl->local_tran);
+   phg_mat_mul(wsgl->total_tran, wsgl->view_rep.ori_matrix, wsgl->local_tran);
    phg_set_matrix(wsgl->total_tran);
 }
 
 /*******************************************************************************
- * phg_set_view
+ * phg_set_view_ind
  *
  * DESCR:	Setup view
  * RETURNS:	N/A
  */
 
-static void phg_set_view(
+static void phg_set_view_ind(
    Ws *ws,
-   Pint view_index
+   Pint ind
    )
 {
+   Phg_ret ret;
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
 #ifdef DEBUG
-   printf("Set view: %d\n", view_index);
+   printf("Set view index: %d\n", view_index);
 #endif
 
-   wsgl->curr_view_index = view_index;
-   phg_update_projection(ws, view_index);
-   phg_update_modelview(ws, view_index);
+   (*ws->inq_representation)(ws,
+                             ind,
+                             PINQ_REALIZED,
+                             PHG_ARGS_VIEWREP,
+                             &ret);
+   if (ret.err == 0) {
+      wsgl->curr_view_index = ind;
+      memcpy(&wsgl->view_rep, &ret.data.rep.viewrep, sizeof(Pview_rep3));
+      phg_update_projection(ws);
+      phg_update_modelview(ws);
+   }
 }
 
 /*******************************************************************************
@@ -979,7 +982,7 @@ static void phg_set_int_attr(
 
    if (attr->style == PSTYLE_HATCH) {
       glEnable(GL_POLYGON_STIPPLE);
-      glPolygonStipple(wsgl_hatch_tbl[attr->style_ind]);
+      glPolygonStipple(wsgl_hatch_tbl[attr->style_ind - 1]);
    }
    else {
       glDisable(GL_POLYGON_STIPPLE);

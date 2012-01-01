@@ -53,14 +53,6 @@ typedef struct {
 } Phg_ret_view_rep;
 
 typedef struct {
-   Pupd_st state;
-   Plimit3 req_window;
-   Plimit3 cur_window;
-   Plimit3 req_viewport;
-   Plimit3 cur_viewport;
-} Phg_ret_ws_tran3;
-
-typedef struct {
    Pdefer_mode      def_mode;
    Pmod_mode        mod_mode;
    Pdisp_surf_empty display_surf;
@@ -74,6 +66,7 @@ typedef union {
    Pint_bundle_plus    extinterrep;
    Pedge_bundle_plus   extedgerep;
    Pcolr_rep           corep;
+   Pview_rep3          viewrep;
 } Phg_ret_rep;
 
 typedef struct {
@@ -88,7 +81,6 @@ typedef union {
    Pint_list            int_list;
    Pposted_struct_list  postlist;
    Phg_ret_open_ws      open_ws;
-   Phg_ret_ws_tran3     ws_xform;
    Phg_ret_el_search    el_search;
    Phg_ret_el_type_size el_type_size;
    Phg_ret_q_content    el_info;

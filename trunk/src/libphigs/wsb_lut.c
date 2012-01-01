@@ -101,6 +101,11 @@ int phg_wsb_create_LUTs(
         goto end;
     }
 
+    if (!phg_create_table(&ows->htab.view, &err, 20)) {
+        status = 0;
+        goto end;
+    }
+
 end:
 
     if (!status) {
@@ -135,6 +140,8 @@ void phg_wsb_destroy_LUTs(
        phg_htab_destroy(ows->htab.edge, (void(*)())NULL);
     if (ows->htab.colour)
        phg_htab_destroy(ows->htab.colour, (void(*)())NULL);
+    if (ows->htab.view)
+       phg_htab_destroy(ows->htab.view, (void(*)())NULL);
 }
 
 /*******************************************************************************
@@ -363,6 +370,25 @@ void phg_wsb_set_LUT_entry(
             }
             break;
 
+        case PHG_ARGS_VIEWREP:
+#ifdef DEBUG
+            printf("Set view: %d\n", rep->index);
+            phg_mat_print(rep->bundl.viewrep.ori_matrix);
+            printf("\n");
+            phg_mat_print(rep->bundl.viewrep.map_matrix);
+#endif
+            data = malloc(sizeof(Pview_rep3));
+            if (data != NULL) {
+                memcpy(data, &rep->bundl.viewrep, sizeof(Pview_rep3));
+                if (!phg_htab_add_entry(ows->htab.view, rep->index, data)) {
+                    ERR_BUF(ws->erh, ERR900);
+                }
+            }
+            else {
+                ERR_BUF(ws->erh, ERR900);
+            }
+            break;
+
         default:
             break;
     }
@@ -393,7 +419,7 @@ void phg_wsb_inq_LUT_entry(
         case PHG_ARGS_LNREP:
         case PHG_ARGS_EXTLNREP:
 #ifdef DEBUG
-            printf("Inq line\n");
+            printf("Inq line: %d\n", index);
 #endif
             if (!phg_htab_get_entry(ows->htab.line, index, &data)) {
                 ret->err = ERR101;
@@ -407,7 +433,7 @@ void phg_wsb_inq_LUT_entry(
         case PHG_ARGS_MKREP:
         case PHG_ARGS_EXTMKREP:
 #ifdef DEBUG
-            printf("Inq marker\n");
+            printf("Inq marker: %d\n", index);
 #endif
             if (!phg_htab_get_entry(ows->htab.marker, index, &data)) {
                 ret->err = ERR101;
@@ -421,7 +447,7 @@ void phg_wsb_inq_LUT_entry(
         case PHG_ARGS_TXREP:
         case PHG_ARGS_EXTTXREP:
 #ifdef DEBUG
-            printf("Inq text\n");
+            printf("Inq text: %d\n", index);
 #endif
             if (!phg_htab_get_entry(ows->htab.text, index, &data)) {
                 ret->err = ERR101;
@@ -435,7 +461,7 @@ void phg_wsb_inq_LUT_entry(
         case PHG_ARGS_INTERREP:
         case PHG_ARGS_EXTINTERREP:
 #ifdef DEBUG
-            printf("Inq interiour\n");
+            printf("Inq interiour: %d\n", index);
 #endif
             if (!phg_htab_get_entry(ows->htab.interiour, index, &data)) {
                 ret->err = ERR101;
@@ -449,7 +475,7 @@ void phg_wsb_inq_LUT_entry(
         case PHG_ARGS_EDGEREP:
         case PHG_ARGS_EXTEDGEREP:
 #ifdef DEBUG
-            printf("Inq edge\n");
+            printf("Inq edge: %d\n", index);
 #endif
             if (!phg_htab_get_entry(ows->htab.edge, index, &data)) {
                 ret->err = ERR101;
@@ -462,13 +488,35 @@ void phg_wsb_inq_LUT_entry(
 
         case PHG_ARGS_COREP:
 #ifdef DEBUG
-            printf("Inq colour\n");
+            printf("Inq colour: %d\n", index);
 #endif
             if (!phg_htab_get_entry(ows->htab.colour, index, &data)) {
                 ret->err = ERR101;
             }
             else {
                 memcpy(gcolr, data, sizeof(Pgcolr));
+                ret->err = 0;
+            }
+            break;
+
+        case PHG_ARGS_VIEWREP:
+#ifdef DEBUG
+            printf("Inq view: %d\n", index);
+#endif
+            if (!phg_htab_get_entry(ows->htab.view, index, &data)) {
+#ifdef DEBUG
+                printf("No such view\n");
+#endif
+                ret->err = ERR101;
+            }
+            else {
+                memcpy(vrep, data, sizeof(Pview_rep3));
+#ifdef DEBUG
+                printf("Got view:\n");
+                phg_mat_print(vrep->ori_matrix);
+                printf("\n");
+                phg_mat_print(vrep->map_matrix);
+#endif
                 ret->err = 0;
             }
             break;

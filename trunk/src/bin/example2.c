@@ -29,7 +29,7 @@
 #define WIDTH     0.5
 #define HEIGHT    0.5
 #define ATTR_NO   1
-#define HATCH_IND 4
+#define HATCH_IND 6
 
 Ppoint pts_mark[] = {
    {WIDTH / 4, HEIGHT + HEIGHT / 4}

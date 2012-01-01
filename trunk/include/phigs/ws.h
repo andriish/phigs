@@ -60,28 +60,6 @@ typedef enum {
    WS_POST_CSS_DELETE
 } Ws_delete_flag;
 
-typedef struct {
-   Pupd_st          pending;
-   Pmatrix3         vom;
-   Pmatrix3         vmm;
-   Plimit3          clip_limit;
-   Pclip_ind        xy_clip;
-   Pclip_ind        back_clip;
-   Pclip_ind        front_clip;
-   Ws_inverse_state npc_to_wc_state;
-   Pmatrix3         npc_to_wc;
-} Ws_view_entry;
-
-typedef struct {
-   Pint higher;
-   Pint lower;
-} Ws_view_priority;
-
-typedef struct {
-   Pint       id;
-   Pview_rep3 view;
-} Ws_pending_view;
-
 typedef struct _Ws_post_str {
    Pfloat              disp_pri;
    Struct_handle       structh;
@@ -121,15 +99,6 @@ typedef struct {
    Pupd_st             ws_viewport_pending;
    Plimit3             req_ws_window;
    Plimit3             req_ws_viewport;
-   Ws_xform            ws_xform;
-
-   /* Views */
-   Pint                num_pending_views;
-   Ws_pending_view     *pending_views;
-   Pint                num_views;
-   Ws_view_entry       *views;
-   Pint                top_view;
-   Ws_view_priority    *view_priorities;
 
    Ws_posted_structs   posted;
 
@@ -153,6 +122,7 @@ typedef struct {
       Hash_table    interiour;
       Hash_table    edge;
       Hash_table    colour;
+      Hash_table    view;
    } htab;
 
    union {
@@ -209,12 +179,6 @@ typedef struct _Ws {
    void         (*set_hlhsr_mode)(
                    struct _Ws *ws,
                    Pint mode
-                   );
-   void         (*set_view_input_priority)(
-                   struct _Ws *ws,
-                   Pint index,
-                   Pint ref_index,
-                   Prel_pri priority
                    );
    void         (*set_rep)(
                    struct _Ws *ws,
@@ -284,20 +248,7 @@ typedef struct _Ws {
                    Struct_handle unpost,
                    Struct_handle post
                    );
-   void         (*inq_view_indices)(
-                   struct _Ws *ws,
-                   Phg_ret *ret
-                   );
    void         (*inq_posted)(
-                   struct _Ws *ws,
-                   Phg_ret *ret
-                   );
-   void         (*inq_view_rep)(
-                   struct _Ws *ws,
-                   Pint index,
-                   Phg_ret *ret
-                   );
-   void         (*inq_ws_xform)(
                    struct _Ws *ws,
                    Phg_ret *ret
                    );
@@ -340,24 +291,6 @@ typedef struct _Ws {
       phg_wsb_resolve_now_action(ws, now_action_ptr);		\
 }
 
-#define WS_DC_TO_NPC2(_wsxf, _dc, _npc) \
-    (_npc)->x = ( (_dc)->x - (_wsxf)->offset.x) / (_wsxf)->scale.x; \
-    (_npc)->y = ( (_dc)->y - (_wsxf)->offset.y) / (_wsxf)->scale.y;
-
-#define WS_DC_TO_NPC(_wsxf, _dc, _npc) \
-    (_npc)->x = ( (_dc)->x - (_wsxf)->offset.x) / (_wsxf)->scale.x; \
-    (_npc)->y = ( (_dc)->y - (_wsxf)->offset.y) / (_wsxf)->scale.y; \
-    (_npc)->z = ( (_dc)->z - (_wsxf)->offset.z) / (_wsxf)->scale.z;
-
-#define WS_PT_IN_LIMIT2( lim, pt) \
-    (  (pt)->x >= (lim)->x_min && (pt)->x <= (lim)->x_max \
-    && (pt)->y >= (lim)->y_min && (pt)->y <= (lim)->y_max)
-
-#define WS_PT_IN_LIMIT( lim, pt) \
-    (  (pt)->x >= (lim)->x_min && (pt)->x <= (lim)->x_max \
-    && (pt)->y >= (lim)->y_min && (pt)->y <= (lim)->y_max \
-    && (pt)->z >= (lim)->z_min && (pt)->z <= (lim)->z_max)
-
 #define WS_SET_WS_RECT(_wsh, _wattr)		\
 {						\
    (_wsh)->ws_rect.x = (_wattr)->x;		\
@@ -368,20 +301,6 @@ typedef struct _Ws {
 
 #define WS_ANY_INP_DEV_ACTIVE(_wsh) \
    ((_wsh)->num_active_input_devs > 0)
-
-#define WS_DC_TO_DRWBL2( _wsh, _dcp, _dwp ) \
-    ((_dwp)->x = (_dcp)->x, \
-     (_dwp)->y = (_wsh)->ws_rect.height - (_dcp)->y)
-
-#define WS_NPC_TO_DC(_wsxf, _npc, _dc) \
-    (_dc)->x = (_npc)->x * (_wsxf)->scale.x + (_wsxf)->offset.x; \
-    (_dc)->y = (_npc)->y * (_wsxf)->scale.y + (_wsxf)->offset.y; \
-    (_dc)->z = (_npc)->z * (_wsxf)->scale.z + (_wsxf)->offset.z;
-
-#define WS_PT_IN_LIMIT( lim, pt) \
-    (  (pt)->x >= (lim)->x_min && (pt)->x <= (lim)->x_max \
-    && (pt)->y >= (lim)->y_min && (pt)->y <= (lim)->y_max \
-    && (pt)->z >= (lim)->z_min && (pt)->z <= (lim)->z_max)
 
 Ws* phg_wsb_open_ws(
     Phg_args_open_ws *args,
@@ -526,32 +445,14 @@ void phg_wsb_set_ws_vp(
     Plimit3 *limits
     );
 
-void phg_wsb_set_view_input_priority(
-    Ws *ws,
-    Pint index,
-    Pint ref_index,
-    Prel_pri priority
-    );
-
 void phg_wsb_set_rep(
     Ws *ws,
     Phg_args_rep_type type,
     Phg_args_rep_data *rep
     );
 
-void phg_wsb_inq_view_indices(
-    Ws *ws,
-    Phg_ret *ret
-    );
-
 void phg_wsb_inq_posted(
     Ws *ws,
-    Phg_ret *ret
-    );
-
-void phg_wsb_inq_view_rep(
-    Ws *ws,
-    Pint index,
     Phg_ret *ret
     );
 
@@ -576,31 +477,6 @@ void phg_wsb_inq_rep(
     Pinq_type how,
     Phg_args_rep_type rep_type,
     Phg_ret *ret
-    );
-
-int phg_wsb_map_initial_points(
-    Ws *ws,
-    Pint view_index,
-    Pint *num_pts,
-    Ppoint3 *wc_pts,
-    XPoint *dwbl_pts
-    );
-
-int phg_wsb_resolve_locator(
-    Ws *ws,
-    Ppoint3 *dc_pt,
-    int determine_z,
-    Pint *view_index,
-    Ppoint3 *wc_pt
-    );
-
-int phg_wsb_resolve_stroke(
-    Ws *ws,
-    int num_pts,
-    Ppoint3 *dc_pts,
-    int determine_z,
-    Pint *view_index,
-    Ppoint_list3 *wc_pts
     );
 
 /*******************************************************************************
