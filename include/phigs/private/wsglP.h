@@ -39,6 +39,7 @@ typedef struct {
    Pgcolr          background;
    Pmatrix3        local_tran, total_tran;
    Pint            curr_view_index;
+   Pview_rep3      view_rep;
 } Wsgl;
 
 /*******************************************************************************

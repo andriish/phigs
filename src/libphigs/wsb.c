@@ -89,11 +89,7 @@ static void wsb_load_funcs(
     ws->update = phg_wsb_update;
     ws->set_disp_update_state = phg_wsb_set_disp_update_state;
     ws->set_rep = phg_wsb_set_rep;
-#if TODO
-    ws->set_filter = phg_wsb_set_filter;
-#endif
     ws->set_hlhsr_mode = phg_wsb_set_hlhsr_mode;
-    ws->set_view_input_priority = phg_wsb_set_view_input_priority;
     ws->set_ws_window = phg_wsb_set_ws_window;
     ws->set_ws_vp = phg_wsb_set_ws_vp;
     ws->add_el = phg_wsb_add_el;
@@ -108,20 +104,10 @@ static void wsb_load_funcs(
     ws->unpost = phg_wsb_unpost;
     ws->unpost_all = phg_wsb_unpost_all;
     ws->change_posting = phg_wsb_change_posting;
-    ws->inq_view_indices = phg_wsb_inq_view_indices;
     ws->inq_posted = phg_wsb_inq_posted;
     ws->inq_representation = phg_wsb_inq_rep;
-    ws->inq_view_rep = phg_wsb_inq_view_rep;
-    ws->inq_ws_xform = phg_wsb_inq_ws_xform;
     ws->inq_disp_update_state = phg_wsb_inq_disp_update_state;
     ws->inq_hlhsr_mode = phg_wsb_inq_hlhsr_mode;
-#if TODO
-    ws->inq_bundle_indices = phg_wsx_inq_LUT_indices;
-    ws->inq_filter = phg_wsb_inq_filter;
-    ws->drawable_pick = phg_wsb_drawable_pick;
-    ws->map_points = phg_wsb_map_points;
-    ws->redraw_regions = phg_wsb_redraw_regions;
-#endif
 }
 
 /* 
@@ -247,89 +233,11 @@ static void init_update_state(
     owsb->surf_state = PSURF_EMPTY;
 }
 
-static int init_view_table(
-    Ws *ws
-    )
-{   
-    Wsb_output_ws	*owsb = &ws->out_ws.model.b;
-
-    Ws_view_entry	*view;
-    Pview_rep3		*predef_view;
-    int			i, max_pd_view;
-
-    ALLOC_DECLARE(5);
-
-    owsb->num_views = WS_MIN_PREDEF_VIEW_REPS;
-
-    if ( !ALLOCATED( owsb->views = (Ws_view_entry *)
-	    malloc((unsigned)(owsb->num_views * sizeof(Ws_view_entry)))) ) {
-	ERR_BUF( ws->erh, ERR900 );
-	return 0;
-    }
-
-    owsb->top_view = 0;
-    if ( !ALLOCATED( owsb->view_priorities = (Ws_view_priority *)
-	    malloc((unsigned)(owsb->num_views * sizeof(Ws_view_priority)))) ) {
-	ERR_BUF( ws->erh, ERR900 );
-	ALLOC_FREE;
-	return 0;
-    }
-
-    owsb->num_pending_views = 0;
-    if ( !ALLOCATED( owsb->pending_views = (Ws_pending_view *)
-	    malloc((unsigned)(owsb->num_views * sizeof(Ws_pending_view)))) ) {
-	ERR_BUF( ws->erh, ERR900 );
-	ALLOC_FREE;
-	return 0;
-    }
-
-    max_pd_view = WS_MIN_PREDEF_VIEW_REPS - 1;
-    predef_view = default_views;
-    view = owsb->views;
-    /* Load the predefined views. */
-    for ( i = 0; i <= max_pd_view; i++, predef_view++, view++ ) {
-#ifdef DEBUG
-        printf("wsb: Set default view: %d\n", i);
-#endif
-        view->pending = PUPD_NOT_PEND;
-        memcpy(view->vom,
-               predef_view->ori_matrix,
-               sizeof(Pmatrix3));
-        memcpy(view->vmm,
-               predef_view->map_matrix,
-               sizeof(Pmatrix3));
-        view->clip_limit = predef_view->clip_limit;
-        view->xy_clip = predef_view->xy_clip;
-        view->back_clip = predef_view->back_clip;
-        view->front_clip = predef_view->front_clip;
-        /* view->npc_to_wc not computed until needed in input code. */
-        view->npc_to_wc_state = WS_INV_NOT_CURRENT;
-    }
-
-    /* Load the available but not predefined views. */
-    for ( /* use existing index */ ; i < owsb->num_views; i++, view++ )
-        *view = owsb->views[0];
-
-    /* Initialize the view transformation priorities.  The list is
-     * terminated at top and bottom by -1.
-     */
-    for ( i = 0; i < owsb->num_views; i++ ) {
-	owsb->view_priorities[i].higher = i - 1;
-	owsb->view_priorities[i].lower = i + 1;
-    }
-    owsb->view_priorities[owsb->num_views - 1].lower = -1;
-    
-    return 1;
-}
-
 static int init_output_state(
     Ws *ws
     )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
-
-    if ( ! init_view_table( ws ) )
-	return 0;
 
     /* Initialize the workstation transform. */
     owsb->req_ws_window.x_min = 0.0;
@@ -352,9 +260,6 @@ static int init_output_state(
     owsb->ws_viewport_pending = PUPD_NOT_PEND;
     wsgl_set_viewport(ws, &owsb->ws_viewport);
 
-    wsgl_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
-	&owsb->ws_xform );
-
     /* Initialize the list of posted structs. */
     owsb->posted.lowest.higher = &owsb->posted.highest;
     owsb->posted.lowest.lower = NULL;
@@ -373,8 +278,8 @@ static int init_attributes(
     Ws *ws
     )
 {
-   Phg_args_rep_data rep;
-   Pgcolr fg;
+    Phg_args_rep_data rep;
+    Pgcolr fg;
 
     Pline_bundle_plus   lnrep    = { PLINE_SOLID, 1.0,  fg };
     Pmarker_bundle_plus mkrep    = { PMARKER_DOT, 1.0, fg };
@@ -426,6 +331,24 @@ static int init_attributes(
     return 1;
 }
 
+int init_viewrep(
+    Ws *ws
+    )
+{
+    Phg_args_rep_data rep;
+    int i, max_pd_view;
+
+    max_pd_view = WS_MIN_PREDEF_VIEW_REPS - 1;
+
+    for (i = 0; i <= max_pd_view; i++) {
+        rep.index = i;
+        memcpy(&rep.bundl.viewrep, &default_views[i], sizeof(Pview_rep3));
+        (*ws->set_rep)(ws, PHG_ARGS_VIEWREP, &rep);
+    }
+
+    return 1;
+}
+
 Ws* phg_wsb_open_ws(
     Phg_args_open_ws *args,
     Phg_ret *ret
@@ -464,6 +387,9 @@ Ws* phg_wsb_open_ws(
     if ( ! init_attributes( ws ) )
         goto abort;
 
+    if ( ! init_viewrep( ws ) )
+        goto abort;
+
     /* Fill in the return data. */
     ret->err = 0;
 
@@ -495,12 +421,6 @@ void wsb_destroy_ws(
     )
 {
     if ( ws ) {
-	if ( ws->out_ws.model.b.views )
-	    free( (char *)ws->out_ws.model.b.views );
-	if ( ws->out_ws.model.b.pending_views )
-	    free( (char *)ws->out_ws.model.b.pending_views );
-	if ( ws->out_ws.model.b.view_priorities )
-	    free( (char *)ws->out_ws.model.b.view_priorities );
 	if ( ws->display ) {
 	    if ( ws->drawable_id )
 		wsgl_release_window( ws );
@@ -545,9 +465,6 @@ void phg_wsb_make_requested_current(
     Ws *ws
     )
 {
-    Ws_view_entry	*view;
-    Ws_pending_view	*req_view;
-
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
 
     /* WS transform */
@@ -574,44 +491,6 @@ void phg_wsb_make_requested_current(
 #ifdef DEBUG
             printf("wsb: Compute transform\n");
 #endif
-	wsgl_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
-	    &owsb->ws_xform );
-    }
-
-    /* View table */
-    if ( owsb->num_pending_views > 0 ) {
-#ifdef DEBUG
-            printf("wsb: Pending views\n");
-#endif
-	req_view = owsb->pending_views;
-	while ( owsb->num_pending_views > 0 ) {
-	    view = &owsb->views[req_view->id];
-	    /*Set it locally. */
-	    view->pending = PUPD_NOT_PEND;
-	    memcpy(view->vom,
-	           req_view->view.ori_matrix,
-		   sizeof(Pmatrix3));
-	    memcpy(view->vmm,
-	           req_view->view.map_matrix,
-		   sizeof(Pmatrix3));
-	    view->clip_limit = req_view->view.clip_limit;
-	    view->xy_clip = req_view->view.xy_clip;
-	    view->back_clip = req_view->view.back_clip;
-	    view->front_clip = req_view->view.front_clip;
-	    view->npc_to_wc_state = WS_INV_NOT_CURRENT;
-
-	    /* Set it in the server.  Can't set them all as a block with one
-	     * request because the pending views may not be contiguous.
-	     */
-#ifdef DEBUG
-	    printf("wsb: Set pending view: %d\n", req_view->id);
-#endif
-            /* NOTE:
-             * Send view to renderer here if needed
-             */
-	    ++req_view;
-	    --owsb->num_pending_views;
-	}
     }
 
     /* Other pending data */
@@ -1368,65 +1247,6 @@ void phg_wsb_set_ws_vp(
     }
 }
 
-void phg_wsb_set_view_input_priority(
-    Ws *ws,
-    Pint index,
-    Pint ref_index,
-    Prel_pri priority
-    )
-{
-    Pint		old;
-
-    Ws_view_priority	*ref, *idx;
-    Pint		*highest;
-    Ws_view_priority	*vp;
-
-    vp = ws->out_ws.model.b.view_priorities;
-    highest = &ws->out_ws.model.b.top_view;
-    idx = &vp[index];
-    ref = &vp[ref_index];
-
-    if ( priority == PPRI_LOWER ) {
-	if ( ref->lower != index ) {
-	    if ( index == *highest)
-		*highest = idx->lower;
-
-	    old = ref->lower;
-	    if ( ref->lower != -1 )	/* if ref not lowest priority */
-		vp[ref->lower].higher = index;
-	    ref->lower = index;
-
-	    if ( idx->higher != -1 )	 /* if idx not highest priority */
-		vp[idx->higher].lower = idx->lower;
-	    if ( idx->lower != -1 )	 /* if idx not lowest priority */
-		vp[idx->lower].higher = idx->higher;
-	    idx->higher = ref_index;
-	    idx->lower = old;
-	}
-	/* Don't need to do anything if priority is already as desired. */
-
-    } else if ( ref->higher != index ) {	/* PPRI_HIGHER */
-	if ( ref_index == *highest )
-	    *highest = index;
-	else if ( index == *highest )
-	    *highest = idx->lower;
-
-	old = ref->higher;
-	if ( ref->higher != -1 )
-	    vp[ref->higher].lower = index;
-	ref->higher = index;
-
-	if ( idx->higher != -1 )
-	    vp[idx->higher].lower = idx->lower;
-	if ( idx->lower != -1 )
-	    vp[idx->lower].higher = idx->higher;
-	idx->lower = ref_index;
-	idx->higher = old;
-    }
-
-    /* Has no effect on the screen */
-}
-
 void phg_wsb_set_rep(
     Ws *ws,
     Phg_args_rep_type type,
@@ -1434,7 +1254,6 @@ void phg_wsb_set_rep(
     )
 {
     Wsb_output_ws	*owsb = &ws->out_ws.model.b;
-    int		i;
     Pgcolr      gcolr;
 
     switch ( type ) {
@@ -1454,22 +1273,8 @@ void phg_wsb_set_rep(
 	case PHG_ARGS_DCUEREP:
 	case PHG_ARGS_LIGHTSRCREP:
 	case PHG_ARGS_COLRMAPREP:
-            phg_wsb_set_LUT_entry(ws, type, rep, NULL);
-	    break;
-
 	case PHG_ARGS_VIEWREP:
-	    /* Add it to the list of pending views. */
-	    if ( owsb->views[rep->index].pending == PUPD_NOT_PEND )
-		i = owsb->num_pending_views++;
-	    else {
-		/* Find the existing pending entry so it can be replaced. */
-		for ( i = 0; i < owsb->num_pending_views; i++ )
-		    if ( owsb->pending_views[i].id == rep->index )
-			break;
-	    }
-	    owsb->pending_views[i].id = rep->index;
-	    owsb->pending_views[i].view = rep->bundl.viewrep;
-	    owsb->views[rep->index].pending = PUPD_PEND;
+            phg_wsb_set_LUT_entry(ws, type, rep, NULL);
 	    break;
 
 	case PHG_ARGS_COREP:
@@ -1532,34 +1337,17 @@ phg_wsb_set_filter( ws, type, devid, inc_set, exc_set )
 	}
     }
 }
-#endif
 
-void phg_wsb_inq_view_indices(
-    Ws *ws,
-    Phg_ret *ret
-    )
+void
+phg_wsb_inq_filter( ws, type, ret )
+    Ws                  *ws;
+    Phg_args_flt_type   type;
+    Phg_ret             *ret;
 {
-    Wsb_output_ws	*owsb = &ws->out_ws.model.b;
-
-    Pint		*list, view;
-    int			i;
-    Ws_view_priority	*prio = owsb->view_priorities;
-
-    if ( !PHG_SCRATCH_SPACE( &ws->scratch, owsb->num_views * sizeof(Pint))) {
-	ret->err = ERR900;
-
-    } else {
-	ret->err = 0;
-	ret->data.int_list.num_ints = owsb->num_views;
-	ret->data.int_list.ints = list = (Pint *)ws->scratch.buf;
-	view = owsb->top_view;
-	i = 0;
-	while ( view != -1 ) {
-	    list[i++] = view;
-	    view = prio[view].lower;
-	}
-    }
+    phg_wsx_inq_name_set( ws, type, (Pint)0, ret );
 }
+
+#endif
 
 void phg_wsb_inq_posted(
     Ws *ws,
@@ -1602,69 +1390,6 @@ void phg_wsb_inq_posted(
     }
 }
 
-void phg_wsb_inq_view_rep(
-    Ws *ws,
-    Pint index,
-    Phg_ret *ret
-    )
-{
-    int			i;
-    Pview_rep3		*cr;
-    Ws_view_entry	*cv;
-    Wsb_output_ws	*owsb = &ws->out_ws.model.b;
-    Phg_ret_view_rep	*vr = &ret->data.view_rep;
-
-    ret->err = 0;
-    vr->update_state = owsb->views[index].pending;
-    /* Load the "current" view. */
-    if ( !PHG_SCRATCH_SPACE( &ws->scratch, sizeof(Pview_rep3) ) ) {
-	ret->err = ERR900;
-	return;
-    } else {
-	vr->cur_rep = cr = (Pview_rep3 *)ws->scratch.buf;
-	cv = &owsb->views[index];
-	cr->clip_limit = cv->clip_limit;
-	cr->xy_clip = cv->xy_clip;
-	cr->back_clip = cv->back_clip;
-	cr->front_clip = cv->front_clip;
-	memcpy(cr->ori_matrix, cv->vom, sizeof(Pmatrix3));
-	memcpy(cr->map_matrix, cv->vmm, sizeof(Pmatrix3));
-    }
-
-    /* Load the "requested" view. */
-    if ( vr->update_state == PUPD_NOT_PEND )	/* save some time */
-	vr->req_rep = vr->cur_rep;
-    else {
-	/* Find the requested entry in the pending view list. */
-	for ( i = 0; i < owsb->num_pending_views; i++ ) {
-	    if ( owsb->pending_views[i].id == index ) {
-		cr = &owsb->pending_views[i].view;
-		break;	/* we've found it, no need to keep searching */
-	    }
-	}
-	vr->req_rep = cr;
-    }
-}
-
-void phg_wsb_inq_ws_xform(
-    Ws *ws,
-    Phg_ret *ret
-    )
-{
-    Phg_ret_ws_tran3	*wsxf = &ret->data.ws_xform;
-    Wsb_output_ws	*owsb = &ws->out_ws.model.b;
-
-    ret->err = 0;
-    wsxf->state =
-	   owsb->ws_window_pending == PUPD_PEND
-	|| owsb->ws_viewport_pending == PUPD_PEND
-	    ? PUPD_PEND : PUPD_NOT_PEND;
-    wsxf->req_window = owsb->req_ws_window;
-    wsxf->req_viewport = owsb->req_ws_viewport;
-    wsxf->cur_window = owsb->ws_window;
-    wsxf->cur_viewport = owsb->ws_viewport;
-}
-
 void phg_wsb_inq_disp_update_state(
     Ws *ws,
     Phg_ret *ret
@@ -1702,6 +1427,7 @@ void phg_wsb_inq_rep(
 {
     Pgcolr gcolr;
     Pcolr_rep *cb;
+    Pview_rep3 vrep;
 
     ret->err = 0;
     switch ( rep_type ) {
@@ -1721,7 +1447,7 @@ void phg_wsb_inq_rep(
 	case PHG_ARGS_LIGHTSRCREP:
 	case PHG_ARGS_COLRMAPREP:
 	/* View rep is done elsewhere. */
-	    phg_wsb_inq_LUT_entry( ws, index, how, rep_type, ret, NULL, NULL);
+	    phg_wsb_inq_LUT_entry(ws, index, how, rep_type, ret, NULL, NULL);
 	    break;
 
 	case PHG_ARGS_COREP:
@@ -1739,541 +1465,14 @@ void phg_wsb_inq_rep(
 	    cb->rgb.blue = gcolr.val.general.z;
 	    break;
 
+        case PHG_ARGS_VIEWREP:
+            phg_wsb_inq_LUT_entry(ws, index, how, rep_type, ret, NULL, &vrep);
+            memcpy(&ret->data.rep.viewrep, &vrep, sizeof(Pview_rep3));
+            break;
+
 	default:
             /* Default */
             break;
     }
 }
-
-int phg_wsb_map_initial_points(
-    Ws *ws,
-    Pint view_index,
-    Pint *num_pts,
-    Ppoint3 *wc_pts,
-    XPoint *dwbl_pts
-    )
-{
-    Ppoint3       scratch[20];  /* enough for most cases */
-    Pmatrix3      wc_to_npc;
-    Ppoint3       dc_pt;
-
-    Ppoint3       *npc_pts = (Ppoint3 *)NULL;
-    int           i;
-    Ws_view_entry *view;
-    Ws_xform      *wsxf = &ws->out_ws.model.b.ws_xform;
-
-    /* Transform the initial points to NPC and check that they all fit
-     * in the clip limits of the specified view.  Then transform and map
-     * them to drawable coordinates.
-     */
-    if ( *num_pts <= 0 )
-	return 0;
-    if ( *num_pts <= sizeof(scratch)/sizeof(scratch[0]) )
-	npc_pts = scratch;
-    else if ( *num_pts > sizeof(scratch)/sizeof(scratch[0]) ) {
-	if ( !(npc_pts = (Ppoint3 *)malloc( (unsigned)(*num_pts *
-		sizeof(Ppoint3)) )) ) {
-	    *num_pts = 0;
-	    ERR_BUF( ws->erh, ERR900 );
-	    return 0;
-	}
-    }
-
-    view = &ws->out_ws.model.b.views[view_index];
-    phg_mat_mul( wc_to_npc, view->vmm, view->vom );
-    if ( !phg_tranpts3( wc_to_npc, *num_pts, wc_pts, npc_pts ) ) {
-	*num_pts = 0;
-	return 0;
-    }
-
-    for ( i = 0; i < *num_pts; i++ ) {
-	if ( !WS_PT_IN_LIMIT( &view->clip_limit, &npc_pts[i] ) ) {
-	    *num_pts = 0;
-	    break;
-	} else {
-	    WS_NPC_TO_DC( wsxf, &npc_pts[i], &dc_pt )
-	    WS_DC_TO_DRWBL2( ws, &dc_pt, &dwbl_pts[i] );
-	}
-    }
-
-    if ( npc_pts && npc_pts != scratch )
-	free( (char *)npc_pts );
-
-    return ( *num_pts > 0 ? 1 : 0 );
-}
-
-static void update_inv_view_xform(
-    Ws_view_entry *view
-    )
-{
-     /* Calculate the inverse xform, if necessary. */
-    if ( view->npc_to_wc_state == WS_INV_NOT_CURRENT ) {
-	phg_mat_mul( view->npc_to_wc, view->vmm, view->vom );
-	phg_mat_inv( view->npc_to_wc );
-	view->npc_to_wc_state = WS_INV_CURRENT;
-    }
-}
-
-int phg_wsb_resolve_locator(
-    Ws *ws,
-    Ppoint3 *dc_pt,
-    int	determine_z,
-    Pint *view_index,
-    Ppoint3 *wc_pt
-    )
-{
-    Ppoint3		npc_pt;
-    Wsb_output_ws	*owsb = &ws->out_ws.model.b;
-    Ws_view_priority	*priorities = owsb->view_priorities;
-    Ws_xform		*wsxf = &owsb->ws_xform;
-    Plimit3		*ws_win = &owsb->ws_window;
-    int			status = 0;
-
-    Ws_view_entry	*view;
-
-    /* Apply the inverse WS transform and see if it's in the ws window.
-     * Can't just check against the viewport boundaries because the
-     * window may be smaller if the aspect ratios are different.
-     */
-    WS_DC_TO_NPC2(wsxf, dc_pt, &npc_pt)
-    if ( npc_pt.x >= ws_win->x_min && npc_pt.x <= ws_win->x_max
-	&& npc_pt.y >= ws_win->y_min && npc_pt.y <= ws_win->y_max ) {
-
-	/* Find the highest priority view that contains the point. */
-	for ( *view_index = owsb->top_view; *view_index != -1;
-		*view_index = priorities[*view_index].lower ) {
-	    view = &owsb->views[*view_index];
-	    if ( WS_PT_IN_LIMIT2(&view->clip_limit, &npc_pt) ) {
-		/* Assign the clip window minimum to Z. */
-		npc_pt.z = view->clip_limit.z_min;
-
-		/* Calculate the inverse xform if necessary. */
-		if ( view->npc_to_wc_state == WS_INV_NOT_CURRENT )
-		    update_inv_view_xform( view );
-  
-		/* Map point to WC if xform invertible. */
-		if ( view->npc_to_wc_state == WS_INV_CURRENT ) {
-		    if ( phg_tranpt3( &npc_pt, view->npc_to_wc, wc_pt ) ) {
-			status = 1;
-			break;	/* out of the for on view index */
-		    }
-		}
-	    }
-	}
-    }
-    return status;
-}
-
-static int wsb_resolve_stroke(
-    Ws *ws,
-    int	two_d,
-    Ppoint3 *dc_ll,
-    Ppoint3 *dc_ur,
-    Pint *view_index
-    )
-
-    /* Returns 1 if stroke resolvable, else 0 */
-{
-    Ppoint3		npc_ll, npc_ur;
-    Wsb_output_ws	*owsb = &ws->out_ws.model.b;
-    Ws_view_priority	*priorities = owsb->view_priorities;
-    Ws_xform		*wsxf = &owsb->ws_xform;
-    Plimit3		*ws_win = &owsb->ws_window;
-    int			status = 0, in_limit;
-
-    Ws_view_entry	*view;
-
-    /* Apply the inverse WS transform and see if the bounding box is in
-     * the ws window.  Can't just check against the viewport boundaries
-     * because the window may be smaller if the aspect ratios are different.
-     */
-    in_limit = 0;
-    if ( two_d ) {
-	WS_DC_TO_NPC2(wsxf, dc_ll, &npc_ll)
-	WS_DC_TO_NPC2(wsxf, dc_ur, &npc_ur)
-	in_limit = WS_PT_IN_LIMIT2(ws_win, &npc_ll)
-	    && WS_PT_IN_LIMIT2(ws_win, &npc_ur);
-    } else {
-	WS_DC_TO_NPC(wsxf, dc_ll, &npc_ll)
-	WS_DC_TO_NPC(wsxf, dc_ur, &npc_ur)
-	in_limit = WS_PT_IN_LIMIT(ws_win, &npc_ll)
-	    && WS_PT_IN_LIMIT(ws_win, &npc_ur);
-    }
-
-    if ( in_limit ) {
-	/* Find the highest priority view that contains the bounding box. */
-	for ( *view_index = owsb->top_view; *view_index != -1;
-		*view_index = priorities[*view_index].lower ) {
-	    view = &owsb->views[*view_index];
-	    in_limit = 0;
-	    if ( two_d )
-		in_limit = WS_PT_IN_LIMIT2(&view->clip_limit, &npc_ll)
-		    && WS_PT_IN_LIMIT2(&view->clip_limit, &npc_ur);
-	    else
-		in_limit = WS_PT_IN_LIMIT(&view->clip_limit, &npc_ll)
-		    && WS_PT_IN_LIMIT(&view->clip_limit, &npc_ur);
-
-	    if ( in_limit ) {
-		/* Found the view.  Calculate its inverse transform if
-		 * necessary.
-		 */
-		if ( view->npc_to_wc_state == WS_INV_NOT_CURRENT )
-		    update_inv_view_xform( view );
-
-		if ( view->npc_to_wc_state == WS_INV_CURRENT ) {
-		    status = 1;
-		    break;  /* break out of the view loop when view found */
-		}
-	    }
-	}
-    }
-    return status;
-}
-
-static void wsb_transform_stroke(
-    Ws *ws,
-    Pint view_index,
-    int two_d,
-    int	num_pts,
-    Ppoint3 *dc_pts,
-    Ppoint_list3 *wc_pts
-    )
-{
-    int			i;
-    Ppoint3		*npc_pts;
-    Ws_xform		*wsxf = &ws->out_ws.model.b.ws_xform;
-    Ws_view_entry	*view = &ws->out_ws.model.b.views[view_index];
-
-    /* Shouldn't call this function with num_pts == 0. */
-    if ( !(npc_pts = (Ppoint3 *)
-	    malloc( (unsigned)(num_pts * sizeof(Ppoint3)) )) ) {
-	wc_pts->num_points = 0;
-	ERR_BUF( ws->erh, ERR900 );
-	return;
-    }
-
-    /* Transform the points to npc and add the z value. */
-    for ( i = 0; i < num_pts; i++ ) {
-	if ( two_d ) {
-	    WS_DC_TO_NPC2(wsxf, &dc_pts[i], &npc_pts[i])
-	    /* Assign the back clip limit. */
-	    npc_pts[i].z = view->clip_limit.z_min;
-	} else {
-	    WS_DC_TO_NPC(wsxf, &dc_pts[i], &npc_pts[i])
-	}
-    }
-
-    /* Transform the points to wc. */
-    if ( !phg_tranpts3( view->npc_to_wc, num_pts, npc_pts, wc_pts->points ) )
-	wc_pts->num_points = 0;
-
-    free( (char *)npc_pts );
-}
-
-int phg_wsb_resolve_stroke(
-    Ws *ws,
-    int num_pts,
-    Ppoint3 *dc_pts,
-    int determine_z,
-    Pint *view_index,
-    Ppoint_list3 *wc_pts
-    )
-{
-    Ppoint3	ll, ur;
-    int		status = 0, two_d = determine_z;
-
-    Ppoint3	*dp;
-    int		i, xmin, xmax, ymin, ymax, zmin, zmax;
-
-    /* Get the bounding box of all the points. */
-    xmin = dc_pts->x; xmax = dc_pts->x;
-    ymin = dc_pts->y; ymax = dc_pts->y;
-    if ( !two_d )
-	zmin = dc_pts->z, zmax = dc_pts->z;
-    for ( i = 1, dp = &dc_pts[1]; i < num_pts; i++, dp++ ) {
-	if ( dp->x < xmin )
-	    xmin = dp->x;
-	else if ( dp->x > xmax )
-	    xmax = dp->x;
-
-	if ( dp->y < ymin )
-	    ymin = dp->y;
-	else if ( dp->y > ymax )
-	    ymax = dp->y;
-	
-	if ( !two_d ) {
-	    /* The incoming points have Z values. */
-	    if ( dp->z < zmin )
-		zmin = dp->z;
-	    else if ( dp->z > zmax )
-		zmax = dp->z;
-	}
-    }
-    ll.x = xmin; ll.y = ymax;
-    ur.x = xmax; ur.y = ymin;
-    if ( !two_d )
-	ur.x = xmax, ur.y = ymin;
-
-    /* Resolve and transform the points.  Don't change the current
-     * measure if the points can't be resolved.
-     */
-    if ( wsb_resolve_stroke( ws, two_d, &ll, &ur, view_index ) ) {
-	wc_pts->num_points = num_pts;
-	wsb_transform_stroke( ws, *view_index, two_d, num_pts, dc_pts, wc_pts );
-	status = 1;
-    }
-
-    return status;
-}
-
-#ifdef NOT_YET
-int phg_wsb_resolve_pick(
-    Ws *ws,
-    Ws_inp_pick *dev,
-    int	echo,
-    Ppoint3 *dc_pt,
-    Ppick *pick
-    )
-{
-    Wsb_output_ws	*owsb = &ws->out_ws.model.b;
-    Ws_post_str		*post_str, *end;
-    Ppoint		dc_vol[2];
-    Ppoint		npc_pt[2];
-    void		*pickPath;
-    int			pickDepth;
-    int			betterPick, i;
-
-    int			pickDataBytes;
-
-    struct {
-	pexEnumTypeIndex pickType;
-	CARD16		 unused;
-	union {
-	    pexPD_DC_HitBox	dcHitBox;
-	    pexPD_NPC_HitVolume npcHitVolume;
-	} pickRec;
-    } pickData;
-    
-    WSB_CHECK_POSTED (&owsb->posted)
-
-    if (WSB_SOME_POSTED (&owsb->posted)) {
-
-	/*
-	 * Use pick rendering to get the pick results.  Call BeginPickOne, do
-	 * a complete traversal (starting with highest priority structure,
-	 * then call EndPickOne to get the pick results.
-	 */
-
-	if (dev->dev_type == PEXPickDeviceDC_HitBox) {
-
-	    pickData.pickType = PEXPickDeviceDC_HitBox;
-
-	    pickData.pickRec.dcHitBox.position.x = dc_pt->x;
-	    pickData.pickRec.dcHitBox.position.y = dc_pt->y;
-	    pickData.pickRec.dcHitBox.distance = dev->ap_size;
-
-	    pickDataBytes = 4 + sizeof (pexPD_DC_HitBox);
-
-	} else {
-
-	    pickData.pickType = PEXPickDeviceNPC_HitVolume;
-
-	    dc_vol[0].x = dc_pt->x - dev->ap_size;
-	    dc_vol[0].y = dc_pt->y - dev->ap_size;
-	    dc_vol[1].x = dc_pt->x + dev->ap_size;
-	    dc_vol[1].y = dc_pt->y + dev->ap_size;
-
-	    WS_DC_TO_NPC2 (&owsb->ws_xform, &dc_vol[0], &npc_pt[0])
-	    WS_DC_TO_NPC2 (&owsb->ws_xform, &dc_vol[1], &npc_pt[1])
-
-	    pickData.pickRec.npcHitVolume.minval.x = npc_pt[0].x;
-	    pickData.pickRec.npcHitVolume.minval.y = npc_pt[0].y;
-	    pickData.pickRec.npcHitVolume.maxval.x = npc_pt[1].x;
-	    pickData.pickRec.npcHitVolume.maxval.y = npc_pt[1].y;
-	    pickData.pickRec.npcHitVolume.minval.z = owsb->ws_window.z_min;
-	    pickData.pickRec.npcHitVolume.maxval.z = owsb->ws_window.z_max;
-
-	    pickDataBytes = 4 + sizeof (pexPD_NPC_HitVolume);
-	}
-
-	PEXChangeRenderer (ws->display, ws->rid,
-		(pexBitmask) PEXRDPickInclusion, (CARD32) sizeof (pexNameSet),
-		(char *) &(dev->filter.incl));
-
-	PEXChangeRenderer (ws->display, ws->rid,
-		(pexBitmask) PEXRDPickExclusion, (CARD32) sizeof (pexNameSet),
-		(char *) &(dev->filter.excl));
-
-
-	PEXBeginPickOne (ws->display, ws->rid, ws->drawable_id, -1,
-		PEXLast, pickDataBytes, &pickData);
-
-	post_str = owsb->posted.highest.lower;
-	end = &(owsb->posted.lowest);
-
-	while (post_str != end) {
-	    phg_wsb_traverse_net (ws, post_str->structh);
-	    post_str = post_str->lower;
-	}
-
-	PEXEndPickOne (ws->display, ws->rid, &betterPick,
-	    &pickPath, &pickDepth);
-    }
-
-
-    if (!pickDepth) {
-
-    	pick->status = PIN_STATUS_NONE;
-    	pick->pick_path.depth = 0;
-    	pick->pick_path.path_list = (Ppick_path_elem *) NULL;
-
-    } else {
-
-	/*
-	 * The protocol pick element ref data structure has its fields
-	 * layed out in a different order than the PHIGS data structure.
-	 * We must repack the data into PHIGS format.
-	 */
-
-	for (i = 1; i < pickDepth; i++) {
-	    Ppick_path_elem *dst = (Ppick_path_elem *) &pickPath[i];
-	    pexPickElementRef src;
-
-	    src = pickPath[i];
-	    dst->struct_id = src.sid;
-	    dst->pick_id = src.pickid;
-	    dst->elem_pos = src.offset;
-	}
-
-	/*
-	 * order = bottom first?
-	 */
-
-	if (dev->order == PORDER_BOTTOM_FIRST) {
-	    int			head, tail;
-	    pexPickElementRef 	temp;
-
-	    head = 1;
-	    tail = pickDepth - 1;
-
-	    for (i = 0; i < (pickDepth - 1) / 2; i++) {
-		temp = pickPath[head];
-		pickPath[head] = pickPath[tail];
-		pickPath[tail] = temp;
-		head++;
-		tail--;
-	    }
-	}
-
-	/*
-	 * return status and pick path
-	 */
-
-	pick->status = PIN_STATUS_OK;
-	pick->pick_path.depth = pickDepth - 1;
-	pick->pick_path.path_list = (Ppick_path_elem *) &(pickPath[1]);
-    }
-
-    return 1;
-}
-
-void phg_wsb_inq_filter(
-    Ws *ws,
-    Phg_args_flt_type type,
-    Phg_ret *ret
-    )
-{
-    phg_wsx_inq_name_set( ws, type, (Pint)0, ret );
-}
-
-void phg_wsb_drawable_pick(
-    Ws *ws,
-    Phg_args_drawable_pick *args,
-    Phg_ret *ret
-    )
-{
-    ret->err = ERRN500;
-    ERR_BUF( ws->erh, ret->err );
-    ret->data.drawable_pick.status = PIN_STATUS_NO_IN;
-    ret->data.drawable_pick.pick.depth = 0;
-    ret->data.drawable_pick.pick.path_list = (Ppick_path_elem *)NULL;
-}
-
-void phg_wsb_map_points(
-    Ws *ws,
-    Phg_args_map_points *args,
-    Phg_ret *ret
-    )
-{
-    Ppoint3 *dc_pts;
-
-    register int	i;
-
-    ret->err = 0;
-    ret->data.map_points.view_index = 0;
-    ret->data.map_points.points.num_points = 0;
-    ret->data.map_points.points.points = (Ppoint3 *)NULL;
-
-    /* Allocate space for both the DC and WC points. */
-    if ( !PHG_SCRATCH_SPACE( &ws->scratch,
-	    (unsigned)(args->points.num_points
-		* (sizeof(Ppoint) + sizeof(Ppoint3))) ) ) {
-	ERR_BUF( ws->erh, ERR900 );
-	return;
-    }
-    dc_pts = (pexDeviceCoord *)ws->scratch.buf;
-    ret->data.map_points.points.points =
-	(Ppoint3 *)(dc_pts + args->points.num_points);
-
-    /* Convert the points to DC. */
-    phg_wsx_update_ws_rect( ws );
-    for ( i = 0; i < args->points.num_points; i++ ) {
-	/* Z coord is already in DC. */
-	WS_DRWBL_TO_DC2(ws, &args->points.points[i], &dc_pts[i]);
-	dc_pts[i].z = args->points.points[i].z;
-    }
-
-    /* Convert the DC points to WC. */
-    if ( !phg_wsb_resolve_stroke( ws, args->points.num_points, dc_pts, 0,
-	    &ret->data.map_points.view_index,
-	    &ret->data.map_points.points ) ) {
-	ret->data.map_points.points.num_points = 0;
-    }
-}
-
-void phg_wsb_redraw_regions(
-    Ws *ws,
-    Phg_args_redraw_regions *args
-    )
-{
-    pexDeviceRect	*pex_rects;
-    pexBitmask		rmask;
-    CARD32		*card32_p;
-
-    if ( args->num_regions <= 0 )
-	return;
-
-    if ( !(pex_rects = (pexDeviceRect *)PHG_SCRATCH_SPACE( &ws->scratch,
-	    sizeof(CARD32) +
-	    (unsigned)(args->num_regions * sizeof(*pex_rects)) )) ) {
-	ERR_BUF( ws->erh, ERR900 );
-	return;
-    }
-    card32_p = (CARD32 *)ws->scratch.buf;
-    pex_rects = (pexDeviceRect *)(card32_p + 1);
-
-    *card32_p = args->num_regions;
-    phg_wsx_convert_rects( ws, args->num_regions, args->regions, pex_rects );
-    rmask = PEXRDClipList;
-    (void)PEXChangeRenderer( ws->display, ws->rid, rmask,
-	(CARD32)(sizeof(CARD32) + args->num_regions * sizeof(pexDeviceRect)),
-	(char *)card32_p );
-    (*ws->repaint_all)( ws, PFLAG_COND, args->num_regions, args->regions );
-
-    /* Reset the renderer's clip list. */ 
-    *card32_p = 0;
-    (void)PEXChangeRenderer( ws->display, ws->rid, rmask,(CARD32)sizeof(CARD32),
-	(char *)card32_p );
-}
-#endif
 
