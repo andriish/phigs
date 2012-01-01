@@ -349,6 +349,16 @@ int init_viewrep(
     return 1;
 }
 
+static void init_view_refs(
+    Ws *ws
+    )
+{
+    Ws_output_ws  *ows = &ws->out_ws;
+    Wsb_output_ws *owsb = &ows->model.b;
+
+    list_init(&owsb->view_refs);
+}
+
 Ws* phg_wsb_open_ws(
     Phg_args_open_ws *args,
     Phg_ret *ret
@@ -389,6 +399,8 @@ Ws* phg_wsb_open_ws(
 
     if ( ! init_viewrep( ws ) )
         goto abort;
+
+    init_view_refs( ws );
 
     /* Fill in the return data. */
     ret->err = 0;
@@ -1247,6 +1259,53 @@ void phg_wsb_set_ws_vp(
     }
 }
 
+static int phg_view_ref_priority(
+    Ws *ws,
+    Pint id,
+    Pint priority,
+    Pview_rep3 *vrep
+    )
+{
+    Ws_view_ref *vref, *vi;
+    Ws_output_ws  *ows = &ws->out_ws;
+    Wsb_output_ws *owsb = &ows->model.b;
+
+    vref = (Ws_view_ref *) malloc(sizeof(Ws_view_ref));
+    if (vref == NULL)
+        return 0;
+
+    vref->id = id;
+    vref->priority = priority;
+    vref->viewrep = vrep;
+
+    /* Check if view already is in list */
+    for (vi = (Ws_view_ref *) LIST_HEAD(&owsb->view_refs);
+         (vi != NULL) && (vi->id != id);
+         vi = (Ws_view_ref *) NODE_NEXT(&vi->node))
+        ;
+
+    /* If node already was in list, delete it */
+    if (vi != NULL) {
+#ifdef DEBUG
+        printf("View reference %d was already in list, deleted.\n", id);
+#endif
+        list_remove(&owsb->view_refs, &vi->node);
+    }
+
+    /* Enqueue new node into list based on priority */
+    list_enqueue(&owsb->view_refs, &vref->node, priority);
+
+#ifdef DEBUG
+    for (vi = (Ws_view_ref *) LIST_HEAD(&owsb->view_refs);
+         vi != NULL;
+         vi = (Ws_view_ref *) NODE_NEXT(&vi->node)) {
+        printf("View #%d, priority = %d\n", vi->id, vi->priority);
+    }
+#endif
+
+    return 1;
+}
+
 void phg_wsb_set_rep(
     Ws *ws,
     Phg_args_rep_type type,
@@ -1273,7 +1332,6 @@ void phg_wsb_set_rep(
 	case PHG_ARGS_DCUEREP:
 	case PHG_ARGS_LIGHTSRCREP:
 	case PHG_ARGS_COLRMAPREP:
-	case PHG_ARGS_VIEWREP:
             phg_wsb_set_LUT_entry(ws, type, rep, NULL);
 	    break;
 
@@ -1284,6 +1342,19 @@ void phg_wsb_set_rep(
 	    gcolr.val.general.y = rep->bundl.corep.rgb.green;
 	    gcolr.val.general.z = rep->bundl.corep.rgb.blue;
             phg_wsb_set_LUT_entry(ws, type, rep, &gcolr);
+	    break;
+
+	case PHG_ARGS_VIEWREP:
+#ifdef DEBUG
+            printf("Set view: %d\n", rep->index);
+#endif
+            phg_wsb_set_LUT_entry(ws, type, rep, NULL);
+            if (!phg_view_ref_priority(ws,
+                                       rep->index,
+                                       rep->index,
+                                       &rep->bundl.viewrep)) {
+	        ERR_BUF(ws->erh, ERR900);
+            }
 	    break;
     }
 
