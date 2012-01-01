@@ -2,7 +2,7 @@
 *   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
 *
 *   This file is part of Open PHIGS
-*   Copyright (C) 2011 Surplus Users Ham Society
+*   Copyright (C) 2011 - 2012 Surplus Users Ham Society
 *
 *   Open PHIGS is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU Lesser General Public License as published by
@@ -53,9 +53,21 @@ void phg_set_hlhsr_id(
    Pint hlhsr_id
    );
 
+static void phg_set_line_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
+   );
+
 static void phg_set_line_attr(
    Ws *ws,
    Pline_bundle_plus *attr
+   );
+
+static void phg_set_int_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
    );
 
 static void phg_set_int_attr(
@@ -63,13 +75,31 @@ static void phg_set_int_attr(
    Pint_bundle_plus *attr
    );
 
+static void phg_set_edge_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
+   );
+
 static void phg_set_edge_attr(Ws *ws,
    Pedge_bundle_plus *attr
+   );
+
+static void phg_set_marker_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
    );
 
 static void phg_set_marker_attr(
    Ws *ws,
    Pmarker_bundle_plus *attr
+   );
+
+static void phg_set_text_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
    );
 
 static void phg_draw_polymarker(
@@ -452,6 +482,11 @@ void wsgl_begin_rendering(
 
    phg_set_hlhsr_id(PHIGS_HLHSR_ID_OFF);
    phg_mat_identity(wsgl->local_tran);
+   phg_set_line_ind(ws, wsgl->attr_group, 0);
+   phg_set_marker_ind(ws, wsgl->attr_group, 0);
+   phg_set_text_ind(ws, wsgl->attr_group, 0);
+   phg_set_edge_ind(ws, wsgl->attr_group, 0);
+   phg_set_int_ind(ws, wsgl->attr_group, 0);
    phg_set_view(ws, 0);
 }
 
@@ -484,7 +519,6 @@ void wsgl_render_element(
    El_handle el
    )
 {
-   Phg_ret ret;
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
    switch (el->eltype) {
@@ -499,21 +533,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_INT_IND:
-         (*ws->inq_representation)(ws,
-                                   PHG_INT(el),
-                                   PINQ_REALIZED,
-                                   PHG_ARGS_EXTINTERREP,
-                                   &ret);
-         if (ret.err == 0) {
-            memcpy(&wsgl->attr_group->int_bundle,
-                   &ret.data.rep.extinterrep,
-                   sizeof(Pint_bundle_plus));
-            if (wsgl->attr_group->int_bundle.colr.type == PINDIRECT) {
-               phg_get_colr_ind(ws,
-                                &wsgl->attr_group->int_bundle.colr,
-                                wsgl->attr_group->int_bundle.colr.val.ind);
-            }
-         }
+         phg_set_int_ind(ws, wsgl->attr_group, PHG_INT(el));
          break;
 
       case PELEM_INT_COLR_IND:
@@ -537,21 +557,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_EDGE_IND:
-         (*ws->inq_representation)(ws,
-                                   PHG_INT(el),
-                                   PINQ_REALIZED,
-                                   PHG_ARGS_EXTEDGEREP,
-                                   &ret);
-         if (ret.err == 0) {
-            memcpy(&wsgl->attr_group->edge_bundle,
-                   &ret.data.rep.extedgerep,
-                   sizeof(Pedge_bundle_plus));
-            if (wsgl->attr_group->edge_bundle.colr.type == PINDIRECT) {
-               phg_get_colr_ind(ws,
-                                &wsgl->attr_group->edge_bundle.colr,
-                                wsgl->attr_group->edge_bundle.colr.val.ind);
-            }
-         }
+         phg_set_edge_ind(ws, wsgl->attr_group, PHG_INT(el));
          break;
 
       case PELEM_EDGE_COLR_IND:
@@ -579,21 +585,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_MARKER_IND:
-         (*ws->inq_representation)(ws,
-                                   PHG_INT(el),
-                                   PINQ_REALIZED,
-                                   PHG_ARGS_EXTMKREP,
-                                   &ret);
-         if (ret.err == 0) {
-            memcpy(&wsgl->attr_group->marker_bundle,
-                   &ret.data.rep.extmkrep,
-                   sizeof(Pmarker_bundle_plus));
-            if (wsgl->attr_group->marker_bundle.colr.type == PINDIRECT) {
-               phg_get_colr_ind(ws,
-                                &wsgl->attr_group->marker_bundle.colr,
-                                wsgl->attr_group->marker_bundle.colr.val.ind);
-            }
-         }
+         phg_set_marker_ind(ws, wsgl->attr_group, PHG_INT(el));
          break;
 
       case PELEM_MARKER_COLR_IND:
@@ -617,21 +609,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_TEXT_IND:
-         (*ws->inq_representation)(ws,
-                                   PHG_INT(el),
-                                   PINQ_REALIZED,
-                                   PHG_ARGS_EXTTXREP,
-                                   &ret);
-         if (ret.err == 0) {
-            memcpy(&wsgl->attr_group->text_bundle,
-                   &ret.data.rep.exttxrep,
-                   sizeof(Ptext_bundle_plus));
-            if (wsgl->attr_group->text_bundle.colr.type == PINDIRECT) {
-               phg_get_colr_ind(ws,
-                                &wsgl->attr_group->text_bundle.colr,
-                                wsgl->attr_group->text_bundle.colr.val.ind);
-            }
-         }
+         phg_set_text_ind(ws, wsgl->attr_group, PHG_INT(el));
          break;
 
       case PELEM_TEXT_COLR_IND:
@@ -651,21 +629,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_LINE_IND:
-         (*ws->inq_representation)(ws,
-                                   PHG_INT(el),
-                                   PINQ_REALIZED,
-                                   PHG_ARGS_EXTLNREP,
-                                   &ret);
-         if (ret.err == 0) {
-            memcpy(&wsgl->attr_group->line_bundle,
-                   &ret.data.rep.extlnrep,
-                   sizeof(Pline_bundle_plus));
-            if (wsgl->attr_group->line_bundle.colr.type == PINDIRECT) {
-               phg_get_colr_ind(ws,
-                                &wsgl->attr_group->line_bundle.colr,
-                                wsgl->attr_group->line_bundle.colr.val.ind);
-            }
-         }
+         phg_set_line_ind(ws, wsgl->attr_group, PHG_INT(el));
          break;
 
       case PELEM_LINE_COLR_IND:
@@ -904,6 +868,33 @@ static void phg_set_gcolr(
 }
 
 /*******************************************************************************
+ * phg_set_line_ind
+ *
+ * DESCR:	Setup line index
+ * RETURNS:	N/A
+ */
+
+static void phg_set_line_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
+   )
+{
+   Phg_ret ret;
+
+   (*ws->inq_representation)(ws,
+                             ind,
+                             PINQ_REALIZED,
+                             PHG_ARGS_EXTLNREP,
+                             &ret);
+   if (ret.err == 0) {
+      phg_attr_group_set_line_bundle(ws,
+                                     attr_group,
+                                     &ret.data.rep.extlnrep);
+   }
+}
+
+/*******************************************************************************
  * phg_set_line_attr
  *
  * DESCR:	Setup line attributes
@@ -945,6 +936,33 @@ static void phg_set_line_attr(
 }
 
 /*******************************************************************************
+ * phg_set_int_ind
+ *
+ * DESCR:	Setup interiour index
+ * RETURNS:	N/A
+ */
+
+static void phg_set_int_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
+   )
+{
+   Phg_ret ret;
+
+   (*ws->inq_representation)(ws,
+                             ind,
+                             PINQ_REALIZED,
+                             PHG_ARGS_EXTINTERREP,
+                             &ret);
+   if (ret.err == 0) {
+      phg_attr_group_set_int_bundle(ws,
+                                    attr_group,
+                                    &ret.data.rep.extinterrep);
+   }
+}
+
+/*******************************************************************************
  * phg_set_int_attr
  *
  * DESCR:	Setup interiour attributes
@@ -965,6 +983,33 @@ static void phg_set_int_attr(
    }
    else {
       glDisable(GL_POLYGON_STIPPLE);
+   }
+}
+
+/*******************************************************************************
+ * phg_set_edge_ind
+ *
+ * DESCR:	Setup edge index
+ * RETURNS:	N/A
+ */
+
+static void phg_set_edge_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
+   )
+{
+   Phg_ret ret;
+
+   (*ws->inq_representation)(ws,
+                             ind,
+                             PINQ_REALIZED,
+                             PHG_ARGS_EXTEDGEREP,
+                             &ret);
+   if (ret.err == 0) {
+      phg_attr_group_set_edge_bundle(ws,
+                                     attr_group,
+                                     &ret.data.rep.extedgerep);
    }
 }
 
@@ -1009,6 +1054,34 @@ static void phg_set_edge_attr(
    }
 }
 
+
+/*******************************************************************************
+ * phg_set_marker_ind
+ *
+ * DESCR:	Setup marker index
+ * RETURNS:	N/A
+ */
+
+static void phg_set_marker_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
+   )
+{
+   Phg_ret ret;
+
+   (*ws->inq_representation)(ws,
+                             ind,
+                             PINQ_REALIZED,
+                             PHG_ARGS_EXTMKREP,
+                             &ret);
+   if (ret.err == 0) {
+      phg_attr_group_set_marker_bundle(ws,
+                                       attr_group,
+                                       &ret.data.rep.extmkrep);
+   }
+}
+
 /*******************************************************************************
  * phg_set_marker_attr
  *
@@ -1023,6 +1096,33 @@ static void phg_set_marker_attr(
 {
    /* Colour */
    phg_set_gcolr(&attr->colr);
+}
+
+/*******************************************************************************
+ * phg_set_text_ind
+ *
+ * DESCR:	Setup text index
+ * RETURNS:	N/A
+ */
+
+static void phg_set_text_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
+   )
+{
+   Phg_ret ret;
+
+   (*ws->inq_representation)(ws,
+                             ind,
+                             PINQ_REALIZED,
+                             PHG_ARGS_EXTTXREP,
+                             &ret);
+    if (ret.err == 0) {
+      phg_attr_group_set_text_bundle(ws,
+                                     attr_group,
+                                     &ret.data.rep.exttxrep);
+   }
 }
 
 /*******************************************************************************
@@ -1309,7 +1409,8 @@ static void phg_draw_fill_area(
 {
    int i;
 
-   if (attr->int_bundle.style == PSTYLE_SOLID) {
+   if ((attr->int_bundle.style == PSTYLE_SOLID) ||
+       (attr->int_bundle.style == PSTYLE_HATCH)) {
       phg_set_int_attr(ws, &attr->int_bundle);
       glBegin(GL_POLYGON);
       for (i = 0; i < point_list->num_points; i++)

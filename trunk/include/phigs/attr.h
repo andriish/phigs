@@ -2,7 +2,7 @@
 *   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
 *
 *   This file is part of Open PHIGS
-*   Copyright (C) 2011 Surplus Users Ham Society
+*   Copyright (C) 2011 - 2012 Surplus Users Ham Society
 *
 *   Open PHIGS is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU Lesser General Public License as published by
@@ -26,10 +26,12 @@
 typedef struct {
    Pline_bundle_plus   line_bundle;
    Pmarker_bundle_plus marker_bundle;
-   Pint_bundle_plus    int_bundle;
-   Pedge_bundle_plus   edge_bundle;
    Ptext_bundle_plus   text_bundle;
+   Pedge_bundle_plus   edge_bundle;
+   Pint_bundle_plus    int_bundle;
 } Pattr_group;
+
+struct _Ws;
 
 /*******************************************************************************
  * phg_attr_group_create
@@ -62,6 +64,71 @@ int phg_attr_group_init(
 
 void phg_attr_group_destroy(
    Pattr_group *attr_group
+   );
+
+/*******************************************************************************
+ * phg_attr_group_set_line_bundle
+ *
+ * DESCR:       Set attribute group line bundle
+ * RETURNS:     N/A
+ */
+
+void phg_attr_group_set_line_bundle(
+   struct _Ws *ws,
+   Pattr_group *attr_group,
+   Pline_bundle_plus *line_bundle
+   );
+
+/*******************************************************************************
+ * phg_attr_group_set_marker_bundle
+ *
+ * DESCR:       Set attribute group marker bundle
+ * RETURNS:     N/A
+ */
+
+void phg_attr_group_set_marker_bundle(
+   struct _Ws *ws,
+   Pattr_group *attr_group,
+   Pmarker_bundle_plus *marker_bundle
+   );
+
+/*******************************************************************************
+ * phg_attr_group_set_text_bundle
+ *
+ * DESCR:       Set attribute group text bundle
+ * RETURNS:     N/A
+ */
+
+void phg_attr_group_set_text_bundle(
+   struct _Ws *ws,
+   Pattr_group *attr_group,
+   Ptext_bundle_plus *text_bundle
+   );
+
+/*******************************************************************************
+ * phg_attr_group_set_edge_bundle
+ *
+ * DESCR:       Set attribute group edge bundle
+ * RETURNS:     N/A
+ */
+
+void phg_attr_group_set_edge_bundle(
+   struct _Ws *ws,
+   Pattr_group *attr_group,
+   Pedge_bundle_plus *edge_bundle
+   );
+
+/*******************************************************************************
+ * phg_attr_group_set_int_bundle
+ *
+ * DESCR:       Set attribute group interiour bundle
+ * RETURNS:     N/A
+ */
+
+void phg_attr_group_set_int_bundle(
+   struct _Ws *ws,
+   Pattr_group *attr_group,
+   Pint_bundle_plus *int_bundle
    );
 
 #endif /* _attr_h */

@@ -2,7 +2,7 @@
 *   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
 *
 *   This file is part of Open PHIGS
-*   Copyright (C) 2011 Surplus Users Ham Society
+*   Copyright (C) 2011 - 2012 Surplus Users Ham Society
 *
 *   Open PHIGS is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU Lesser General Public License as published by
@@ -369,6 +369,63 @@ static int init_output_state(
     return 1;
 }
 
+static int init_attributes(
+    Ws *ws
+    )
+{
+   Phg_args_rep_data rep;
+   Pgcolr fg;
+
+    Pline_bundle_plus   lnrep    = { PLINE_SOLID, 1.0,  fg };
+    Pmarker_bundle_plus mkrep    = { PMARKER_DOT, 1.0, fg };
+    Ptext_bundle_plus   txrep    = { 0, fg };
+    Pedge_bundle_plus   edgerep  = { PEDGE_OFF, PLINE_SOLID, 1.0, fg };
+    Pint_bundle_plus    interrep = { PSTYLE_SOLID, 1, fg };
+
+    if (ws->current_colour_model == PINDIRECT) {
+        fg.type = PINDIRECT;
+        fg.val.ind = 1;
+    }
+    else {
+        fg.type = PMODEL_RGB;
+        fg.val.general.x = 1.0;
+        fg.val.general.y = 1.0;
+        fg.val.general.z = 1.0;
+    }
+
+    memcpy(&lnrep.colr, &fg, sizeof(Pgcolr));
+    memcpy(&mkrep.colr, &fg, sizeof(Pgcolr));
+    memcpy(&edgerep.colr, &fg, sizeof(Pgcolr));
+    memcpy(&interrep.colr, &fg, sizeof(Pgcolr));
+
+    /* Line representation */
+    rep.index = 0;
+    memcpy(&rep.bundl.lnrep, &lnrep, sizeof(Pline_bundle_plus));
+    (*ws->set_rep)(ws, PHG_ARGS_EXTLNREP, &rep);
+
+    /* Marker representation */
+    rep.index = 0;
+    memcpy(&rep.bundl.mkrep, &mkrep, sizeof(Pmarker_bundle_plus));
+    (*ws->set_rep)(ws, PHG_ARGS_EXTMKREP, &rep);
+
+    /* Text representation */
+    rep.index = 0;
+    memcpy(&rep.bundl.txrep, &txrep, sizeof(Ptext_bundle_plus));
+    (*ws->set_rep)(ws, PHG_ARGS_EXTTXREP, &rep);
+
+    /* Edge representation */
+    rep.index = 0;
+    memcpy(&rep.bundl.edgerep, &edgerep, sizeof(Pedge_bundle_plus));
+    (*ws->set_rep)(ws, PHG_ARGS_EXTEDGEREP, &rep);
+
+    /* Interiour representation */
+    rep.index = 0;
+    memcpy(&rep.bundl.interrep, &interrep, sizeof(Pint_bundle_plus));
+    (*ws->set_rep)(ws, PHG_ARGS_EXTINTERREP, &rep);
+
+    return 1;
+}
+
 Ws* phg_wsb_open_ws(
     Phg_args_open_ws *args,
     Phg_ret *ret
@@ -403,6 +460,9 @@ Ws* phg_wsb_open_ws(
         goto abort;
 
     wsb_load_funcs( ws );
+
+    if ( ! init_attributes( ws ) )
+        goto abort;
 
     /* Fill in the return data. */
     ret->err = 0;

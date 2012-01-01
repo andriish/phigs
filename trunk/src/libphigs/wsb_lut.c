@@ -2,7 +2,7 @@
 *   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
 *
 *   This file is part of Open PHIGS
-*   Copyright (C) 2011 Surplus Users Ham Society
+*   Copyright (C) 2011 - 2012 Surplus Users Ham Society
 *
 *   Open PHIGS is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU Lesser General Public License as published by
@@ -27,6 +27,8 @@
 #include <phigs/css.h>
 #include <phigs/alloc.h>
 
+#define HASH_SIZE 10
+
 /*******************************************************************************
  * phg_create_table
  *
@@ -40,11 +42,12 @@ static int phg_create_table(
     int hash_size
     )
 {
-    int status = 0;
+    int status;
 
     *htab = phg_htab_create(hash_size);
     if (*htab == NULL) {
         *err = ERR900;
+        status = 0;
     }
     else {
         status = 1;
@@ -52,8 +55,6 @@ static int phg_create_table(
 
     return status;
 }
-
-#define HASH_SIZE 10
 
 /*******************************************************************************
  * phg_wsb_create_LUTs
@@ -70,32 +71,32 @@ int phg_wsb_create_LUTs(
     int status = 1;
     Ws_output_ws *ows = &ws->out_ws;
 
-    if (phg_create_table(&ows->htab.marker, &err, HASH_SIZE) == 0) {
+    if (!phg_create_table(&ows->htab.line, &err, HASH_SIZE)) {
         status = 0;
         goto end;
     }
 
-    if (phg_create_table(&ows->htab.line, &err, HASH_SIZE) == 0) {
+    if (!phg_create_table(&ows->htab.marker, &err, HASH_SIZE)) {
         status = 0;
         goto end;
     }
 
-    if (phg_create_table(&ows->htab.text, &err, HASH_SIZE) == 0) {
+    if (!phg_create_table(&ows->htab.text, &err, HASH_SIZE)) {
         status = 0;
         goto end;
     }
 
-    if (phg_create_table(&ows->htab.interiour, &err, HASH_SIZE) == 0) {
+    if (!phg_create_table(&ows->htab.interiour, &err, HASH_SIZE)) {
         status = 0;
         goto end;
     }
 
-    if (phg_create_table(&ows->htab.edge, &err, HASH_SIZE) == 0) {
+    if (!phg_create_table(&ows->htab.edge, &err, HASH_SIZE)) {
         status = 0;
         goto end;
     }
 
-    if (phg_create_table(&ows->htab.colour, &err, 100) == 0) {
+    if (!phg_create_table(&ows->htab.colour, &err, 100)) {
         status = 0;
         goto end;
     }
@@ -122,10 +123,10 @@ void phg_wsb_destroy_LUTs(
 {
     Ws_output_ws *ows = &ws->out_ws;
 
-    if (ows->htab.marker)
-       phg_htab_destroy(ows->htab.marker, (void(*)())NULL);
     if (ows->htab.line)
        phg_htab_destroy(ows->htab.line, (void(*)())NULL);
+    if (ows->htab.marker)
+       phg_htab_destroy(ows->htab.marker, (void(*)())NULL);
     if (ows->htab.text)
        phg_htab_destroy(ows->htab.text, (void(*)())NULL);
     if (ows->htab.interiour)
@@ -155,6 +156,9 @@ void phg_wsb_set_LUT_entry(
 
     switch(type) {
         case PHG_ARGS_LNREP:
+#ifdef DEBUG
+            printf("Set lnrep %d\n", rep->index);
+#endif
             data = malloc(sizeof(Pline_bundle_plus));
             if (data != NULL) {
                 memset(data, 0, sizeof(Pline_bundle_plus));
@@ -173,6 +177,9 @@ void phg_wsb_set_LUT_entry(
             break;
 
         case PHG_ARGS_EXTLNREP:
+#ifdef DEBUG
+            printf("Set extlnrep: %d\n", rep->index);
+#endif
             data = malloc(sizeof(Pline_bundle_plus));
             if (data != NULL) {
                 memcpy(data, &rep->bundl.extlnrep, sizeof(Pline_bundle_plus));
@@ -186,6 +193,9 @@ void phg_wsb_set_LUT_entry(
             break;
 
         case PHG_ARGS_MKREP:
+#ifdef DEBUG
+            printf("Set mkrep: %d\n", rep->index);
+#endif
             data = malloc(sizeof(Pmarker_bundle_plus));
             if (data != NULL) {
                 memset(data, 0, sizeof(Pmarker_bundle_plus));
@@ -204,6 +214,9 @@ void phg_wsb_set_LUT_entry(
             break;
 
         case PHG_ARGS_EXTMKREP:
+#ifdef DEBUG
+            printf("Set extmkrep: %d\n", rep->index);
+#endif
             data = malloc(sizeof(Pmarker_bundle_plus));
             if (data != NULL) {
                 memcpy(data, &rep->bundl.extmkrep, sizeof(Pmarker_bundle_plus));
@@ -217,6 +230,9 @@ void phg_wsb_set_LUT_entry(
             break;
 
         case PHG_ARGS_TXREP:
+#ifdef DEBUG
+            printf("Set txrep: %d\n", rep->index);
+#endif
             data = malloc(sizeof(Ptext_bundle_plus));
             if (data != NULL) {
                 memset(data, 0, sizeof(Ptext_bundle_plus));
@@ -234,6 +250,9 @@ void phg_wsb_set_LUT_entry(
             break;
 
         case PHG_ARGS_EXTTXREP:
+#ifdef DEBUG
+            printf("Set exttxrep: %d\n", rep->index);
+#endif
             data = malloc(sizeof(Ptext_bundle_plus));
             if (data != NULL) {
                 memcpy(data, &rep->bundl.exttxrep, sizeof(Ptext_bundle_plus));
@@ -247,6 +266,9 @@ void phg_wsb_set_LUT_entry(
             break;
 
         case PHG_ARGS_INTERREP:
+#ifdef DEBUG
+            printf("Set interrep: %d\n", rep->index);
+#endif
             data = malloc(sizeof(Pint_bundle_plus));
             if (data != NULL) {
                 memset(data, 0, sizeof(Pint_bundle_plus));
@@ -268,6 +290,9 @@ void phg_wsb_set_LUT_entry(
             break;
 
         case PHG_ARGS_EXTINTERREP:
+#ifdef DEBUG
+            printf("Set extinterrep: %d\n", rep->index);
+#endif
             data = malloc(sizeof(Pint_bundle_plus));
             if (data != NULL) {
                 memcpy(data,
@@ -285,6 +310,9 @@ void phg_wsb_set_LUT_entry(
             break;
 
         case PHG_ARGS_EDGEREP:
+#ifdef DEBUG
+            printf("Set edgerep: %d\n", rep->index);
+#endif
             data = malloc(sizeof(Pedge_bundle_plus));
             if (data != NULL) {
                 memset(data, 0, sizeof(Pedge_bundle_plus));
@@ -304,6 +332,9 @@ void phg_wsb_set_LUT_entry(
             break;
 
         case PHG_ARGS_EXTEDGEREP:
+#ifdef DEBUG
+            printf("Set extedgerep: %d\n", rep->index);
+#endif
             data = malloc(sizeof(Pedge_bundle_plus));
             if (data != NULL) {
                 memcpy(data, &rep->bundl.extedgerep, sizeof(Pedge_bundle_plus));
@@ -317,6 +348,9 @@ void phg_wsb_set_LUT_entry(
             break;
 
         case PHG_ARGS_COREP:
+#ifdef DEBUG
+            printf("Set corep: %d\n", rep->index);
+#endif
             data = malloc(sizeof(Pgcolr));
             if (data != NULL) {
                 memcpy(data, gcolr, sizeof(Pgcolr));
@@ -358,6 +392,9 @@ void phg_wsb_inq_LUT_entry(
     switch(rep_type) {
         case PHG_ARGS_LNREP:
         case PHG_ARGS_EXTLNREP:
+#ifdef DEBUG
+            printf("Inq line\n");
+#endif
             if (!phg_htab_get_entry(ows->htab.line, index, &data)) {
                 ret->err = ERR101;
             }
@@ -369,6 +406,9 @@ void phg_wsb_inq_LUT_entry(
 
         case PHG_ARGS_MKREP:
         case PHG_ARGS_EXTMKREP:
+#ifdef DEBUG
+            printf("Inq marker\n");
+#endif
             if (!phg_htab_get_entry(ows->htab.marker, index, &data)) {
                 ret->err = ERR101;
             }
@@ -380,6 +420,9 @@ void phg_wsb_inq_LUT_entry(
 
         case PHG_ARGS_TXREP:
         case PHG_ARGS_EXTTXREP:
+#ifdef DEBUG
+            printf("Inq text\n");
+#endif
             if (!phg_htab_get_entry(ows->htab.text, index, &data)) {
                 ret->err = ERR101;
             }
@@ -391,6 +434,9 @@ void phg_wsb_inq_LUT_entry(
 
         case PHG_ARGS_INTERREP:
         case PHG_ARGS_EXTINTERREP:
+#ifdef DEBUG
+            printf("Inq interiour\n");
+#endif
             if (!phg_htab_get_entry(ows->htab.interiour, index, &data)) {
                 ret->err = ERR101;
             }
@@ -402,6 +448,9 @@ void phg_wsb_inq_LUT_entry(
 
         case PHG_ARGS_EDGEREP:
         case PHG_ARGS_EXTEDGEREP:
+#ifdef DEBUG
+            printf("Inq edge\n");
+#endif
             if (!phg_htab_get_entry(ows->htab.edge, index, &data)) {
                 ret->err = ERR101;
             }
@@ -412,6 +461,9 @@ void phg_wsb_inq_LUT_entry(
             break;
 
         case PHG_ARGS_COREP:
+#ifdef DEBUG
+            printf("Inq colour\n");
+#endif
             if (!phg_htab_get_entry(ows->htab.colour, index, &data)) {
                 ret->err = ERR101;
             }
