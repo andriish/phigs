@@ -397,10 +397,10 @@ Ws* phg_wsb_open_ws(
     if ( ! init_attributes( ws ) )
         goto abort;
 
+    init_view_refs( ws );
+
     if ( ! init_viewrep( ws ) )
         goto abort;
-
-    init_view_refs( ws );
 
     /* Fill in the return data. */
     ret->err = 0;
@@ -1259,7 +1259,7 @@ void phg_wsb_set_ws_vp(
     }
 }
 
-static int phg_view_ref_priority(
+static int phg_view_ref_add(
     Ws *ws,
     Pint id,
     Pint priority,
@@ -1349,10 +1349,10 @@ void phg_wsb_set_rep(
             printf("Set view: %d\n", rep->index);
 #endif
             phg_wsb_set_LUT_entry(ws, type, rep, NULL);
-            if (!phg_view_ref_priority(ws,
-                                       rep->index,
-                                       rep->index,
-                                       &rep->bundl.viewrep)) {
+            if (!phg_view_ref_add(ws,
+                                  rep->index,
+                                  rep->index,
+                                  &rep->bundl.viewrep)) {
 	        ERR_BUF(ws->erh, ERR900);
             }
 	    break;
