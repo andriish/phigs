@@ -23,6 +23,7 @@
 
 #include <X11/Xlib.h>
 #include <phigs/phg.h>
+#include <phigs/list.h>
 #include <phigs/private/htabP.h>
 
 #define NUM_DEFERRAL            5
@@ -53,6 +54,13 @@ typedef enum {
    WS_PRE_CSS_DELETE,
    WS_POST_CSS_DELETE
 } Ws_delete_flag;
+
+typedef struct {
+   Node       node;
+   Pint       id;
+   Pint       priority;
+   Pview_rep3 *viewrep;
+} Ws_view_ref;
 
 typedef struct _Ws_post_str {
    Pfloat              disp_pri;
@@ -94,6 +102,10 @@ typedef struct {
    Plimit3             req_ws_window;
    Plimit3             req_ws_viewport;
 
+   /* Views */
+   List                view_refs;
+
+   /* Structures */
    Ws_posted_structs   posted;
 
    Ws_update_action    now_action;
