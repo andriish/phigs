@@ -18,6 +18,7 @@
 *   along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <phigs/phg.h>
 #include <phigs/list.h>
@@ -212,6 +213,107 @@ void list_enqueue(
     {
         list_add(pList, pNode);
         pNode->key = key;
+    }
+}
+
+/*******************************************************************************
+ * list_requeue
+ *
+ * DESCR:	Requeue item relative reference based on priority condition
+ * RETURNS:	N/A
+ */
+
+void list_requeue(
+    List *pList,
+    Node *pNode,
+    Node *pRef,
+    NodePrio prio
+    )
+{
+#ifdef DEBUG
+    printf("Node: %d\n"
+           "Ref: %d\n",
+           pNode->key,
+           pRef->key);
+#endif
+
+    /* Set node priority lower than reference */
+    if (prio == NODE_PRIO_LOWER) {
+
+        /* If priority is higher than reference */
+        if (pNode->key < pRef->key) {
+            list_remove(pList, pNode);
+
+#ifdef DEBUG
+            printf("Old prio: %d\n", pNode->key);
+#endif
+
+            /* Set priority one unit higher than reference */
+            pNode->key = pRef->key + 1;
+
+#ifdef DEBUG
+            printf("New prio: %d\n", pNode->key);
+#endif
+
+            /* Node should be placed after reference */
+            list_insert(pList, pRef, pNode);
+        }
+
+        /* Nothing to do, priority already lower than reference */
+    }
+
+    /* Set node priority higher than reference */
+    else {
+
+        /* If priority is lower than reference */
+        if (pNode->key > pRef->key) {
+            list_remove(pList, pNode);
+
+#ifdef DEBUG
+            printf("Old prio: %d\n", pNode->key);
+#endif
+
+            /* Do not allow negative key */
+            if ((pRef->key - 1) < 0) {
+                pNode->key = 0;
+            }
+            else {
+                pNode->key = pRef->key - 1;
+            }
+
+#ifdef DEBUG
+            printf("New prio: %d\n", pNode->key);
+#endif
+
+            /* Node should be placed before reference */
+            list_insert(pList, NODE_PREV(pRef), pNode);
+        }
+
+        /* Nothing to do, priority already higher than reference */
+    }
+}
+
+/*******************************************************************************
+ * list_queue_unique
+ *
+ * DESCR:	Make all nodes in list to an have an unique key
+ * RETURNS:	N/A
+ */
+
+void list_queue_unique(
+    List *pList,
+    int startValue
+    )
+{
+    int key;
+    Node *pNode;
+
+    key = startValue;
+
+    for (pNode = LIST_HEAD(pList);
+         pNode != NULL;
+         pNode = NODE_NEXT(pNode)) {
+        pNode->key = key++;
     }
 }
 

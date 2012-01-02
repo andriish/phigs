@@ -25,6 +25,11 @@
 #define NODE_NEXT(pNode) ( ((Node *)(pNode))->pNext)
 #define NODE_PREV(pNode) ( ((Node *)(pNode))->pPrev)
 
+typedef enum {
+    NODE_PRIO_LOWER,
+    NODE_PRIO_HIGHER
+} NodePrio;
+
 /* Node type */
 typedef struct nodeType
 {
