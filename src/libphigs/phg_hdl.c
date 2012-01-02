@@ -692,7 +692,7 @@ int phg_handle_colr(
          if (data == NULL)
             return (FALSE);
 
-         memcpy(&data, PHG_DATA_COLR(argdata), sizeof(Pgcolr));
+         memcpy(data, PHG_DATA_COLR(argdata), sizeof(Pgcolr));
          elmt->eldata.ptr = data;
       break;
 
