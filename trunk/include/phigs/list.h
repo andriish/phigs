@@ -126,6 +126,32 @@ void list_enqueue(
     int key);
 
 /*******************************************************************************
+ * list_requeue
+ *
+ * DESCR:       Requeue item relative reference based on priority condition
+ * RETURNS:     N/A
+ */
+
+void list_requeue(
+    List *pList,
+    Node *pNode,
+    Node *pRef,
+    NodePrio prio
+    );
+
+/*******************************************************************************
+ * list_queue_unique
+ *
+ * DESCR:       Make all nodes in list to an have an unique key
+ * RETURNS:     N/A
+ */
+
+void list_queue_unique(
+    List *pList,
+    int startValue
+    );
+
+/*******************************************************************************
  * list_dequeue
  *
  * DESCR:       Get node on top if key matches

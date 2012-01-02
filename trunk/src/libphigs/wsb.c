@@ -1266,17 +1266,10 @@ static int phg_view_ref_add(
     Pview_rep3 *vrep
     )
 {
+    int status;
     Ws_view_ref *vref, *vi;
     Ws_output_ws  *ows = &ws->out_ws;
     Wsb_output_ws *owsb = &ows->model.b;
-
-    vref = (Ws_view_ref *) malloc(sizeof(Ws_view_ref));
-    if (vref == NULL)
-        return 0;
-
-    vref->id = id;
-    vref->priority = priority;
-    vref->viewrep = vrep;
 
     /* Check if view already is in list */
     for (vi = (Ws_view_ref *) LIST_HEAD(&owsb->view_refs);
@@ -1289,21 +1282,36 @@ static int phg_view_ref_add(
 #ifdef DEBUG
         printf("View reference %d was already in list, deleted.\n", id);
 #endif
-        list_remove(&owsb->view_refs, &vi->node);
+        /* Replace view */
+        vi->viewrep = vrep;
+        status = 1;
     }
 
-    /* Enqueue new node into list based on priority */
-    list_enqueue(&owsb->view_refs, &vref->node, priority);
+    else {
+        /* Create new node */
+        vref = (Ws_view_ref *) malloc(sizeof(Ws_view_ref));
+        if (vref == NULL) {
+            status = 0;
+        }
+        else {
+            vref->id = id;
+            vref->viewrep = vrep;
+
+            /* Enqueue new node into list based on priority */
+            list_enqueue(&owsb->view_refs, &vref->node, priority);
+            status = 1;
+        }
+    }
 
 #ifdef DEBUG
     for (vi = (Ws_view_ref *) LIST_HEAD(&owsb->view_refs);
          vi != NULL;
          vi = (Ws_view_ref *) NODE_NEXT(&vi->node)) {
-        printf("View #%d, priority = %d\n", vi->id, vi->priority);
+        printf("View #%d, priority = %d\n", vi->id, vi->node.key);
     }
 #endif
 
-    return 1;
+    return status;
 }
 
 void phg_wsb_set_rep(
