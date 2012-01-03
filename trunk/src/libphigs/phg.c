@@ -71,6 +71,8 @@ void popen_phigs(
       goto abort;
    }
 
+   phg_init_default_views();
+
    list_init(&PHG_WST_LIST);
    wst = wsx_gl_create();
    if (wst == NULL) {
@@ -90,8 +92,6 @@ void popen_phigs(
       goto abort;
    }
    memset(PHG_WS_LIST, 0, sizeof(Ws_handle) * MAX_NO_OPEN_WS);
-
-   phg_init_default_views();
 
    PSL_SYS_STATE(PHG_PSL) = PSYS_ST_PHOP;
 
