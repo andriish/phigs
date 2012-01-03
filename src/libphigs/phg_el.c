@@ -461,7 +461,7 @@ void pset_int_ind(
    if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
       ERR_REPORT(PHG_ERH, ERR5);
    }
-   else if (int_ind < 0) {
+   else if (int_ind < 1) {
       ERR_REPORT(PHG_ERH, ERR100);
    }
    else {
@@ -570,7 +570,7 @@ void pset_line_ind(
    if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
       ERR_REPORT(PHG_ERH, ERR5);
    }
-   else if (line_ind < 0) {
+   else if (line_ind < 1) {
       ERR_REPORT(PHG_ERH, ERR100);
    }
    else {
@@ -676,7 +676,7 @@ void pset_marker_ind(
    if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
       ERR_REPORT(PHG_ERH, ERR5);
    }
-   else if (marker_ind < 0) {
+   else if (marker_ind < 1) {
       ERR_REPORT(PHG_ERH, ERR100);
    }
    else {
@@ -782,7 +782,7 @@ void pset_edge_ind(
    if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
       ERR_REPORT(PHG_ERH, ERR5);
    }
-   else if (edge_ind < 0) {
+   else if (edge_ind < 1) {
       ERR_REPORT(PHG_ERH, ERR100);
    }
    else {
@@ -938,7 +938,7 @@ void pset_text_ind(
    if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
       ERR_REPORT(PHG_ERH, ERR5);
    }
-   else if (text_ind < 0) {
+   else if (text_ind < 1) {
       ERR_REPORT(PHG_ERH, ERR100);
    }
    else {
