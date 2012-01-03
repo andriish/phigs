@@ -67,7 +67,7 @@ SOFTWARE.
 #include <stdio.h>
 #include <math.h>
 #include <phigs/phg.h>
-#include <phigs/mat_utils.h>
+#include <phigs/util/mat.h>
 
 int phg_mat_equal(Pfloat *a, Pfloat *b)
 {

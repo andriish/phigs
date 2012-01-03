@@ -22,7 +22,6 @@
 #include <string.h>
 #include <phigs/phg.h>
 #include <phigs/css.h>
-#include <phigs/mat_utils.h>
 #include <phigs/private/phgP.h>
 
 /*******************************************************************************

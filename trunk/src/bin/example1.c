@@ -24,7 +24,6 @@
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>
-#include <phigs/mat_utils.h>
 
 #define WIDTH  0.9
 #define HEIGHT 0.9

@@ -21,7 +21,7 @@
 #ifndef _list_h
 #define _list_h
 
-#include <phigs/node.h>
+#include <phigs/util/node.h>
 
 /* Macros */
 #define LIST_HEAD(pList) ( ((List *)(pList))->pHead)

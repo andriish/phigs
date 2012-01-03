@@ -32,7 +32,6 @@
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
 #include <phigs/private/wsglP.h>
-#include <phigs/mat_utils.h>
 
 static void phg_update_projection(
    Ws *ws

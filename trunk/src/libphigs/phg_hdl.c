@@ -22,7 +22,6 @@
 #include <string.h>
 #include <phigs/phg.h>
 #include <phigs/css.h>
-#include <phigs/mat_utils.h>
 #include <phigs/private/phgP.h>
 #include <phigs/private/hdlP.h>
 
@@ -675,6 +674,7 @@ int phg_handle_colr(
       break;
 
       case CSS_EL_REPLACE:
+         data = (Pgcolr *) elmt->eldata.ptr;
          data->type = ARGS_ELMT_DATA(argdata).colr.type;
          if (data->type == PINDIRECT) {
             data->val.ind = ARGS_ELMT_DATA(argdata).colr.val.ind;

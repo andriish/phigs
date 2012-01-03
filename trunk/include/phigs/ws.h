@@ -23,8 +23,6 @@
 
 #include <X11/Xlib.h>
 #include <phigs/phg.h>
-#include <phigs/list.h>
-#include <phigs/private/htabP.h>
 
 #define NUM_DEFERRAL            5
 #define NUM_MODIFICATION        3

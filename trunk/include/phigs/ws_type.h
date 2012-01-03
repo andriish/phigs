@@ -21,8 +21,6 @@
 #ifndef _ws_type_h
 #define _ws_type_h
 
-#include <phigs/list.h>
-
 /* Workstation types */
 #define PWST_OUTPUT_TRUE              0
 

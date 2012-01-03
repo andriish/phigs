@@ -23,7 +23,6 @@
 #include <phigs/css.h>
 #include <phigs/private/phgP.h>
 #include <phigs/private/cssP.h>
-#include <phigs/mat_utils.h>
 #include <phigs/ws.h>
 
 /*******************************************************************************
