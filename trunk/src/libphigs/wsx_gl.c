@@ -111,7 +111,7 @@ static void init_output_ws_dt(
    memcpy(&wsdt->default_edge_bundle_table[0].colr, &fg, sizeof(Pgcolr));
 
    wsdt->num_predefined_interior_indices = WST_MIN_PREDEF_INTERIOR_REPS;
-   wsdt->default_interior_bundle_table[0].style     = PSTYLE_SOLID;
+   wsdt->default_interior_bundle_table[0].style = PSTYLE_SOLID;
    wsdt->default_interior_bundle_table[0].style_ind = 1;
    memcpy(&wsdt->default_interior_bundle_table[0].colr, &fg, sizeof(Pgcolr));
 }
