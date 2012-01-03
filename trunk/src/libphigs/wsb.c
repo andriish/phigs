@@ -220,8 +220,8 @@ static void init_update_state(
     Ws_output_ws	*ows = &ws->out_ws;
     Wsb_output_ws	*owsb = &ows->model.b;
 
-    ows->def_mode = PDEFER_ASAP;
-    ows->mod_mode = PMODE_NIVE;
+    ows->def_mode = ws->type->desc_tbl.phigs_dt.out_dt.deferral_mode;
+    ows->mod_mode = ws->type->desc_tbl.phigs_dt.out_dt.modification_mode;
 
     owsb->update_action_table = (Ws_action_table_ptr)default_action_table;
 
@@ -384,8 +384,11 @@ Ws* phg_wsb_open_ws(
     /* Store workstation type */
     ws->type = args->type;
 
+    ws->current_colour_model =
+        ws->type->desc_tbl.phigs_dt.out_dt.default_colour_model;
+    ws->category = ws->type->desc_tbl.phigs_dt.ws_category;
+
     /* NOTE:
-     * Colour model filled in by wsgl
      * Css filled in by popen_ws
      */
 

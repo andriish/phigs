@@ -137,6 +137,7 @@ typedef struct {
 typedef struct _Ws {
    Pint         id;
    Wst          *type;
+   Pws_cat      category;
    Ws_output_ws out_ws;
    Pint         current_colour_model;
    Pint         num_active_input_devs;
