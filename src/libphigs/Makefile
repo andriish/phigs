@@ -12,10 +12,10 @@ OUTPATH=../../lib
 .c.o:
 	$(CC) $(DFLAGS) $(CFLAGS) $(INCFLAGS) -c $*.c
 
-OBJS=ut_misc.o ut_mat.o ut_list.o css_ini.o css_stb.o css_set.o css_str.o css_el.o \
-     css_inq.o css_pr.o css_ws.o phg.o phg_str.o phg_el.o phg_attr.o phg_ws.o  \
-     phg_hdl.o phg_psl.o phg_err.o phg_errnum.o phg_views.o phg_col.o phg_inq.o\
-     wsb.o wsgl.o wsx_gl.o phg_tr.o phg_wst.o wsgl_hatch.o ut_htab.o wsb_lut.o
+OBJS=ut.o ut_mat.o ut_list.o ut_htab.o css_ini.o css_stb.o css_set.o css_str.o \
+     css_el.o css_inq.o css_pr.o css_ws.o phg.o phg_str.o phg_el.o phg_attr.o  \
+     phg_ws.o phg_hdl.o phg_psl.o phg_err.o phg_errnum.o phg_views.o phg_col.o \
+     phg_inq.o phg_tr.o phg_wst.o wsb.o wsb_lut.o wsgl.o wsgl_hatch.o wsx_gl.o
 
 all: libphigs
 
