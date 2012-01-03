@@ -383,7 +383,7 @@ void ppost_struct(
 
 void pset_colr_rep(
    Pint ws_id,
-   Pint index,
+   Pint ind,
    Pcolr_rep *rep
    );
 
