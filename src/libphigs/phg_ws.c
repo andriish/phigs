@@ -351,14 +351,18 @@ void pset_line_rep(
 {
    Ws *wsh;
    Phg_args_rep_data rep;
+   Wst_phigs_dt *dt;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_line_rep);
-
-   wsh = PHG_WSID(ws_id);
-   rep.index = line_ind;
-   memcpy(&rep.bundl.lnrep, line_bundle, sizeof(Pline_bundle));
-
-   (*wsh->set_rep)(wsh, PHG_ARGS_LNREP, &rep);
+   dt = phg_wst_check_set_rep(Pfn_set_line_rep,
+                              ws_id,
+                              line_ind,
+                              line_bundle->colr_ind);
+   if (dt != NULL) {
+      wsh = PHG_WSID(ws_id);
+      rep.index = line_ind;
+      memcpy(&rep.bundl.lnrep, line_bundle, sizeof(Pline_bundle));
+      (*wsh->set_rep)(wsh, PHG_ARGS_LNREP, &rep);
+   }
 }
 
 /*******************************************************************************
@@ -376,14 +380,18 @@ void pset_marker_rep(
 {
    Ws *wsh;
    Phg_args_rep_data rep;
+   Wst_phigs_dt *dt;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_marker_rep);
-
-   wsh = PHG_WSID(ws_id);
-   rep.index = marker_ind;
-   memcpy(&rep.bundl.lnrep, marker_bundle, sizeof(Pmarker_bundle));
-
-   (*wsh->set_rep)(wsh, PHG_ARGS_MKREP, &rep);
+   dt = phg_wst_check_set_rep(Pfn_set_marker_rep,
+                              ws_id,
+                              marker_ind,
+                              marker_bundle->colr_ind);
+   if (dt != NULL) {
+      wsh = PHG_WSID(ws_id);
+      rep.index = marker_ind;
+      memcpy(&rep.bundl.lnrep, marker_bundle, sizeof(Pmarker_bundle));
+      (*wsh->set_rep)(wsh, PHG_ARGS_MKREP, &rep);
+   }
 }
 
 /*******************************************************************************
@@ -401,14 +409,18 @@ void pset_text_rep(
 {
    Ws *wsh;
    Phg_args_rep_data rep;
+   Wst_phigs_dt *dt;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_text_rep);
-
-   wsh = PHG_WSID(ws_id);
-   rep.index = text_ind;
-   memcpy(&rep.bundl.lnrep, text_bundle, sizeof(Ptext_bundle));
-
-   (*wsh->set_rep)(wsh, PHG_ARGS_TXREP, &rep);
+   dt = phg_wst_check_set_rep(Pfn_set_text_rep,
+                              ws_id,
+                              text_ind,
+                              text_bundle->colr_ind);
+   if (dt != NULL) {
+      wsh = PHG_WSID(ws_id);
+      rep.index = text_ind;
+      memcpy(&rep.bundl.lnrep, text_bundle, sizeof(Ptext_bundle));
+      (*wsh->set_rep)(wsh, PHG_ARGS_TXREP, &rep);
+   }
 }
 
 /*******************************************************************************
@@ -426,14 +438,18 @@ void pset_edge_rep(
 {
    Ws *wsh;
    Phg_args_rep_data rep;
+   Wst_phigs_dt *dt;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_edge_rep);
-
-   wsh = PHG_WSID(ws_id);
-   rep.index = edge_ind;
-   memcpy(&rep.bundl.lnrep, edge_bundle, sizeof(Pedge_bundle));
-
-   (*wsh->set_rep)(wsh, PHG_ARGS_EDGEREP, &rep);
+   dt = phg_wst_check_set_rep(Pfn_set_edge_rep,
+                              ws_id,
+                              edge_ind,
+                              edge_bundle->colr_ind);
+   if (dt != NULL) {
+      wsh = PHG_WSID(ws_id);
+      rep.index = edge_ind;
+      memcpy(&rep.bundl.lnrep, edge_bundle, sizeof(Pedge_bundle));
+      (*wsh->set_rep)(wsh, PHG_ARGS_EDGEREP, &rep);
+   }
 }
 
 /*******************************************************************************
@@ -451,14 +467,18 @@ void pset_int_rep(
 {
    Ws *wsh;
    Phg_args_rep_data rep;
+   Wst_phigs_dt *dt;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_int_rep);
-
-   wsh = PHG_WSID(ws_id);
-   rep.index = int_ind;
-   memcpy(&rep.bundl.lnrep, int_bundle, sizeof(Pint_bundle));
-
-   (*wsh->set_rep)(wsh, PHG_ARGS_INTERREP, &rep);
+   dt = phg_wst_check_set_rep(Pfn_set_int_rep,
+                              ws_id,
+                              int_ind,
+                              int_bundle->colr_ind);
+   if (dt != NULL) {
+      wsh = PHG_WSID(ws_id);
+      rep.index = int_ind;
+      memcpy(&rep.bundl.lnrep, int_bundle, sizeof(Pint_bundle));
+      (*wsh->set_rep)(wsh, PHG_ARGS_INTERREP, &rep);
+   }
 }
 
 /*******************************************************************************

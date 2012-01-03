@@ -100,9 +100,12 @@ int wsx_gl_init(
    Wst *wst
    )
 {
+   int i;
    Display *display;
    int screen_num;
    Wst_phigs_dt *dt;
+   Wst_output_wsdt *wsdt;
+   Pgcolr fg;
 
    display = XOpenDisplay(NULL);
    if (display == NULL) {
@@ -128,6 +131,40 @@ int wsx_gl_init(
    }
    dt->hlhsr_modes[0] = PHIGS_HLHSR_MODE_NONE;
    dt->hlhsr_modes[1] = PHIGS_HLHSR_MODE_ZBUFF;
+
+   /* Setup default views */
+   for (i = 0; i < WST_MIN_PREDEF_VIEW_REPS; i++) {
+      memcpy(&dt->default_views[i], &default_views[i], sizeof(Pview_rep3));
+   }
+
+   wsdt = &dt->out_dt;
+
+   /* Set foreground colour */
+   fg.type = PMODEL_RGB;
+   fg.val.general.x = 1.0;
+   fg.val.general.y = 1.0;
+   fg.val.general.z = 1.0;
+
+   /* Setup default attribute bundles */
+   wsdt->default_polyline_bundle_table[0].type       = PLINE_SOLID;
+   wsdt->default_polyline_bundle_table[0].width      = 1.0;
+   memcpy(&wsdt->default_polyline_bundle_table[0].colr,  &fg, sizeof(Pgcolr));
+
+   wsdt->default_polymarker_bundle_table[0].type     = PLINE_SOLID;
+   wsdt->default_polymarker_bundle_table[0].size     = 1.0;
+   memcpy(&wsdt->default_polymarker_bundle_table[0].colr, &fg, sizeof(Pgcolr));
+
+   wsdt->default_text_bundle_table[0].font           = 0;
+   memcpy(&wsdt->default_text_bundle_table[0].colr, &fg, sizeof(Pgcolr));
+
+   wsdt->default_edge_bundle_table[0].flag           = PEDGE_OFF;
+   wsdt->default_edge_bundle_table[0].type           = PLINE_SOLID;
+   wsdt->default_edge_bundle_table[0].width          = 1.0;
+   memcpy(&wsdt->default_edge_bundle_table[0].colr, &fg, sizeof(Pgcolr));
+
+   wsdt->default_interiour_bundle_table[0].style     = PSTYLE_SOLID;
+   wsdt->default_interiour_bundle_table[0].style_ind = 1;
+   memcpy(&wsdt->default_interiour_bundle_table[0].colr, &fg, sizeof(Pgcolr));
 
 #ifdef DEBUG
    printf("Added wsx_gl with coords: %f %f %f\n",

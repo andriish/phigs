@@ -105,3 +105,50 @@ void phg_wst_destroy(
    }
 }
 
+/*******************************************************************************
+ * phg_wst_check_set_rep
+ *
+ * DESCR:       Check workstation attribute to set
+ * RETURNS:     Pointer to Wst_phigs_dt structure or NULL
+ */
+
+Wst_phigs_dt* phg_wst_check_set_rep(
+   Pint fn_id,
+   Pint ws_id,
+   Pint ind,
+   Pint colr_ind
+   )
+{
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt = NULL;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, fn_id);
+
+   if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      ERR_REPORT(PHG_ERH, ERR3);
+   }
+   else if (ind < 1) {
+      ERR_REPORT(PHG_ERH, ERR100);
+   }
+   else if (colr_ind < 0) {
+      ERR_REPORT(PHG_ERH, ERR113);
+   }
+   else {
+      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (wsinfo == NULL) {
+         ERR_REPORT(PHG_ERH, ERR54);
+      }
+      else {
+         dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+         if (!(dt->ws_category == PCAT_OUTIN ||
+               dt->ws_category == PCAT_OUT ||
+               dt->ws_category == PCAT_MO)) {
+            ERR_REPORT(PHG_ERH, ERR59);
+            dt = NULL;
+         }
+      }
+   }
+
+   return dt;
+}
+

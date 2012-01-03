@@ -278,55 +278,56 @@ static int init_attributes(
     Ws *ws
     )
 {
+    int i;
     Phg_args_rep_data rep;
-    Pgcolr fg;
+    Wst_output_wsdt *wsdt;
 
-    Pline_bundle_plus   lnrep    = { PLINE_SOLID, 1.0,  fg };
-    Pmarker_bundle_plus mkrep    = { PMARKER_DOT, 1.0, fg };
-    Ptext_bundle_plus   txrep    = { 0, fg };
-    Pedge_bundle_plus   edgerep  = { PEDGE_OFF, PLINE_SOLID, 1.0, fg };
-    Pint_bundle_plus    interrep = { PSTYLE_SOLID, 1, fg };
+    wsdt = &ws->type->desc_tbl.phigs_dt.out_dt;
 
-    if (ws->current_colour_model == PINDIRECT) {
-        fg.type = PINDIRECT;
-        fg.val.ind = 1;
-    }
-    else {
-        fg.type = PMODEL_RGB;
-        fg.val.general.x = 1.0;
-        fg.val.general.y = 1.0;
-        fg.val.general.z = 1.0;
+    /* Line representations */
+    for (i = 0; i < WST_MIN_PREDEF_LINE_REPS; i++) {
+        rep.index = i;
+        memcpy(&rep.bundl.lnrep,
+               &wsdt->default_polyline_bundle_table[i],
+               sizeof(Pline_bundle_plus));
+        (*ws->set_rep)(ws, PHG_ARGS_EXTLNREP, &rep);
     }
 
-    memcpy(&lnrep.colr, &fg, sizeof(Pgcolr));
-    memcpy(&mkrep.colr, &fg, sizeof(Pgcolr));
-    memcpy(&edgerep.colr, &fg, sizeof(Pgcolr));
-    memcpy(&interrep.colr, &fg, sizeof(Pgcolr));
+    /* Marker representations */
+    for (i = 0; i < WST_MIN_PREDEF_MARKER_REPS; i++) {
+        rep.index = i;
+        memcpy(&rep.bundl.mkrep,
+               &wsdt->default_polymarker_bundle_table[i],
+               sizeof(Pmarker_bundle_plus));
+        (*ws->set_rep)(ws, PHG_ARGS_EXTMKREP, &rep);
+    }
 
-    /* Line representation */
-    rep.index = 0;
-    memcpy(&rep.bundl.lnrep, &lnrep, sizeof(Pline_bundle_plus));
-    (*ws->set_rep)(ws, PHG_ARGS_EXTLNREP, &rep);
+    /* Text representations */
+    for (i = 0; i < WST_MIN_PREDEF_TEXT_REPS; i++) {
+        rep.index = i;
+        memcpy(&rep.bundl.txrep,
+               &wsdt->default_text_bundle_table[i],
+               sizeof(Ptext_bundle_plus));
+        (*ws->set_rep)(ws, PHG_ARGS_EXTTXREP, &rep);
+    }
 
-    /* Marker representation */
-    rep.index = 0;
-    memcpy(&rep.bundl.mkrep, &mkrep, sizeof(Pmarker_bundle_plus));
-    (*ws->set_rep)(ws, PHG_ARGS_EXTMKREP, &rep);
+    /* Edge representations */
+    for (i = 0; i < WST_MIN_PREDEF_EDGE_REPS; i++) {
+        rep.index = i;
+        memcpy(&rep.bundl.edgerep,
+               &wsdt->default_edge_bundle_table[i],
+               sizeof(Pedge_bundle_plus));
+        (*ws->set_rep)(ws, PHG_ARGS_EXTEDGEREP, &rep);
+    }
 
-    /* Text representation */
-    rep.index = 0;
-    memcpy(&rep.bundl.txrep, &txrep, sizeof(Ptext_bundle_plus));
-    (*ws->set_rep)(ws, PHG_ARGS_EXTTXREP, &rep);
-
-    /* Edge representation */
-    rep.index = 0;
-    memcpy(&rep.bundl.edgerep, &edgerep, sizeof(Pedge_bundle_plus));
-    (*ws->set_rep)(ws, PHG_ARGS_EXTEDGEREP, &rep);
-
-    /* Interiour representation */
-    rep.index = 0;
-    memcpy(&rep.bundl.interrep, &interrep, sizeof(Pint_bundle_plus));
-    (*ws->set_rep)(ws, PHG_ARGS_EXTINTERREP, &rep);
+    /* Interiour representations */
+    for (i = 0; i < WST_MIN_PREDEF_INTERIOUR_REPS; i++) {
+        rep.index = i;
+        memcpy(&rep.bundl.interrep,
+               &wsdt->default_interiour_bundle_table[i],
+               sizeof(Pint_bundle_plus));
+        (*ws->set_rep)(ws, PHG_ARGS_EXTINTERREP, &rep);
+    }
 
     return 1;
 }
@@ -335,14 +336,17 @@ int init_viewrep(
     Ws *ws
     )
 {
+    int i;
     Phg_args_rep_data rep;
-    int i, max_pd_view;
+    Wst_phigs_dt *dt;
 
-    max_pd_view = WS_MIN_PREDEF_VIEW_REPS - 1;
+    dt = &ws->type->desc_tbl.phigs_dt;
 
-    for (i = 0; i <= max_pd_view; i++) {
+    for (i = 0; i < WST_MIN_PREDEF_VIEW_REPS; i++) {
         rep.index = i;
-        memcpy(&rep.bundl.viewrep, &default_views[i], sizeof(Pview_rep3));
+        memcpy(&rep.bundl.viewrep,
+               &dt->default_views[i],
+               sizeof(Pview_rep3));
         (*ws->set_rep)(ws, PHG_ARGS_VIEWREP, &rep);
     }
 
@@ -376,6 +380,9 @@ Ws* phg_wsb_open_ws(
 
     (void)XGetWindowAttributes( ws->display, ws->drawable_id, &wattr );
     WS_SET_WS_RECT( ws, &wattr )
+
+    /* Store workstation type */
+    ws->type = args->type;
 
     /* NOTE:
      * Colour model filled in by wsgl

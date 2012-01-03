@@ -73,17 +73,23 @@ void phg_get_colr_ind(
 
 void pset_colr_rep(
    Pint ws_id,
-   Pint index,
+   Pint ind,
    Pcolr_rep *rep
    )
 {
    Ws *wsh;
    Phg_args_rep_data corep;
+   Wst_phigs_dt *dt;
 
-   wsh = PHG_WSID(ws_id);
-   corep.index = index;
-   memcpy(&corep.bundl.corep, rep, sizeof(Pcolr_rep));
-
-   (*wsh->set_rep)(wsh, PHG_ARGS_COREP, &corep);
+   dt = phg_wst_check_set_rep(Pfn_set_colr_rep,
+                              ws_id,
+                              1,
+                              ind);
+   if (dt != NULL) {
+      wsh = PHG_WSID(ws_id);
+      corep.index = ind;
+      memcpy(&corep.bundl.corep, rep, sizeof(Pcolr_rep));
+      (*wsh->set_rep)(wsh, PHG_ARGS_COREP, &corep);
+   }
 }
 
