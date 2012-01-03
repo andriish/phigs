@@ -86,7 +86,7 @@ int phg_wsb_create_LUTs(
         goto end;
     }
 
-    if (!phg_create_table(&ows->htab.interiour, &err, HASH_SIZE)) {
+    if (!phg_create_table(&ows->htab.interior, &err, HASH_SIZE)) {
         status = 0;
         goto end;
     }
@@ -134,8 +134,8 @@ void phg_wsb_destroy_LUTs(
        phg_htab_destroy(ows->htab.marker, (void(*)())NULL);
     if (ows->htab.text)
        phg_htab_destroy(ows->htab.text, (void(*)())NULL);
-    if (ows->htab.interiour)
-       phg_htab_destroy(ows->htab.interiour, (void(*)())NULL);
+    if (ows->htab.interior)
+       phg_htab_destroy(ows->htab.interior, (void(*)())NULL);
     if (ows->htab.edge)
        phg_htab_destroy(ows->htab.edge, (void(*)())NULL);
     if (ows->htab.colour)
@@ -285,7 +285,7 @@ void phg_wsb_set_LUT_entry(
                 ((Pint_bundle_plus *) data)->colr.type = PINDIRECT;
                 ((Pint_bundle_plus *) data)->colr.val.ind =
                     rep->bundl.interrep.colr_ind;
-                if (!phg_htab_add_entry(ows->htab.interiour,
+                if (!phg_htab_add_entry(ows->htab.interior,
                                         rep->index,
                                         data)) {
                     ERR_BUF(ws->erh, ERR900);
@@ -305,7 +305,7 @@ void phg_wsb_set_LUT_entry(
                 memcpy(data,
                        &rep->bundl.extinterrep,
                        sizeof(Pint_bundle_plus));
-                if (!phg_htab_add_entry(ows->htab.interiour,
+                if (!phg_htab_add_entry(ows->htab.interior,
                                         rep->index,
                                         data)) {
                     ERR_BUF(ws->erh, ERR900);
@@ -461,9 +461,9 @@ void phg_wsb_inq_LUT_entry(
         case PHG_ARGS_INTERREP:
         case PHG_ARGS_EXTINTERREP:
 #ifdef DEBUG
-            printf("Inq interiour: %d\n", index);
+            printf("Inq interior: %d\n", index);
 #endif
-            if (!phg_htab_get_entry(ows->htab.interiour, index, &data)) {
+            if (!phg_htab_get_entry(ows->htab.interior, index, &data)) {
                 ret->err = ERR101;
             }
             else {

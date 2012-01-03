@@ -455,7 +455,7 @@ void pset_edge_rep(
 /*******************************************************************************
  * pset_int_rep
  *
- * DESCR:	Set workstation interiour represenation
+ * DESCR:	Set workstation interior represenation
  * RETURNS:	N/A
  */
 

@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
    pclose_struct();
 
    popen_struct(2);
-   pset_edge_ind(0);
+   pset_edge_flag(PEDGE_OFF);
    pset_int_ind(ATTR_NO);
    pset_int_style(PSTYLE_HATCH);
    pset_int_style_ind(HATCH_IND);

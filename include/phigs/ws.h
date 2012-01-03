@@ -26,7 +26,6 @@
 
 #define NUM_DEFERRAL            5
 #define NUM_MODIFICATION        3
-#define WS_MIN_PREDEF_VIEW_REPS 6
 
 typedef enum {
    PHG_TIME_NOW,
@@ -123,7 +122,7 @@ typedef struct {
       Hash_table    marker;
       Hash_table    line;
       Hash_table    text;
-      Hash_table    interiour;
+      Hash_table    interior;
       Hash_table    edge;
       Hash_table    colour;
       Hash_table    view;

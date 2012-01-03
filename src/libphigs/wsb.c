@@ -285,7 +285,7 @@ static int init_attributes(
     wsdt = &ws->type->desc_tbl.phigs_dt.out_dt;
 
     /* Line representations */
-    for (i = 0; i < WST_MIN_PREDEF_LINE_REPS; i++) {
+    for (i = 0; i < wsdt->num_predefined_polyline_indices; i++) {
         rep.index = i;
         memcpy(&rep.bundl.lnrep,
                &wsdt->default_polyline_bundle_table[i],
@@ -294,7 +294,7 @@ static int init_attributes(
     }
 
     /* Marker representations */
-    for (i = 0; i < WST_MIN_PREDEF_MARKER_REPS; i++) {
+    for (i = 0; i < wsdt->num_predefined_polymarker_indices; i++) {
         rep.index = i;
         memcpy(&rep.bundl.mkrep,
                &wsdt->default_polymarker_bundle_table[i],
@@ -303,7 +303,7 @@ static int init_attributes(
     }
 
     /* Text representations */
-    for (i = 0; i < WST_MIN_PREDEF_TEXT_REPS; i++) {
+    for (i = 0; i < wsdt->num_predefined_text_indices; i++) {
         rep.index = i;
         memcpy(&rep.bundl.txrep,
                &wsdt->default_text_bundle_table[i],
@@ -312,7 +312,7 @@ static int init_attributes(
     }
 
     /* Edge representations */
-    for (i = 0; i < WST_MIN_PREDEF_EDGE_REPS; i++) {
+    for (i = 0; i < wsdt->num_predefined_edge_indices; i++) {
         rep.index = i;
         memcpy(&rep.bundl.edgerep,
                &wsdt->default_edge_bundle_table[i],
@@ -321,10 +321,10 @@ static int init_attributes(
     }
 
     /* Interiour representations */
-    for (i = 0; i < WST_MIN_PREDEF_INTERIOUR_REPS; i++) {
+    for (i = 0; i < wsdt->num_predefined_interior_indices; i++) {
         rep.index = i;
         memcpy(&rep.bundl.interrep,
-               &wsdt->default_interiour_bundle_table[i],
+               &wsdt->default_interior_bundle_table[i],
                sizeof(Pint_bundle_plus));
         (*ws->set_rep)(ws, PHG_ARGS_EXTINTERREP, &rep);
     }
@@ -342,7 +342,7 @@ int init_viewrep(
 
     dt = &ws->type->desc_tbl.phigs_dt;
 
-    for (i = 0; i < WST_MIN_PREDEF_VIEW_REPS; i++) {
+    for (i = 0; i < dt->num_predefined_views; i++) {
         rep.index = i;
         memcpy(&rep.bundl.viewrep,
                &dt->default_views[i],

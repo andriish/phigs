@@ -71,8 +71,6 @@ void popen_phigs(
       goto abort;
    }
 
-   phg_init_default_views();
-
    list_init(&PHG_WST_LIST);
    wst = wsx_gl_create();
    if (wst == NULL) {
