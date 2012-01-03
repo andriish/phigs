@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <phigs/phg.h>
-#include <phigs/list.h>
+#include <phigs/util/list.h>
 
 /*******************************************************************************
  * list_init

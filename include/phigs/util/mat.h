@@ -18,8 +18,8 @@
 *   along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#ifndef _mat_utils_h
-#define _mat_utils_h
+#ifndef _mat_h
+#define _mat_h
 
 #define PHG_COPY_MAT(to, from) \
    memcpy(to, from, sizeof(Pmatrix3));

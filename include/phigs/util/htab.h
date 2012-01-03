@@ -21,6 +21,7 @@
 #ifndef _htabP_h
 #define _htabP_h
 
+struct _Htab;
 typedef struct _Htab *Hash_table;
 
 /*******************************************************************************

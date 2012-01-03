@@ -70,7 +70,7 @@ SOFTWARE.
 #include <string.h>
 #include <sys/types.h>
 #include <phigs/phg.h>
-#include <phigs/private/htabP.h>
+#include <phigs/util/htab.h>
 
 typedef struct _Htab_entry {
     int			key;
