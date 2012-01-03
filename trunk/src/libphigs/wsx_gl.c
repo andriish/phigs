@@ -45,6 +45,11 @@ static int glConfig[] = {
 
 static char *arglist[] = {""};
 
+static Colormap wsx_gl_get_sharable_colormap(
+   XVisualInfo *vi,
+   Display *dpy
+   );
+
 static int wsx_gl_open_window(
    Ws *ws,
    Phg_args_open_ws *args
@@ -60,10 +65,165 @@ static void wsx_gl_release_window(
    Ws *ws
    );
 
-static Colormap wsx_gl_get_sharable_colormap(
-   XVisualInfo *vi,
-   Display *dpy
-   );
+/*******************************************************************************
+ * init_output_ws_dt
+ *
+ * DESCR:	Helper initialization function for output ws dt
+ * RETURNS:	N/A
+ */
+
+static void init_output_ws_dt(
+   Wst_output_wsdt *wsdt
+   )
+{
+   Pgcolr fg;
+
+   wsdt->ws_class             = PCLASS_RASTER;
+   wsdt->deferral_mode        = PDEFER_ASAP;
+   wsdt->modification_mode    = PMODE_UQUM;
+   wsdt->default_colour_model = PMODEL_RGB;
+
+   /* Set foreground colour */
+   fg.type = PMODEL_RGB;
+   fg.val.general.x = 1.0;
+   fg.val.general.y = 1.0;
+   fg.val.general.z = 1.0;
+
+   /* Setup default attribute bundles */
+   wsdt->num_predefined_polyline_indices = WST_MIN_PREDEF_LINE_REPS;
+   wsdt->default_polyline_bundle_table[0].type = PLINE_SOLID;
+   wsdt->default_polyline_bundle_table[0].width = 1.0;
+   memcpy(&wsdt->default_polyline_bundle_table[0].colr,  &fg, sizeof(Pgcolr));
+
+   wsdt->num_predefined_polymarker_indices = WST_MIN_PREDEF_MARKER_REPS;
+   wsdt->default_polymarker_bundle_table[0].type = PLINE_SOLID;
+   wsdt->default_polymarker_bundle_table[0].size = 1.0;
+   memcpy(&wsdt->default_polymarker_bundle_table[0].colr, &fg, sizeof(Pgcolr));
+
+   wsdt->num_predefined_text_indices = WST_MIN_PREDEF_TEXT_REPS;
+   wsdt->default_text_bundle_table[0].font = 0;
+   memcpy(&wsdt->default_text_bundle_table[0].colr, &fg, sizeof(Pgcolr));
+
+   wsdt->num_predefined_edge_indices = WST_MIN_PREDEF_EDGE_REPS;
+   wsdt->default_edge_bundle_table[0].flag = PEDGE_OFF;
+   wsdt->default_edge_bundle_table[0].type = PLINE_SOLID;
+   wsdt->default_edge_bundle_table[0].width = 1.0;
+   memcpy(&wsdt->default_edge_bundle_table[0].colr, &fg, sizeof(Pgcolr));
+
+   wsdt->num_predefined_interior_indices = WST_MIN_PREDEF_INTERIOR_REPS;
+   wsdt->default_interior_bundle_table[0].style     = PSTYLE_SOLID;
+   wsdt->default_interior_bundle_table[0].style_ind = 1;
+   memcpy(&wsdt->default_interior_bundle_table[0].colr, &fg, sizeof(Pgcolr));
+}
+
+/*******************************************************************************
+ * init_views
+ *
+ * DESCR:	Helper function to initialize default views
+ * RETURNS:	N/A
+ */
+
+void init_views(
+    Wst_phigs_dt *ws_dt
+    )
+{
+    int	i;
+    Pview_rep3 *view;
+
+    view = ws_dt->default_views;
+
+    ws_dt->num_predefined_views = WST_MIN_PREDEF_VIEW_REPS;
+
+    phg_mat_identity( view[0].ori_matrix );
+    phg_mat_identity( view[0].map_matrix );
+    view[0].clip_limit.x_min = view[0].clip_limit.y_min =
+	view[0].clip_limit.z_min = 0.0;
+    view[0].clip_limit.x_max = view[0].clip_limit.y_max =
+	view[0].clip_limit.z_max = 1.0;
+    view[0].xy_clip = view[0].back_clip = view[0].front_clip = PIND_CLIP;
+    for ( i = 1; i < WST_MIN_PREDEF_VIEW_REPS; i++ )
+	view[i] = view[0];
+
+    /* Predefined some interesting views. */
+    /* View 1: parallel front view in lower left corner of ws window.
+     * vrp = (0,0,0), vup = <0,1,0>, vpn = <0,0,1>, prp = (0.5,0.5,5.0)
+     * win x limits = [0,1], win y limits = [0,1]
+     * view plane = 0.0, front plane = 1.0, back plane = 0.0
+     * vp x limits = [.1,.4], vp y limits = [.1,.4], vp z limits = [0,1]
+     */
+    view[1].map_matrix[0][0] = 0.3;
+    view[1].map_matrix[0][3] = 0.1;
+    view[1].map_matrix[1][1] = 0.3;
+    view[1].map_matrix[1][3] = 0.1;
+
+    /* View 2: top view in upper left corner of ws window.
+     * vrp = (0,0,0), vup = <0,0,-1>, vpn = <0,1,0>, prp = (0.5,-0.5,5.0)
+     * win x limits = [0,1], win y limits = [-1,0]
+     * view plane = 0.0, front plane = 1.0, back plane = 0.0
+     * vp x limits = [.1,.4], vp y limits = [.6,.9], vp z limits = [0,1]
+     */
+    view[2].map_matrix[0][0] = 0.3;
+    view[2].map_matrix[0][3] = 0.1;
+    view[2].map_matrix[1][1] = 0.3;
+    view[2].map_matrix[1][3] = 0.9;
+    view[2].ori_matrix[1][1] =  0.0;
+    view[2].ori_matrix[1][2] = -1.0;
+    view[2].ori_matrix[2][1] =  1.0;
+    view[2].ori_matrix[2][2] =  0.0;
+
+    /* View 3: right side view in lower right corner of ws window.
+     * vrp = (0,0,0), vup = <0,1,0>, vpn = <1,0,0>, prp = (-0.5,0.5,5.0)
+     * win x limits = [-1,0], win y limits = [0,1]
+     * view plane = 0.0, front plane = 1.0, back plane = 0.0
+     * vp x limits = [.6,.9], vp y limits = [.1,.4], vp z limits = [0,1]
+     */
+    view[3].map_matrix[0][0] = 0.3;
+    view[3].map_matrix[0][3] = 0.9;
+    view[3].map_matrix[1][1] = 0.3;
+    view[3].map_matrix[1][3] = 0.1;
+    view[3].ori_matrix[0][0] =  0.0;
+    view[3].ori_matrix[0][2] = -1.0;
+    view[3].ori_matrix[2][0] =  1.0;
+    view[3].ori_matrix[2][2] =  0.0;
+
+    /* View 4: off-axis view in upper right corner of ws window.
+     * vrp = (0,0,0), vup = <0,1,0>, vpn = <1,1,1>, prp = (0,0,5)
+     * win x limits = [-a,a], win y limits = [-a,a], a = 1/sqrt(2)
+     * view plane = 0.0, front plane = sqrt(3), back plane = 0.0
+     * vp x limits = [.6,.9], vp y limits = [.6,.9], vp z limits = [0,1]
+     */
+    view[4].map_matrix[0][0] = 0.3 / sqrt(2.0);
+    view[4].map_matrix[1][1] = 0.3 / sqrt(2.0);
+    view[4].map_matrix[2][2] = 1.0 / sqrt(3.0);
+    view[4].map_matrix[0][3] = 0.75;
+    view[4].map_matrix[1][3] = 0.75;
+    view[4].ori_matrix[0][0] =
+        -(view[4].ori_matrix[0][2] = -1.0/sqrt(2.0));
+    view[4].ori_matrix[2][0] =
+        view[4].ori_matrix[2][1] =
+        view[4].ori_matrix[2][2] =  1.0/sqrt(3.0);
+    view[4].ori_matrix[1][0] =
+        view[4].ori_matrix[1][2] = -1.0/(sqrt(3.0) * sqrt(2.0));
+    view[4].ori_matrix[1][1] = -2.0 * view[4].ori_matrix[1][0];
+
+    /* View 5: off-axis perspective view in whole of ws window.
+     * vrp = (0,0,0), vup = <0,1,0>, vpn = <1,1,1>, prp = (0,0,20)
+     * win x limits = [-a,a], win y limits = [-a,a], a = 1/sqrt(2)
+     * view plane = 10.0, front plane = sqrt(3), back plane = 0.0
+     * vp x limits = [0,1], vp y limits = [0,1], vp z limits = [0,1]
+     */
+    memcpy(view[5].ori_matrix,
+           view[4].ori_matrix,
+	   sizeof(Pmatrix3));
+    view[5].map_matrix[0][0] =  0.5 / sqrt(2.0);
+    view[5].map_matrix[1][1] =  0.5 / sqrt(2.0);
+    view[5].map_matrix[0][2] = -0.025;
+    view[5].map_matrix[1][2] = -0.025;
+    view[5].map_matrix[2][2] = 1.0/sqrt(3.0) - 1.0/20.0;
+    view[5].map_matrix[0][3] = 0.5;
+    view[5].map_matrix[1][3] = 0.5;
+    view[5].map_matrix[3][2] = -1.0/20.0;
+}
 
 /*******************************************************************************
  * wsx_gl_create
@@ -99,12 +259,9 @@ int wsx_gl_init(
    Wst *wst
    )
 {
-   int i;
    Display *display;
    int screen_num;
    Wst_phigs_dt *dt;
-   Wst_output_wsdt *wsdt;
-   Pgcolr fg;
 
    display = XOpenDisplay(NULL);
    if (display == NULL) {
@@ -132,38 +289,10 @@ int wsx_gl_init(
    dt->hlhsr_modes[1] = PHIGS_HLHSR_MODE_ZBUFF;
 
    /* Setup default views */
-   for (i = 0; i < WST_MIN_PREDEF_VIEW_REPS; i++) {
-      memcpy(&dt->default_views[i], &default_views[i], sizeof(Pview_rep3));
-   }
+   init_views(dt);
 
-   wsdt = &dt->out_dt;
-
-   /* Set foreground colour */
-   fg.type = PMODEL_RGB;
-   fg.val.general.x = 1.0;
-   fg.val.general.y = 1.0;
-   fg.val.general.z = 1.0;
-
-   /* Setup default attribute bundles */
-   wsdt->default_polyline_bundle_table[0].type       = PLINE_SOLID;
-   wsdt->default_polyline_bundle_table[0].width      = 1.0;
-   memcpy(&wsdt->default_polyline_bundle_table[0].colr,  &fg, sizeof(Pgcolr));
-
-   wsdt->default_polymarker_bundle_table[0].type     = PLINE_SOLID;
-   wsdt->default_polymarker_bundle_table[0].size     = 1.0;
-   memcpy(&wsdt->default_polymarker_bundle_table[0].colr, &fg, sizeof(Pgcolr));
-
-   wsdt->default_text_bundle_table[0].font           = 0;
-   memcpy(&wsdt->default_text_bundle_table[0].colr, &fg, sizeof(Pgcolr));
-
-   wsdt->default_edge_bundle_table[0].flag           = PEDGE_OFF;
-   wsdt->default_edge_bundle_table[0].type           = PLINE_SOLID;
-   wsdt->default_edge_bundle_table[0].width          = 1.0;
-   memcpy(&wsdt->default_edge_bundle_table[0].colr, &fg, sizeof(Pgcolr));
-
-   wsdt->default_interiour_bundle_table[0].style     = PSTYLE_SOLID;
-   wsdt->default_interiour_bundle_table[0].style_ind = 1;
-   memcpy(&wsdt->default_interiour_bundle_table[0].colr, &fg, sizeof(Pgcolr));
+   /* Initialize workstation output attributes */
+   init_output_ws_dt(&dt->out_dt);
 
 #ifdef DEBUG
    printf("Added wsx_gl with coords: %f %f %f\n",
@@ -177,6 +306,50 @@ int wsx_gl_init(
    wst->release_window = wsx_gl_release_window;
 
    return TRUE;
+}
+
+/*******************************************************************************
+ * wsx_gl_get_sharable_colormap
+ *
+ * DESCR:	Get sharable colormap
+ * RETURNS:	Colormap
+ */
+
+static Colormap wsx_gl_get_sharable_colormap(
+   XVisualInfo *vi,
+   Display *dpy
+   )
+{
+  Status status;
+  XStandardColormap *standardCmaps;
+  Colormap cmap;
+  int i, numCmaps;
+
+  /* True color only */
+  if (vi->class != TrueColor) {
+    fprintf(stderr, "Only true color supported\n");
+    exit(1);
+  }
+
+  /* If no standard colormap but TrueColor make an unshared one */
+  status = XmuLookupStandardColormap(dpy, vi->screen, vi->visualid,
+                vi->depth, XA_RGB_DEFAULT_MAP, False, True);
+  if (status == 1) {
+    status = XGetRGBColormaps(dpy, RootWindow(dpy, vi->screen),
+                &standardCmaps, &numCmaps, XA_RGB_DEFAULT_MAP);
+
+    if (status == 1)
+      for (i = 0; i < numCmaps; i++)
+        if (standardCmaps[i].visualid == vi->visualid) {
+          cmap = standardCmaps[i].colormap;
+          XFree(standardCmaps);
+          return cmap;
+        }
+  }
+
+  cmap = XCreateColormap(dpy, RootWindow(dpy, vi->screen),
+                vi->visual, AllocNone);
+  return cmap;
 }
 
 /*******************************************************************************
@@ -322,49 +495,5 @@ static void wsx_gl_release_window(
    )
 {
    XDestroyWindow(ws->display, ws->drawable_id);
-}
-
-/*******************************************************************************
- * wsx_gl_get_sharable_colormap
- *
- * DESCR:	Get sharable colormap
- * RETURNS:	Colormap
- */
-
-static Colormap wsx_gl_get_sharable_colormap(
-   XVisualInfo *vi,
-   Display *dpy
-   )
-{
-  Status status;
-  XStandardColormap *standardCmaps;
-  Colormap cmap;
-  int i, numCmaps;
-
-  /* True color only */
-  if (vi->class != TrueColor) {
-    fprintf(stderr, "Only true color supported\n");
-    exit(1);
-  }
-
-  /* If no standard colormap but TrueColor make an unshared one */
-  status = XmuLookupStandardColormap(dpy, vi->screen, vi->visualid,
-                vi->depth, XA_RGB_DEFAULT_MAP, False, True);
-  if (status == 1) {
-    status = XGetRGBColormaps(dpy, RootWindow(dpy, vi->screen),
-                &standardCmaps, &numCmaps, XA_RGB_DEFAULT_MAP);
-
-    if (status == 1)
-      for (i = 0; i < numCmaps; i++)
-        if (standardCmaps[i].visualid == vi->visualid) {
-          cmap = standardCmaps[i].colormap;
-          XFree(standardCmaps);
-          return cmap;
-        }
-  }
-
-  cmap = XCreateColormap(dpy, RootWindow(dpy, vi->screen),
-                vi->visual, AllocNone);
-  return cmap;
 }
 

@@ -63,6 +63,12 @@ typedef enum {
 
 /* Workstation related */
 typedef enum {
+   PCLASS_VEC,
+   PCLASS_RASTER,
+   PCLASS_OTHER
+} Pws_class;
+
+typedef enum {
    PCAT_OUT,
    PCAT_IN,
    PCAT_OUTIN,

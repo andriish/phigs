@@ -155,7 +155,7 @@ int phg_handle_edge_flag(
 /*******************************************************************************
  * phg_handle_int_style
  *
- * DESCR:       Handle interiour style
+ * DESCR:       Handle interior style
  * RETURNS:     TRUE on success, otherwise FALSE
  */
 

@@ -28,42 +28,53 @@
 #define WST_MIN_PREDEF_LINE_REPS      1
 #define WST_MIN_PREDEF_MARKER_REPS    1
 #define WST_MIN_PREDEF_TEXT_REPS      1
-#define WST_MIN_PREDEF_INTERIOUR_REPS 1
+#define WST_MIN_PREDEF_INTERIOR_REPS  1
 #define WST_MIN_PREDEF_EDGE_REPS      1
 #define WST_MIN_PREDEF_VIEW_REPS      6
 
 typedef struct {
+   Pws_class           ws_class;
+   Pdefer_mode         deferral_mode;
+   Pmod_mode           modification_mode;
 
    /* Lines */
+   Pint                num_predefined_polyline_indices;
    Pline_bundle_plus
       default_polyline_bundle_table[WST_MIN_PREDEF_LINE_REPS];
 
    /* Markers */
+   Pint                num_predefined_polymarker_indices;
    Pmarker_bundle_plus
       default_polymarker_bundle_table[WST_MIN_PREDEF_MARKER_REPS];
 
    /* Text */
+   Pint                num_predefined_text_indices;
    Ptext_bundle_plus
       default_text_bundle_table[WST_MIN_PREDEF_TEXT_REPS];
 
    /* Interiour */
+   Pint                num_predefined_interior_indices;
    Pint_bundle_plus
-      default_interiour_bundle_table[WST_MIN_PREDEF_INTERIOUR_REPS];
+      default_interior_bundle_table[WST_MIN_PREDEF_INTERIOR_REPS];
 
    /* Edge */
+   Pint                num_predefined_edge_indices;
    Pedge_bundle_plus
       default_edge_bundle_table[WST_MIN_PREDEF_EDGE_REPS];
 
+   /* Colour */
+   Pint                default_colour_model;
 } Wst_output_wsdt;
 
 typedef struct {
-   Pws_cat ws_category;
-   Pfloat  dev_coords[3];
-   Pint    num_hlhsr_modes;
-   Pint    *hlhsr_modes;
+   Pws_cat    ws_category;
+   Pfloat     dev_coords[3];
+   Pint       num_hlhsr_modes;
+   Pint       *hlhsr_modes;
 
 
    /* View */
+   Pint       num_predefined_views;
    Pview_rep3
       default_views[WST_MIN_PREDEF_VIEW_REPS];
 

@@ -120,9 +120,5 @@ void phg_get_colr_ind(
 
 void phg_traverse(Css_handle css, Struct_handle structp);
 
-extern Pview_rep3 default_views[];
-
-void phg_init_default_views(void);
-
 #endif
 

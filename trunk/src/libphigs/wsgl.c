@@ -940,7 +940,7 @@ static void phg_set_line_attr(
 /*******************************************************************************
  * phg_set_int_ind
  *
- * DESCR:	Setup interiour index
+ * DESCR:	Setup interior index
  * RETURNS:	N/A
  */
 
@@ -967,7 +967,7 @@ static void phg_set_int_ind(
 /*******************************************************************************
  * phg_set_int_attr
  *
- * DESCR:	Setup interiour attributes
+ * DESCR:	Setup interior attributes
  * RETURNS:	N/A
  */
 
@@ -1018,7 +1018,7 @@ static void phg_set_edge_ind(
 /*******************************************************************************
  * phg_set_edge_attr
  *
- * DESCR:	Setup interiour attributes
+ * DESCR:	Setup interior attributes
  * RETURNS:	N/A
  */
 

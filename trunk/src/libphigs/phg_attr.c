@@ -170,7 +170,7 @@ void phg_attr_group_set_edge_bundle(
 /*******************************************************************************
  * phg_attr_group_set_int_bundle
  *
- * DESCR:	Set attribute group interiour bundle
+ * DESCR:	Set attribute group interior bundle
  * RETURNS:	N/A
  */
 
