@@ -242,6 +242,22 @@ typedef enum {
    PTYPE_PERSPECT
 } Pproj_type;
 
+typedef enum {
+   PIN_STATUS_NONE,
+   PIN_STATUS_OK,
+   PIN_STATUS_NO_IN
+} Pin_status;
+
+typedef enum {
+   PIN_NONE,
+   PIN_LOC,
+   PIN_STROKE,
+   PIN_VAL,
+   PIN_CHOICE,
+   PIN_PICK,
+   PIN_STRING
+} Pin_class;
+
 typedef int Pint;
 typedef long Plong;
 typedef float Pfloat;
@@ -476,7 +492,25 @@ typedef struct {
    Pfloat     front_plane;
 } Pview_map3;
 
-extern Pint phigs_ws_type_glx_drawable;
+typedef struct {
+   Pint struct_id;
+   Pint pick_id;
+   Pint elem_pos;
+} Ppick_path_elem;
+
+typedef struct {
+   Pint            depth;
+   Ppick_path_elem *path_list;
+} Ppick_path;
+
+typedef struct {
+   Pint loc;
+   Pint stroke;
+   Pint val;
+   Pint choice;
+   Pint pick;
+   Pint string;
+} Pnum_in;
 
 #endif
 
