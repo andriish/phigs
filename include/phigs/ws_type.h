@@ -32,6 +32,20 @@
 #define WST_MIN_PREDEF_EDGE_REPS      1
 #define WST_MIN_PREDEF_VIEW_REPS      6
 
+#define WST_MAX_NUM_PETS              10
+#define WST_MAX_NUM_LOCATOR_DEVS      3
+#define WST_MAX_NUM_STROKE_DEVS       3
+#define WST_MAX_NUM_PICK_DEVS         3
+#define WST_MAX_NUM_VALUATOR_DEVS     12
+#define WST_MAX_NUM_CHOICE_DEVS       3
+#define WST_MAX_NUM_STRING_DEVS       1
+
+typedef enum {
+   WST_LOC_TYPE_POINTER_BUTTON_1,
+   WST_LOC_TYPE_POINTER_BUTTON_2,
+   WST_LOC_TYPE_POINTER_BUTTON_3
+} Wst_loc_type;
+
 typedef struct {
    Pws_class           ws_class;
    Pdefer_mode         deferral_mode;
@@ -65,6 +79,10 @@ typedef struct {
    /* Colour */
    Pint                default_colour_model;
 } Wst_output_wsdt;
+
+typedef struct {
+   Pnum_in num_devs;
+} Wst_input_wsdt;
 
 typedef struct {
    Pws_cat    ws_category;

@@ -32,6 +32,58 @@
 #define PHG_ZERO_TOLERANCE      1.0e-30
 
 typedef struct {
+   Pint   view_ind;
+   Ppoint position;
+} Ploc;
+
+typedef struct {
+   Pint    view_ind;
+   Ppoint3 position;
+} Ploc3;
+
+typedef struct {
+   Pin_status status;
+   Ppick_path pick_path;
+} Ppick;
+
+typedef struct {
+   Pint   view_ind;
+   Pint   num_points;
+   Ppoint *points;
+} Pstroke;
+
+typedef struct {
+   Pint    view_ind;
+   Pint    num_points;
+   Ppoint3 *points;
+} Pstroke3;
+
+typedef struct {
+   Pin_status status;
+   Pint       choice;
+} Pchoice;
+
+typedef struct {
+   Pint  length;
+   char *string;
+} Phg_string;
+
+typedef union {
+   Ploc3      loc;
+   Ppick      pik;
+   Pstroke3   stk;
+   Pfloat     val;
+   Pchoice    chc;
+   Phg_string str;
+} Phg_inp_event_data;
+
+typedef struct {
+   Pint      ws;
+   Pin_class class;
+   Pint      dev;
+} Pevent;
+
+typedef struct {
    char     *buf;
    unsigned size;
 } Phg_scratch;

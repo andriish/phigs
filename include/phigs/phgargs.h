@@ -21,6 +21,7 @@
 #ifndef _phgargs_h
 #define _phgargs_h
 
+#include <phigs/util.h>
 #include <phigs/ws_type.h>
 
 typedef enum {
