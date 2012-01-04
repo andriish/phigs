@@ -60,12 +60,13 @@ typedef struct _Sin_input_device {
    Sin_window_rect echo_area;
 } Sin_input_device;
 
-typedef struct {
+typedef struct _Sin_input_ws {
    Err_handle       erh;
    Pint             wsid;
    Ws_handle        wsh;
    Wst_input_wsdt   *idt;
    Sin_event_queue  *queue;
+   Sin_input_device *break_device;
    Display          *display;
    Window           input_window;
    Window           output_window;
@@ -83,6 +84,9 @@ typedef struct {
    void            (*send_request)(void);
    int             (*in_viewport)(void);
 } Sin_desc;
+
+#define SIN_CLASS_INDEX( class) \
+    ((int)(class))
 
 #endif /* _sin_h */
 
