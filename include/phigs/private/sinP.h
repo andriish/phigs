@@ -119,5 +119,13 @@
 #define SIN_DISABLE_BREAK( ws) \
     SIN_BREAK_DEVICE((ws)) = NULL; \
 
+/* Control-d (^d) is the break "key." */
+#define BREAK_EVENT( _e ) \
+    ((_e)->type == KeyPress && ((_e)->xkey.state & ControlMask) \
+        && (XLookupKeysym(&(_e)->xkey, 0) == XK_d))
+
+#define SIN_SAME_CLIENT( _ca, _cb ) \
+    ((_ca)->window == (_cb)->window && (_ca)->handle == (_cb)->handle)
+
 #endif /* _sinP_h */
 
