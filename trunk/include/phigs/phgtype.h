@@ -83,6 +83,9 @@ typedef struct {
    Pint      dev;
 } Pevent;
 
+struct _Sin_event_queue;
+typedef struct _Sin_event_queue *Input_q_handle;
+
 typedef struct {
    char     *buf;
    unsigned size;
