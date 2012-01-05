@@ -243,6 +243,22 @@ typedef enum {
 } Pproj_type;
 
 typedef enum {
+   PASF_BUNDLED,
+   PASF_INDIV
+} Pasf;
+
+typedef enum {
+   PFLAG_LINE,
+   PFLAG_FILL,
+   PFLAG_FILL_SET
+} Pline_fill_ctrl_flag;
+
+typedef enum {
+   PPR_OFF,
+   PPR_ON
+} Ppr_switch;
+
+typedef enum {
    PIN_STATUS_NONE,
    PIN_STATUS_OK,
    PIN_STATUS_NO_IN
@@ -493,6 +509,39 @@ typedef struct {
 } Pview_map3;
 
 typedef struct {
+   Pasf         type_asf;
+   Pasf         width_asf;
+   Pasf         colr_ind_asf;
+   Pint         ind;
+   Pline_bundle bundle;
+} Pline_attrs;
+
+typedef struct {
+   Pasf           type_asf;
+   Pasf           size_asf;
+   Pasf           colr_ind_asf;
+   Pint           ind;
+   Pmarker_bundle bundle;
+} Pmarker_attrs;
+
+typedef struct {
+   Pasf        style_asf;
+   Pasf        style_ind_asf;
+   Pasf        colr_ind_asf;
+   Pint        ind;
+   Pint_bundle bundle;
+} Pint_attrs;
+
+typedef struct {
+   Pasf         flag_asf;
+   Pasf         type_asf;
+   Pasf         widthasf;
+   Pasf         colr_ind_asf;
+   Pint         ind;
+   Pedge_bundle bundle;
+} Pedge_attrs;
+
+typedef struct {
    Pint struct_id;
    Pint pick_id;
    Pint elem_pos;
@@ -511,6 +560,175 @@ typedef struct {
    Pint pick;
    Pint string;
 } Pnum_in;
+
+typedef struct {
+   union {
+
+      struct {
+         Pint unused;
+      } pet_r1;
+
+      struct {
+         Pint unused;
+      } pet_r2;
+
+      struct {
+         Pint unused;
+      } pet_r3;
+
+      struct {
+         Pline_attrs line_attrs;
+      } pet_r4;
+
+      struct {
+         Pline_fill_ctrl_flag line_fill_ctrl_flag;
+         union {
+            Pline_attrs line_attrs;
+            Pint_attrs  int_attrs;
+            struct {
+               Pint_attrs  int_attrs;
+               Pedge_attrs edge_attrs;
+            } fill_set;
+         } attrs;
+      } pet_r5;
+
+   } pets;
+} Ploc_data;
+
+typedef Ploc_data Ploc_data3;
+
+typedef struct {
+   union {
+      struct {
+         Pint unused;
+      } pet_r1;
+   } pets;
+} Ppick_data;
+
+typedef Ppick_data Ppick_data3;
+
+typedef struct {
+   Pint   buffer_size;
+   Pint   init_pos;
+   Pfloat x_interval;
+   Pfloat y_interval;
+   Pfloat time_interval;
+
+   union {
+      struct {
+         Pint unused;
+      } pet_r1;
+
+      struct {
+         Pint unused;
+      } pet_r2;
+
+      struct {
+         Pmarker_attrs marker_attrs;
+      } pet_r3;
+
+      struct {
+         Pline_attrs line_attrs;
+      } pet_r4;
+   } pets;
+
+} Pstroke_data;
+
+typedef struct {
+   Pint   buffer_size;
+   Pint   init_pos;
+   Pfloat x_interval;
+   Pfloat y_interval;
+   Pfloat z_interval;
+   Pfloat time_interval;
+
+   union {
+      struct {
+         Pint unused;
+      } pet_r1;
+
+      struct {
+         Pint unused;
+      } pet_r2;
+
+      struct {
+         Pmarker_attrs marker_attrs;
+      } pet_r3;
+
+      struct {
+         Pline_attrs line_attrs;
+      } pet_r4;
+   } pets;
+
+} Pstroke_data3;
+
+typedef struct {
+   Pfloat low;
+   Pfloat high;
+
+   union {
+
+      struct {
+         Pint unused;
+      } pet_r1;
+
+      struct {
+         char *label;
+         char *format;
+         char *low_label;
+         char *high_label;
+      } pet_u1;
+
+   } pets;
+} Pval_data;
+
+typedef Pval_data Pval_data3;
+
+typedef struct {
+
+   union {
+      struct {
+         Pint unused;
+      } pet_r1;
+
+      struct {
+         Pint       num_prompts;
+         Ppr_switch *prompts;
+      } pet_r2;
+
+      struct {
+         Pint       num_strings;
+         char       **strings;
+      } pet_r3;
+
+      struct {
+         Pint       num_strings;
+         char       **strings;
+      } pet_r4;
+
+      struct {
+         Pint       struct_id;
+         Pint       num_pick_ids;
+         Pint       *pick_ids;
+      } pet_r5;
+   } pets;
+
+} Pchoice_data;
+
+typedef Pchoice_data Pchoice_data3;
+
+typedef struct {
+   Pint buffeR_size;
+   Pint init_pos;
+
+   union {
+      struct {
+         Pint unused;
+      } pet_r1;
+   } pets;
+} Pstring_data;
+
+typedef Pstring_data Pstring_data3;
 
 #endif
 

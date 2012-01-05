@@ -75,5 +75,12 @@
     (_n)->data.valuator.high_label      = (_o)->data.valuator.high_label; \
     }
 
+#define SET_DEFAULT_DEV_GENERIC_DATA( _ws, _dev ) \
+    (_dev)->ws = (_ws); \
+    (_dev)->wsid = (_ws)->wsid; \
+    (_dev)->mode = SIN_REQUEST; \
+    (_dev)->flags.on = 0; \
+    (_dev)->echo_sw = TRUE;
+
 #endif /* _sinP_h */
 
