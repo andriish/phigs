@@ -40,14 +40,55 @@ typedef enum {
    SIN_STRING   = 5
 } Sin_input_class;
 
-struct _Sin_input_ws;
-typedef struct _Sin_input_ws *Sin_handle;
-
 typedef XPoint Sin_window_pt;
 
 typedef struct {
    Sin_window_pt ll, ur;
 } Sin_window_rect;
+
+typedef struct {
+   int dummy;
+} Sin_dev_init_data;
+
+struct _Sin_input_device;
+
+typedef struct {
+   int (*create)(
+      struct _Sin_input_device *dev
+      );
+   int (*init)(
+      struct _Sin_input_device *dev,
+      Sin_dev_init_data *nd
+      );
+   void (*destroy)(
+      struct _Sin_input_device *dev
+      );
+   void (*reset)(
+      struct _Sin_input_device *dev
+      );
+   void (*enable)(
+      struct _Sin_input_device *dev
+      );
+   void (*disable)(
+      struct _Sin_input_device *dev
+      );
+   void (*sample)(
+      struct _Sin_input_device *dev
+      );
+   void (*resize)(
+      struct _Sin_input_device *dev,
+      XRectangle *old_rect,
+      XRectangle *new_rect
+      );
+   void (*repaint)(
+      struct _Sin_input_device *dev,
+      Pint num_rects,
+      XRectangle *rects
+      );
+} Sin_device_ops;
+
+struct _Sin_input_ws;
+typedef struct _Sin_input_ws *Sin_handle;
 
 typedef struct _Sin_input_device {
    Pint            wsid;
@@ -58,6 +99,7 @@ typedef struct _Sin_input_device {
    Pint            pe_type;
    Pint            echo_sw;
    Sin_window_rect echo_area;
+   Sin_device_ops  dev_ops;
 } Sin_input_device;
 
 typedef struct _Sin_input_ws {

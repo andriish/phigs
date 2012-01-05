@@ -74,7 +74,7 @@ typedef struct {
    Sin_input_event event;
 } Sin_q_element;
 
-typedef struct {
+typedef struct _Sin_event_queue {
    Pint          count;
    Pint          size;
    Pint          last;
