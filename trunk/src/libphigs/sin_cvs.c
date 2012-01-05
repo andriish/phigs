@@ -72,18 +72,33 @@ SOFTWARE.
 #include <phigs/private/sinP.h>
 #include <phigs/private/cvsP.h>
 
-#if TODO
-static void
-    activate_loc(),
-    activate_stroke(),
-    activate_pick(),
+static void activate_loc(
+    Dev_data *dev,
+    Sin_window_table *cvs_tbl
+    );
 
-    deactivate_loc(),
-    deactivate_stroke(),
+static void deactivate_loc(
+    register Dev_data *dev,
+    Sin_window_table *cvs_tbl
+    );
 
-    sample_loc(),
-    sample_stroke();
-#endif
+static void activate_stroke(
+    Dev_data *dev,
+    Sin_window_table *cvs_tbl
+    );
+
+static void deactivate_stroke(
+    Dev_data *dev,
+    Sin_window_table *cvs_tbl
+    );
+
+static void sample_loc(
+    Dev_data *dev
+    );
+
+static void sample_stroke(
+    Dev_data *dev
+    );
 
 static void echo_locator(
    Dev_data *dev
@@ -191,7 +206,11 @@ static void reset_device(
 static void attach_to_trigger(
     Sin_trig_data *trig,
     Dev_data *dev,
-    void (*func)(void)
+    void (*func)(
+        Dev_data*,
+        Sin_window_table*,
+        Window,
+        Sin_cvs_event*)
     )
 {
     Sin_trig_op	*op;
@@ -210,7 +229,11 @@ static void attach_to_trigger(
 static void attach_to_triggers(
     Dev_data *dev,
     Sin_window_table *cvs_tbl,
-    void (*func)(void)
+    void (*func)(
+        Dev_data*,
+        Sin_window_table*,
+        Window,
+        Sin_cvs_event*)
     )
 {
     Sin_trig_data *trig;
@@ -235,7 +258,7 @@ static void detach_from_trigger(
 	if ( (*op)->dev_data == dev ) {
 	    old_op = *op;
 	    *op = (*op)->next;
-	    free( (char *)old_op );
+	    free(old_op);
 	    break;
 	}
 	op = &(*op)->next;
@@ -300,11 +323,11 @@ static void locator_event_func(
 	sin_dev->data.locator.cur_pos = dev->measure->data.pt;
 	switch ( sin_dev->mode) {
 	    case SIN_REQUEST_PENDING:
-		if ( (*sin_dev->data.locator.resolve)( sin_dev ) )
+		if ( (*sin_dev->data.locator.resolve)( sin_dev, 0, NULL ) )
 		    phg_sin_ws_send_request( sin_dev );
 		break;
 	    case SIN_EVENT:
-		if ( (*sin_dev->data.locator.resolve)( sin_dev) ) {
+		if ( (*sin_dev->data.locator.resolve)( sin_dev, 0, NULL ) ) {
 		    phg_sin_ws_buffer_event( cvs_tbl->ws, sin_dev );
 		}
 		break;
@@ -314,18 +337,17 @@ static void locator_event_func(
     }
 }
 
-#if 0
-static void
-pick_event_func( dev, cvs_tbl, window, event )
-    Dev_data			*dev;
-    Sin_window_table		*cvs_tbl;
-    Window			window;
-    register Sin_cvs_event	*event;
+static void pick_event_func(
+    Dev_data *dev,
+    Sin_window_table *cvs_tbl,
+    Window window,
+    Sin_cvs_event *event
+    )
 {
-    register Sin_input_device	*sin_dev = dev->sin_dev;
-    Sin_window_pt		cpt;
-    int				event_occurred = SIN_FALSE;
-    int				echo;
+    Sin_input_device *sin_dev = dev->sin_dev;
+    Sin_window_pt cpt;
+    int	event_occurred = FALSE;
+    int	echo;
 
     cpt.x = event->pt.x; cpt.y = event->pt.y;
 
@@ -339,7 +361,7 @@ pick_event_func( dev, cvs_tbl, window, event )
 	    case WST_PICK_TYPE_POINTER_BUTTON_2:
 	    case WST_PICK_TYPE_POINTER_BUTTON_3:
 		if ( event->flags & SIN_BUTTON_DOWN )
-		    event_occurred = SIN_TRUE;
+		    event_occurred = TRUE;
 		break;
 	}
     }
@@ -349,30 +371,31 @@ pick_event_func( dev, cvs_tbl, window, event )
 	echo = sin_dev->echo_sw && SIN_POINT_IN_ECHO_AREA( &cpt, sin_dev);
 	switch ( sin_dev->mode ) {
 	case SIN_REQUEST_PENDING:
-	    if ((*sin_dev->data.pick.resolve)( sin_dev, echo ) )
+	    if ((*sin_dev->data.pick.resolve)( sin_dev, echo, NULL ) )
 		phg_sin_ws_send_request( sin_dev);
 	    break;
 	case SIN_EVENT:
-	    if ((*sin_dev->data.pick.resolve)( sin_dev, echo ) ) {
+	    if ((*sin_dev->data.pick.resolve)( sin_dev, echo, NULL ) ) {
 		SIN_WS_SET_ACKNOWLEDGE(cvs_tbl->ws);
 		phg_sin_ws_buffer_event( cvs_tbl->ws, sin_dev);
 	    }
 	    break;
 	case SIN_SAMPLE:
-    	    (void)(*sin_dev->data.pick.resolve)( sin_dev, echo );
+    	    (void)(*sin_dev->data.pick.resolve)( sin_dev, echo, NULL );
 	    break; 
+        default:
+           break;
     	}
     }
 }
-
 
-static void
-process_stroke_event( dev, cvs_tbl, event, sin_dev, pt )
-    Dev_data			*dev;
-    register Sin_window_table	*cvs_tbl;
-    register Sin_cvs_event	*event;
-    register Sin_input_device	*sin_dev;
-    Sin_window_pt		*pt;
+static void process_stroke_event(
+    Dev_data *dev,
+    Sin_window_table *cvs_tbl,
+    Sin_cvs_event *event,
+    Sin_input_device *sin_dev,
+    Sin_window_pt *pt
+    )
 {
 
     if ( EVENT_SHIFT_IS_DOWN(event) && SIN_EVENT_IS_WANTED(dev)) {
@@ -425,16 +448,16 @@ process_stroke_event( dev, cvs_tbl, event, sin_dev, pt )
     }
 }
 
-static void
-stroke_event_func( dev, cvs_tbl, window, event )
-    register Dev_data		*dev;
-    Sin_window_table		*cvs_tbl;
-    Window			window;
-    register Sin_cvs_event	*event;
+static void stroke_event_func(
+    register Dev_data *dev,
+    Sin_window_table *cvs_tbl,
+    Window window,
+    Sin_cvs_event *event
+    )
 {
-    register Sin_input_device	*sin_dev = dev->sin_dev;
-    int				event_occurred = SIN_FALSE;
-    Sin_window_pt		cpt;
+    Sin_input_device *sin_dev = dev->sin_dev;
+    int	event_occurred = FALSE;
+    Sin_window_pt cpt;
 
     if ( dev->evt_state == SIN_EVT_STARTED)
 	echo_stroke( dev, SIN_ECHO_DYNAMIC);	/* remove last dynamic echo */
@@ -446,78 +469,80 @@ stroke_event_func( dev, cvs_tbl, window, event )
     if (event->trigger != SIN_WIN_EXIT && SIN_POINT_IN_WS(&cpt,sin_dev->ws))
 	echo_stroke( dev, SIN_ECHO_DYNAMIC);
 
+#ifdef TODO
     if ( event->flags & SIN_BUTTON_DOWN ) {
 	if ( EVENT_SHIFT_IS_DOWN(event) || EVENT_CTRL_IS_DOWN(event) )
-	    event_occurred = SIN_TRUE;
+	    event_occurred = TRUE;
 	else if ( (*sin_dev->ws->ops.in_viewport)(sin_dev->client_data, &cpt))
-	    event_occurred = SIN_TRUE;
+	    event_occurred = TRUE;
     }
+#endif
 
     if ( event_occurred )
 	process_stroke_event( dev, cvs_tbl, event, sin_dev, &cpt );
 }
 
-static void
-activate_loc( dev, cvs_tbl )
-    Dev_data		*dev;
-    Sin_window_table	*cvs_tbl;
+static void activate_loc(
+    Dev_data *dev,
+    Sin_window_table *cvs_tbl
+    )
 {
     reset_device( dev );
     attach_to_triggers( dev, cvs_tbl, locator_event_func );
 }
 
-static void
-deactivate_loc( dev, cvs_tbl )
-    register Dev_data	*dev;
-    Sin_window_table	*cvs_tbl;
+static void deactivate_loc(
+    register Dev_data *dev,
+    Sin_window_table *cvs_tbl
+    )
 {
     detach_from_triggers( dev, cvs_tbl );
     reset_device( dev );
 }
 
-static void
-activate_stroke( dev, cvs_tbl)
-    register Dev_data	*dev;
-    Sin_window_table	*cvs_tbl;
+static void activate_stroke(
+    Dev_data *dev,
+    Sin_window_table *cvs_tbl
+    )
 {
     reset_device( dev );
     attach_to_triggers( dev, cvs_tbl, stroke_event_func );
     echo_stroke( dev, SIN_ECHO_ALL_POINTS );
 }
 
-static void
-deactivate_stroke( dev, cvs_tbl )
-    register Dev_data	*dev;
-    Sin_window_table	*cvs_tbl;
+static void deactivate_stroke(
+    Dev_data *dev,
+    Sin_window_table *cvs_tbl
+    )
 {
     detach_from_triggers( dev, cvs_tbl );
     echo_stroke( dev, SIN_ECHO_ALL_POINTS );
     reset_device( dev );
 }
 
-static void
-activate_pick( dev, cvs_tbl )
-    Dev_data		*dev;
-    Sin_window_table	*cvs_tbl;
+static void activate_pick(
+    Dev_data *dev,
+    Sin_window_table *cvs_tbl
+    )
 {
     reset_device( dev );
     attach_to_triggers( dev, cvs_tbl, pick_event_func );
 }
 
-static void
-sample_loc( dev )
-    register Dev_data	*dev;
+static void sample_loc(
+    Dev_data *dev
+    )
 {
     /* Don't resolve until the measure is changed. */
     if ( dev->evt_state == SIN_EVT_STARTED ) {
 	dev->sin_dev->data.locator.cur_pos = dev->measure->data.pt;
-	(void)(*dev->sin_dev->data.locator.resolve)( dev->sin_dev );
+	(void)(*dev->sin_dev->data.locator.resolve)( dev->sin_dev, 0, NULL );
     }
 }
 
-static void
-sample_stroke( dev )
-    Dev_data	*dev;
+static void sample_stroke(
+    Dev_data *dev
+    )
 {
     /* Don't resolve until the measure is changed. */
     if ( dev->evt_state == SIN_EVT_STARTED ) {
@@ -526,12 +551,19 @@ sample_stroke( dev )
     }
 }
 
-void
-phg_sin_cvs_device_enable( device )
-    Sin_input_device	*device;
+/*******************************************************************************
+ * phg_sin_cvs_device_enable
+ *
+ * DESCR:       Enable device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_device_enable(
+    Sin_input_device *device
+    )
 {
-    Sin_window_table	*cvs_tbl;
-    Dev_data		*dev;
+    Sin_window_table *cvs_tbl;
+    Dev_data *dev;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE(device);
     dev = DEVICE_DATA(cvs_tbl, device->class, device->num);
@@ -545,15 +577,24 @@ phg_sin_cvs_device_enable( device )
 	case SIN_EVENT:
 	    (*dev->activate)( dev, cvs_tbl );
 	    break;
+        default:
+            break;
     }
 }
 
-void
-phg_sin_cvs_device_disable( device )
-    Sin_input_device	*device;
+/*******************************************************************************
+ * phg_sin_cvs_device_disable
+ *
+ * DESCR:       Disable device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_device_disable(
+    Sin_input_device *device
+    )
 {
-    Sin_window_table	*cvs_tbl;
-    Dev_data		*dev;
+    Sin_window_table *cvs_tbl;
+    Dev_data *dev;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE( device);
     dev = DEVICE_DATA(cvs_tbl, device->class, device->num);
@@ -562,15 +603,22 @@ phg_sin_cvs_device_disable( device )
     }
 }
 
-int
-phg_sin_cvs_device_initialize( sin_dev, nd )
-    Sin_input_device	*sin_dev;
-    Sin_dev_init_data	*nd;
+/*******************************************************************************
+ * phg_sin_cvs_device_initialize
+ *
+ * DESCR:       Initialize device
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sin_cvs_device_initialize(
+    Sin_input_device *sin_dev,
+    Sin_dev_init_data *nd
+    )
 {
-    Sin_window_table	*cvs_tbl;
-    Dev_data		*dev;
-    Sin_measure		*m;
-    int			size_needed, status = !0;
+    Sin_window_table *cvs_tbl;
+    Dev_data *dev;
+    Sin_measure	*m;
+    int	size_needed, status = TRUE;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE(sin_dev);
     dev = DEVICE_DATA( cvs_tbl, sin_dev->class, sin_dev->num);
@@ -581,41 +629,57 @@ phg_sin_cvs_device_initialize( sin_dev, nd )
 	    m = dev->measure;
 	    if ( m->size < size_needed ) {
 		if ( m->data.pts ) {
-		    free((char *)m->data.pts);
+		    free(m->data.pts);
 		    m->size = 0;
 		}
-		if ( (m->data.pts = (Sin_window_pt*)Malloc(size_needed)) )
+		if ( (m->data.pts = (Sin_window_pt*) malloc(size_needed)) )
 		    m->size = size_needed;
 		else
 		    status = 0;
 	    }
 	    break;
+        default:
+	    break;
     }
     return status;
 }
 
-void
-phg_sin_cvs_device_sample( sin_dev )
-    Sin_input_device	*sin_dev;
+/*******************************************************************************
+ * phg_sin_cvs_device_sample
+ *
+ * DESCR:       Sample device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_device_sample(
+    Sin_input_device *sin_dev
+    )
 {
-    Sin_window_table	*cvs_tbl;
-    Dev_data		*dev;
+    Sin_window_table *cvs_tbl;
+    Dev_data *dev;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE(sin_dev);
     dev = DEVICE_DATA(cvs_tbl, sin_dev->class, sin_dev->num);
     if ( dev->sample) {
-	(*dev->sample)( dev);
+	(*dev->sample)(dev);
     }
 }
 
-void
-phg_sin_cvs_device_repaint( sin_dev, num_rects, rects )
-    Sin_input_device	*sin_dev;
-    int			num_rects;
-    XRectangle		*rects;
+/*******************************************************************************
+ * phg_sin_cvs_device_repaint
+ *
+ * DESCR:       Repaint device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_device_repaint(
+    Sin_input_device *sin_dev,
+    int	num_rects,
+    XRectangle *rects
+    )
 {
-    Sin_window_table	*cvs_tbl;
-    Dev_data		*dev;
+    Sin_window_table *cvs_tbl;
+    Dev_data *dev;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE(sin_dev);
     dev = DEVICE_DATA(cvs_tbl, sin_dev->class, sin_dev->num);
@@ -631,18 +695,27 @@ phg_sin_cvs_device_repaint( sin_dev, num_rects, rects )
 	    echo_stroke(dev, SIN_ECHO_ALL_POINTS);
 	    XSetClipMask( sin_dev->ws->display, dev->gc, None );
 	    break;
+        default:
+	    break;
     }
 }
-
 
-void
-phg_sin_cvs_device_resize( sin_dev, old_rect, new_rect )
-    Sin_input_device	*sin_dev;
-    XRectangle		*old_rect, *new_rect;
+/*******************************************************************************
+ * phg_sin_cvs_device_resize
+ *
+ * DESCR:       Resize device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_device_resize(
+    Sin_input_device *sin_dev,
+    XRectangle	*old_rect,
+    XRectangle	*new_rect
+    )
 {
-    Sin_window_table	*cvs_tbl;
-    Dev_data		*dev;
-    int			delta;
+    Sin_window_table *cvs_tbl;
+    Dev_data *dev;
+    int	delta;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE( sin_dev);
     dev = DEVICE_DATA( cvs_tbl, sin_dev->class, sin_dev->num);
@@ -659,15 +732,24 @@ phg_sin_cvs_device_resize( sin_dev, old_rect, new_rect )
 	    for ( i = 0; i < dev->measure->count; i++, pt++ )
 		pt->y += delta;
 	    } break;
+        default:
+            break;
     }
 }
 
-static int
-create_locator_dev( sin_dev, dev )
-    Sin_input_device	*sin_dev;
-    register Dev_data	*dev;
+/*******************************************************************************
+ * create_locator_dev
+ *
+ * DESCR:       Create locator device helper function
+ * RETURNS:     TRUE or FALSE
+ */
+
+static int create_locator_dev(
+    Sin_input_device *sin_dev,
+    Dev_data *dev
+    )
 {
-    int			status = SIN_TRUE;
+    int	status = TRUE;
 
     dev->activate = activate_loc;
     dev->deactivate = deactivate_loc;
@@ -701,12 +783,19 @@ create_locator_dev( sin_dev, dev )
     return status;
 }
 
-static int
-create_pick_dev( sin_dev, dev )
-    Sin_input_device	*sin_dev;
-    register Dev_data	*dev;
+/*******************************************************************************
+ * create_pick_dev
+ *
+ * DESCR:       Create pick device helper function
+ * RETURNS:     TRUE or FALSE
+ */
+
+static int create_pick_dev(
+    Sin_input_device *sin_dev,
+    Dev_data *dev
+    )
 {
-    int			status = SIN_TRUE;
+    int	status = TRUE;
 
     dev->activate = activate_pick;
     dev->deactivate = detach_from_triggers;
@@ -736,12 +825,19 @@ create_pick_dev( sin_dev, dev )
     return status;
 }
 
-static int
-create_stroke_dev( sin_dev, dev )
-    Sin_input_device	*sin_dev;
-    register Dev_data	*dev;
+/*******************************************************************************
+ * create_stroke_dev
+ *
+ * DESCR:       Create stroke device helper function
+ * RETURNS:     TRUE or FALSE
+ */
+
+static int create_stroke_dev(
+    Sin_input_device *sin_dev,
+    Dev_data *dev
+    )
 {
-    int			status = SIN_TRUE;
+    int	status = TRUE;
 
     dev->activate = activate_stroke;
     dev->deactivate = deactivate_stroke;
@@ -775,17 +871,25 @@ create_stroke_dev( sin_dev, dev )
     return status;
 }
 
-int
-phg_sin_cvs_create_device( device )
-    register Sin_input_device	*device;
+/*******************************************************************************
+ * phg_sin_cvs_create_device
+ *
+ * DESCR:       Create device
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sin_cvs_create_device(
+    Sin_input_device *device
+    )
 {
-    int			status = SIN_FALSE;
-    register Dev_data	*dev;
-    Sin_window_table	*cvs_tbl;
+    int	status = FALSE;
+    Dev_data *dev;
+    Sin_window_table *cvs_tbl;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE(device);
     dev = DEVICE_DATA(cvs_tbl, device->class, device->num);
-    if ( dev->measure = (Sin_measure*)calloc( 1, sizeof(Sin_measure)) ) {
+    dev->measure = (Sin_measure*) calloc( 1, sizeof(Sin_measure));
+    if ( dev->measure != NULL) {
 	dev->evt_state = SIN_EVT_NONE;
 	dev->sin_dev = device;
 	switch ( device->class ) {
@@ -798,18 +902,27 @@ phg_sin_cvs_create_device( device )
 	    case SIN_STROKE:
 		status = create_stroke_dev( device, dev );
 		break;
+            default:
+		break;
 	}
     }
     
     return status;
 }
 
-void
-phg_sin_cvs_destroy_device( sin_dev )
-    Sin_input_device	*sin_dev;
+/*******************************************************************************
+ * phg_sin_cvs_destroy_device
+ *
+ * DESCR:       Destroy device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_destroy_device(
+    Sin_input_device *sin_dev
+    )
 {
-    Sin_window_table	*cvs_tbl;
-    Dev_data		*dev;
+    Sin_window_table *cvs_tbl;
+    Dev_data *dev;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE(sin_dev);
     dev = DEVICE_DATA(cvs_tbl, sin_dev->class, sin_dev->num);
@@ -817,20 +930,24 @@ phg_sin_cvs_destroy_device( sin_dev )
 	(*dev->deactivate)( dev, cvs_tbl );
     if ( dev->measure ) {
 	if ( dev->measure->size )
-	    free( (char *)dev->measure->data.pts );
-	free( (char *)dev->measure );
+	    free(dev->measure->data.pts);
+	free(dev->measure);
     }
 }
 
-#define ALL_BUTTONS \
-    (Button1Mask | Button2Mask | Button3Mask | Button4Mask | Button5Mask)
+/*******************************************************************************
+ * map_event
+ *
+ * DESCR:       Map event helper function
+ * RETURNS:     One or zero on unknown event
+ */
 
-static int
-map_event( xevent, event )
-    register	XEvent		*xevent;
-    register	Sin_cvs_event	*event;
+static int map_event(
+    XEvent *xevent,
+    Sin_cvs_event *event
+    )
 {
-    int		status = 1;
+    int	status = 1;
 
     event->flags = 0;
     event->xevent = xevent;
@@ -918,17 +1035,24 @@ map_event( xevent, event )
     return status;
 }
 
-static void
-process_event( ws, cvs_tbl, window, xevent )
-    Sin_input_ws	*ws;
-    Sin_window_table	*cvs_tbl;
-    Window		window;
-    XEvent		*xevent;
-{
-    Sin_trig_data	*trig;
-    Sin_cvs_event	event;
+/*******************************************************************************
+ * process_event
+ *
+ * DESCR:       Process event handler function
+ * RETURNS:     N/A
+ */
 
-    register	Sin_trig_op	*op, *next;
+static void process_event(
+    Sin_input_ws *ws,
+    Sin_window_table *cvs_tbl,
+    Window window,
+    XEvent *xevent
+    )
+{
+    Sin_trig_data *trig;
+    Sin_cvs_event event;
+
+    Sin_trig_op	*op, *next;
 
     /* Call all the event procs associated with this event. */
     if ( !map_event( xevent, &event ) )
@@ -944,28 +1068,42 @@ process_event( ws, cvs_tbl, window, xevent )
     }
 }
 
-void
-phg_sin_cvs_close( ws )
-    Sin_input_ws	*ws;
+/*******************************************************************************
+ * phg_sin_cvs_destroy
+ *
+ * DESCR:       Destroy cvs
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_destroy(
+    Sin_input_ws *ws
+    )
 {
     /* Deactivate and free the window table. */
     phg_sin_ws_remove_event_func( ws, ws->input_window,
 	(caddr_t)ws->window_table, process_event );
     if ( ws->window_table )
-	free( (char *)ws->window_table );
+	free(ws->window_table );
 }
 
-Sin_window_table*
-phg_sin_cvs_init( ws )
-    Sin_input_ws	*ws;
-{
-    Sin_window_table	*cvs_tbl;
-    register	int	i;
-    ALLOC_DECLARE(5);
+/*******************************************************************************
+ * phg_sin_cvs_create
+ *
+ * DESCR:       Initialize cvs
+ * RETURNS:     Pointer to window table or NULL
+ */
 
-    if (!ALLOCATED( cvs_tbl = (Sin_window_table*)
-	calloc( 1, sizeof(Sin_window_table))) )
+Sin_window_table* phg_sin_cvs_create(
+    Sin_input_ws *ws
+    )
+{
+    Sin_window_table *cvs_tbl;
+    int	i;
+
+    cvs_tbl = (Sin_window_table *) calloc(1, sizeof(Sin_window_table));
+    if (cvs_tbl == NULL) {
 	goto no_mem;
+    }
 
     cvs_tbl->ws = ws;
     if ( !phg_sin_ws_set_event_func( ws, ws->input_window, (caddr_t)cvs_tbl,
@@ -978,8 +1116,7 @@ phg_sin_cvs_init( ws )
     return cvs_tbl;
 
 no_mem:
-    ALLOC_FREE;
-    return (Sin_window_table*)NULL;
+    free(cvs_tbl);
+    return NULL;
 }
-#endif
 

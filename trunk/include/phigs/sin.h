@@ -58,7 +58,9 @@ typedef struct {
    Ppoint3       ws_pt;
    Pint          view;
    int           (*resolve)(
-                    struct _Sin_input_device *dev
+                    struct _Sin_input_device *dev,
+                    Pint int_data,
+                    Sin_window_pt *pt
                     );
    Pline_bundle  ln_bundl;
 } Sin_locator_device_data;
@@ -71,7 +73,9 @@ typedef struct {
    Ppick         init_pick;
    caddr_t       client_data;
    int           (*resolve)(
-                    struct _Sin_input_device *dev
+                    struct _Sin_input_device *dev,
+                    Pint int_data,
+                    Sin_window_pt *pt
                     );
 } Sin_pick_device_data;
 
@@ -85,7 +89,9 @@ typedef struct {
    Ppoint3         *ws_pts;
    Pint            view;
    int             (*resolve)(
-                      struct _Sin_input_device *dev
+                      struct _Sin_input_device *dev,
+                      Pint int_data,
+                      Sin_window_pt *pt
                       );
    Pline_bundle    ln_bundl;
    Pmarker_bundle  mk_bundl;
@@ -232,20 +238,23 @@ typedef struct {
    Sin_input_device **devs;
 } Sin_buf_data;
 
+struct _Sin_window_table;
+
 typedef struct _Sin_input_ws {
-   Err_handle       erh;
-   Pint             wsid;
-   Ws_handle        wsh;
-   Wst_input_wsdt   *idt;
-   Sin_event_queue  *queue;
-   Sin_input_device *break_device;
-   Display          *display;
-   Window           input_window;
-   Window           output_window;
-   Sin_buf_data     event_buffer;
-   Sin_notify_data  *notify_list;
-   Pnum_in          num_devs;
-   Sin_input_device *devices[6];
+   Err_handle               erh;
+   Pint                     wsid;
+   Ws_handle                wsh;
+   Wst_input_wsdt           *idt;
+   Sin_event_queue          *queue;
+   Sin_input_device         *break_device;
+   Display                  *display;
+   Window                   input_window;
+   Window                   output_window;
+   Sin_buf_data             event_buffer;
+   Sin_notify_data          *notify_list;
+   Pnum_in                  num_devs;
+   Sin_input_device         *devices[6];
+   struct _Sin_window_table *window_table;
 } Sin_input_ws;
 
 typedef struct {

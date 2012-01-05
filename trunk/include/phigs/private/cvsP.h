@@ -89,20 +89,36 @@ typedef struct {
 
 typedef Sin_trig_code Sin_trig_list[SIN_MAX_DEV_TRIGGERS + 1];
 
-typedef struct {
+struct _Sin_window_table;
+
+typedef struct _Dev_data {
    Pint             enabled;
    Sin_event_state  evt_state;
    Sin_measure      *measure;
    Sin_input_device *sin_dev;
    GC               gc;
-   void             (*acitvate)(void);
-   void             (*deacitvate)(void);
-   void             (*sample)(void);
+   void             (*activate)(
+                       struct _Dev_data *dev,
+                       struct _Sin_window_table *cvs_tbl
+                    );
+   void             (*deactivate)(
+                       struct _Dev_data *dev,
+                       struct _Sin_window_table *cvs_tbl
+                    );
+
+   void             (*sample)(
+                       struct _Dev_data *dev
+                    );
    Sin_trig_list    triggers;
 } Dev_data;
 
 typedef struct _Sin_trig_op {
-   void                (*evt_func)(void);
+   void                (*evt_func)(
+                           Dev_data *dev,
+                           struct _Sin_window_table *table,
+                           Window window,
+                           Sin_cvs_event *event
+                           );
    Dev_data            *dev_data;
    struct _Sin_trig_op *next;
 } Sin_trig_op;
@@ -150,6 +166,124 @@ typedef struct _Sin_window_table {
 
 #define TRIGGER_DATA( _ct, _code ) \
     (&(_ct)->trigs[(int)(_code)])
+
+#define ALL_BUTTONS \
+    (Button1Mask | Button2Mask | Button3Mask | Button4Mask | Button5Mask)
+
+/*******************************************************************************
+ * phg_sin_cvs_device_enable
+ *
+ * DESCR:       Enable device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_device_enable(
+    Sin_input_device *device
+    );
+
+/*******************************************************************************
+ * phg_sin_cvs_device_disable
+ *
+ * DESCR:       Disable device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_device_disable(
+    Sin_input_device *device
+    );
+
+/*******************************************************************************
+ * phg_sin_cvs_device_initialize
+ *
+ * DESCR:       Initialize device
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sin_cvs_device_initialize(
+    Sin_input_device *sin_dev,
+    Sin_dev_init_data *nd
+    );
+
+/*******************************************************************************
+ * phg_sin_cvs_device_sample
+ *
+ * DESCR:       Sample device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_device_sample( 
+    Sin_input_device *sin_dev
+    );
+
+/*******************************************************************************
+ * phg_sin_cvs_device_repaint
+ *
+ * DESCR:       Repaint device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_device_repaint(
+    Sin_input_device *sin_dev,
+    int num_rects,
+    XRectangle *rects
+    );
+
+/*******************************************************************************
+ * phg_sin_cvs_device_resize
+ *
+ * DESCR:       Resize device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_device_resize(
+    Sin_input_device *sin_dev,
+    XRectangle  *old_rect,
+    XRectangle  *new_rect
+    );
+
+/*******************************************************************************
+ * phg_sin_cvs_create_device
+ *
+ * DESCR:       Create device
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sin_cvs_create_device(
+    Sin_input_device *device
+    );
+
+/*******************************************************************************
+ * phg_sin_cvs_destroy_device
+ *
+ * DESCR:       Destroy device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_destroy_device(
+    Sin_input_device *sin_dev
+    );
+
+/*******************************************************************************
+ * phg_sin_cvs_destroy
+ *
+ * DESCR:       Destroy cvs
+ * RETURNS:     N/A
+ */
+
+void phg_sin_cvs_destroy(
+    Sin_input_ws *ws
+    );
+
+/*******************************************************************************
+ * phg_sin_cvs_create
+ *
+ * DESCR:       Initialize cvs
+ * RETURNS:     Pointer to window table or NULL
+ */
+
+Sin_window_table* phg_sin_cvs_create(
+    Sin_input_ws *ws
+    );
 
 #endif /* _cvsP_h */
 
