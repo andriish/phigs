@@ -25,6 +25,8 @@
 #include <X11/Xlib.h>
 #include <phigs/private/sinqP.h>
 
+#define SIN_EVT_ACKNOWLEDGE    0x0001
+
 typedef enum {
    SIN_REQUEST,
    SIN_REQUEST_PENDING,
@@ -47,13 +49,17 @@ typedef struct {
    Sin_window_pt ll, ur;
 } Sin_window_rect;
 
+struct _Sin_input_device;
+
 typedef struct {
    Wst_loc_type  type;
    Sin_window_pt cur_pos;
    Sin_window_pt init_pos;
    Ppoint3       ws_pt;
    Pint          view;
-   int           (*resolve)(void);
+   int           (*resolve)(
+                    struct _Sin_input_device *dev
+                    );
    Pline_bundle  ln_bundl;
 } Sin_locator_device_data;
 
@@ -64,7 +70,9 @@ typedef struct {
    Ppick         cur_pick;
    Ppick         init_pick;
    caddr_t       client_data;
-   int           (*resolve)(void);
+   int           (*resolve)(
+                    struct _Sin_input_device *dev
+                    );
 } Sin_pick_device_data;
 
 typedef struct {
@@ -76,7 +84,9 @@ typedef struct {
    Sin_window_pt   *init_pts;
    Ppoint3         *ws_pts;
    Pint            view;
-   int             (*resolve)(void);
+   int             (*resolve)(
+                      struct _Sin_input_device *dev
+                      );
    Pline_bundle    ln_bundl;
    Pmarker_bundle  mk_bundl;
 } Sin_stroke_device_data;
@@ -215,6 +225,13 @@ typedef struct _Sin_notify_data {
    struct _Sin_notify_data *next;
 } Sin_notify_data;
 
+typedef struct {
+   unsigned         flags;
+   Pint             count;
+   Pint             size;
+   Sin_input_device **devs;
+} Sin_buf_data;
+
 typedef struct _Sin_input_ws {
    Err_handle       erh;
    Pint             wsid;
@@ -225,6 +242,7 @@ typedef struct _Sin_input_ws {
    Display          *display;
    Window           input_window;
    Window           output_window;
+   Sin_buf_data     event_buffer;
    Sin_notify_data  *notify_list;
    Pnum_in          num_devs;
    Sin_input_device *devices[6];
@@ -268,6 +286,12 @@ typedef struct {
 #define SIN_EA_HEIGHT( _ea ) ((_ea)->ll.y - (_ea)->ur.y)
 #define SIN_EA_X( _ea ) ((_ea)->ll.x)
 #define SIN_EA_Y( _ea ) ((_ea)->ur.y)
+
+#define SIN_WS_RESET_EVENT_BUFFER( _ev ) \
+    (_ev)->flags = 0, (_ev)->count = 0
+
+#define SIN_WS_SET_ACKNOWLEDGE( _ws ) \
+    (_ws)->event_buffer.flags |= SIN_EVT_ACKNOWLEDGE
 
 #endif /* _sin_h */
 
