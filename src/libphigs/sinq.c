@@ -73,13 +73,17 @@ SOFTWARE.
 #include <phigs/sin.h>
 #include <phigs/private/sinP.h>
 
+/*******************************************************************************
+ * phg_sin_q_enque_free_event
+ *
+ * DESCR:       Place a free and empty event on the queue and return a pointer
+ *              to it or NULL if the queue is full.
+ * RETURNS:     Pointer to event or NULL
+ */
+
 Sin_input_event* phg_sin_q_enque_free_event(
     Sin_event_queue *queue
     )
-
-    /* Place a free and empty event on the queue and return a pointer to
-     * it or NULL if the queue is full.
-     */
 {
     int	current;
     Sin_q_element *element;
@@ -101,13 +105,17 @@ Sin_input_event* phg_sin_q_enque_free_event(
     return event;
 }
 
+/*******************************************************************************
+ * phg_sin_q_next_event
+ *
+ * DESCR:       Return a pointer to the first event in the queue.
+ *              The event is not dequed.  Use sin_q_deque_event() for that.
+ * RETURNS:     Pointer to event or NULL
+ */
+
 Sin_input_event* phg_sin_q_next_event(
     Sin_event_queue *queue
     )
-
-    /* Return a pointer to the first event in the queue.  The event is
-     * not dequed.  Use sin_q_deque_event() for that.
-     */
 {
     Sin_input_event *event;
 
@@ -119,14 +127,19 @@ Sin_input_event* phg_sin_q_next_event(
     return event;
 }
 
+/*******************************************************************************
+ * phg_sin_q_deque_event
+ *
+ * DESCR:       Remove the first event from the queue.
+ *              Does not return the event.
+ *              Use sin_q_next_event() prior to calling this function to read
+ *              the event at the head of the queue.
+ * RETURNS:     N/A
+ */
+
 void phg_sin_q_deque_event(
     Sin_event_queue *queue
     )
-
-    /* Remove the first event from the queue.  Does not return the event.
-     * Use sin_q_next_event() prior to calling this function to read the
-     * event at the head of the queue.
-     */
 {
     int current;
 
@@ -139,13 +152,17 @@ void phg_sin_q_deque_event(
     }
 }
 
+/*******************************************************************************
+ * delete_event
+ *
+ * DESCR:       Delete event helper function
+ * RETURNS:     N/A
+ */
+
 static void delete_event(
     Sin_event_queue *queue,
     int event_q_id
     )
-
-    /* Remove an event from a queue.
-     */
 {
     int next, previous;
 
@@ -162,13 +179,17 @@ static void delete_event(
     }
 }
 
+/*******************************************************************************
+ * phg_sin_q_flush_ws
+ *
+ * DESCR:       Flush all events on queue from a workstation.
+ * RETURNS:     N/A
+ */
+
 void phg_sin_q_flush_ws(
     Sin_event_queue *queue,
     int	wsid
     )
-    
-    /* Flush all events on queue from a workstation.
-     */
 {
     int current, next, i, count;
 
@@ -192,15 +213,19 @@ void phg_sin_q_flush_ws(
     */
 }
 
+/*******************************************************************************
+ * phg_sin_q_flush_device
+ *
+ * DESCR:       Flush all events on queue from a device.
+ * RETURNS:     N/A
+ */
+
 void phg_sin_q_flush_device(
     Sin_event_queue *queue,
     Pint wsid,
     Pin_class class,
     Pint num
     )
-
-    /* Flush all events on queue from a device.
-     */
 {
     int current_index, next_index, i, count;
     Sin_q_element *current;
@@ -223,6 +248,13 @@ void phg_sin_q_flush_device(
 	SIN_Q_CLEAR_OVERFLOW(queue);
     */
 }
+
+/*******************************************************************************
+ * initialize_queue
+ *
+ * DESCR:       Initialize queue helper function
+ * RETURNS:     N/A
+ */
 
 static void initialize_queue(
     Sin_event_queue *queue,
@@ -250,6 +282,13 @@ static void initialize_queue(
     }
 }
 
+/*******************************************************************************
+ * phg_sin_q_create
+ *
+ * DESCR:       Create input queue
+ * RETURNS:     Input queue handle or NULL
+ */
+
 Input_q_handle phg_sin_q_create(
     Err_handle erh
     )
@@ -266,12 +305,26 @@ Input_q_handle phg_sin_q_create(
     return (Input_q_handle) queue;
 }
 
+/*******************************************************************************
+ * phg_sin_q_destroy
+ *
+ * DESCR:       Destroy input queue
+ * RETURNS:     N/A
+ */
+
 void phg_sin_q_destroy(
     Sin_event_queue *queue
     )
 {
     free(queue);
 }
+
+/*******************************************************************************
+ * phg_sin_q_overflow_event
+ *
+ * DESCR:       Get overflow event
+ * RETURNS:     Overflow event id or zero
+ */
 
 int phg_sin_q_overflow_event(
     Sin_event_queue *queue,
@@ -297,6 +350,14 @@ int phg_sin_q_overflow_event(
     return status;
 
 }
+
+
+/*******************************************************************************
+ * phg_sin_q_set_event_notify_proc
+ *
+ * DESCR:       Set event notify procedure
+ * RETURNS:     N/A
+ */
 
 void phg_sin_q_set_event_notify_proc(
     Sin_event_queue *queue,

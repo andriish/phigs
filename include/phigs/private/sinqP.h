@@ -132,5 +132,115 @@ typedef struct _Sin_event_queue {
     (!SIN_Q_EMPTY(_queue) && SIN_Q_HEAD_EVENT(_queue)->simul_id > 0 \
         && (_queue)->cur_simul_id == SIN_Q_HEAD_EVENT(_queue)->simul_id)
 
+/*******************************************************************************
+ * phg_sin_q_enque_free_event
+ *
+ * DESCR:       Place a free and empty event on the queue and return a pointer 
+ *              to it or NULL if the queue is full.
+ * RETURNS:     Pointer to event or NULL
+ */
+
+Sin_input_event* phg_sin_q_enque_free_event(
+    Sin_event_queue *queue
+    );
+
+/*******************************************************************************
+ * phg_sin_q_next_event
+ *
+ * DESCR:       Return a pointer to the first event in the queue.
+ *              The event is not dequed.  Use sin_q_deque_event() for that.
+ * RETURNS:     Pointer to event or NULL
+ */
+
+Sin_input_event* phg_sin_q_next_event(
+    Sin_event_queue *queue
+    );
+
+/*******************************************************************************
+ * phg_sin_q_deque_event
+ *
+ * DESCR:       Remove the first event from the queue.
+ *              Does not return the event.
+ *              Use sin_q_next_event() prior to calling this function to read 
+ *              the event at the head of the queue.
+ * RETURNS:     N/A
+ */
+
+void phg_sin_q_deque_event(
+    Sin_event_queue *queue
+    );
+
+/*******************************************************************************
+ * phg_sin_q_flush_ws
+ *
+ * DESCR:       Flush all events on queue from a workstation.
+ * RETURNS:     N/A
+ */
+
+void phg_sin_q_flush_ws(
+    Sin_event_queue *queue,
+    int wsid
+    );
+
+/*******************************************************************************
+ * phg_sin_q_flush_device
+ *
+ * DESCR:       Flush all events on queue from a device.
+ * RETURNS:     N/A
+ */
+
+void phg_sin_q_flush_device(
+    Sin_event_queue *queue,
+    Pint wsid,
+    Pin_class class,
+    Pint num
+    );
+
+/*******************************************************************************
+ * phg_sin_q_create
+ *
+ * DESCR:       Create input queue
+ * RETURNS:     Input queue handle or NULL
+ */
+
+Input_q_handle phg_sin_q_create(
+    Err_handle erh
+    );
+
+/*******************************************************************************
+ * phg_sin_q_destroy
+ *  
+ * DESCR:       Destroy input queue
+ * RETURNS:     N/A
+ */
+
+void phg_sin_q_destroy(
+    Sin_event_queue *queue
+    );
+
+/*******************************************************************************
+ * phg_sin_q_overflow_event
+ *
+ * DESCR:       Get overflow event
+ * RETURNS:     Overflow event id or zero
+ */
+
+int phg_sin_q_overflow_event(
+    Sin_event_queue *queue,
+    Pevent *event
+    );
+
+/*******************************************************************************
+ * phg_sin_q_set_event_notify_proc
+ *
+ * DESCR:       Set event notify procedure
+ * RETURNS:     N/A
+ */
+
+void phg_sin_q_set_event_notify_proc(
+    Sin_event_queue *queue,
+    void (*proc)(void)
+    );
+
 #endif /* _sinqP_h */
 
