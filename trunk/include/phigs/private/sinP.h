@@ -29,15 +29,6 @@
 #define SIN_EVENT_ENQUED( _s )          ((_s) & SIN_EVENT_ENQUED_FLAG)
 #define SIN_EVENT_NOTIFIED( _s )        ((_s) & SIN_EVENT_NOTIFIED_FLAG)
 
-#define SIN_BREAK_DEVICE( ws) \
-    ((ws)->break_device)
-
-#define SIN_ENABLE_BREAK( device) \
-    SIN_BREAK_DEVICE((device)->ws) = device; \
-
-#define SIN_DISABLE_BREAK( ws) \
-    SIN_BREAK_DEVICE((ws)) = NULL; \
-
 #define SIN_COPY_LOC_INIT_DATA( _o, _n ) \
     { \
     (_n)->data.locator.cur_pos          = (_o)->data.locator.cur_pos; \
@@ -81,6 +72,52 @@
     (_dev)->mode = SIN_REQUEST; \
     (_dev)->flags.on = 0; \
     (_dev)->echo_sw = TRUE;
+
+#define SIN_EVENT_IS_WANTED( _dev ) \
+    ( (_dev)->sin_dev->mode == SIN_REQUEST_PENDING  || \
+      (_dev)->sin_dev->mode == SIN_EVENT )
+
+#define SIN_X_RECT_TO_SIN_RECT( _sw_r, _sin_r) \
+    (_sin_r)->ll.x = (_sw_r)->x; \
+    (_sin_r)->ll.y = (_sw_r)->y + (_sw_r)->height; \
+    (_sin_r)->ur.x = (_sw_r)->x + (_sw_r)->width; \
+    (_sin_r)->ur.y = (_sw_r)->y;
+
+#define SIN_POINT_IN_RECT( _p, _r) \
+    /* window coords, y increases top to bottom */ \
+    (   (_p)->x >= (_r)->ll.x && (_p)->x <= (_r)->ur.x \
+     && (_p)->y <= (_r)->ll.y && (_p)->y >= (_r)->ur.y)
+
+#define SIN_POINT_IN_ECHO_AREA( _p, _dev) \
+    (SIN_POINT_IN_RECT( (_p), &(_dev)->echo_area))
+
+#define SIN_POINT_IN_WS( _p, _ws) \
+    (1) /* not needed yet */
+
+#define SIN_SET_ENABLE_DATA( _dev, _ed) \
+    (_dev)->echo_area = (_ed)->echo_area;    \
+    switch ((_dev)->class) { \
+        case SIN_LOCATOR: \
+            (_dev)->data.locator.init_pos = (_ed)->data.locator.init_pos;\
+            break; \
+        case SIN_STROKE: \
+            (_dev)->data.stroke.count = (_ed)->data.stroke.cnt; \
+            bcopy( (char *)(_ed)->data.stroke.init_pts, \
+                (char *)(_dev)->data.stroke.init_pts, \
+                (_dev)->data.stroke.count * sizeof(Sin_window_pt)); \
+    }
+
+#define SIN_VALUATOR_SCALE( data) \
+    (((data).valuator.high - (data).valuator.low) / (data).valuator.length)
+
+#define SIN_BREAK_DEVICE( ws) \
+    ((ws)->break_device)
+
+#define SIN_ENABLE_BREAK( device) \
+    SIN_BREAK_DEVICE((device)->ws) = device; \
+
+#define SIN_DISABLE_BREAK( ws) \
+    SIN_BREAK_DEVICE((ws)) = NULL; \
 
 #endif /* _sinP_h */
 
