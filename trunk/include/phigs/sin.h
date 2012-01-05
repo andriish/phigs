@@ -224,10 +224,17 @@ typedef struct _Sin_input_device {
    } flags;
 } Sin_input_device;
 
+struct _Sin_input_ws;
+
 typedef struct _Sin_notify_data {
    Window                  window;
    caddr_t                 handle;
-   void                    (*notify)(void);
+   void                    (*notify)(
+                              struct _Sin_input_ws *ws,
+                              caddr_t handle,
+                              Window window,
+                              XEvent *event
+                              );
    struct _Sin_notify_data *next;
 } Sin_notify_data;
 
