@@ -46,6 +46,82 @@ typedef enum {
    WST_LOC_TYPE_POINTER_BUTTON_3
 } Wst_loc_type;
 
+typedef enum {
+   WST_PICK_TYPE_POINTER_BUTTON_1,
+   WST_PICK_TYPE_POINTER_BUTTON_2,
+   WST_PICK_TYPE_POINTER_BUTTON_3
+} Wst_pick_type;
+
+typedef enum {
+   WST_STROKE_TYPE_POINTER_BUTTON_1,
+   WST_STROKE_TYPE_POINTER_BUTTON_2,
+   WST_STROKE_TYPE_POINTER_BUTTON_3
+} Wst_stroke_type;
+
+typedef enum {
+   WST_VAL_TYPE_SLIDE
+} Wst_val_type;
+
+typedef enum {
+   WST_CHOICE_TYPE_LIST
+} Wst_choice_type;
+
+typedef enum {
+   WST_STRING_TYPE_WINDOW
+} Wst_string_type;
+
+typedef struct {
+   Ppoint3      position;
+   Pint         num_pets;
+   Pint         pets[WST_MAX_NUM_PETS];
+   Plimit3      e_volume;
+   Ploc_data3   record;
+   Wst_loc_type type;
+} Wst_defloc;
+
+typedef struct {
+   Ppath_order  order;
+   Pint         num_pets;
+   Pint         pets[WST_MAX_NUM_PETS];
+   Plimit3      e_volume;
+   Ppick_data3  record;
+   Wst_pick_type type;
+} Wst_defpick;
+
+typedef struct {
+   Pint            max_bufsize;
+   Pint            num_pets;
+   Plimit3         e_volume;
+   Pstroke_data3   record;
+   Wst_stroke_type type;
+} Wst_defstroke;
+
+typedef struct {
+   Pfloat       value;
+   Pint         num_pets;
+   Pint         pets[WST_MAX_NUM_PETS];
+   Plimit3      e_volume;
+   Pval_data3   record;
+   Wst_val_type type;
+} Wst_defval;
+
+typedef struct {
+   Pint            choices;
+   Pint            num_pets;
+   Pint            pets[WST_MAX_NUM_PETS];
+   Plimit3         e_volume;
+   Pchoice_data3   record;
+   Wst_choice_type type;
+} Wst_defchoice;
+
+typedef struct {
+   Pint            max_bufsize;
+   Pint            num_pets;
+   Pint            pets[WST_MAX_NUM_PETS];
+   Plimit3         e_volume;
+   Wst_string_type type;
+} Wst_defstring;
+
 typedef struct {
    Pws_class           ws_class;
    Pdefer_mode         deferral_mode;
@@ -81,7 +157,13 @@ typedef struct {
 } Wst_output_wsdt;
 
 typedef struct {
-   Pnum_in num_devs;
+   Pnum_in       num_devs;
+   Wst_defloc    locators[WST_MAX_NUM_LOCATOR_DEVS];
+   Wst_defpick   picks[WST_MAX_NUM_PICK_DEVS];
+   Wst_defstroke strokes[WST_MAX_NUM_STROKE_DEVS];
+   Wst_defval     valuators[WST_MAX_NUM_VALUATOR_DEVS];
+   Wst_defchoice choices[WST_MAX_NUM_CHOICE_DEVS];
+   Wst_defstring  strings[WST_MAX_NUM_STRING_DEVS];
 } Wst_input_wsdt;
 
 typedef struct {

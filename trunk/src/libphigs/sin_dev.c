@@ -111,7 +111,6 @@ static void remove_ops(
     dev->dev_ops.destroy = NULL;
 }
 
-#if 0
 int phg_sin_dev_create_devices(
     Sin_input_ws *ws
     )
@@ -186,14 +185,15 @@ int phg_sin_dev_create_devices(
 	}
     }
 
-    return SIN_TRUE;
+    return TRUE;
 }
 
-int
-phg_sin_dev_start( ws )
-    Sin_input_ws	*ws;
+#ifdef TODO
+int phg_sin_dev_start(
+    Sin_input_ws *ws
+    )
 {
-    register	int	i;
+    int	i;
 
     /* Start up input processing for the input window. */
     for ( i = 0; i < NUM_COMMON_EVENTS; i++ ) {
@@ -201,16 +201,14 @@ phg_sin_dev_start( ws )
 	    common_events[i], (caddr_t)ws, phg_sin_ws_window_event_proc );
     }
     XSelectInput( ws->display, ws->input_window, common_mask );
-    return SIN_TRUE;
+    return TRUE;
 }
 
-void
-phg_sin_dev_stop( ws )
-    Sin_input_ws	*ws;
+void phg_sin_dev_stop(
+    Sin_input_ws *ws
+    )
 {
-    extern void	phg_ntfy_unregister_event();
-
-    register	int	i;
+    int	i;
 
     for ( i = 0; i < NUM_COMMON_EVENTS; i++ ) {
 	phg_ntfy_unregister_event( ws->display, ws->input_window,
@@ -218,12 +216,12 @@ phg_sin_dev_stop( ws )
     }
 }
 
-void
-phg_sin_dev_destroy_devices( ws )
-    Sin_input_ws        *ws;
+void phg_sin_dev_destroy_devices(
+    Sin_input_ws *ws
+    )
 {
-    register	Sin_input_device	*dev;
-    register	int        		i;
+    Sin_input_device *dev;
+    int i;
 
     for ( i = 1; i <= ws->num_devs.loc; i++) {
 	dev = SIN_DEV(ws, SIN_LOCATOR, i);
@@ -270,26 +268,19 @@ phg_sin_dev_destroy_devices( ws )
 
 /* Initialization Routines */
 
-#define SET_DEFAULT_DEV_GENERIC_DATA( _ws, _dev ) \
-    (_dev)->ws = (_ws); \
-    (_dev)->wsid = (_ws)->wsid; \
-    (_dev)->mode = SIN_REQUEST; \
-    (_dev)->flags.on = 0; \
-    (_dev)->echo_sw = SIN_TRUE;
-
-void
-phg_sin_dev_init_devices( ws )
-    register Sin_input_ws    *ws;
+void phg_sin_dev_init_devices(
+    Sin_input_ws *ws
+    )
 {
-    Wst_defloc		*idt_loc;
-    Wst_defstroke	*idt_stroke;
-    Wst_defpick		*idt_pick;
-    Wst_defchoice	*idt_choice;
-    Wst_defval		*idt_val;
-    Wst_defstring	*idt_string;
+    Wst_defloc *idt_loc;
+    Wst_defstroke *idt_stroke;
+    Wst_defpick	*idt_pick;
+    Wst_defchoice *idt_choice;
+    Wst_defval *idt_val;
+    Wst_defstring *idt_string;
 
-    register int                i;
-    register Sin_input_device   *dev;
+    int i;
+    Sin_input_device *dev;
 
     /* Assign initial and default workstation data */
     ws->notify_list = NULL;
