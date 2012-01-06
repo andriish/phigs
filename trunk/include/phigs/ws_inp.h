@@ -168,5 +168,28 @@ void phg_ws_inp_init_device(
     Phg_args_inp_init_dev *args
     );
 
+/*******************************************************************************
+ * phg_ws_input_init
+ *
+ * DESCR:       Initialize input workstation
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_ws_input_init(
+    struct _Ws *ws,
+    Input_q_handle queue
+    );
+
+/*******************************************************************************
+ * phg_ws_input_close
+ *
+ * DESCR:       Close input workstation
+ * RETURNS:     TRUE or FALSE
+ */
+
+void phg_ws_input_close(
+    struct _Ws *ws
+    );
+
 #endif /* _ws_inp_h */
 

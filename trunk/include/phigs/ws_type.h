@@ -186,6 +186,7 @@ typedef struct {
       default_views[WST_MIN_PREDEF_VIEW_REPS];
 
    Wst_output_wsdt out_dt;
+   Wst_input_wsdt  in_dt;
 } Wst_phigs_dt;
 
 typedef struct {
