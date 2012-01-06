@@ -111,6 +111,8 @@ static void wsb_load_funcs(
     ws->resolve_locator = NULL;
     ws->resolve_stroke = NULL;
     ws->resolve_pick = NULL;
+    ws->map_initial_points = NULL;
+    ws->valid_pick_path = NULL;
 }
 
 /* 

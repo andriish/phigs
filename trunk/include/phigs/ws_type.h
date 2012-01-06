@@ -22,23 +22,29 @@
 #define _ws_type_h
 
 /* Workstation types */
-#define PWST_OUTPUT_TRUE              0
+#define PWST_OUTPUT_TRUE                 0
 
 /* Default tables */
-#define WST_MIN_PREDEF_LINE_REPS      1
-#define WST_MIN_PREDEF_MARKER_REPS    1
-#define WST_MIN_PREDEF_TEXT_REPS      1
-#define WST_MIN_PREDEF_INTERIOR_REPS  1
-#define WST_MIN_PREDEF_EDGE_REPS      1
-#define WST_MIN_PREDEF_VIEW_REPS      6
+#define WST_MIN_PREDEF_LINE_REPS         1
+#define WST_MIN_PREDEF_MARKER_REPS       1
+#define WST_MIN_PREDEF_TEXT_REPS         1
+#define WST_MIN_PREDEF_INTERIOR_REPS     1
+#define WST_MIN_PREDEF_EDGE_REPS         1
+#define WST_MIN_PREDEF_VIEW_REPS         6
 
-#define WST_MAX_NUM_PETS              10
-#define WST_MAX_NUM_LOCATOR_DEVS      3
-#define WST_MAX_NUM_STROKE_DEVS       3
-#define WST_MAX_NUM_PICK_DEVS         3
-#define WST_MAX_NUM_VALUATOR_DEVS     12
-#define WST_MAX_NUM_CHOICE_DEVS       3
-#define WST_MAX_NUM_STRING_DEVS       1
+#define WST_MAX_NUM_PETS                 10
+#define WST_MAX_NUM_LOCATOR_DEVS         3
+#define WST_MAX_NUM_STROKE_DEVS          3
+#define WST_MAX_NUM_PICK_DEVS            3
+#define WST_MAX_NUM_VALUATOR_DEVS        12
+#define WST_MAX_NUM_CHOICE_DEVS          3
+#define WST_MAX_NUM_STRING_DEVS          1
+
+/* Default settings */
+#define WST_DEFAULT_VALUATOR_LABEL       "value:"
+#define WST_DEFAULT_VALUATOR_FORMAT      "%8.3g"
+#define WST_DEFAULT_VALUATOR_LOW_LABEL   "[%8.3g]"
+#define WST_DEFAULT_VALUATOR_HIGH_LABEL  "[%8.3g]"
 
 typedef enum {
    WST_LOC_TYPE_POINTER_BUTTON_1,

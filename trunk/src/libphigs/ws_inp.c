@@ -71,17 +71,6 @@ SOFTWARE.
 #include <phigs/ws_inp.h>
 #include <phigs/phg_dt.h>
 
-#define WSINP_DC_ECHO_TO_DRWBL_ECHO2( _ws, _ev_vdc, _ea_dc) \
-    {   Ppoint	p; \
-	p.x = (_ev_vdc)->x_min; \
-	p.y = (_ev_vdc)->y_min; \
-	WS_DC_TO_DRWBL2((_ws), &p, &(_ea_dc)->ll); \
-	p.x = (_ev_vdc)->x_max; \
-	p.y = (_ev_vdc)->y_max; \
-	WS_DC_TO_DRWBL2((_ws), &p, &(_ea_dc)->ur); \
-    }
-
-#ifdef TODO
 /*******************************************************************************
  * resolve_locator
  *
@@ -90,7 +79,9 @@ SOFTWARE.
  */
 
 static int resolve_locator(
-    Sin_input_device *dev
+    Sin_input_device *dev,
+    Pint int_data,
+    Sin_window_pt *pt
     )
 {
     Ws *ws = (Ws *)dev->client_data;
@@ -123,7 +114,7 @@ static int resolve_locator(
 
 static int resolve_stroke(
     Sin_input_device *dev,
-    int	count,
+    Pint count,
     XPoint *raw_pts
     )
 {
@@ -175,7 +166,8 @@ static int resolve_stroke(
 
 static int resolve_pick(
     Sin_input_device *dev,
-    int	echo
+    Pint echo,
+    Sin_window_pt *pt
     )
 {
     int	status = FALSE;
@@ -202,7 +194,7 @@ static int resolve_pick(
 		    malloc(pick.pick_path.depth * sizeof(Ppick_path_elem));
 		if ( path ) {
 		    if ( dev_state->scratch_path.depth > 0 )
-			free( (char *)dev_state->scratch_path.path_list );
+			free(dev_state->scratch_path.path_list);
 		    dev_state->scratch_path.path_list = path;
 		}
 	    }
@@ -234,19 +226,23 @@ static int resolve_pick(
 
     return status;
 }
-#endif
 
-#if 0
-static void
-init_sin_locator( ws, iws, dev, init_dwbl_pt )
-    Ws				*ws;
-    Ws_input_ws			*iws;
-    register Ws_inp_loc		*dev;
-    XPoint			*init_dwbl_pt; /* in drawable coords */
+/*******************************************************************************
+ * init_sin_locator
+ *
+ * DESCR:       Initialize locator device helper
+ * RETURNS:     N/A
+ */
+
+static void init_sin_locator(
+    Ws *ws,
+    Ws_input_ws	*iws,
+    Ws_inp_loc *dev,
+    XPoint *init_dwbl_pt
+    )
 {
-    Sin_dev_init_data		new_data;
-
-    register Sin_dev_init_data	*nd = &new_data;
+    Sin_dev_init_data new_data;
+    Sin_dev_init_data *nd = &new_data;
 
     nd->data.locator.init_pos.x = init_dwbl_pt->x;
     nd->data.locator.init_pos.y = init_dwbl_pt->y;
@@ -267,18 +263,25 @@ init_sin_locator( ws, iws, dev, init_dwbl_pt )
     phg_sin_init_device( iws->sin_handle, SIN_LOCATOR, dev->num, nd );
 }
 
-static void
-init_locator( ws, iws, dev, args, two_d )
-    Ws					*ws;
-    Ws_input_ws				*iws;
-    register Ws_inp_loc 		*dev;
-    register Phg_args_inp_init_dev	*args;
-    int					two_d;
-{
-    XPoint	init_dwbl_pt;
-    Pint	num_pts = 1;
+/*******************************************************************************
+ * init_locator
+ *
+ * DESCR:       Initialize locator callback
+ * RETURNS:     N/A
+ */
 
-    register Ploc3	*init = &args->data.loc.init;
+static void init_locator(
+    Ws *ws,
+    Ws_input_ws *iws,
+    Ws_inp_loc *dev,
+    Phg_args_inp_init_dev *args,
+    int two_d
+    )
+{
+    XPoint init_dwbl_pt;
+    Pint num_pts = 1;
+
+    Ploc3 *init = &args->data.loc.init;
 
     if ( two_d )
 	init->position.z = dev->loc.position.z;
@@ -302,16 +305,22 @@ init_locator( ws, iws, dev, args, two_d )
     }
 }
 
-static void
-init_sin_stroke( ws, iws, dev, init_dwbl_pts )
-    Ws				*ws;
-    Ws_input_ws			*iws;
-    register Ws_inp_stroke	*dev;
-    XPoint			*init_dwbl_pts;
-{
-    Sin_dev_init_data		new_data;
+/*******************************************************************************
+ * init_sin_stroke
+ *
+ * DESCR:       Initialize stroke helper function
+ * RETURNS:     N/A
+ */
 
-    register Sin_dev_init_data	*nd = &new_data;
+static void init_sin_stroke(
+    Ws *ws,
+    Ws_input_ws *iws,
+    Ws_inp_stroke *dev,
+    XPoint *init_dwbl_pts
+    )
+{
+    Sin_dev_init_data new_data;
+    Sin_dev_init_data *nd = &new_data;
 
     nd->data.stroke.view = dev->stroke.view_ind;
     nd->data.stroke.init_count = dev->stroke.num_points;
@@ -334,19 +343,25 @@ init_sin_stroke( ws, iws, dev, init_dwbl_pts )
     phg_sin_init_device( iws->sin_handle, SIN_STROKE, dev->num, nd );
 }
 
+/*******************************************************************************
+ * init_stroke
+ *
+ * DESCR:       Initialize stroke callback
+ * RETURNS:     N/A
+ */
 
-static void
-init_stroke( ws, iws, dev, args, two_d )
-    Ws					*ws;
-    Ws_input_ws				*iws;
-    register Ws_inp_stroke		*dev;
-    register Phg_args_inp_init_dev	*args;
-    int					two_d;
+static void init_stroke(
+    Ws *ws,
+    Ws_input_ws *iws,
+    Ws_inp_stroke *dev,
+    Phg_args_inp_init_dev *args,
+    int two_d
+    )
 {
-    XPoint	*init_dwbl_pts;
-    Ppoint3	*init_wc_pts = (Ppoint3 *)NULL;
+    XPoint *init_dwbl_pts;
+    Ppoint3 *init_wc_pts = NULL;
 
-    register Pstroke3	*init = &args->data.stk.init;
+    Pstroke3 *init = &args->data.stk.init;
 
     /* Take care of any initial points. */
     if ( init->num_points > 0 ) {
@@ -360,7 +375,9 @@ init_stroke( ws, iws, dev, args, two_d )
 	    return;
 	}
 	init_dwbl_pts = (XPoint *)(init_wc_pts + init->num_points);
-	bcopy( (char *)init->points, (char *)init_wc_pts, init->num_points * sizeof(Ppoint3) );
+	memcpy(init_wc_pts,
+               init->points,
+               init->num_points * sizeof(Ppoint3) );
 
 	if ( two_d ) {
 	    /* Fill in the Z value. */
@@ -385,7 +402,7 @@ init_stroke( ws, iws, dev, args, two_d )
     dev->record = args->data.stk.rec;
     /* Free the old points, if any. */
     if ( dev->stroke.points )
-	free( (char *)dev->stroke.points );
+	free(dev->stroke.points);
     dev->stroke.view_ind = init->view_ind;
     dev->stroke.num_points = init->num_points;
     dev->stroke.points = init_wc_pts;
@@ -404,19 +421,26 @@ init_stroke( ws, iws, dev, args, two_d )
    state, the pet 1 datarecord has no data, they are part of the policy for
    choice devices.
  */
-static char     *pet1_strings[] = {
+static char *pet1_strings[] = {
     "1", "2", "3", "4", "5",
     "6", "7", "8", "9", "10"
 };
 
-static void
-init_sin_choice( ws, iws, dev )
-    Ws				*ws;
-    Ws_input_ws			*iws;
-    register Ws_inp_choice	*dev;
+/*******************************************************************************
+ * init_sin_choice
+ *
+ * DESCR:       Initialize choice device helper
+ * RETURNS:     N/A
+ */
+
+static void init_sin_choice(
+    Ws *ws,
+    Ws_input_ws *iws,
+    Ws_inp_choice *dev
+    )
 {
-    		Sin_dev_init_data	new_data;
-    register	Sin_dev_init_data	*nd = &new_data;
+    Sin_dev_init_data new_data;
+    Sin_dev_init_data *nd = &new_data;
 
     WSINP_DC_ECHO_TO_DRWBL_ECHO2( ws, &dev->e_volume, &nd->echo_area )
     nd->client_data = (caddr_t)ws;
@@ -439,14 +463,21 @@ init_sin_choice( ws, iws, dev )
     phg_sin_init_device( iws->sin_handle, SIN_CHOICE, dev->num, nd );
 }
 
-static int
-setup_choice_init( dev, args, two_d )
-    register Ws_inp_choice		*dev;
-    register Phg_args_inp_init_dev	*args;
-    int					two_d;
+/*******************************************************************************
+ * setup_choice_init
+ *
+ * DESCR:       Initialize setup choice helper function
+ * RETURNS:     Error code or zero
+ */
+
+static int setup_choice_init(
+    Ws_inp_choice *dev,
+    Phg_args_inp_init_dev *args,
+    int two_d
+    )
 {
-    register int	i, cnt;
-    int			errnum = 0;	/* success is the default */
+    int	i, cnt;
+    int	errnum = 0;	/* success is the default */
 
     dev->pet = args->pet;
     dev->choice.status = args->data.cho.status;
@@ -467,18 +498,19 @@ setup_choice_init( dev, args, two_d )
 		= args->data.cho.rec.pets.pet_r3.num_strings;
 	    if ( cnt > 0 ) {
 		/* Get pointer array space. */
-		if ( !(strs = (char**)Malloc( cnt * sizeof(char*))) ) {
+		strs = (char**) malloc( cnt * sizeof(char*));
+		if (strs == NULL) {
 		    errnum = ERR900;
 		/* Get space for ALL the strings. */
 		} else if ( !( strs[0]
-			= (char*)Malloc(args->data.cho.string_list_size)) ) {
+			= (char*) malloc(args->data.cho.string_list_size)) ) {
 		    errnum = ERR900;
-		    free((char *)strs);
+		    free(strs);
 		} else {
 		    dev->strings_length = args->data.cho.string_list_size; 
 		    new_strs =
 			(char*)args->data.cho.rec.pets.pet_r3.strings;
-		    bcopy(new_strs, strs[0], args->data.cho.string_list_size);
+		    memcpy(strs[0], new_strs, args->data.cho.string_list_size);
 		    /* Resolve the pointers into the "strings" array. */
 		    for ( i = 1; i < cnt; i++ )
 			strs[i] = strs[i-1] + strlen(strs[i-1]) + 1;
@@ -492,34 +524,49 @@ setup_choice_init( dev, args, two_d )
     return errnum;
 }
 
-static void
-free_choice( dev )
-    register Ws_inp_choice	*dev;
+/*******************************************************************************
+ * free_choice
+ *
+ * DESCR:       Free choice helper function
+ * RETURNS:     N/A
+ */
+
+static void free_choice(
+    Ws_inp_choice *dev
+    )
 {
     switch ( dev->pet ) {
 	case 3:
 	    if ( dev->record.pets.pet_r3.num_strings > 0 ) {
-		free( (char *)dev->record.pets.pet_r3.strings[0] );
-		free( (char *)dev->record.pets.pet_r3.strings );
+		free(dev->record.pets.pet_r3.strings[0]);
+		free(dev->record.pets.pet_r3.strings);
 	    }
 	    break;
     }
 }
 
-static void
-init_choice( ws, iws, dev, args, two_d )
-    Ws				*ws;
-    Ws_input_ws			*iws;
-    Ws_inp_choice		*dev;
-    Phg_args_inp_init_dev	*args;
-    int				two_d;
+/*******************************************************************************
+ * init_choice
+ *
+ * DESCR:       Initialize choice callback
+ * RETURNS:     N/A
+ */
+
+static void init_choice(
+    Ws *ws,
+    Ws_input_ws *iws,
+    Ws_inp_choice *dev,
+    Phg_args_inp_init_dev *args,
+    int two_d
+    )
 {
-    Ws_inp_choice	new_dev;
-    int			errnum;
+    Ws_inp_choice new_dev;
+    int errnum;
 
     /* Initialize and operate on a temporary copy of the state. */
     new_dev = *dev;
-    if ( errnum = setup_choice_init( &new_dev, args, two_d ) ) {
+    errnum = setup_choice_init( &new_dev, args, two_d );
+    if ( errnum ) {
 	ERR_BUF( ws->erh, errnum);
     } else {
 	init_sin_choice( ws, iws, &new_dev );
@@ -530,14 +577,21 @@ init_choice( ws, iws, dev, args, two_d )
     }
 }
 
-static void
-init_sin_valuator( ws, iws, dev )
-    Ws				*ws;
-    Ws_input_ws			*iws;
-    register Ws_inp_val		*dev;
+/*******************************************************************************
+ * init_sin_valuator
+ *
+ * DESCR:       Initialize valuator device helper
+ * RETURNS:     N/A
+ */
+
+static void init_sin_valuator(
+    Ws *ws,
+    Ws_input_ws *iws,
+    Ws_inp_val *dev
+    )
 {
-    		Sin_dev_init_data	new_data;
-    register	Sin_dev_init_data	*nd = &new_data;
+    Sin_dev_init_data new_data;
+    Sin_dev_init_data *nd = &new_data;
 
     WSINP_DC_ECHO_TO_DRWBL_ECHO2( ws, &dev->e_volume, &nd->echo_area )
     nd->client_data = (caddr_t)ws;
@@ -563,15 +617,22 @@ init_sin_valuator( ws, iws, dev )
     phg_sin_init_device( iws->sin_handle, SIN_VALUATOR, dev->num, nd);
 }
 
-static int
-setup_val_init( dev, args, two_d )
-    register Ws_inp_val			*dev;
-    register Phg_args_inp_init_dev	*args;
-    int					two_d;
+/*******************************************************************************
+ * setup_val_init
+ *
+ * DESCR:       Initialize valuator helper function
+ * RETURNS:     Error code or zero
+ */
+
+static int setup_val_init(
+    Ws_inp_val *dev,
+    Phg_args_inp_init_dev *args,
+    int two_d
+    )
 {
-    int		size;
-    int		errnum = 0;	/* success is the default */
-    char	*strings;
+    int size;
+    int errnum = 0;            /* success is the default */
+    char *strings;
 
     /* Update workstation state. */
     dev->pet = args->pet;
@@ -589,7 +650,8 @@ setup_val_init( dev, args, two_d )
 	case -1:
 	    size = args->data.val.counts[0] + args->data.val.counts[1] +
 		args->data.val.counts[2] + args->data.val.counts[3];
-	    if ( !(strings = (char *)Malloc( size ) ) ) {
+	    strings = (char *) malloc( size );
+	    if (strings == NULL) {
 		errnum = ERR900;
 	    } else {
 		dev->string_buf = strings;
@@ -624,32 +686,47 @@ setup_val_init( dev, args, two_d )
     return errnum;
 }
 
-static void
-free_valuator( dev )
-    register Ws_inp_val		*dev;
+/*******************************************************************************
+ * free_valuator
+ *
+ * DESCR:       Free valuator device helper
+ * RETURNS:     N/A
+ */
+
+static void free_valuator(
+    Ws_inp_val *dev
+    )
 {
     switch ( dev->pet ) {
 	case -1:
 	    if ( dev->string_buf )
-		free( (char *)dev->string_buf );
+		free(dev->string_buf);
 	    break;
     }
 }
 
-static void
-init_valuator( ws, iws, dev, args, two_d )
-    Ws					*ws;
-    Ws_input_ws				*iws;
-    register Ws_inp_val			*dev;
-    register Phg_args_inp_init_dev	*args;
-    int					two_d;
+/*******************************************************************************
+ * init_valuator
+ *
+ * DESCR:       Initialize valuator device callback
+ * RETURNS:     N/A
+ */
+
+static void init_valuator(
+    Ws *ws,
+    Ws_input_ws *iws,
+    Ws_inp_val *dev,
+    Phg_args_inp_init_dev *args,
+    int two_d
+    )
 {
-    int		errnum;
-    Ws_inp_val	new_dev;
+    int errnum;
+    Ws_inp_val new_dev;
 
     /* Initialize and operate on a temporary copy of the state. */
     new_dev = *dev;
-    if ( errnum = setup_val_init( &new_dev, args, two_d ) ) {
+    errnum = setup_val_init( &new_dev, args, two_d );
+    if ( errnum ) {
 	ERR_BUF( ws->erh, errnum);
     } else {
 	init_sin_valuator( ws, iws, &new_dev );
@@ -660,14 +737,21 @@ init_valuator( ws, iws, dev, args, two_d )
     }
 }
 
-static void
-init_sin_pick( ws, iws, dev )
-    Ws			*ws;
-    Ws_input_ws		*iws;
-    Ws_inp_pick		*dev;
+/*******************************************************************************
+ * init_sin_pick
+ *
+ * DESCR:       Initialize pick device helper function
+ * RETURNS:     N/A
+ */
+
+static void init_sin_pick(
+    Ws *ws,
+    Ws_input_ws *iws,
+    Ws_inp_pick *dev
+    )
 {
-    Sin_dev_init_data		new_data;
-    register Sin_dev_init_data	*nd = &new_data;
+    Sin_dev_init_data new_data;
+    Sin_dev_init_data *nd = &new_data;
 
     WSINP_DC_ECHO_TO_DRWBL_ECHO2( ws, &dev->e_volume, &nd->echo_area )
     nd->client_data = (caddr_t)ws;
@@ -678,17 +762,24 @@ init_sin_pick( ws, iws, dev )
     phg_sin_init_device( iws->sin_handle, SIN_PICK, dev->num, nd );
 }
 
-static void
-init_pick( ws, iws, dev, args, two_d )
-    Ws				*ws;
-    Ws_input_ws			*iws;
-    Ws_inp_pick			*dev;
-    Phg_args_inp_init_dev	*args;
-    int				two_d;
+/*******************************************************************************
+ * init_pick
+ *
+ * DESCR:       Initialize pick device callback
+ * RETURNS:     N/A
+ */
+
+static void init_pick(
+    Ws *ws,
+    Ws_input_ws *iws,
+    Ws_inp_pick *dev,
+    Phg_args_inp_init_dev *args,
+    int two_d
+    )
 {
-    Ppick		*init = &args->data.pik.init;
-    Ppick_path_elem	*init_path;
-    unsigned		size;
+    Ppick *init = &args->data.pik.init;
+    Ppick_path_elem *init_path;
+    unsigned size;
 
     /* Have the initial path checked if the ws wants it to be. */
     if ( ws->valid_pick_path && !(*ws->valid_pick_path)( ws, init ) ) {
@@ -703,8 +794,9 @@ init_pick( ws, iws, dev, args, two_d )
 	    ERR_BUF(ws->erh, ERR900);
 	    return;
 	} else
-	    bcopy( (char*)init->pick_path.path_list, (char*)init_path,
-		(int)size );
+            memcpy(init_path,
+	           init->pick_path.path_list,
+		   (int) size);
     } else
 	init_path = NULL;
 
@@ -713,7 +805,7 @@ init_pick( ws, iws, dev, args, two_d )
      * when there is an error.
      */
     if ( dev->pick.status == PIN_STATUS_OK && dev->pick.pick_path.depth > 0 )
-	free( (char *)dev->pick.pick_path.path_list );
+	free(dev->pick.pick_path.path_list);
 
     dev->pet = args->pet;
     dev->record = args->data.pik.rec;
@@ -728,14 +820,21 @@ init_pick( ws, iws, dev, args, two_d )
     init_sin_pick( ws, iws, dev );
 }
 
-static void
-init_sin_string( ws, iws, dev )
-    Ws			*ws;
-    Ws_input_ws		*iws;
-    Ws_inp_string	*dev;
+/*******************************************************************************
+ * init_sin_string
+ *
+ * DESCR:       Initialize string device helper function
+ * RETURNS:     N/A
+ */
+
+static void init_sin_string(
+    Ws *ws,
+    Ws_input_ws *iws,
+    Ws_inp_string *dev
+    )
 {
-    		Sin_dev_init_data	new_data;
-    register	Sin_dev_init_data	*nd = &new_data;
+    Sin_dev_init_data new_data;
+    Sin_dev_init_data *nd = &new_data;
 
     WSINP_DC_ECHO_TO_DRWBL_ECHO2( ws, &dev->e_volume, &nd->echo_area )
     nd->client_data = (caddr_t)ws;
@@ -745,29 +844,38 @@ init_sin_string( ws, iws, dev )
     phg_sin_init_device( iws->sin_handle, SIN_STRING, dev->num, nd);
 }
 
-static void
-init_string( ws, iws, dev, args, two_d )
-    Ws					*ws;
-    Ws_input_ws				*iws;
-    register Ws_inp_string		*dev;
-    register Phg_args_inp_init_dev	*args;
-    int					two_d;
+/*******************************************************************************
+ * init_string
+ *
+ * DESCR:       Initialize string device callback
+ * RETURNS:     N/A
+ */
+
+static void init_string(
+    Ws *ws,
+    Ws_input_ws *iws,
+    Ws_inp_string *dev,
+    Phg_args_inp_init_dev *args,
+    int two_d
+    )
 {
-    register Phg_string		*init = &args->data.str.init;
-    char			*init_str;
+    Phg_string *init = &args->data.str.init;
+    char *init_str;
 
     /* Copy initial string to state list. */
     /* TODO: detect allocation failure and free this at ws close. */
     if ( init->length > 0 ) {
-	init_str = (char *)Malloc( init->length );
-	strcpy( init_str, init->string );
+	init_str = (char *) malloc( init->length );
+        if (init_str != NULL) {
+	   strcpy( init_str, init->string );
+        }
     } else
 	init_str = NULL;
 
     dev->pet = args->pet;
     dev->record = args->data.str.rec;
     if ( dev->length > 0 ) {
-	free( (char *)dev->string );
+	free(dev->string);
 	dev->string = NULL;
     }
     dev->length = init->length;
@@ -780,72 +888,105 @@ init_string( ws, iws, dev, args, two_d )
     init_sin_string( ws, iws, dev);
 }
 
-void
-phg_ws_inp_init_device( ws, args )
-    Ws				*ws;
-    Phg_args_inp_init_dev	*args;
+/*******************************************************************************
+ * phg_ws_inp_init_device
+ *
+ * DESCR:       Initialize workstation input device
+ * RETURNS:     N/A
+ */
+
+void phg_ws_inp_init_device(
+    Ws *ws,
+    Phg_args_inp_init_dev *args
+    )
 {
-    Ws_input_ws			*iws = (Ws_input_ws*)&ws->in_ws;
-    Ws_inp_device_handle	dev;
-    Pop_mode			mode;
-    int				two_d;
-    void			(*init_dev)();
+    Ws_input_ws *iws = (Ws_input_ws*)&ws->in_ws;
+    Ws_inp_device_handle dev;
+    Pop_mode mode;
+    int two_d;
 
+#ifdef TODO
     phg_wsx_update_ws_rect( ws );
+#endif
     switch ( args->class ) {
-	case PHG_ARGS_INP_LOC3:
-	case PHG_ARGS_INP_LOC:
-	    dev.loc = &iws->devs.locator[args->dev-1];
-	    mode = dev.loc->mode;
-	    init_dev = init_locator;
-	    two_d = args->class == PHG_ARGS_INP_LOC ? 1 : 0;
+        case PHG_ARGS_INP_LOC3:
+        case PHG_ARGS_INP_LOC:
+            dev.loc = &iws->devs.locator[args->dev-1];
+            mode = dev.loc->mode;
+            if (mode == POP_REQ) {
+                two_d = args->class == PHG_ARGS_INP_LOC ? 1 : 0;
+                init_locator( ws, iws, dev.loc, args, two_d );
+            }
+            else {
+                ERR_BUF( ws->erh, ERR251 );
+            }
+            break;
+        case PHG_ARGS_INP_STK3:
+        case PHG_ARGS_INP_STK:
+            dev.stk = &iws->devs.stroke[args->dev-1];
+            mode = dev.stk->mode;
+            if (mode == POP_REQ) {
+                two_d = args->class == PHG_ARGS_INP_STK ? 1 : 0;
+                init_stroke( ws, iws, dev.stk, args, two_d );
+            }
+            else {
+                ERR_BUF( ws->erh, ERR251 );
+            }
 	    break;
-	case PHG_ARGS_INP_STK3:
-	case PHG_ARGS_INP_STK:
-	    dev.stk = &iws->devs.stroke[args->dev-1];
-	    mode = dev.stk->mode;
-	    init_dev = init_stroke;
-	    two_d = args->class == PHG_ARGS_INP_STK ? 1 : 0;
-	    break;
-	case PHG_ARGS_INP_CHC3:
-	case PHG_ARGS_INP_CHC:
-	    dev.cho = &iws->devs.choice[args->dev-1];
-	    mode = dev.cho->mode;
-	    init_dev = init_choice;
-	    two_d = args->class == PHG_ARGS_INP_CHC ? 1 : 0;
-	    break;
-	case PHG_ARGS_INP_VAL3:
-	case PHG_ARGS_INP_VAL:
-	    dev.val = &iws->devs.valuator[args->dev-1];
-	    mode = dev.val->mode;
-	    init_dev = init_valuator;
-	    two_d = args->class == PHG_ARGS_INP_VAL ? 1 : 0;
-	    break;
-	case PHG_ARGS_INP_PIK3:
-	case PHG_ARGS_INP_PIK:
-	    dev.pik = &iws->devs.pick[args->dev-1];
-	    mode = dev.pik->mode;
-	    init_dev = init_pick;
-	    two_d = args->class == PHG_ARGS_INP_PIK ? 1 : 0;
-	    break;
-	case PHG_ARGS_INP_STR3:
-	case PHG_ARGS_INP_STR:
-	    dev.str = &iws->devs.string[args->dev-1];
-	    mode = dev.str->mode;
-	    init_dev = init_string;
-	    two_d = args->class == PHG_ARGS_INP_STR ? 1 : 0;
-	    break;
+        case PHG_ARGS_INP_CHC3:
+        case PHG_ARGS_INP_CHC:
+            dev.cho = &iws->devs.choice[args->dev-1];
+            mode = dev.cho->mode;
+            if (mode == POP_REQ) {
+                two_d = args->class == PHG_ARGS_INP_CHC ? 1 : 0;
+                init_choice( ws, iws, dev.cho, args, two_d );
+            }
+            else {
+                ERR_BUF( ws->erh, ERR251 );
+            }
+            break;
+        case PHG_ARGS_INP_VAL3:
+        case PHG_ARGS_INP_VAL:
+            dev.val = &iws->devs.valuator[args->dev-1];
+            mode = dev.val->mode;
+            if (mode == POP_REQ) {
+                two_d = args->class == PHG_ARGS_INP_VAL ? 1 : 0;
+                init_valuator( ws, iws, dev.val, args, two_d );
+            }
+            else {
+                ERR_BUF( ws->erh, ERR251 );
+            }
+            break;
+        case PHG_ARGS_INP_PIK3:
+        case PHG_ARGS_INP_PIK:
+            dev.pik = &iws->devs.pick[args->dev-1];
+            mode = dev.pik->mode;
+            if (mode == POP_REQ) {
+                two_d = args->class == PHG_ARGS_INP_PIK ? 1 : 0;
+                init_pick( ws, iws, dev.pik, args, two_d );
+            }
+            else {
+                ERR_BUF( ws->erh, ERR251 );
+            }
+            break;
+        case PHG_ARGS_INP_STR3:
+        case PHG_ARGS_INP_STR:
+            dev.str = &iws->devs.string[args->dev-1];
+            mode = dev.str->mode;
+            if (mode == POP_REQ) {
+                two_d = args->class == PHG_ARGS_INP_STR ? 1 : 0;
+                init_string( ws, iws, dev.str, args, two_d );
+            }
+            else {
+                ERR_BUF( ws->erh, ERR251 );
+            }
+            break;
     }
 
-    if ( mode == POP_REQ )
-        /* why dev.pik? It doesn't, matter they are all pointers. */
-	(*init_dev)( ws, iws, dev.pik, args, two_d );
-    else {
-	ERR_BUF( ws->erh, ERR251 );
-    }
     XFlush( ws->display );
 }
 
+#if 0
 static void
 init_all_devices( ws, iws, idt )
     Ws				*ws;
@@ -1165,7 +1306,7 @@ phg_ws_input_close( ws )
 	if (stk) {
 	    for ( i = 0; i < iws->num_devs.stroke; i++, stk++ ) {
 		if ( stk->stroke.points )
-		    free( (char *)stk->stroke.points );
+		    free(stk->stroke.points);
 	    }
 	}
     }
@@ -1181,7 +1322,7 @@ phg_ws_input_close( ws )
 		    (void)PEXFreeNameSet( ws->display, pick->filter.excl );
 		if ( pick->pick.status == PIN_STATUS_OK
 			&& pick->pick.pick_path.depth > 0 )
-		    free( (char *)pick->pick.pick_path.path_list );
+		    free(pick->pick.pick_path.path_list);
 	    }
 	}
     }
@@ -1191,7 +1332,7 @@ phg_ws_input_close( ws )
  
 	if (str) {
 	    for ( i = 0; i < iws->num_devs.string; i++, str++)
-		free( (char *)str->string );
+		free(str->string);
 	}
     }
 
@@ -1216,17 +1357,17 @@ phg_ws_input_close( ws )
     if ( iws->sin_handle )
 	phg_sin_close( iws->sin_handle );
     if ( iws->num_devs.loc > 0 )
-	free((char *)iws->devs.locator);
+	free(iws->devs.locator);
     if ( iws->num_devs.stroke > 0 )
-	free((char *)iws->devs.stroke);
+	free(iws->devs.stroke);
     if ( iws->num_devs.pick > 0 )
-	free((char *)iws->devs.pick);
+	free(iws->devs.pick);
     if ( iws->num_devs.val > 0 )
-	free((char *)iws->devs.valuator);
+	free(iws->devs.valuator);
     if ( iws->num_devs.choice > 0 )
-	free((char *)iws->devs.choice);
+	free(iws->devs.choice);
     if ( iws->num_devs.string > 0 )
-	free((char *)iws->devs.string);
+	free(iws->devs.string);
     bzero( (char *)iws, sizeof(iws) );
 }
 

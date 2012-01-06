@@ -292,9 +292,17 @@ typedef struct _Ws {
                    Ws_point *dc_pt,
                    Ppick *pick
                    );
-
-
-
+   int          (*map_initial_points)(
+                   struct _Ws *ws,
+                   Pint view_index,
+                   Pint *num_pts,
+                   Ppoint3 *wc_pts,
+                   XPoint *dwbl_pts
+                   );
+   int          (*valid_pick_path)(
+                   struct _Ws *ws,
+                   Ppick *pick
+                   );
 } Ws;
 
 #define WSB_NONE_POSTED(posted_ptr) \
@@ -333,6 +341,10 @@ typedef struct _Ws {
 #define WS_DRWBL_TO_DC2( _wsh, _dwp, _dcp ) \
     ((_dcp)->x = (_dwp)->x, \
      (_dcp)->y = (_wsh)->ws_rect.height - (_dwp)->y)
+
+#define WS_DC_TO_DRWBL2( _wsh, _dcp, _dwp ) \
+    ((_dwp)->x = (_dcp)->x, \
+     (_dwp)->y = (_wsh)->ws_rect.height - (_dcp)->y)
 
 Ws* phg_wsb_open_ws(
     Phg_args_open_ws *args,

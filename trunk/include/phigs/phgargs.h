@@ -64,6 +64,21 @@ typedef enum {
    PHG_ARGS_HIER_DESCENDANTS
 } Phg_args_hierarchy_dir;
 
+typedef enum {
+   PHG_ARGS_INP_LOC,
+   PHG_ARGS_INP_LOC3,
+   PHG_ARGS_INP_PIK,
+   PHG_ARGS_INP_PIK3,
+   PHG_ARGS_INP_STK,
+   PHG_ARGS_INP_STK3,
+   PHG_ARGS_INP_VAL,
+   PHG_ARGS_INP_VAL3,
+   PHG_ARGS_INP_CHC,
+   PHG_ARGS_INP_CHC3,
+   PHG_ARGS_INP_STR,
+   PHG_ARGS_INP_STR3
+} Phg_args_idev_class;
+
 typedef struct {
    Pint       el_size;
    Pelem_type el_type;
@@ -112,6 +127,51 @@ typedef union {
     } label_range;
     Pint        struct_id;
 } Phg_args_del_el_data;
+
+typedef union {
+   struct {
+      Ploc3         init;
+      Ploc_data3    rec;
+   } loc;
+
+   struct {
+      Ppick         init;
+      Ppick_data    rec;
+      Ppath_order   porder;
+   } pik;
+
+   struct {
+      Pstroke3      init;
+      Pstroke_data3 rec;
+   } stk;
+
+   struct {
+      Pfloat        init;
+      Pint          counts[4];
+      Pval_data     rec;
+   } val;
+
+   struct {
+      Pin_status    status;
+      Pint          init;
+      Pint          string_list_size;
+      Pchoice_data  rec;
+   } cho;
+
+   struct {
+      Phg_string    init;
+      Pstring_data  rec;
+   } str;
+} Phg_args_init_data;
+
+typedef struct {
+   Pint                wsid;
+   Phg_args_idev_class class;
+   Pint                dev;
+   Pint                pet;
+   Plimit3             echo_volume;
+   Phg_args_init_data  data;
+} Phg_args_inp_init_dev;
 
 #endif
 

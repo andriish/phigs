@@ -84,6 +84,7 @@ typedef struct {
    Pchoice       choice;
    Pint          pet;
    Plimit3       e_volume;
+   Pint          strings_length;
    Pchoice_data3 record;
 } Ws_inp_choice;
 
@@ -91,7 +92,7 @@ typedef struct {
    Pint          num;
    Pop_mode      mode;
    Pecho_switch  esw;
-   Pint          lebgth;
+   Pint          length;
    char          *string;
    Pint          pet;
    Plimit3       e_volume;
@@ -105,7 +106,7 @@ typedef union {
    Ws_inp_val    *val;
    Ws_inp_choice *cho;
    Ws_inp_string *str;
-} Ws_inp_handle;
+} Ws_inp_device_handle;
 
 typedef struct _Ws_input_ws {
    Pnum_in          num_devs;
@@ -135,6 +136,30 @@ typedef struct _Ws_input_ws {
 #define MAP_MODE( _m) \
     ((_m) == POP_EVENT ? SIN_EVENT : \
         (_m) == POP_SAMPLE ? SIN_SAMPLE : SIN_REQUEST)
+
+#define WSINP_DC_ECHO_TO_DRWBL_ECHO2( _ws, _ev_vdc, _ea_dc) \
+    {   Ppoint  p; \
+        p.x = (_ev_vdc)->x_min; \
+        p.y = (_ev_vdc)->y_min; \
+        WS_DC_TO_DRWBL2((_ws), &p, &(_ea_dc)->ll); \
+        p.x = (_ev_vdc)->x_max; \
+        p.y = (_ev_vdc)->y_max; \
+        WS_DC_TO_DRWBL2((_ws), &p, &(_ea_dc)->ur); \
+    }
+
+struct _Ws;
+
+/*******************************************************************************
+ * phg_ws_inp_init_device
+ *
+ * DESCR:       Initialize workstation input device
+ * RETURNS:     N/A
+ */
+
+void phg_ws_inp_init_device(
+    struct _Ws *ws,
+    Phg_args_inp_init_dev *args
+    );
 
 #endif /* _ws_inp_h */
 
