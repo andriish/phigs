@@ -986,20 +986,26 @@ void phg_ws_inp_init_device(
     XFlush( ws->display );
 }
 
-#if 0
-static void
-init_all_devices( ws, iws, idt )
-    Ws				*ws;
-    register Ws_input_ws	*iws;
-    Wst_input_wsdt		*idt;
-{
-    Pint		num_pts;
+/*******************************************************************************
+ * init_all_devices
+ *
+ * DESCR:       Initialize all workstation input device helper function
+ * RETURNS:     N/A
+ */
 
-    register int	i;
-    
+static void init_all_devices(
+    Ws *ws,
+    Ws_input_ws *iws,
+    Wst_input_wsdt *idt
+    )
+{
+    Pint num_pts;
+    Ws_inp_loc *loc_dev;
+    XPoint init_dwbl_pt;
+    int i;
+
     for ( i = 0; i < iws->num_devs.loc; i++ ) {
-	Ws_inp_loc	*loc_dev = &iws->devs.locator[i];
-	XPoint		init_dwbl_pt;
+	loc_dev = &iws->devs.locator[i];
 
 	num_pts = 1;
 	(void)(*ws->map_initial_points)( ws, loc_dev->loc.view_ind,
@@ -1028,41 +1034,58 @@ init_all_devices( ws, iws, idt )
     }
 }
 
-#define WSINP_INIT_COMMON_FIELDS( stp, def) \
-    stp->mode = POP_REQ; \
-    stp->esw = PSWITCH_ECHO; \
-    stp->pet = 1; \
-    stp->e_volume = def->e_volume; \
-    stp->record = def->record;
+/*******************************************************************************
+ * init_input_state
+ *
+ * DESCR:       Initialize input state helper function
+ * RETURNS:     TRUE or FALSE
+ */
 
-static int
-init_input_state( ws, idt )
-    Ws				*ws;
-    register Wst_input_wsdt	*idt;
+static int init_input_state(
+    Ws *ws,
+    Wst_input_wsdt *idt
+    )
 {
-    register int		i;
-    register Ws_input_ws	*iws = &ws->in_ws;
-    ALLOC_DECLARE(20);
+    int i;
+    Ws_input_ws *iws = &ws->in_ws;
 
     iws->num_devs = idt->num_devs;
-    if (!ALLOCATED( iws->devs.locator = (Ws_inp_loc*)
-	calloc( (unsigned)iws->num_devs.loc, sizeof(Ws_inp_loc))))
+
+    iws->devs.locator = (Ws_inp_loc*)
+	calloc( (unsigned)iws->num_devs.loc, sizeof(Ws_inp_loc));
+    if (iws->devs.locator == NULL) {
 	goto no_mem;
-    if (!ALLOCATED( iws->devs.stroke = (Ws_inp_stroke*)
-	calloc( (unsigned)iws->num_devs.stroke, sizeof(Ws_inp_stroke))))
+    }
+
+    iws->devs.stroke = (Ws_inp_stroke*)
+	calloc( (unsigned)iws->num_devs.stroke, sizeof(Ws_inp_stroke));
+    if (iws->devs.stroke == NULL) {
 	goto no_mem;
-    if (!ALLOCATED( iws->devs.pick = (Ws_inp_pick*)
-	calloc( (unsigned)iws->num_devs.pick, sizeof(Ws_inp_pick))))
+    }
+
+    iws->devs.pick = (Ws_inp_pick*)
+	calloc( (unsigned)iws->num_devs.pick, sizeof(Ws_inp_pick));
+    if (iws->devs.pick == NULL) {
 	goto no_mem;
-    if (!ALLOCATED( iws->devs.valuator = (Ws_inp_val*)
-	calloc( (unsigned)iws->num_devs.val, sizeof(Ws_inp_val))))
+    }
+
+    iws->devs.valuator = (Ws_inp_val*)
+	calloc( (unsigned)iws->num_devs.val, sizeof(Ws_inp_val));
+    if (iws->devs.valuator == NULL) {
 	goto no_mem;
-    if (!ALLOCATED( iws->devs.choice = (Ws_inp_choice*)
-	calloc( (unsigned)iws->num_devs.choice, sizeof(Ws_inp_choice))))
+    }
+
+    iws->devs.choice = (Ws_inp_choice*)
+	calloc( (unsigned)iws->num_devs.choice, sizeof(Ws_inp_choice));
+    if (iws->devs.choice == NULL) {
 	goto no_mem;
-    if (!ALLOCATED( iws->devs.string = (Ws_inp_string*)
-	calloc( (unsigned)iws->num_devs.string, sizeof(Ws_inp_string))))
+    }
+
+    iws->devs.string = (Ws_inp_string*)
+	calloc( (unsigned)iws->num_devs.string, sizeof(Ws_inp_string));
+    if (iws->devs.string == NULL) {
 	goto no_mem;
+    }
 
     {
 	Ws_inp_loc	*loc = iws->devs.locator;
@@ -1092,6 +1115,7 @@ init_input_state( ws, idt )
 	}
     }
 
+#ifdef TODO
     {
 	Ws_inp_pick	*pick = iws->devs.pick;
 	Wst_defpick	*def_pick = idt->picks;
@@ -1120,6 +1144,7 @@ init_input_state( ws, idt )
 		pick->filter.excl = XAllocID(ws->display) );
 	}
     }
+#endif
 
     {
 	Ws_inp_val	*val = iws->devs.valuator;
@@ -1154,27 +1179,41 @@ init_input_state( ws, idt )
 	     * minimum size of 1, and changes when the device is initialized.
 	     */
 	    str->length = 1;
-	    if (!ALLOCATED( str->string =
-		(char*)Malloc(str->length*sizeof(char))))
+	    str->string = (char*) malloc(str->length*sizeof(char));
+            if (str->string == NULL) {
 		goto no_mem;
+            }
 	    *str->string = '\0';
 	}
     }
 
-    return 1;
+    return TRUE;
 
 no_mem:	/* ran out of memory somewhere! */
-    ALLOC_FREE;
     ERR_BUF( ws->erh, ERR900);
-    iws->devs.locator = (Ws_inp_loc*)	NULL;
-    iws->devs.stroke = (Ws_inp_stroke*)	NULL;
-    iws->devs.pick = (Ws_inp_pick*)	NULL;
-    iws->devs.valuator = (Ws_inp_val*)	NULL;
-    iws->devs.choice = (Ws_inp_choice*)	NULL;
-    iws->devs.string = (Ws_inp_string*)	NULL;
-    return 0;
+    if (iws->devs.locator != NULL) {
+        free(iws->devs.locator);
+    }
+    if (iws->devs.stroke != NULL) {
+        free(iws->devs.stroke);
+    }
+    if (iws->devs.pick != NULL) {
+        free(iws->devs.pick);
+    }
+    if (iws->devs.valuator != NULL) {
+        free(iws->devs.valuator);
+    }
+    if (iws->devs.choice != NULL) {
+        free(iws->devs.choice);
+    }
+    if (iws->devs.string != NULL) {
+        free(iws->devs.string);
+    }
+
+    return FALSE;
 }
 
+#if 0
 static void
 send_request( ws, event, brake )
     Ws			*ws;
