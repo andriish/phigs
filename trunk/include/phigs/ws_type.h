@@ -125,6 +125,7 @@ typedef struct {
    Pint            num_pets;
    Pint            pets[WST_MAX_NUM_PETS];
    Plimit3         e_volume;
+   Pstring_data3   record;
    Wst_string_type type;
 } Wst_defstring;
 

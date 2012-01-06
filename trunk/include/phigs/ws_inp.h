@@ -147,6 +147,13 @@ typedef struct _Ws_input_ws {
         WS_DC_TO_DRWBL2((_ws), &p, &(_ea_dc)->ur); \
     }
 
+#define WSINP_INIT_COMMON_FIELDS( stp, def) \
+    stp->mode = POP_REQ; \
+    stp->esw = PSWITCH_ECHO; \
+    stp->pet = 1; \
+    stp->e_volume = def->e_volume; \
+    stp->record = def->record;
+
 struct _Ws;
 
 /*******************************************************************************
