@@ -140,7 +140,7 @@
 void phg_sin_ws_window_event_proc(
     Display *display,
     Window window,
-    Sin_input_ws *ws,
+    caddr_t handle,
     XEvent *event
     );
 
@@ -355,6 +355,61 @@ void phg_sin_dev_boot_choice(
 
 void phg_sin_dev_boot_string( 
     Sin_input_device *dev
+    );
+
+/*******************************************************************************
+ * phg_sin_dev_create_devices
+ *
+ * DESCR:       Create devices on workspace
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sin_dev_create_devices(
+    Sin_input_ws *ws
+    );
+
+/*******************************************************************************
+ * phg_sin_dev_start
+ *
+ * DESCR:       Start devices on workspace
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sin_dev_start(
+    Sin_input_ws *ws
+    );
+
+/*******************************************************************************
+ * phg_sin_dev_stop
+ *
+ * DESCR:       Stop devices on workspace
+ * RETURNS:     N/A
+ */
+
+void phg_sin_dev_stop(
+    Sin_input_ws *ws
+    );
+
+/*******************************************************************************
+ * phg_sin_dev_destroy_devices
+ *
+ * DESCR:       Destroy devices on workspace
+ * RETURNS:     N/A
+ */
+
+void phg_sin_dev_destroy_devices(
+    Sin_input_ws *ws
+    );
+
+/*******************************************************************************
+ * phg_sin_dev_init_devices
+ *  
+ * DESCR:       Initialize devices on workspace
+ * RETURNS:     N/A
+ */ 
+
+void phg_sin_dev_init_devices(
+    Sin_input_ws *ws
     );
 
 #endif /* _sinP_h */

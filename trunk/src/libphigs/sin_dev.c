@@ -74,6 +74,7 @@ SOFTWARE.
 #include <phigs/sin.h>
 #include <phigs/private/sinP.h>
 #include <phigs/private/cvsP.h>
+#include <phigs/private/evP.h>
 
 #define NUM_COMMON_EVENTS (sizeof(common_events) / sizeof(common_events[0]))
 
@@ -96,6 +97,13 @@ static int common_events[] = {
     MotionNotify
 };
 
+/*******************************************************************************
+ * remove_ops
+ *
+ * DESCR:       Remove device operators helper function
+ * RETURNS:     N/A
+ */
+
 static void remove_ops(
     Sin_input_device *dev
     )
@@ -111,6 +119,13 @@ static void remove_ops(
     dev->dev_ops.repaint = NULL;
     dev->dev_ops.destroy = NULL;
 }
+
+/*******************************************************************************
+ * phg_sin_dev_create_devices
+ *
+ * DESCR:       Create devices on workspace
+ * RETURNS:     TRUE or FALSE
+ */
 
 int phg_sin_dev_create_devices(
     Sin_input_ws *ws
@@ -189,6 +204,13 @@ int phg_sin_dev_create_devices(
     return TRUE;
 }
 
+/*******************************************************************************
+ * phg_sin_dev_start
+ *
+ * DESCR:       Start devices on workspace
+ * RETURNS:     TRUE or FALSE
+ */
+
 int phg_sin_dev_start(
     Sin_input_ws *ws
     )
@@ -197,12 +219,19 @@ int phg_sin_dev_start(
 
     /* Start up input processing for the input window. */
     for ( i = 0; i < NUM_COMMON_EVENTS; i++ ) {
-	(void)phg_ntfy_register_event( ws->display, ws->input_window,
+	(void)phg_ev_register( PHG_EVT_TABLE, ws->display, ws->input_window,
 	    common_events[i], (caddr_t)ws, phg_sin_ws_window_event_proc );
     }
     XSelectInput( ws->display, ws->input_window, common_mask );
     return TRUE;
 }
+
+/*******************************************************************************
+ * phg_sin_dev_stop
+ *
+ * DESCR:       Stop devices on workspace
+ * RETURNS:     N/A
+ */
 
 void phg_sin_dev_stop(
     Sin_input_ws *ws
@@ -211,10 +240,17 @@ void phg_sin_dev_stop(
     int	i;
 
     for ( i = 0; i < NUM_COMMON_EVENTS; i++ ) {
-	phg_ntfy_unregister_event( ws->display, ws->input_window,
+	phg_ev_unregister( PHG_EVT_TABLE, ws->display, ws->input_window,
 	    common_events[i], (caddr_t)ws );
     }
 }
+
+/*******************************************************************************
+ * phg_sin_dev_destroy_devices
+ *
+ * DESCR:       Destroy devices on workspace
+ * RETURNS:     N/A
+ */
 
 void phg_sin_dev_destroy_devices(
     Sin_input_ws *ws
@@ -266,7 +302,12 @@ void phg_sin_dev_destroy_devices(
     }
 }
 
-/* Initialization Routines */
+/*******************************************************************************
+ * phg_sin_dev_init_devices
+ *
+ * DESCR:       Initialize devices on workspace
+ * RETURNS:     N/A
+ */
 
 void phg_sin_dev_init_devices(
     Sin_input_ws *ws
