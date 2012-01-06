@@ -302,7 +302,7 @@ static int css_get_dlist(Css_handle cssh,
     Css_set_element	*exec, *ref;
     Css_set_ptr		refer_to_me;
     caddr_t		data;
-    register char	ok_to_delete = TRUE;
+    char		ok_to_delete = TRUE;
 
     exec = parent->i_refer_to->elements->next;
     while (exec) {

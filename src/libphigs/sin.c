@@ -241,15 +241,21 @@ no_mem:
     return NULL;
 }
 
-#if 0
-void
-phg_sin_init_device( iws, class, dev_num, new_data )
-    Sin_input_ws	*iws;
-    Sin_input_class	class;
-    int			dev_num;
-    Sin_dev_init_data	*new_data;
+/*******************************************************************************
+ * phg_sin_init_device
+ *
+ * DESCR:       Initialize device for input workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_init_device(
+    Sin_input_ws *iws,
+    Sin_input_class class,
+    Pint dev_num,
+    Sin_dev_init_data *new_data
+    )
 {
-    Sin_input_device	*dev = SIN_DEV(iws, class, dev_num);
+    Sin_input_device *dev = SIN_DEV(iws, class, dev_num);
 
     if ( !dev->flags.exists )
 	return;
@@ -276,19 +282,19 @@ phg_sin_init_device( iws, class, dev_num, new_data )
 	    Ppoint3		*wc_pts;
 	    if ( dev->data.stroke.buf_size < new_data->data.stroke.buf_size) {
 		if ( dev->data.stroke.wc_pts )
-		    free( (char *)dev->data.stroke.wc_pts);
+		    free(dev->data.stroke.wc_pts);
 		wc_pts = (Ppoint3*)
-		    Malloc(new_data->data.stroke.buf_size * sizeof(Ppoint3));
+		    malloc(new_data->data.stroke.buf_size * sizeof(Ppoint3));
 	    } else
 		wc_pts = dev->data.stroke.wc_pts;
 
 	    if ( dev->data.stroke.init_pts )
-		free( (char *)dev->data.stroke.init_pts);
+		free(dev->data.stroke.init_pts);
 	    /* TODO: Make a macro to only copy the relevant fields. */
 	    dev->data = new_data->data;
 	    dev->data.stroke.wc_pts = wc_pts;
 	    if ( new_data->data.stroke.count > 0 )
-		bcopy( new_data->data.stroke.wc_pts, wc_pts,
+		memcpy(wc_pts, new_data->data.stroke.wc_pts,
 		    new_data->data.stroke.count * sizeof(Ppoint3) );
             } break;
 	case SIN_VALUATOR:
@@ -315,7 +321,7 @@ phg_sin_init_device( iws, class, dev_num, new_data )
 	    if ( dev->data.string.buf_size < new_data->data.string.buf_size) {
 		if ( dev->data.string.string )
 		    free( dev->data.string.string);
-		str = Malloc(new_data->data.string.buf_size);
+		str = malloc(new_data->data.string.buf_size);
 	    } else
 		str = dev->data.string.string;
 	    dev->data = new_data->data;
@@ -327,13 +333,20 @@ phg_sin_init_device( iws, class, dev_num, new_data )
     }
 }
 
-void
-phg_sin_set_mode( iws, md, ed )
-    Sin_input_ws	*iws;
-    Sin_set_mode_data	*md;
-    Sin_enable_data	*ed;
+/*******************************************************************************
+ * phg_sin_set_mode
+ *
+ * DESCR:       Set device mode for input workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_set_mode(
+    Sin_input_ws *iws,
+    Sin_set_mode_data *md,
+    Sin_enable_data *ed
+    )
 {
-    register Sin_input_device	*dev = SIN_DEV(iws, md->class, md->dev_num);
+    Sin_input_device *dev = SIN_DEV(iws, md->class, md->dev_num);
 
     if ( !dev->flags.exists )
 	return;
@@ -359,14 +372,21 @@ phg_sin_set_mode( iws, md, ed )
     }
 }
 
-void
-phg_sin_sample( iws, class, dev_num, event )
-    Sin_input_ws	*iws;
-    Sin_input_class	class;
-    int			dev_num;
-    Sin_input_event	*event;
+/*******************************************************************************
+ * phg_sin_sample
+ *
+ * DESCR:       Sample device for input workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_sample(
+    Sin_input_ws *iws,
+    Sin_input_class class,
+    Pint dev_num,
+    Sin_input_event *event
+    )
 {
-    register Sin_input_device	*dev = SIN_DEV(iws, class, dev_num);
+    Sin_input_device *dev = SIN_DEV(iws, class, dev_num);
 
     if ( !dev->flags.exists )
 	return;
@@ -377,14 +397,21 @@ phg_sin_sample( iws, class, dev_num, event )
     phg_sin_ws_load_event( dev, event );
 }
 
-void
-phg_sin_request( iws, class, dev_num, ed )
-    Sin_input_ws	*iws;
-    Sin_input_class	class;
-    int			dev_num;
-    Sin_enable_data	*ed;
+/*******************************************************************************
+ * phg_sin_request
+ *
+ * DESCR:       Request device for input workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_request(
+    Sin_input_ws *iws,
+    Sin_input_class class,
+    Pint dev_num,
+    Sin_enable_data *ed
+    )
 {
-    register Sin_input_device	*dev = SIN_DEV(iws, class, dev_num);
+    Sin_input_device *dev = SIN_DEV(iws, class, dev_num);
 
     if ( !dev->flags.exists )
 	return;
@@ -396,14 +423,21 @@ phg_sin_request( iws, class, dev_num, ed )
     phg_sin_ws_enable_device( dev );
 }
 
-void
-phg_sin_repaint( iws, num_rects, rects )
-    Sin_input_ws	*iws;
-    int			num_rects;
-    XRectangle		*rects;
+/*******************************************************************************
+ * phg_sin_repaint
+ *
+ * DESCR:       Repaint device for input workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_repaint(
+    Sin_input_ws *iws,
+    Pint num_rects,
+    XRectangle *rects
+    )
 {
-    register Sin_input_device	*dev;
-    register int		i;
+    Sin_input_device *dev;
+    int i;
 
     /* Only repaint active devices. */
 
@@ -439,16 +473,23 @@ phg_sin_repaint( iws, num_rects, rects )
     }
 }
 
-void
-phg_sin_resize_dev( ws, class, dev_num, ed, old_rect, new_rect )
-    Sin_input_ws		*ws;
-    Sin_input_class		class;
-    int				dev_num;
-    register Sin_enable_data	*ed;
-    XRectangle			*old_rect;
-    XRectangle			*new_rect;
+/*******************************************************************************
+ * phg_sin_resize_dev
+ *
+ * DESCR:       Resize device for input workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_resize_dev(
+    Sin_input_ws *ws,
+    Sin_input_class class,
+    Pint dev_num,
+    Sin_enable_data *ed,
+    XRectangle *old_rect,
+    XRectangle *new_rect
+    )
 {
-    register Sin_input_device	*dev = SIN_DEV( ws, class, dev_num);
+    Sin_input_device *dev = SIN_DEV( ws, class, dev_num);
 
     if ( dev->flags.on ) {
 	SIN_SET_ENABLE_DATA( dev, ed)
@@ -456,5 +497,4 @@ phg_sin_resize_dev( ws, class, dev_num, ed, old_rect, new_rect )
 	    (dev->dev_ops.resize)( dev, old_rect, new_rect );
     }
 }
-#endif
 

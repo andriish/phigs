@@ -36,17 +36,17 @@
 #include <phigs/psl.h>
 #include <phigs/phg_dt.h>
 #include <phigs/sin.h>
-#include <phigs/private/evP.h>
+#include <phigs/private/evtP.h>
 
 #define PHG_NUM_EVENTS         35
 
 typedef struct {
-   Psl_handle psl;
-   Err_handle erh;
-   Css_handle css;
-   Phg_ev_tbl *evt_table;
-   List       wst_list;
-   Ws_handle  *ws_list;
+   Psl_handle      psl;
+   Err_handle      erh;
+   Css_handle      css;
+   Phg_sin_evt_tbl *evt_table;
+   List            wst_list;
+   Ws_handle       *ws_list;
 } Phg_struct;
 
 typedef Phg_struct *Phg_handle;
