@@ -345,5 +345,28 @@ typedef struct {
 #define SIN_WS_SET_ACKNOWLEDGE( _ws ) \
     (_ws)->event_buffer.flags |= SIN_EVT_ACKNOWLEDGE
 
+/*******************************************************************************
+ * phg_sin_destroy
+ *
+ * DESCR:       Destroy input workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_destroy(
+    Sin_input_ws *iws
+    );
+
+/*******************************************************************************
+ * phg_sin_create
+ *
+ * DESCR:       Create input workstation
+ * RETURNS:     Pointer to input workstation or NULL
+ */
+
+Sin_handle phg_sin_create(
+    Sin_desc *desc,
+    Err_handle erh
+    );
+
 #endif /* _sin_h */
 

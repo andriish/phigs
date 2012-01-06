@@ -74,26 +74,37 @@ SOFTWARE.
 #include <phigs/ws.h>
 #include <phigs/sin.h>
 #include <phigs/private/sinP.h>
+#include <phigs/private/cvsP.h>
 
-void phg_sin_close(
+/*******************************************************************************
+ * phg_sin_destroy
+ *
+ * DESCR:       Destroy input workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_destroy(
     Sin_input_ws *iws
     )
 {
     int	i;
 
-#ifdef TODO
     phg_sin_dev_stop( iws );
-    phg_sin_ws_close_event_buf( iws );
+    phg_sin_ws_destroy_event_buf( iws );
     phg_sin_dev_destroy_devices( iws );
-    phg_sin_cvs_close( iws );
-#endif
+    phg_sin_cvs_destroy( iws );
     for ( i = 0; i < 6; i++)
 	free(iws->devices[i]);
-#ifdef TODO
     phg_sin_ws_free_notify_list( iws );
-#endif
     free(iws);
 }
+
+/*******************************************************************************
+ * phg_sin_create
+ *
+ * DESCR:       Create input workstation
+ * RETURNS:     Pointer to input workstation or NULL
+ */
 
 Sin_handle phg_sin_create(
     Sin_desc *desc,
@@ -113,14 +124,10 @@ Sin_handle phg_sin_create(
     iws->display = desc->display;
     iws->output_window = desc->output_window;
     iws->input_window = desc->input_window;
-#ifdef TODO
     iws->shell = desc->shell;
-#endif
     iws->wsh = desc->wsh;
-#ifdef TODO
     iws->ops.send_request = desc->send_request;
     iws->ops.in_viewport = desc->in_viewport;
-#endif
 
     iws->wsid = desc->wsh->id;
     iws->idt = desc->idt;
@@ -173,34 +180,30 @@ Sin_handle phg_sin_create(
         }
     }
 
-#ifdef TODO
     phg_sin_dev_init_devices( iws );
-#endif
 
     SIN_DISABLE_BREAK(iws);
 
-#ifdef TODO
     if ( !phg_sin_ws_event_buf_init( iws ) )
 	goto no_mem;
 
-    if ( !(iws->window_table = phg_sin_cvs_init( iws )) ) {
-	phg_sin_ws_close_event_buf( iws );
+    if ( !(iws->window_table = phg_sin_cvs_create( iws )) ) {
+	phg_sin_ws_destroy_event_buf( iws );
 	goto no_mem;
     }
 
     if ( !phg_sin_dev_create_devices( iws ) ) {
-	phg_sin_ws_close_event_buf( iws );
-	phg_sin_cvs_close( iws );
+	phg_sin_ws_destroy_event_buf( iws );
+	phg_sin_cvs_destroy( iws );
 	goto no_mem;
     }
 
     if ( !phg_sin_dev_start( iws ) ) {
-	phg_sin_ws_close_event_buf( iws );
+	phg_sin_ws_destroy_event_buf( iws );
 	phg_sin_dev_destroy_devices( iws );
-	phg_sin_cvs_close( iws );
+	phg_sin_cvs_destroy( iws );
 	goto no_mem;
     }
-#endif
 
     return iws;
 
