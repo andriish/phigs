@@ -81,10 +81,11 @@ SOFTWARE.
 void phg_sin_ws_window_event_proc(
     Display *display,
     Window window,
-    Sin_input_ws *ws,
+    caddr_t handle,
     XEvent *event
     )
 {
+    Sin_input_ws *ws = (Sin_input_ws *) handle;
     Sin_notify_data *nd, *next;
 
     if ( BREAK_EVENT(event) && phg_sin_ws_break( ws ) )

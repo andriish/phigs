@@ -29,6 +29,7 @@
 #include <phigs/css.h>
 #include <phigs/ws.h>
 #include <phigs/private/wsglP.h>
+#include <phigs/private/evP.h>
 
 Phg_handle phg;
 
@@ -71,10 +72,19 @@ void popen_phigs(
       goto abort;
    }
 
+   PHG_EVT_TABLE = phg_ev_tbl_create(PHG_NUM_EVENTS);
+   if (PHG_EVT_TABLE == NULL) {
+      ERR_REPORT(PHG_ERH, ERR900);
+      phg_css_destroy(PHG_CSS);
+      phg_psl_destroy(PHG_PSL);
+      goto abort;
+   }
+
    list_init(&PHG_WST_LIST);
    wst = wsx_gl_create();
    if (wst == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
+      phg_ev_tbl_destroy(PHG_EVT_TABLE);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
       goto abort;
@@ -85,6 +95,7 @@ void popen_phigs(
    if (PHG_WS_LIST == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
       phg_wst_destroy(wst);
+      phg_ev_tbl_destroy(PHG_EVT_TABLE);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
       goto abort;
