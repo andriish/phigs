@@ -280,13 +280,13 @@ int phg_sin_ws_break(
     );
 
 /*******************************************************************************
- * phg_sin_ws_close_event_buf
+ * phg_sin_ws_destroy_event_buf
  *
- * DESCR:       Close event buffer for workstation
+ * DESCR:       Destroy event buffer for workstation
  * RETURNS:     N/A
  */
 
-void phg_sin_ws_close_event_buf(
+void phg_sin_ws_destroy_event_buf(
     Sin_input_ws *ws
     );
 
