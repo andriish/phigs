@@ -21,8 +21,8 @@
 #ifndef _ws_h
 #define _ws_h
 
+#include <phigs/ws_inp.h>
 #include <X11/Xlib.h>
-#include <phigs/phg.h>
 
 #define NUM_DEFERRAL            5
 #define NUM_MODIFICATION        3
@@ -139,6 +139,7 @@ typedef struct _Ws {
    Wst          *type;
    Pws_cat      category;
    Ws_output_ws out_ws;
+   Ws_input_ws  in_ws;
    Pint         current_colour_model;
    Pint         num_active_input_devs;
 
@@ -269,6 +270,31 @@ typedef struct _Ws {
                    Phg_args_rep_type rep_type,
                    Phg_ret *ret
                    );
+    int         (*resolve_locator)(
+                   struct _Ws *ws,
+                   Ws_point *dc_pt,
+                   int determine_z,
+                   Pint *view_index,
+                   Ppoint3 *wc_pt
+                   );
+    int         (*resolve_stroke)(
+                   struct _Ws *ws,
+                   Pint num_pts,
+                   Ws_point *dc_pts,
+                   int determine_z,
+                   Pint *view_index,
+                   Ppoint_list3 *wc_pts
+                   );
+   int          (*resolve_pick)(
+                   struct _Ws *ws,
+                   Ws_inp_pick *dev,
+                   int echo,
+                   Ws_point *dc_pt,
+                   Ppick *pick
+                   );
+
+
+
 } Ws;
 
 #define WSB_NONE_POSTED(posted_ptr) \
@@ -303,6 +329,10 @@ typedef struct _Ws {
 
 #define WS_ANY_INP_DEV_ACTIVE(_wsh) \
    ((_wsh)->num_active_input_devs > 0)
+
+#define WS_DRWBL_TO_DC2( _wsh, _dwp, _dcp ) \
+    ((_dcp)->x = (_dwp)->x, \
+     (_dcp)->y = (_wsh)->ws_rect.height - (_dwp)->y)
 
 Ws* phg_wsb_open_ws(
     Phg_args_open_ws *args,
