@@ -147,6 +147,29 @@ typedef struct {
 } Sin_dev_init_data;
 
 typedef struct {
+   Sin_window_rect echo_area;
+   union {
+      struct {
+         Sin_window_pt init_pos;
+      } locator;
+
+      struct {
+         Pint          cnt;
+         Sin_window_pt *init_pts;
+      } stroke;
+
+   } data;
+} Sin_enable_data;
+
+typedef struct {
+   Sin_input_class class;
+   Pint            dev_num;
+   Sin_enable_data *enable_data;
+   Sin_input_mode  mode;
+   Pint            echo;
+} Sin_set_mode_data;
+
+typedef struct {
    Widget shell;
    Widget pane;
    Widget scrollbar;
@@ -366,6 +389,90 @@ void phg_sin_destroy(
 Sin_handle phg_sin_create(
     Sin_desc *desc,
     Err_handle erh
+    );
+
+/*******************************************************************************
+ * phg_sin_init_device
+ *
+ * DESCR:       Initialize device for input workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_init_device(
+    Sin_input_ws *iws,
+    Sin_input_class class,
+    Pint dev_num,
+    Sin_dev_init_data *new_data
+    );
+
+/*******************************************************************************
+ * phg_sin_set_mode
+ *
+ * DESCR:       Set device mode for input workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_set_mode( 
+    Sin_input_ws *iws,
+    Sin_set_mode_data *md,
+    Sin_enable_data *ed
+    );
+
+/*******************************************************************************
+ * phg_sin_sample
+ *
+ * DESCR:       Sample device for input workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_sample(
+    Sin_input_ws *iws,
+    Sin_input_class class,
+    Pint dev_num,
+    Sin_input_event *event
+    );
+
+/*******************************************************************************
+ * phg_sin_request
+ *
+ * DESCR:       Request device for input workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_request(
+    Sin_input_ws *iws,
+    Sin_input_class class,
+    Pint dev_num,
+    Sin_enable_data *ed
+    );
+
+/*******************************************************************************
+ * phg_sin_repaint
+ *  
+ * DESCR:       Repaint device for input workstation
+ * RETURNS:     N/A
+ */ 
+
+void phg_sin_repaint(
+    Sin_input_ws *iws,
+    Pint num_rects,
+    XRectangle *rects
+    );
+
+/*******************************************************************************
+ * phg_sin_resize_dev
+ *  
+ * DESCR:       Resize device for input workstation
+ * RETURNS:     N/A
+ */ 
+
+void phg_sin_resize_dev(
+    Sin_input_ws *ws,
+    Sin_input_class class,
+    Pint dev_num,
+    Sin_enable_data *ed,
+    XRectangle *old_rect,
+    XRectangle *new_rect
     );
 
 #endif /* _sin_h */

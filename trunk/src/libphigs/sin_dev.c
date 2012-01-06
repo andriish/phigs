@@ -74,7 +74,7 @@ SOFTWARE.
 #include <phigs/sin.h>
 #include <phigs/private/sinP.h>
 #include <phigs/private/cvsP.h>
-#include <phigs/private/evP.h>
+#include <phigs/private/evtP.h>
 
 #define NUM_COMMON_EVENTS (sizeof(common_events) / sizeof(common_events[0]))
 
@@ -219,8 +219,9 @@ int phg_sin_dev_start(
 
     /* Start up input processing for the input window. */
     for ( i = 0; i < NUM_COMMON_EVENTS; i++ ) {
-	(void)phg_ev_register( PHG_EVT_TABLE, ws->display, ws->input_window,
-	    common_events[i], (caddr_t)ws, phg_sin_ws_window_event_proc );
+	(void)phg_sin_evt_register( PHG_EVT_TABLE, ws->display,
+	    ws->input_window, common_events[i], (caddr_t)ws,
+            phg_sin_ws_window_event_proc );
     }
     XSelectInput( ws->display, ws->input_window, common_mask );
     return TRUE;
@@ -240,7 +241,7 @@ void phg_sin_dev_stop(
     int	i;
 
     for ( i = 0; i < NUM_COMMON_EVENTS; i++ ) {
-	phg_ev_unregister( PHG_EVT_TABLE, ws->display, ws->input_window,
+	phg_sin_evt_unregister( PHG_EVT_TABLE, ws->display, ws->input_window,
 	    common_events[i], (caddr_t)ws );
     }
 }

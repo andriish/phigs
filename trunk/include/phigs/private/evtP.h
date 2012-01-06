@@ -18,8 +18,8 @@
 *   along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#ifndef _evP_h
-#define _evP_h
+#ifndef _evtP_h
+#define _evtP_h
 
 #include <sys/types.h>
 #include <X11/Xlib.h>
@@ -37,55 +37,55 @@ typedef struct {
               caddr_t caddr,
               XEvent *event
               );
-} Phg_ev_entry;
+} Phg_sin_evt_entry;
 
 typedef struct {
    Pint num_events;
    List *events;
-} Phg_ev_tbl;
+} Phg_sin_evt_tbl;
 
 /*******************************************************************************
- * phg_ev_tbl_create
+ * phg_sin_evt_tbl_create
  * 
  * DESCR:       Create event table
  * RETURNS:     Pointer to event table or NULL
  */
 
-Phg_ev_tbl* phg_ev_tbl_create(
+Phg_sin_evt_tbl* phg_sin_evt_tbl_create(
    int num_events
    );
 
 /*******************************************************************************
- * phg_ev_tbl_init
+ * phg_sin_evt_tbl_init
  *
  * DESCR:       Inititalize event table
  * RETURNS:     TRUE or FALSE
  */
 
-int phg_ev_tbl_init(
-   Phg_ev_tbl *ev_tbl
+int phg_sin_evt_tbl_init(
+   Phg_sin_evt_tbl *ev_tbl
    );
 
 /*******************************************************************************
- * phg_ev_tbl_destroy
+ * phg_sin_evt_tbl_destroy
  *
  * DESCR:       Destroy event table
  * RETURNS:     N/A
  */
 
-void phg_ev_tbl_destroy(
-   Phg_ev_tbl *ev_tbl
+void phg_sin_evt_tbl_destroy(
+   Phg_sin_evt_tbl *ev_tbl
    );
 
 /*******************************************************************************
- * phg_ev_register
+ * phg_sin_evt_register
  *
  * DESCR:       Register an event in event table
  * RETURNS:     TRUE or FALSE
  */
 
-int phg_ev_register(
-   Phg_ev_tbl *ev_tbl,
+int phg_sin_evt_register(
+   Phg_sin_evt_tbl *ev_tbl,
    Display *display,
    Window window,
    int event_type,
@@ -94,14 +94,14 @@ int phg_ev_register(
    );
 
 /*******************************************************************************
- * phg_ev_unregister
+ * phg_sin_evt_unregister
  * 
  * DESCR:       Unregister an event in event table
  * RETURNS:     N/A
  */
 
-void phg_ev_unregister(
-   Phg_ev_tbl *ev_tbl,
+void phg_sin_evt_unregister(
+   Phg_sin_evt_tbl *ev_tbl,
    Display *display,
    Window window,
    int event_type,
@@ -109,42 +109,42 @@ void phg_ev_unregister(
    );
 
 /*******************************************************************************
- * phg_ev_unregister_display
+ * phg_sin_evt_unregister_display
  *
  * DESCR:       Unregister all events for display in event table
  * RETURNS:     N/A
  */
 
-void phg_ev_unregister_display(
-   Phg_ev_tbl *ev_tbl,
+void phg_sin_evt_unregister_display(
+   Phg_sin_evt_tbl *ev_tbl,
    Display *display
    );
 
 /*******************************************************************************
- * phg_ev_unregister_window
+ * phg_sin_evt_unregister_window
  *
  * DESCR:       Unregister all events for window in event table
  * RETURNS:     N/A
  */
 
-void phg_ev_unregister_window(
-   Phg_ev_tbl *ev_tbl,
+void phg_sin_evt_unregister_window(
+   Phg_sin_evt_tbl *ev_tbl,
    Display *display,
    Window window
    );
 
 /*******************************************************************************
- * phg_ev_dispatch
+ * phg_sin_evt_dispatch
  * 
  * DESCR:       Dipatch events using event table
  * RETURNS:     N/A
  */
 
-void phg_ev_dispatch(
-   Phg_ev_tbl *ev_tbl,
+void phg_sin_evt_dispatch(
+   Phg_sin_evt_tbl *ev_tbl,
    Display *display,
    XEvent *event
    );
 
-#endif /* _evP_h */
+#endif /* _evtP_h */
 

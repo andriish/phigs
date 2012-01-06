@@ -102,9 +102,12 @@
             break; \
         case SIN_STROKE: \
             (_dev)->data.stroke.count = (_ed)->data.stroke.cnt; \
-            bcopy( (char *)(_ed)->data.stroke.init_pts, \
-                (char *)(_dev)->data.stroke.init_pts, \
-                (_dev)->data.stroke.count * sizeof(Sin_window_pt)); \
+            memcpy((_dev)->data.stroke.init_pts, \
+                   (char *)(_ed)->data.stroke.init_pts, \
+                   (_dev)->data.stroke.count * sizeof(Sin_window_pt)); \
+            break; \
+        default: \
+            break; \
     }
 
 #define SIN_VALUATOR_SCALE( data) \

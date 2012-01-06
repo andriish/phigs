@@ -21,27 +21,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <phigs/phg.h>
-#include <phigs/private/evP.h>
+#include <phigs/private/evtP.h>
 
 /*******************************************************************************
- * phg_ev_tbl_create
+ * phg_sin_evt_tbl_create
  *
  * DESCR:       Create event table
  * RETURNS:     Pointer to event table or NULL
  */
 
-Phg_ev_tbl* phg_ev_tbl_create(
+Phg_sin_evt_tbl* phg_sin_evt_tbl_create(
    int num_events
    )
 {
-   Phg_ev_tbl *ev_tbl;
+   Phg_sin_evt_tbl *ev_tbl;
 
-   ev_tbl = (Phg_ev_tbl *) malloc(sizeof(Phg_ev_tbl) +
-                                  sizeof(Phg_ev_entry) * num_events);
+   ev_tbl = (Phg_sin_evt_tbl *) malloc(sizeof(Phg_sin_evt_tbl) +
+                                       sizeof(Phg_sin_evt_entry) * num_events);
    if (ev_tbl != NULL) {
       ev_tbl->num_events = num_events;
       ev_tbl->events = (List *) &ev_tbl[1];
-      if (!phg_ev_tbl_init(ev_tbl)) {
+      if (!phg_sin_evt_tbl_init(ev_tbl)) {
          free(ev_tbl);
          ev_tbl = NULL;
       }
@@ -51,14 +51,14 @@ Phg_ev_tbl* phg_ev_tbl_create(
 }
 
 /*******************************************************************************
- * phg_ev_tbl_init
+ * phg_sin_evt_tbl_init
  *
  * DESCR:       Inititalize event table
  * RETURNS:     TRUE or FALSE
  */
 
-int phg_ev_tbl_init(
-   Phg_ev_tbl *ev_tbl
+int phg_sin_evt_tbl_init(
+   Phg_sin_evt_tbl *ev_tbl
    )
 {
    int i;
@@ -71,28 +71,28 @@ int phg_ev_tbl_init(
 }
 
 /*******************************************************************************
- * phg_ev_tbl_destroy
+ * phg_sin_evt_tbl_destroy
  *
  * DESCR:       Destroy event table
  * RETURNS:     N/A
  */
 
-void phg_ev_tbl_destroy(
-   Phg_ev_tbl *ev_tbl
+void phg_sin_evt_tbl_destroy(
+   Phg_sin_evt_tbl *ev_tbl
    )
 {
    free(ev_tbl);
 }
 
 /*******************************************************************************
- * phg_ev_register
+ * phg_sin_evt_register
  *
  * DESCR:       Register an event in event table
  * RETURNS:     TRUE or FALSE
  */
 
-int phg_ev_register(
-   Phg_ev_tbl *ev_tbl,
+int phg_sin_evt_register(
+   Phg_sin_evt_tbl *ev_tbl,
    Display *display,
    Window window,
    int event_type,
@@ -101,12 +101,12 @@ int phg_ev_register(
    )
 {
    int status;
-   Phg_ev_entry *ev;
+   Phg_sin_evt_entry *ev;
 
    /* First check if entry exists */
-   for (ev = (Phg_ev_entry *) LIST_HEAD(&ev_tbl->events[event_type]);
+   for (ev = (Phg_sin_evt_entry *) LIST_HEAD(&ev_tbl->events[event_type]);
         ev != NULL;
-        ev = (Phg_ev_entry *) NODE_NEXT(&ev->node)) {
+        ev = (Phg_sin_evt_entry *) NODE_NEXT(&ev->node)) {
       if ((ev->display == display) &&
           (ev->window == window) &&
           (ev->cdata == cdata)) {
@@ -117,7 +117,7 @@ int phg_ev_register(
 
    /* Was not found */
    if (ev == NULL) {
-      ev = (Phg_ev_entry *) malloc(sizeof(Phg_ev_entry));
+      ev = (Phg_sin_evt_entry *) malloc(sizeof(Phg_sin_evt_entry));
       if (ev == NULL) {
          status = FALSE;
       }
@@ -133,26 +133,26 @@ int phg_ev_register(
 }
 
 /*******************************************************************************
- * phg_ev_unregister
+ * phg_sin_evt_unregister
  *
  * DESCR:       Unregister event in event table
  * RETURNS:     N/A
  */
 
-void phg_ev_unregister(
-   Phg_ev_tbl *ev_tbl,
+void phg_sin_evt_unregister(
+   Phg_sin_evt_tbl *ev_tbl,
    Display *display,
    Window window,
    int event_type,
    caddr_t cdata
    )
 {
-   Phg_ev_entry *ev;
+   Phg_sin_evt_entry *ev;
 
    /* First check if entry exists */
-   for (ev = (Phg_ev_entry *) LIST_HEAD(&ev_tbl->events[event_type]);
+   for (ev = (Phg_sin_evt_entry *) LIST_HEAD(&ev_tbl->events[event_type]);
         ev != NULL;
-        ev = (Phg_ev_entry *) NODE_NEXT(&ev->node)) {
+        ev = (Phg_sin_evt_entry *) NODE_NEXT(&ev->node)) {
       if ((ev->display == display) &&
           (ev->window == window) &&
           (ev->cdata == cdata)) {
@@ -164,24 +164,24 @@ void phg_ev_unregister(
 }
 
 /*******************************************************************************
- * phg_ev_unregister_display
+ * phg_sin_evt_unregister_display
  *
  * DESCR:       Unregister all events for display in event table
  * RETURNS:     N/A
  */
 
-void phg_ev_unregister_display(
-   Phg_ev_tbl *ev_tbl,
+void phg_sin_evt_unregister_display(
+   Phg_sin_evt_tbl *ev_tbl,
    Display *display
    )
 {
    int i;
-   Phg_ev_entry *ev;
+   Phg_sin_evt_entry *ev;
 
    for (i = 0; i < ev_tbl->num_events; i++) {
-      for (ev = (Phg_ev_entry *) LIST_HEAD(&ev_tbl->events[i]);
+      for (ev = (Phg_sin_evt_entry *) LIST_HEAD(&ev_tbl->events[i]);
            ev != NULL;
-           ev = (Phg_ev_entry *) NODE_NEXT(&ev->node)) {
+           ev = (Phg_sin_evt_entry *) NODE_NEXT(&ev->node)) {
          if (ev->display == display) {
             list_remove(&ev_tbl->events[i], &ev->node);
             free(ev);
@@ -191,25 +191,25 @@ void phg_ev_unregister_display(
 }
 
 /*******************************************************************************
- * phg_ev_unregister_window
+ * phg_sin_evt_unregister_window
  *
  * DESCR:       Unregister all events for window in event table
  * RETURNS:     N/A
  */
 
-void phg_ev_unregister_window(
-   Phg_ev_tbl *ev_tbl,
+void phg_sin_evt_unregister_window(
+   Phg_sin_evt_tbl *ev_tbl,
    Display *display,
    Window window
    )
 {
    int i;
-   Phg_ev_entry *ev;
+   Phg_sin_evt_entry *ev;
 
    for (i = 0; i < ev_tbl->num_events; i++) {
-      for (ev = (Phg_ev_entry *) LIST_HEAD(&ev_tbl->events[i]);
+      for (ev = (Phg_sin_evt_entry *) LIST_HEAD(&ev_tbl->events[i]);
            ev != NULL;
-           ev = (Phg_ev_entry *) NODE_NEXT(&ev->node)) {
+           ev = (Phg_sin_evt_entry *) NODE_NEXT(&ev->node)) {
          if ((ev->display == display) &&
              (ev->window == window)) {
             list_remove(&ev_tbl->events[i], &ev->node);
@@ -220,24 +220,24 @@ void phg_ev_unregister_window(
 }
 
 /*******************************************************************************
- * phg_ev_dispatch
+ * phg_sin_evt_dispatch
  *
  * DESCR:       Dipatch events using event table
  * RETURNS:     N/A
  */
 
-void phg_ev_dispatch(
-   Phg_ev_tbl *ev_tbl,
+void phg_sin_evt_dispatch(
+   Phg_sin_evt_tbl *ev_tbl,
    Display *display,
    XEvent *event
    )
 {
-   Phg_ev_entry *ev;
+   Phg_sin_evt_entry *ev;
 
    /* First check if entry exists */
-   for (ev = (Phg_ev_entry *) LIST_HEAD(&ev_tbl->events[event->type]);
+   for (ev = (Phg_sin_evt_entry *) LIST_HEAD(&ev_tbl->events[event->type]);
         ev != NULL;
-        ev = (Phg_ev_entry *) NODE_NEXT(&ev->node)) {
+        ev = (Phg_sin_evt_entry *) NODE_NEXT(&ev->node)) {
       if ((ev->display == display) &&
           (ev->window == event->xany.window)) {
          (*ev->callback)(display,
