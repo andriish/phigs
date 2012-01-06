@@ -127,5 +127,202 @@
 #define SIN_SAME_CLIENT( _ca, _cb ) \
     ((_ca)->window == (_cb)->window && (_ca)->handle == (_cb)->handle)
 
+#define SIN_DATA_MATCHES( _nd, _w, _h, _f ) \
+    ((_nd)->window == (_w) && (_nd)->handle == (_h) && (_nd)->notify == (_f))
+
+/*******************************************************************************
+ * phg_sin_ws_window_event_proc
+ *
+ * DESCR:       Set window event procedure
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_window_event_proc(
+    Display *display,
+    Window window,
+    Sin_input_ws *ws,
+    XEvent *event
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_set_event_func
+ *
+ * DESCR:       Add client to list helper function
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sin_ws_set_event_func(
+    Sin_input_ws *ws,
+    Window window,
+    caddr_t handle,
+    void (*func)(
+        struct _Sin_input_ws *ws,
+        caddr_t handle,
+        Window window,
+        XEvent *event
+        )
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_remove_event_func
+ *
+ * DESCR:       Remove workstation event function
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_remove_event_func(
+    Sin_input_ws *ws,
+    Window window,
+    caddr_t handle,
+    void (*func)(
+        struct _Sin_input_ws *ws,
+        caddr_t handle,
+        Window window,
+        XEvent *event
+        )
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_free_notify_list
+ *
+ * DESCR:       Free workstation event notify list
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_free_notify_list(
+    Sin_input_ws *ws
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_load_event
+ *
+ * DESCR:       Copy an event from a device to an event strucure.
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_load_event(
+    Sin_input_device *dev,
+    Sin_input_event *event
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_enque_events
+ *
+ * DESC:        Add simultaneous events to the event queue.
+ *              Returns SIN_EVENT_ENQUED if all events can be enqued else
+ *              SIN_EVENT_NOT_ENQUED.  No events were enqued if
+ *              SIN_EVENT_NOT_ENQUED is returned.
+ *              All the events are treated as simultaneous.
+ *
+ *              Call the event notify proc (if any) anytime an attempt is made 
+ *              to place events on the queue -- even if the queue has overfloed.
+ * RETURNS:     N/A
+ */
+
+int phg_sin_ws_enque_events(
+    int count,
+    Sin_input_device **devs
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_enable_device
+ *
+ * DESCR:       Enable device for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_enable_device(
+    Sin_input_device *device
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_disable_device
+ *
+ * DESCR:       Disable device for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_disable_device(
+    Sin_input_device *device
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_reset_device
+ *
+ * DESCR:       Reset device for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_reset_device(
+    Sin_input_device *device
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_send_request
+ *
+ * DESCR:       Send request for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_send_request(
+    Sin_input_device *dev
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_break
+ *
+ * DESCR:       Break for workstation
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sin_ws_break( 
+    Sin_input_ws *ws
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_close_event_buf
+ *
+ * DESCR:       Close event buffer for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_close_event_buf(
+    Sin_input_ws *ws
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_event_buf_init
+ *
+ * DESCR:       Initialize event buffer for workstation
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sin_ws_event_buf_init(
+    Sin_input_ws *ws
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_buffer_event
+ *
+ * DESCR:       Buffer event for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_buffer_event(
+    Sin_input_ws *ws,
+    Sin_input_device *dev
+    );
+
+/*******************************************************************************
+ * phg_sin_ws_flush_event_buffer
+ *
+ * DESCR:       Flush event buffer for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_flush_event_buffer(
+    Sin_input_ws *ws
+    );
+
 #endif /* _sinP_h */
 

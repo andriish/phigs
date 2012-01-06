@@ -61,10 +61,11 @@ typedef union {
    Sin_string_event_data   string;
 } Sin_event_data;
 
-typedef struct {
+typedef struct _Sin_input_event {
    Pint           wsid;
    Pint           dev_num;
    Pin_class      dev_class;
+   unsigned       simul_id;
    Sin_event_data data;
 } Sin_input_event;
 
