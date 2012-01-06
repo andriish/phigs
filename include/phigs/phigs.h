@@ -274,6 +274,17 @@ typedef enum {
    PIN_STRING
 } Pin_class;
 
+typedef enum {
+   POP_REQ,
+   POP_SAMPLE,
+   POP_EVENT
+} Pop_mode;
+
+typedef enum {
+   PSWITCH_NO_ECHO,
+   PSWITCH_ECHO
+} Pecho_switch;
+
 typedef int Pint;
 typedef long Plong;
 typedef float Pfloat;

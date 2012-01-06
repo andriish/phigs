@@ -31,6 +31,7 @@
 #include <phigs/css.h>
 #include <phigs/attr.h>
 #include <phigs/ws.h>
+#include <phigs/ws_inp.h>
 #include <phigs/ws_type.h>
 #include <phigs/phigsfunc.h>
 #include <phigs/psl.h>
