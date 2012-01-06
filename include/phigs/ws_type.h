@@ -59,7 +59,7 @@ typedef enum {
 } Wst_stroke_type;
 
 typedef enum {
-   WST_VAL_TYPE_SLIDE
+   WST_VAL_TYPE_SLIDER
 } Wst_val_type;
 
 typedef enum {

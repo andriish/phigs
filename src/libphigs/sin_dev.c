@@ -73,6 +73,7 @@ SOFTWARE.
 #include <phigs/ws_type.h>
 #include <phigs/sin.h>
 #include <phigs/private/sinP.h>
+#include <phigs/private/cvsP.h>
 
 #define NUM_COMMON_EVENTS (sizeof(common_events) / sizeof(common_events[0]))
 
@@ -188,7 +189,6 @@ int phg_sin_dev_create_devices(
     return TRUE;
 }
 
-#ifdef TODO
 int phg_sin_dev_start(
     Sin_input_ws *ws
     )
@@ -400,5 +400,4 @@ void phg_sin_dev_init_devices(
 	phg_sin_dev_boot_string( dev );
     }
 }
-#endif
 

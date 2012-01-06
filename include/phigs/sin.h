@@ -23,6 +23,7 @@
 
 #include <sys/types.h>
 #include <X11/Xlib.h>
+#include <X11/Intrinsic.h>
 #include <phigs/private/sinqP.h>
 
 #define SIN_EVT_ACKNOWLEDGE    0x0001
@@ -104,6 +105,7 @@ typedef struct {
    Pfloat       low;
    Pfloat       high;
    char         *label;
+   char         *format;
    char         *low_label;
    char         *high_label;
 } Sin_valuator_device_data;
@@ -145,15 +147,25 @@ typedef struct {
 } Sin_dev_init_data;
 
 typedef struct {
-   int unused;
+   Widget shell;
+   Widget pane;
+   Widget scrollbar;
+   Widget value;
+   Widget label;
+   Widget low;
+   Widget high;
 } Sin_valuator_handle;
 
 typedef struct {
-   int unused;
+   Widget shell;
+   Widget viewport;
+   Widget list;
 } Sin_choice_handle;
 
 typedef struct {
-   int unused;
+   Widget shell;
+   Widget pane;
+   Widget textw;
 } Sin_string_handle;
 
 typedef union {
@@ -246,6 +258,10 @@ typedef struct {
            struct _Sin_input_event *event,
            Pint int_data
            );
+   int  (*in_viewport)(
+           caddr_t client_data,
+           Sin_window_pt *pt
+           );
 } Sin_ws_ops;
 
 typedef struct {
@@ -267,6 +283,7 @@ typedef struct _Sin_input_ws {
    Display                  *display;
    Window                   input_window;
    Window                   output_window;
+   Widget                   shell;
    Sin_ws_ops               ops;
    Sin_buf_data             event_buffer;
    Sin_notify_data          *notify_list;
@@ -280,10 +297,18 @@ typedef struct {
    Display         *display;
    Window          output_window;
    Window          input_window;
+   Widget          shell;
    Ws_handle       wsh;
    Wst_input_wsdt  *idt;
-   void            (*send_request)(void);
-   int             (*in_viewport)(void);
+   void            (*send_request)(
+                      Ws_handle wsh,
+                      struct _Sin_input_event *event,
+                      Pint int_data
+                   );
+   int             (*in_viewport)(
+                      caddr_t client_data,
+                      Sin_window_pt *pt
+                      );
 } Sin_desc;
 
 #define SIN_CLASS_INDEX( class) \
