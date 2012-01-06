@@ -108,6 +108,9 @@ static void wsb_load_funcs(
     ws->inq_representation = phg_wsb_inq_rep;
     ws->inq_disp_update_state = phg_wsb_inq_disp_update_state;
     ws->inq_hlhsr_mode = phg_wsb_inq_hlhsr_mode;
+    ws->resolve_locator = NULL;
+    ws->resolve_stroke = NULL;
+    ws->resolve_pick = NULL;
 }
 
 /* 

@@ -17,7 +17,7 @@ OBJS=ut.o ut_mat.o ut_list.o ut_htab.o css_ini.o css_stb.o css_set.o css_str.o \
      phg_ws.o phg_hdl.o phg_psl.o phg_err.o phg_errnum.o phg_col.o phg_inq.o   \
      phg_tr.o phg_wst.o wsb.o wsb_lut.o wsgl.o wsgl_hatch.o wsx_gl.o sin.o     \
      sinq.o sin_ws.o sin_cvs.o sin_val.o sin_cho.o sin_str.o sin_dev.o         \
-     sin_evt.o
+     sin_evt.o ws_inp.o
 
 all: libphigs
 

@@ -24,6 +24,10 @@
 #include <phigs/sin.h>
 
 typedef struct {
+   Pint x, y;
+} Ws_point;
+
+typedef struct {
    Pint         num;
    Pop_mode     mode;
    Pecho_switch esw;
@@ -121,6 +125,16 @@ typedef struct _Ws_input_ws {
 
 #define WS_INP_DEV( _wsh, _class, _num ) \
     (&(_wsh)->in_ws.devs._class[(_num)-1])
+
+#define SET_ECHO_AREA( _ev1, _ev2 ) \
+    (_ev2).x_min = (_ev1).x_min; \
+    (_ev2).x_max = (_ev1).x_max; \
+    (_ev2).y_min = (_ev1).y_min; \
+    (_ev2).y_max = (_ev1).y_max
+
+#define MAP_MODE( _m) \
+    ((_m) == POP_EVENT ? SIN_EVENT : \
+        (_m) == POP_SAMPLE ? SIN_SAMPLE : SIN_REQUEST)
 
 #endif /* _ws_inp_h */
 
