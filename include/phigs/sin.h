@@ -282,7 +282,7 @@ typedef struct {
            Pint int_data
            );
    int  (*in_viewport)(
-           caddr_t client_data,
+           Ws_handle wsh,
            Sin_window_pt *pt
            );
 } Sin_ws_ops;
@@ -329,7 +329,7 @@ typedef struct {
                       Pint int_data
                    );
    int             (*in_viewport)(
-                      caddr_t client_data,
+                      Ws_handle wsh,
                       Sin_window_pt *pt
                       );
 } Sin_desc;

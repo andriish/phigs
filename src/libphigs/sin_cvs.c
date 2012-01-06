@@ -472,7 +472,8 @@ static void stroke_event_func(
     if ( event->flags & SIN_BUTTON_DOWN ) {
 	if ( EVENT_SHIFT_IS_DOWN(event) || EVENT_CTRL_IS_DOWN(event) )
 	    event_occurred = TRUE;
-	else if ( (*sin_dev->ws->ops.in_viewport)(sin_dev->client_data, &cpt))
+	else if ( (*sin_dev->ws->ops.in_viewport)(
+                      (Ws_handle) sin_dev->client_data, &cpt))
 	    event_occurred = TRUE;
     }
 

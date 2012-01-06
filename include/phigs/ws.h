@@ -23,6 +23,7 @@
 
 #include <phigs/ws_inp.h>
 #include <X11/Xlib.h>
+#include <X11/Intrinsic.h>
 
 #define NUM_DEFERRAL            5
 #define NUM_MODIFICATION        3
@@ -149,9 +150,11 @@ typedef struct _Ws {
    /* Window system variables */
    Display      *display;
    Drawable     drawable_id;
+   Window       input_overlay_window;
    void         *render_context;
    int          has_double_buffer;
    XRectangle   ws_rect;
+   Widget       shell;
 
    void         (*close)(
                    struct _Ws *ws
@@ -302,6 +305,14 @@ typedef struct _Ws {
    int          (*valid_pick_path)(
                    struct _Ws *ws,
                    Ppick *pick
+                   );
+   void         (*pick_disable)(
+                   struct _Ws *ws,
+                   Ws_inp_pick *dev
+                   );
+   int          (*point_in_viewport)(
+                   struct _Ws *ws,
+                   XPoint *pt
                    );
 } Ws;
 

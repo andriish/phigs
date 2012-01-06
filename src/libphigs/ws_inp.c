@@ -1213,22 +1213,28 @@ no_mem:	/* ran out of memory somewhere! */
     return FALSE;
 }
 
-#if 0
-static void
-send_request( ws, event, brake )
-    Ws			*ws;
-    Sin_input_event	*event;
-    int			brake;	/* (sic) */
+/*******************************************************************************
+ * send_request
+ *
+ * DESCR:       Send reuqest helper function
+ * RETURNS:     N/A
+ */
+
+static void send_request(
+    Ws *ws,
+    Sin_input_event *event,
+    int brk
+    )
 {
-    Phg_ret			ret;
-    Phg_ret_inp_request		*req = &ret.data.inp_request;
-    register Phg_ret_inp_event	*revt = &req->event;
+    Phg_ret ret;
+    Phg_ret_inp_request	*req = &ret.data.inp_request;
+    Phg_ret_inp_event *revt = &req->event;
 
     ret.err = 0;
     --ws->num_active_input_devs;
     revt->id.class = event->dev_class;
-    if ( brake ) {
-	req->brake = !0;
+    if ( brk ) {
+	req->brk = TRUE;
 	switch ( revt->id.class ) {
 	    case PIN_LOC:
 	    case PIN_STROKE:
@@ -1242,10 +1248,12 @@ send_request( ws, event, brake )
 	    case PIN_CHOICE:
 		req->status.chstat = PIN_STATUS_NO_IN;
 		break;
+            default:
+                break;
 	}
 
     } else {
-	req->brake = 0;
+	req->brk = FALSE;
 	switch ( revt->id.class ) {
 	    case PIN_LOC:
 		req->status.istat = PIN_STATUS_OK;
@@ -1258,7 +1266,9 @@ send_request( ws, event, brake )
 	    case PIN_PICK:
 		revt->data.pik = event->data.pick.evt;
 		req->status.pkstat =
-		    revt->data.pik.status == PIN_STATUS_OK ? PIN_STATUS_OK : PIN_STATUS_NONE;
+		    revt->data.pik.status == PIN_STATUS_OK ?
+                                                 PIN_STATUS_OK :
+                                                 PIN_STATUS_NONE;
 		break;
 	    case PIN_VAL:
 		req->status.istat = PIN_STATUS_OK;
@@ -1267,45 +1277,67 @@ send_request( ws, event, brake )
 	    case PIN_CHOICE:
 		revt->data.chc = event->data.choice.evt;
 		req->status.chstat =
-		    revt->data.chc.status == PIN_STATUS_OK ? PIN_STATUS_OK : PIN_STATUS_NONE;
+		    revt->data.chc.status == PIN_STATUS_OK ?
+                                                 PIN_STATUS_OK :
+                                                 PIN_STATUS_NONE;
 		break;
 	    case PIN_STRING:
 		req->status.istat = PIN_STATUS_OK;
 		revt->data.str = event->data.string.evt;
 		break;
+            default:
+                break;
 	}
     }
 
+#ifdef TODO
     phg_cp_send_request( ws->cph, &ret );
+#endif
 
     if ( revt->id.class == PIN_PICK && ws->pick_disable )
 	(*ws->pick_disable)( ws, &ws->in_ws.devs.pick[event->dev_num-1] );
 }
 
-static void
-ws_inp_load_funcs( ws )
-    Ws		*ws;
+/*******************************************************************************
+ * ws_inp_load_funcs
+ *
+ * DESCR:       Load input device operators helper function
+ * RETURNS:     N/A
+ */
+
+static void ws_inp_load_funcs(
+    Ws *ws
+    )
 {
-    ws->set_device_mode	= phg_ws_inp_set_mode;
-    ws->init_device		= phg_ws_inp_init_device;
-    ws->request_device		= phg_ws_inp_request;
-    ws->sample_device		= phg_ws_inp_sample;
-    ws->inq_inp_dev_state	= phg_ws_inp_inq_dev_state;
-    ws->input_repaint		= phg_ws_inp_repaint;
+#ifdef TODO
+    ws->set_device_mode	  = phg_ws_inp_set_mode;
+    ws->init_device       = phg_ws_inp_init_device;
+    ws->request_device    = phg_ws_inp_request;
+    ws->sample_device	  = phg_ws_inp_sample;
+    ws->inq_inp_dev_state = phg_ws_inp_inq_dev_state;
+    ws->input_repaint     = phg_ws_inp_repaint;
+#endif
 }
 
 
-int
-phg_ws_input_init( ws, queue )
-    Ws			*ws;
-    Input_q_handle	queue;
-{
-    int			status = 0;
-    Wst_input_wsdt	*idt = &ws->type->desc_tbl.phigs_dt.in_dt;
-    Sin_desc		sin_desc;
+/*******************************************************************************
+ * phg_ws_input_init
+ *
+ * DESCR:       Initialize input workstation
+ * RETURNS:     TRUE or FALSE
+ */
 
-    register	Sin_desc	*desc = &sin_desc;
-    register	Ws_input_ws	*iws = &ws->in_ws;
+int phg_ws_input_init(
+    Ws *ws,
+    Input_q_handle queue
+    )
+{
+    int status = FALSE;
+    Wst_input_wsdt *idt = &ws->type->desc_tbl.phigs_dt.in_dt;
+    Sin_desc sin_desc;
+
+    Sin_desc *desc = &sin_desc;
+    Ws_input_ws *iws = &ws->in_ws;
 
     if ( init_input_state( ws, idt ) ) {
 	iws->input_queue = (Input_q_handle)queue;
@@ -1317,7 +1349,7 @@ phg_ws_input_init( ws, queue )
 	desc->input_window = ws->input_overlay_window;
 	desc->shell = ws->shell;
 	desc->send_request = send_request;
-	desc->in_viewport = ws->X_point_in_viewport;
+	desc->in_viewport = ws->point_in_viewport;
 
 	ws_inp_load_funcs( ws );
 
@@ -1325,24 +1357,31 @@ phg_ws_input_init( ws, queue )
 	    phg_ws_input_close( ws );
 	} else {
 	    init_all_devices( ws, iws, idt );
-	    status = 1;
+	    status = TRUE;
 	}
     }
 
     return status;
 }
 
-void
-phg_ws_input_close( ws )
-    Ws				*ws;
+/*******************************************************************************
+ * phg_ws_input_close
+ *
+ * DESCR:       Close input workstation
+ * RETURNS:     TRUE or FALSE
+ */
+
+void phg_ws_input_close(
+    Ws *ws
+    )
 {
-    register Ws_input_ws	*iws = &ws->in_ws;
-    register int		i;
+    Ws_input_ws *iws = &ws->in_ws;
+    int i;
 
     {
-	register Ws_inp_stroke	*stk = iws->devs.stroke;
+	Ws_inp_stroke *stk = iws->devs.stroke;
 	
-	if (stk) {
+	if (stk != NULL) {
 	    for ( i = 0; i < iws->num_devs.stroke; i++, stk++ ) {
 		if ( stk->stroke.points )
 		    free(stk->stroke.points);
@@ -1351,14 +1390,16 @@ phg_ws_input_close( ws )
     }
 
     {
-	register Ws_inp_pick	*pick = iws->devs.pick;
+	Ws_inp_pick *pick = iws->devs.pick;
  
-	if ( pick ) {
+	if (pick != NULL) {
 	    for ( i = 0; i < iws->num_devs.pick; i++, pick++ ) {
+#ifdef TODO
 		if ( pick->filter.incl )
 		    (void)PEXFreeNameSet( ws->display, pick->filter.incl );
 		if ( pick->filter.excl )
 		    (void)PEXFreeNameSet( ws->display, pick->filter.excl );
+#endif
 		if ( pick->pick.status == PIN_STATUS_OK
 			&& pick->pick.pick_path.depth > 0 )
 		    free(pick->pick.pick_path.path_list);
@@ -1367,49 +1408,57 @@ phg_ws_input_close( ws )
     }
 
     {
-	register Ws_inp_string	*str = iws->devs.string;
+	Ws_inp_string *str = iws->devs.string;
  
-	if (str) {
+	if (str != NULL) {
 	    for ( i = 0; i < iws->num_devs.string; i++, str++)
 		free(str->string);
 	}
     }
 
     {
-	register Ws_inp_choice	*cho = iws->devs.choice;
+	Ws_inp_choice *cho = iws->devs.choice;
  
-	if ( cho ) {
+	if (cho != NULL) {
 	    for ( i = 0; i < iws->num_devs.choice; i++, cho++ )
 		free_choice( cho );
 	}
     }
 
     {
-	register Ws_inp_val	*val = iws->devs.valuator;
+	Ws_inp_val *val = iws->devs.valuator;
  
-	if ( val ) {
+	if (val != NULL) {
 	    for ( i = 0; i < iws->num_devs.val; i++, val++ )
 		free_valuator( val );
 	}
     }
 
-    if ( iws->sin_handle )
-	phg_sin_close( iws->sin_handle );
-    if ( iws->num_devs.loc > 0 )
+    if (iws->sin_handle != NULL) {
+	phg_sin_destroy(iws->sin_handle);
+    }
+    if (iws->num_devs.loc > 0) {
 	free(iws->devs.locator);
-    if ( iws->num_devs.stroke > 0 )
+    }
+    if (iws->num_devs.stroke > 0) {
 	free(iws->devs.stroke);
-    if ( iws->num_devs.pick > 0 )
+    }
+    if (iws->num_devs.pick > 0) {
 	free(iws->devs.pick);
-    if ( iws->num_devs.val > 0 )
+    }
+    if (iws->num_devs.val > 0) {
 	free(iws->devs.valuator);
-    if ( iws->num_devs.choice > 0 )
+    }
+    if (iws->num_devs.choice > 0) {
 	free(iws->devs.choice);
-    if ( iws->num_devs.string > 0 )
+    }
+    if (iws->num_devs.string > 0) {
 	free(iws->devs.string);
-    bzero( (char *)iws, sizeof(iws) );
+    }
+    memset(iws, 0, sizeof(iws));
 }
 
+#if 0
 #define SET_GENERIC_ENABLE_DATA( _ws, _dev, _ed ) \
     { \
     /* Set echo area using the current vdc rect of the window.  */ \

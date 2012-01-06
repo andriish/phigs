@@ -75,6 +75,23 @@ typedef struct {
    Pint    req_mode;
 } Phg_ret_hlhsr_mode;
 
+typedef struct {
+   Pevent             id;
+   Phg_inp_event_data data;
+} Phg_ret_inp_event;
+
+typedef struct {
+   Pin_status istat;
+   Pin_status chstat;
+   Pin_status pkstat;
+} Phg_ret_inp_req_stat;
+
+typedef struct {
+   int                  brk;
+   Phg_ret_inp_req_stat status;
+   Phg_ret_inp_event    event;
+} Phg_ret_inp_request;
+
 typedef union {
    Pint                 idata;
    Pfloat               fdata;
@@ -89,6 +106,8 @@ typedef union {
    Phg_ret_update_state update_state;
    Phg_ret_rep          rep;
    Phg_ret_hlhsr_mode   hlhsr_mode;
+   Phg_ret_inp_request  inp_request;
+   Phg_ret_inp_event    inp_event;
 } Phg_ret_data;
 
 typedef struct {
