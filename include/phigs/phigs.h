@@ -729,7 +729,7 @@ typedef struct {
 typedef Pchoice_data Pchoice_data3;
 
 typedef struct {
-   Pint buffeR_size;
+   Pint buffer_size;
    Pint init_pos;
 
    union {
