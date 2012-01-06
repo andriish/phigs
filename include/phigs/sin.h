@@ -55,7 +55,7 @@ typedef struct {
    Wst_loc_type  type;
    Sin_window_pt cur_pos;
    Sin_window_pt init_pos;
-   Ppoint3       ws_pt;
+   Ppoint3       wc_pt;
    Pint          view;
    int           (*resolve)(
                     struct _Sin_input_device *dev,
@@ -86,7 +86,7 @@ typedef struct {
    Pint            edit_pos;
    Pint            buf_size;
    Sin_window_pt   *init_pts;
-   Ppoint3         *ws_pts;
+   Ppoint3         *wc_pts;
    Pint            view;
    int             (*resolve)(
                       struct _Sin_input_device *dev,
@@ -238,6 +238,16 @@ typedef struct _Sin_notify_data {
    struct _Sin_notify_data *next;
 } Sin_notify_data;
 
+struct _Sin_input_event;
+
+typedef struct {
+   void (*send_request)(
+           Ws_handle wsh,
+           struct _Sin_input_event *event,
+           Pint int_data
+           );
+} Sin_ws_ops;
+
 typedef struct {
    unsigned         flags;
    Pint             count;
@@ -257,6 +267,7 @@ typedef struct _Sin_input_ws {
    Display                  *display;
    Window                   input_window;
    Window                   output_window;
+   Sin_ws_ops               ops;
    Sin_buf_data             event_buffer;
    Sin_notify_data          *notify_list;
    Pnum_in                  num_devs;

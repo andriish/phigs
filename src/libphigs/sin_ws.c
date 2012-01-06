@@ -65,12 +65,19 @@ SOFTWARE.
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <phigs/phg.h>
 #include <phigs/sin.h>
 #include <phigs/private/sinP.h>
 #include <X11/keysym.h>
 
-#if 0
+/*******************************************************************************
+ * phg_sin_ws_window_event_proc
+ *
+ * DESCR:       Set window event procedure
+ * RETURNS:     N/A
+ */
+
 void phg_sin_ws_window_event_proc(
     Display *display,
     Window window,
@@ -100,12 +107,19 @@ void phg_sin_ws_window_event_proc(
     }
 }
 
-static void
-add_client_to_list( client, listp )
-    Sin_notify_data		**listp;
-    Sin_notify_data		*client;
+/*******************************************************************************
+ * add_client_to_list
+ *
+ * DESCR:       Add client to list helper function
+ * RETURNS:     N/A
+ */
+
+static void add_client_to_list(
+    Sin_notify_data **listp,
+    Sin_notify_data *client
+    )
 {
-    Sin_notify_data	*dead_node;
+    Sin_notify_data *dead_node;
 
     /* If client exists, replace it.  If not, add new client to end of
      * list.
@@ -123,70 +137,105 @@ add_client_to_list( client, listp )
 	*listp = client;
 }
 
-int
-phg_sin_ws_set_event_func( ws, window, handle, func )
-    Sin_input_ws	*ws;
-    Window		window;
-    caddr_t		handle;
-    void		(*func)();
+/*******************************************************************************
+ * phg_sin_ws_set_event_func
+ *
+ * DESCR:       Set workstation event function
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sin_ws_set_event_func(
+    Sin_input_ws *ws,
+    Window window,
+    caddr_t handle,
+    void (*func)(
+        struct _Sin_input_ws *ws,
+        caddr_t handle,
+        Window window,
+        XEvent *event
+        )
+    )
 {
-    Sin_notify_data	*nd;
-    int			status = SIN_FALSE;
+    Sin_notify_data *nd;
+    int	status = FALSE;
 
     nd = (Sin_notify_data*)calloc((unsigned)1, sizeof(Sin_notify_data));
     if ( nd ) {
-	status = SIN_TRUE;
+	status = TRUE;
 	nd->window = window;
 	nd->handle = handle;
 	nd->notify = func;
 	nd->next = NULL;
-	add_client_to_list( nd, &ws->notify_list);
+        /* WARNING:
+         * Is this really correct
+         */
+	add_client_to_list(&ws->notify_list, nd);
     }
     return status;
 }
 
-#define DATA_MATCHES( _nd, _w, _h, _f ) \
-    ((_nd)->window == (_w) && (_nd)->handle == (_h) && (_nd)->notify == (_f))
+/*******************************************************************************
+ * phg_sin_ws_remove_event_func
+ *
+ * DESCR:       Remove workstation event function
+ * RETURNS:     N/A
+ */
 
-void
-phg_sin_ws_remove_event_func( ws, window, handle, func )
-    Sin_input_ws	*ws;
-    Window		window;
-    caddr_t		handle;
-    void		(*func)();
+void phg_sin_ws_remove_event_func(
+    Sin_input_ws *ws,
+    Window window,
+    caddr_t handle,
+    void (*func)(
+        struct _Sin_input_ws *ws,
+        caddr_t handle,
+        Window window,
+        XEvent *event
+        )
+    )
 {
-    register Sin_notify_data	**ndp;
-    Sin_notify_data		*dead_node;
+    Sin_notify_data **ndp;
+    Sin_notify_data *dead_node;
 
     for ( ndp = &ws->notify_list; *ndp; ndp = &(*ndp)->next ) {
-	if ( DATA_MATCHES( *ndp, window, handle, func) ) {
+	if ( SIN_DATA_MATCHES( *ndp, window, handle, func) ) {
 	    dead_node = *ndp;
 	    *ndp = (*ndp)->next;
-	    free((char*)dead_node);
+	    free(dead_node);
 	    break;
 	}
     }
 }
 
-void
-phg_sin_ws_free_notify_list( ws )
-    Sin_input_ws	*ws;
+/*******************************************************************************
+ * phg_sin_ws_free_notify_list
+ *
+ * DESCR:       Free workstation event notify list
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_free_notify_list(
+    Sin_input_ws *ws
+    )
 {
-    register Sin_notify_data	*nd, *next;
+    Sin_notify_data *nd, *next;
 
     for ( nd = ws->notify_list; nd; nd = next ) {
 	next = nd->next;
-	free((char *)nd);
+	free(nd);
     }
 }
 
-void
-phg_sin_ws_load_event( dev, event)
-    Sin_input_device    *dev;
-    Sin_input_event     *event;		/* event struct to copy to */
-    /*
-     * Copy an event from a device to an event strucure.
-     */
+/*******************************************************************************
+ * phg_sin_ws_load_event
+ *
+ * DESCR:       Copy an event from a device to an event strucure.
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_load_event(
+    Sin_input_device *dev,
+    Sin_input_event *event
+    )
 {
     event->wsid = dev->wsid;
     event->dev_num = dev->num;
@@ -212,11 +261,12 @@ phg_sin_ws_load_event( dev, event)
 		event->data.stroke.evt.points = dev->data.stroke.wc_pts;
 	    else if ( dev->data.stroke.count > 0 ) {
 		/* TODO: Issue error if this fails. */
-		if ( event->data.stroke.evt.points = (Ppoint3*)
-		    Malloc(dev->data.stroke.count * sizeof(Ppoint3)) ) {
-		    bcopy( (char *)dev->data.stroke.wc_pts,
-			(char *)event->data.stroke.evt.points,
-			dev->data.stroke.count * sizeof(Ppoint3));
+		event->data.stroke.evt.points = (Ppoint3*)
+		    malloc(dev->data.stroke.count * sizeof(Ppoint3));
+		if ( event->data.stroke.evt.points != NULL) {
+		    memcpy(event->data.stroke.evt.points,
+		           dev->data.stroke.wc_pts,
+			   dev->data.stroke.count * sizeof(Ppoint3));
 		} else {
 		    event->data.stroke.evt.num_points = 0;
 		}
@@ -246,7 +296,7 @@ phg_sin_ws_load_event( dev, event)
 		     */
 		    /* TODO: Issue error when this fails. */
 		    event->data.string.evt.string =
-			Malloc((unsigned)event->data.string.evt.length);
+			malloc((unsigned)event->data.string.evt.length);
 		    if ( !event->data.string.evt.string )
 			event->data.string.evt.length = 0;
 		    else
@@ -257,26 +307,29 @@ phg_sin_ws_load_event( dev, event)
             break;
     }
 }
-
 
-int
-phg_sin_ws_enque_events( count, devs)
-    int			count;	/* number of events in list */
-    Sin_input_device    **devs;	/* list of dev pointers with events */
-    /*
-     * Add simultaneous events to the event queue.
-     * Returns SIN_EVENT_ENQUED if all events can be enqued else
-     * SIN_EVENT_NOT_ENQUED.  No events were enqued if
-     * SIN_EVENT_NOT_ENQUED is returned.
-     * All the events are treated as simultaneous.
-     *
-     * Call the event notify proc (if any) anytime an attempt is made to
-     * place events on the queue -- even if the queue has overfloed.
-     */
+/*******************************************************************************
+ * phg_sin_ws_enque_events
+ *
+ * DESC:        Add simultaneous events to the event queue.
+ *              Returns SIN_EVENT_ENQUED if all events can be enqued else
+ *              SIN_EVENT_NOT_ENQUED.  No events were enqued if
+ *              SIN_EVENT_NOT_ENQUED is returned.
+ *              All the events are treated as simultaneous.
+ *
+ *              Call the event notify proc (if any) anytime an attempt is made
+ *              to place events on the queue -- even if the queue has overfloed.
+ * RETURNS:     N/A
+ */
+
+int phg_sin_ws_enque_events(
+    int	count,
+    Sin_input_device **devs
+    )
 {
-    Sin_input_event    	*event;
-    Sin_event_queue	*queue;
-    int			status = SIN_EVENT_NOT_ENQUED_FLAG, simul_id;
+    Sin_input_event *event;
+    Sin_event_queue *queue;
+    int	status = SIN_EVENT_NOT_ENQUED_FLAG, simul_id;
 
     queue = (*devs)->ws->queue;
     if ( SIN_Q_ENOUGH_ROOM( queue, count) && !SIN_Q_OVERFLOWED( queue) ) {
@@ -286,7 +339,8 @@ phg_sin_ws_enque_events( count, devs)
 	    simul_id = 0;
 	}
 	while ( count--) {
-	    if ( event = phg_sin_q_enque_free_event( queue) ) {
+	    event = phg_sin_q_enque_free_event(queue);
+	    if ( event != NULL ) {
 		phg_sin_ws_load_event( *devs, event);
 		event->simul_id = simul_id;
 	    }
@@ -306,9 +360,16 @@ phg_sin_ws_enque_events( count, devs)
     return status;
 }
 
-void
-phg_sin_ws_enable_device( device )
-    Sin_input_device    *device;
+/*******************************************************************************
+ * phg_sin_ws_enable_device
+ *
+ * DESCR:       Enable device for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_enable_device(
+    Sin_input_device *device
+    )
 {
     device->flags.on = 1;
     if ( device->dev_ops.enable) {
@@ -316,9 +377,16 @@ phg_sin_ws_enable_device( device )
     }
 }
 
-void
-phg_sin_ws_disable_device( device )
-    Sin_input_device    *device;
+/*******************************************************************************
+ * phg_sin_ws_disable_device
+ *
+ * DESCR:       Disable device for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_disable_device(
+    Sin_input_device *device
+    )
 {
     device->flags.on = 0;
     if ( device->dev_ops.disable ) {
@@ -326,9 +394,16 @@ phg_sin_ws_disable_device( device )
     }
 }
 
-void
-phg_sin_ws_reset_device( device)
-    register Sin_input_device        *device;
+/*******************************************************************************
+ * phg_sin_ws_reset_device
+ *
+ * DESCR:       Reset device for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_reset_device(
+    Sin_input_device *device
+    )
 {
     switch( device->class) {
         case SIN_LOCATOR:
@@ -360,12 +435,19 @@ phg_sin_ws_reset_device( device)
     }
 }
 
-void
-phg_sin_ws_send_request( dev )
-    Sin_input_device    *dev;
+/*******************************************************************************
+ * phg_sin_ws_send_request
+ *
+ * DESCR:       Send request for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_send_request(
+    Sin_input_device *dev
+    )
 {
-    register Sin_input_ws	*ws = dev->ws;
-    Sin_input_event		scratch_event;
+    Sin_input_ws *ws = dev->ws;
+    Sin_input_event scratch_event;
 
     if ( dev->mode == SIN_REQUEST_PENDING) {
 	dev->mode = SIN_REQUEST;
@@ -376,17 +458,24 @@ phg_sin_ws_send_request( dev )
     }
 }
 
-int
-phg_sin_ws_break( ws )
-    Sin_input_ws    *ws;
+/*******************************************************************************
+ * phg_sin_ws_break
+ *
+ * DESCR:       Break for workstation
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sin_ws_break(
+    Sin_input_ws *ws
+    )
 {
     /* Return true if the break was used. */
-    Sin_input_device    *dev;
-    Sin_input_event	scratch_event;
-    int			status = SIN_FALSE;
+    Sin_input_device *dev;
+    Sin_input_event scratch_event;
+    int	status = FALSE;
 
     if ( ws && (dev = SIN_BREAK_DEVICE(ws)) ){
-	status = SIN_TRUE;
+	status = TRUE;
 	/* Check the mode just to be safe. */
         if ( dev->mode == SIN_REQUEST_PENDING) {
             dev->mode = SIN_REQUEST;
@@ -402,39 +491,63 @@ phg_sin_ws_break( ws )
     return status;
 }
 
-void
-phg_sin_ws_close_event_buf( ws )
-    Sin_input_ws	*ws;
+/*******************************************************************************
+ * phg_sin_ws_close_event_buf
+ *
+ * DESCR:       Close event buffer for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_close_event_buf(
+    Sin_input_ws *ws
+    )
 {
-    free((char*)ws->event_buffer.devs);
+    free(ws->event_buffer.devs);
     ws->event_buffer.devs = NULL;
     ws->event_buffer.size = 0;
     SIN_WS_RESET_EVENT_BUFFER( &ws->event_buffer );
 }
 
-int
-phg_sin_ws_event_buf_init( ws )
-    Sin_input_ws	*ws;
+/*******************************************************************************
+ * phg_sin_ws_event_buf_init
+ *
+ * DESCR:       Initialize event buffer for workstation
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sin_ws_event_buf_init(
+    Sin_input_ws *ws
+    )
 {
-    int		status = SIN_FALSE;
+    int	status = FALSE;
 
     ws->event_buffer.size = 10;	/* room for this many events initially */
-    if ( ws->event_buffer.devs = (Sin_input_device**) calloc( (unsigned)1,
-	    (unsigned)ws->event_buffer.size * sizeof(Sin_input_device*)) ) {
-	status = SIN_TRUE;
-    } else
+    ws->event_buffer.devs = (Sin_input_device**) calloc( (unsigned)1,
+	    (unsigned)ws->event_buffer.size * sizeof(Sin_input_device*));
+    if (ws->event_buffer.devs != NULL) {
+	status = TRUE;
+    }
+    else {
 	ws->event_buffer.size = 0;
+    }
 
     SIN_WS_RESET_EVENT_BUFFER( &ws->event_buffer );
     return status;
 }
 
-void
-phg_sin_ws_buffer_event( ws, dev )
-    Sin_input_ws	*ws;
-    Sin_input_device	*dev;
+/*******************************************************************************
+ * phg_sin_ws_buffer_event
+ *
+ * DESCR:       Buffer event for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_buffer_event(
+    Sin_input_ws *ws,
+    Sin_input_device *dev
+    )
 {
-    register Sin_buf_data	*ev_buf = &ws->event_buffer;
+    Sin_buf_data *ev_buf = &ws->event_buffer;
 
     if ( ev_buf->count >= ev_buf->size) {
 	ev_buf->devs = (Sin_input_device**)realloc( (char *)ev_buf->devs,
@@ -448,14 +561,21 @@ phg_sin_ws_buffer_event( ws, dev )
     }
 }
 
-void
-phg_sin_ws_flush_event_buffer( ws )
-    Sin_input_ws	*ws;
+/*******************************************************************************
+ * phg_sin_ws_flush_event_buffer
+ *
+ * DESCR:       Flush event buffer for workstation
+ * RETURNS:     N/A
+ */
+
+void phg_sin_ws_flush_event_buffer(
+    Sin_input_ws *ws
+    )
 {
-    register Sin_buf_data	*ev_buf = &ws->event_buffer;
-    register Sin_input_device	**devs;
-    register int		i;
-    int				status;
+    Sin_buf_data *ev_buf = &ws->event_buffer;
+    Sin_input_device **devs;
+    int	i;
+    int	status;
 
     /* Put all the events on the queue. */
     if ( ev_buf->count > 0) {
@@ -481,9 +601,10 @@ phg_sin_ws_flush_event_buffer( ws )
     SIN_WS_RESET_EVENT_BUFFER(ev_buf);
 }
 
-XtActionProc
-phg_sin_xt_request_satisfied( w )
-    Widget      w;
+#ifdef TODO
+XtActionProc phg_sin_xt_request_satisfied(
+    Widget  w
+    )
 {
     Sin_input_device    *device;
 
