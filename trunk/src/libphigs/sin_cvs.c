@@ -469,14 +469,12 @@ static void stroke_event_func(
     if (event->trigger != SIN_WIN_EXIT && SIN_POINT_IN_WS(&cpt,sin_dev->ws))
 	echo_stroke( dev, SIN_ECHO_DYNAMIC);
 
-#ifdef TODO
     if ( event->flags & SIN_BUTTON_DOWN ) {
 	if ( EVENT_SHIFT_IS_DOWN(event) || EVENT_CTRL_IS_DOWN(event) )
 	    event_occurred = TRUE;
 	else if ( (*sin_dev->ws->ops.in_viewport)(sin_dev->client_data, &cpt))
 	    event_occurred = TRUE;
     }
-#endif
 
     if ( event_occurred )
 	process_stroke_event( dev, cvs_tbl, event, sin_dev, &cpt );
@@ -1044,13 +1042,14 @@ static int map_event(
 
 static void process_event(
     Sin_input_ws *ws,
-    Sin_window_table *cvs_tbl,
+    caddr_t handle,
     Window window,
     XEvent *xevent
     )
 {
     Sin_trig_data *trig;
     Sin_cvs_event event;
+    Sin_window_table *cvs_tbl = (Sin_window_table *) handle;
 
     Sin_trig_op	*op, *next;
 

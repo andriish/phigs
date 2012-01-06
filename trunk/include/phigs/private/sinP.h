@@ -324,5 +324,38 @@ void phg_sin_ws_flush_event_buffer(
     Sin_input_ws *ws
     );
 
+/*******************************************************************************
+ * phg_sin_dev_boot_valuator(
+ *
+ * DESCR:       Boot valuator device
+ * RETURNS:     N/A
+ */     
+            
+void phg_sin_dev_boot_valuator( 
+    Sin_input_device *dev
+    );
+
+/*******************************************************************************
+ * phg_sin_dev_boot_choice
+ *
+ * DESCR:       Boot choice device 
+ * RETURNS:     N/A
+ */         
+
+void phg_sin_dev_boot_choice( 
+    Sin_input_device *dev
+    );
+
+/*******************************************************************************
+ * phg_sin_dev_boot_string
+ *
+ * DESCR:       Boot string device
+ * RETURNS:     N/A
+ */
+
+void phg_sin_dev_boot_string( 
+    Sin_input_device *dev
+    );
+
 #endif /* _sinP_h */
 
