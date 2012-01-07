@@ -1566,12 +1566,18 @@ void phg_ws_inp_set_mode(
     Ws_inp_device_handle dev;
     Sin_enable_data ed;
     Sin_set_mode_data md;
-    int okay = !0;
+    int okay = TRUE;
     Pop_mode old_mode;
+
+#ifdef DEBUG
+    printf("ws_inp: phg_ws_inp_set_mode\n");
+    printf("\tClass: %d\n", args->class);
+#endif
 
 #ifdef TODO
     phg_wsx_update_ws_rect( ws );
 #endif
+
     switch (args->class) {
         case PHG_ARGS_INP_LOC:
 	    md.class = SIN_LOCATOR;
@@ -1633,6 +1639,7 @@ void phg_ws_inp_set_mode(
         default:
             break;
     }
+
     if ( okay ) {
 	md.dev_num = args->dev;
 	md.mode = MAP_MODE(args->mode);
@@ -1649,6 +1656,7 @@ void phg_ws_inp_set_mode(
 		--ws->num_active_input_devs;
 	}
     }
+
     XFlush( ws->display );
 }
 
@@ -1751,6 +1759,10 @@ static void sample_locator(
     )
 {
     Sin_input_event event;
+
+#ifdef DEBUG
+    printf("ws_inp: sample_locator\n");
+#endif
 
     phg_sin_sample( iws->sin_handle, SIN_LOCATOR, loc->num, &event);
     revt->id.class = PIN_LOC;
@@ -1874,6 +1886,10 @@ void phg_ws_inp_sample(
     Ws_input_ws *iws = &ws->in_ws;
     Ws_inp_device_handle dev;
     Pop_mode cur_mode;
+
+#ifdef DEBUG
+    printf("ws_inp: phg_ws_inp_sample\n");
+#endif
 
     switch (class) {
         case PHG_ARGS_INP_LOC3:
@@ -2151,6 +2167,7 @@ static void overlay_event(
     XEvent *event
     )
 {
+#ifdef PROPAGATE
     Window parent = (Window) client_data;
 
 #ifdef DEBUG
@@ -2161,15 +2178,14 @@ static void overlay_event(
 #endif
 
 #ifdef DEBUG
-    fprintf(stderr, "Got OVERLAY event %s on window %d on display %#x\n", 
+    fprintf(stderr, "Got OVERLAY event %s on window %x on display %#x\n", 
 	phg_sin_evt_name(event), (unsigned) window, (unsigned) display);
 #endif
 
-#ifdef TODO
     switch ( event->type ) {
 	default:
 	/* Propogate this event to the window's parent. */
-	XSendEvent( display, parent, 1, KeyPressMask | KeyReleaseMask
+	XSendEvent( display, parent, True, KeyPressMask | KeyReleaseMask
 	    | ButtonPressMask | ButtonReleaseMask, event );
 	break;
     }
@@ -2216,6 +2232,7 @@ Window phg_wsx_create_overlay(
 
 #ifdef DEBUG
     printf("ws_inp: phg_ws_create_overlay\n");
+    printf("\tParent window = %x\n", (unsigned) parent);
 #endif
 
     XGetWindowAttributes(display, (Window)parent, &gattrs);
@@ -2224,6 +2241,7 @@ Window phg_wsx_create_overlay(
 	    (unsigned)gattrs.width, (unsigned)gattrs.height, (unsigned)0,
 	    0, InputOnly, (Visual *)NULL, CWWinGravity, &sattrs );
     if ( win ) {
+#ifndef NOT_USED
 	/* Set up to propogate input events to parent. */
 	(void)phg_sin_evt_register(PHG_EVT_TABLE, display, win, KeyPress,
 	    (caddr_t)parent, overlay_event );
@@ -2233,6 +2251,7 @@ Window phg_wsx_create_overlay(
 	    (caddr_t)parent, overlay_event );
 	(void)phg_sin_evt_register(PHG_EVT_TABLE, display, win, ButtonRelease,
 	    (caddr_t)parent, overlay_event );
+#endif
 
 	/* Set up to resize overlay when parent is resized. */
 	(void)phg_sin_evt_register(PHG_EVT_TABLE, display, parent,

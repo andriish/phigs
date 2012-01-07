@@ -589,6 +589,21 @@ int phg_wsb_map_initial_points(
     );
 
 /*******************************************************************************
+ * phg_wsb_resolve_locator
+ *
+ * DESCR:       Resolve locator device
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wsb_resolve_locator(
+    Ws *ws,
+    Ws_point *dc_pt,
+    int determine_z,
+    Pint *view_index,
+    Ppoint3 *wc_pt
+    );
+
+/*******************************************************************************
  * phg_wsb_create_LUTs
  *  
  * DESCR:       Create workstation lookup tables
