@@ -574,6 +574,21 @@ void phg_wsb_inq_rep(
     );
 
 /*******************************************************************************
+ * phg_wsb_map_initial_points
+ *
+ * DESCR:       Map initial points
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wsb_map_initial_points(
+    Ws *ws,
+    Pint view_index,
+    Pint *num_pts,
+    Ppoint3 *wc_pts,
+    XPoint *dwbl_pts
+    );
+
+/*******************************************************************************
  * phg_wsb_create_LUTs
  *  
  * DESCR:       Create workstation lookup tables

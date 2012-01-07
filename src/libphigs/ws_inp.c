@@ -905,6 +905,10 @@ void phg_ws_inp_init_device(
     Pop_mode mode;
     int two_d;
 
+#ifdef DEBUG
+    printf("ws_inp: phg_ws_inp_init_device\n");
+#endif
+
 #ifdef TODO
     phg_wsx_update_ws_rect( ws );
 #endif
@@ -1004,6 +1008,10 @@ static void init_all_devices(
     XPoint init_dwbl_pt;
     int i;
 
+#ifdef DEBUG
+    printf("ws_inp: init_all_devices\n");
+#endif
+
     for ( i = 0; i < iws->num_devs.loc; i++ ) {
 	loc_dev = &iws->devs.locator[i];
 
@@ -1048,8 +1056,11 @@ static int init_input_state(
 {
     int i;
     Ws_input_ws *iws = &ws->in_ws;
-
     iws->num_devs = idt->num_devs;
+
+#ifdef DEBUG
+    printf("ws_inp: init_input_state\n");
+#endif
 
     iws->devs.locator = (Ws_inp_loc*)
 	calloc( (unsigned)iws->num_devs.loc, sizeof(Ws_inp_loc));
@@ -1309,6 +1320,10 @@ static void ws_inp_load_funcs(
     Ws *ws
     )
 {
+#ifdef DEBUG
+    printf("ws_inp: load_funcs\n");
+#endif
+
     ws->init_device       = phg_ws_inp_init_device;
     ws->set_device_mode	  = phg_ws_inp_set_mode;
     ws->request_device    = phg_ws_inp_request;
@@ -1330,12 +1345,18 @@ int phg_ws_input_init(
     Input_q_handle queue
     )
 {
+    Sin_desc sin_desc;
     int status = FALSE;
     Wst_input_wsdt *idt = &ws->type->desc_tbl.phigs_dt.in_dt;
-    Sin_desc sin_desc;
-
     Sin_desc *desc = &sin_desc;
     Ws_input_ws *iws = &ws->in_ws;
+
+#ifdef DEBUG
+    printf("ws_inp: phg_ws_input_init\n");
+    printf("\twindow = %x\n", (unsigned) ws->drawable_id);
+    printf("\tinput_overlay_window = %x\n",
+           (unsigned) ws->input_overlay_window);
+#endif
 
     if ( init_input_state( ws, idt ) ) {
 	iws->input_queue = (Input_q_handle)queue;
@@ -1358,6 +1379,10 @@ int phg_ws_input_init(
 	    status = TRUE;
 	}
     }
+
+#ifdef DEBUG
+    printf("ws_inp: phg_ws_input_init DONE!\n");
+#endif
 
     return status;
 }
@@ -2128,6 +2153,10 @@ static void overlay_event(
     Window parent = (Window) client_data;
 
 #ifdef DEBUG
+   printf("ws_inp: overlay_event\n");
+#endif
+
+#ifdef DEBUG_DIAGNOSTICS
     fprintf( stderr, "Got OVERLAY event %s on window %d on display 0x%x\n", 
 	eventNames[event->type], window, display);
 #endif
@@ -2177,6 +2206,10 @@ Window phg_wsx_create_overlay(
     XSetWindowAttributes sattrs;
     Display *display = ws->display;
     Drawable parent = ws->drawable_id;
+
+#ifdef DEBUG
+    printf("ws_inp: phg_ws_create_overlay\n");
+#endif
 
     XGetWindowAttributes(display, (Window)parent, &gattrs);
     sattrs.win_gravity = NorthWestGravity;
