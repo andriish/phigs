@@ -134,7 +134,10 @@ void sample_locator(Ws *wsh)
       printf("Error sampling locator\n");
    }
    else {
-      printf("Sampled locator.\n");
+      printf("Sampled locator at: %f ,%f, %f\n",
+             ret.data.inp_event.data.loc.position.x,
+             ret.data.inp_event.data.loc.position.y,
+             ret.data.inp_event.data.loc.position.z);
    }
 }
 
@@ -157,7 +160,7 @@ int main(void)
       printf("Waiting for events...\n");
       while (1) {
          XNextEvent(wsh->display, &event);
-         print_event(&event);
+         //print_event(&event);
          phg_sin_evt_dispatch(PHG_EVT_TABLE, wsh->display, &event);
          if (event.type == Expose) {
             while (XCheckTypedEvent(wsh->display, Expose, &event));

@@ -1618,7 +1618,10 @@ int phg_wsb_resolve_locator(
     Ppoint3 *wc_pt
     )
 {
-    printf("resolve_locator not defined\n");
+    /* Temporary dummy method */
+    wc_pt->x = dc_pt->x;
+    wc_pt->y = dc_pt->y;
+    wc_pt->z = 0.0;
 
     return 1;
 }
