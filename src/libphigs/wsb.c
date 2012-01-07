@@ -1598,9 +1598,7 @@ int phg_wsb_map_initial_points(
     XPoint *dwbl_pts
     )
 {
-#ifdef DEBUG
-   printf("wsb: map_initial_points\n");
-#endif
+    printf("map_initial_points not defined\n");
 
     return 1;
 }

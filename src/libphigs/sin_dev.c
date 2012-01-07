@@ -224,6 +224,9 @@ int phg_sin_dev_start(
 
     /* Start up input processing for the input window. */
     for ( i = 0; i < NUM_COMMON_EVENTS; i++ ) {
+#ifdef DEBUG
+        printf("\tRegister event: %d\n", common_events[i]);
+#endif
 	(void)phg_sin_evt_register( PHG_EVT_TABLE, ws->display,
 	    ws->input_window, common_events[i], (caddr_t)ws,
             phg_sin_ws_window_event_proc );

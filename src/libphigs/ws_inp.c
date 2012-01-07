@@ -70,6 +70,7 @@ SOFTWARE.
 #include <phigs/ws.h>
 #include <phigs/ws_inp.h>
 #include <phigs/phg_dt.h>
+#include <phigs/private/evtP.h>
 
 /*******************************************************************************
  * resolve_locator
@@ -381,7 +382,7 @@ static void init_stroke(
 
 	if ( two_d ) {
 	    /* Fill in the Z value. */
-	    register int	i;
+	    int i;
 
 	    for ( i = 0; i < init->num_points; i++ )
 		init_wc_pts[i].z = 0.0;
@@ -491,7 +492,7 @@ static int setup_choice_init(
     /* Take care of pets that need more data moving/mapping. */
     switch ( dev->pet ) {
 	case 3: {
-	    register char       **strs, *new_strs;
+	    char **strs, *new_strs;
 
 	    /* Get space for the new list of strings and copy them.*/
 	    cnt = dev->record.pets.pet_r3.num_strings
@@ -2154,12 +2155,17 @@ static void overlay_event(
 
 #ifdef DEBUG
    printf("ws_inp: overlay_event\n");
+   printf("From window: %x to %x\n",
+          (unsigned) window,
+          (unsigned) parent);
 #endif
 
-#ifdef DEBUG_DIAGNOSTICS
-    fprintf( stderr, "Got OVERLAY event %s on window %d on display 0x%x\n", 
-	eventNames[event->type], window, display);
+#ifdef DEBUG
+    fprintf(stderr, "Got OVERLAY event %s on window %d on display %#x\n", 
+	phg_sin_evt_name(event), (unsigned) window, (unsigned) display);
 #endif
+
+#ifdef TODO
     switch ( event->type ) {
 	default:
 	/* Propogate this event to the window's parent. */
@@ -2167,6 +2173,7 @@ static void overlay_event(
 	    | ButtonPressMask | ButtonReleaseMask, event );
 	break;
     }
+#endif
 }
 
 /*******************************************************************************

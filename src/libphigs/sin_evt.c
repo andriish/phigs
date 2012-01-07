@@ -142,6 +142,10 @@ int phg_sin_evt_register(
    int status;
    Phg_sin_evt_entry *ev;
 
+#ifdef DEBUG
+   printf("sin_evt: phg_sin_evt_register\n");
+   printf("\tClient_data = %x\n", (unsigned) cdata);
+#endif
    /* First check if entry exists */
    for (ev = (Phg_sin_evt_entry *) LIST_HEAD(&ev_tbl->events[event_type]);
         ev != NULL;
@@ -161,6 +165,10 @@ int phg_sin_evt_register(
          status = FALSE;
       }
       else {
+         ev->display = display;
+         ev->window = window;
+         ev->cdata = cdata;
+         ev->callback = callback;
          list_add(&ev_tbl->events[event_type], &ev->node);
       }
    }
@@ -279,12 +287,31 @@ void phg_sin_evt_dispatch(
         ev = (Phg_sin_evt_entry *) NODE_NEXT(&ev->node)) {
       if ((ev->display == display) &&
           (ev->window == event->xany.window)) {
+#ifdef DEBUG
+         printf("%x\t", ev->cdata);
+         phg_sin_evt_print(event);
+         printf("\n");
+#endif
          (*ev->callback)(display,
                          event->xany.window,
                          ev->cdata,
                          event);
       }
    }
+}
+
+/*******************************************************************************
+ * phg_sin_evt_name
+ *
+ * DESCR:       Get event type name
+ * RETURNS:     Pointer to string
+ */
+
+char* phg_sin_evt_name(
+   XEvent *event
+   )
+{
+   return eventNames[event->type];
 }
 
 /*******************************************************************************
