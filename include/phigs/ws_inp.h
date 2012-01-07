@@ -154,6 +154,21 @@ typedef struct _Ws_input_ws {
     stp->e_volume = def->e_volume; \
     stp->record = def->record;
 
+#define WSINP_SET_GENERIC_ENABLE_DATA( _ws, _dev, _ed ) \
+    { \
+    /* Set echo area using the current vdc rect of the window.  */ \
+    WSINP_DC_ECHO_TO_DRWBL_ECHO2((_ws), &(_dev)->e_volume, &(_ed)->echo_area) \
+    }
+
+#define WSINP_COPY_COMMON_STATE_FIELDS( _st, _dev ) \
+  { \
+    (_st)->mode = (_dev)->mode; \
+    (_st)->esw = (_dev)->esw; \
+    (_st)->pet = (_dev)->pet; \
+    (_st)->e_volume = (_dev)->e_volume; \
+    (_st)->record = (_dev)->record; \
+  }
+
 struct _Ws;
 
 /*******************************************************************************
@@ -166,6 +181,73 @@ struct _Ws;
 void phg_ws_inp_init_device(
     struct _Ws *ws,
     Phg_args_inp_init_dev *args
+    );
+
+/*******************************************************************************
+ * phg_ws_inp_set_mode
+ *
+ * DESCR:       Set input mode
+ * RETURNS:     N/A
+ */
+
+void phg_ws_inp_set_mode(
+    struct _Ws *ws,
+    Phg_args_set_mode_data *args
+    );
+
+/*******************************************************************************
+ * phg_ws_inp_request
+ *
+ * DESCR:       Request input from device
+ * RETURNS:     N/A
+ */
+
+void phg_ws_inp_request(
+    struct _Ws *ws,
+    Phg_args_idev_class class,
+    Pint dev_num,
+    Phg_ret *ret
+    );
+
+/*******************************************************************************
+ * phg_ws_inp_sample
+ *
+ * DESCR:       Sample device
+ * RETURNS:     N/A
+ */
+
+void phg_ws_inp_sample(
+    struct _Ws *ws,
+    Phg_args_idev_class class,
+    Pint dev_num,
+    Phg_ret *ret
+    );
+
+/*******************************************************************************
+ * phg_ws_inp_repaint
+ *
+ * DESCR:       Repaint device
+ * RETURNS:     N/A
+ */
+
+void phg_ws_inp_repaint(
+    struct _Ws *ws,
+    Pint num_rects,
+    XRectangle *rects
+    );
+
+/*******************************************************************************
+ * phg_ws_inp_inq_dev_state
+ *
+ * DESCR:       Inquire device state
+ * RETURNS:     N/A
+ */
+
+void phg_ws_inp_inq_dev_state(
+    struct _Ws *ws,
+    Phg_args_idev_class class,
+    Pint num,
+    Phg_ret *ret
     );
 
 /*******************************************************************************
@@ -189,6 +271,42 @@ int phg_ws_input_init(
 
 void phg_ws_input_close(
     struct _Ws *ws
+    );
+
+/*******************************************************************************
+ * phg_ws_inp_resize
+ *
+ * DESCR:       Resize input device
+ * RETURNS:     N/A
+ */
+
+void phg_ws_inp_resize(
+    struct _Ws *ws,
+    XRectangle *old_rect
+    );
+
+/*******************************************************************************
+ * phg_wsx_create_overlay
+ *
+ * DESCR:       Create overlay window
+ * RETURNS:     Overlay window
+ */
+
+Window phg_wsx_create_overlay(
+    struct _Ws *ws
+    );
+
+/*******************************************************************************
+ * phg_wsx_destroy_overlay
+ *
+ * DESCR:       Destroy overlay window
+ * RETURNS:     N/A
+ */
+
+void phg_wsx_destroy_overlay(
+    Display *display,
+    Window overlay,
+    Drawable parent
     );
 
 #endif /* _ws_inp_h */

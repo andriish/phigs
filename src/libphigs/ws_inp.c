@@ -1309,14 +1309,12 @@ static void ws_inp_load_funcs(
     Ws *ws
     )
 {
-#ifdef TODO
-    ws->set_device_mode	  = phg_ws_inp_set_mode;
     ws->init_device       = phg_ws_inp_init_device;
+    ws->set_device_mode	  = phg_ws_inp_set_mode;
     ws->request_device    = phg_ws_inp_request;
     ws->sample_device	  = phg_ws_inp_sample;
-    ws->inq_inp_dev_state = phg_ws_inp_inq_dev_state;
     ws->input_repaint     = phg_ws_inp_repaint;
-#endif
+    ws->inq_inp_dev_state = phg_ws_inp_inq_dev_state;
 }
 
 
@@ -1458,27 +1456,25 @@ void phg_ws_input_close(
     memset(iws, 0, sizeof(iws));
 }
 
-#if 0
-#define SET_GENERIC_ENABLE_DATA( _ws, _dev, _ed ) \
-    { \
-    /* Set echo area using the current vdc rect of the window.  */ \
-    WSINP_DC_ECHO_TO_DRWBL_ECHO2((_ws), &(_dev)->e_volume, &(_ed)->echo_area) \
-    }
+/*******************************************************************************
+ * stk_enable_data
+ *
+ * DESCR:       Stroke enable data helper function
+ * RETURNS:     TRUE or FALSE
+ */
 
-static int
-stk_enable_data( ws, dev, ed )
-    Ws				*ws;
-    register Ws_inp_stroke	*dev;
-    register Sin_enable_data	*ed;
+static int stk_enable_data(
+    Ws *ws,
+    Ws_inp_stroke *dev,
+    Sin_enable_data *ed
+    )
 {
-    Pint	num_pts;
-    XPoint	*init_dwbl_pts;
+    Pint num_pts;
+    XPoint *init_dwbl_pts;
 
     /* Set echo area and initial drawable points using current window size. */
 
     if ( dev->stroke.num_points > 0 ) {
-	Pint		num_pts;
-	unsigned	size;
 
 	/* Get the space we have stashed away for drawable points. */
 	init_dwbl_pts = (XPoint *)
@@ -1491,7 +1487,7 @@ stk_enable_data( ws, dev, ed )
 		|| num_pts != dev->stroke.num_points ) {
 	    /* The points aren't valid with this window size. */
 	    ERR_BUF( ws->erh, ERR261 );
-	    return;
+	    return FALSE;
 	}
 	ed->data.stroke.cnt = num_pts;
 	ed->data.stroke.init_pts = init_dwbl_pts;
@@ -1502,17 +1498,24 @@ stk_enable_data( ws, dev, ed )
 
     WSINP_DC_ECHO_TO_DRWBL_ECHO2( ws, &dev->e_volume, &ed->echo_area )
 
-    return 1;
+    return TRUE;
 }
 
-static void
-loc_enable_data( ws, dev, ed )
-    Ws				*ws;
-    register Ws_inp_loc		*dev;
-    register Sin_enable_data	*ed;
+/*******************************************************************************
+ * loc_enable_data
+ *
+ * DESCR:       Locator enable data helper function
+ * RETURNS:     N/A
+ */
+
+static void loc_enable_data(
+    Ws *ws,
+    Ws_inp_loc *dev,
+    Sin_enable_data *ed
+    )
 {
-    Pint	num_pts = 1;
-    XPoint	dwbl_pt;
+    Pint num_pts = 1;
+    XPoint dwbl_pt;
 
     /* Set echo area using the current window size. */
     if ( (*ws->map_initial_points)( ws, dev->loc.view_ind, &num_pts,
@@ -1521,20 +1524,29 @@ loc_enable_data( ws, dev, ed )
     WSINP_DC_ECHO_TO_DRWBL_ECHO2( ws, &dev->e_volume, &ed->echo_area )
 }
 
-void
-phg_ws_inp_set_mode( ws, args )
-    Ws					*ws;
-    register Phg_args_set_mode_data	*args;
-{
-    register Ws_input_ws		*iws = &ws->in_ws;
-    register Ws_inp_device_handle	dev;
-    Sin_enable_data			ed;
-    Sin_set_mode_data			md;
-    int					okay = !0;
-    Pop_mode				old_mode;
+/*******************************************************************************
+ * phg_ws_inp_set_mode
+ *
+ * DESCR:       Set input mode
+ * RETURNS:     N/A
+ */
 
+void phg_ws_inp_set_mode(
+    Ws *ws,
+    Phg_args_set_mode_data *args
+    )
+{
+    Ws_input_ws *iws = &ws->in_ws;
+    Ws_inp_device_handle dev;
+    Sin_enable_data ed;
+    Sin_set_mode_data md;
+    int okay = !0;
+    Pop_mode old_mode;
+
+#ifdef TODO
     phg_wsx_update_ws_rect( ws );
-    switch ( args->class) {
+#endif
+    switch (args->class) {
         case PHG_ARGS_INP_LOC:
 	    md.class = SIN_LOCATOR;
 	    dev.loc = &iws->devs.locator[args->dev-1];
@@ -1547,7 +1559,8 @@ phg_ws_inp_set_mode( ws, args )
 	    md.class = SIN_STROKE;
 	    dev.stk = &iws->devs.stroke[args->dev-1];
 	    old_mode = dev.stk->mode;
-	    if ( okay = stk_enable_data( ws, dev.stk, &ed) ) {
+	    okay = stk_enable_data( ws, dev.stk, &ed);
+	    if ( okay ) {
 		dev.stk->mode = args->mode;
 		dev.stk->esw = args->echo;
 	    }
@@ -1558,7 +1571,7 @@ phg_ws_inp_set_mode( ws, args )
 	    old_mode = dev.val->mode;
 	    dev.val->mode = args->mode;
 	    dev.val->esw = args->echo;
-	    SET_GENERIC_ENABLE_DATA( ws, dev.val, &ed)
+	    WSINP_SET_GENERIC_ENABLE_DATA( ws, dev.val, &ed)
 	    break;
         case PHG_ARGS_INP_CHC:
 	    md.class = SIN_CHOICE;
@@ -1566,7 +1579,7 @@ phg_ws_inp_set_mode( ws, args )
 	    old_mode = dev.cho->mode;
 	    dev.cho->mode = args->mode;
 	    dev.cho->esw = args->echo;
-	    SET_GENERIC_ENABLE_DATA( ws, dev.cho, &ed)
+	    WSINP_SET_GENERIC_ENABLE_DATA( ws, dev.cho, &ed)
 	    break;
         case PHG_ARGS_INP_PIK:
 	    md.class = SIN_PICK;
@@ -1574,7 +1587,7 @@ phg_ws_inp_set_mode( ws, args )
 	    old_mode = dev.pik->mode;
 	    dev.pik->mode = args->mode;
 	    dev.pik->esw = args->echo;
-	    SET_GENERIC_ENABLE_DATA( ws, dev.pik, &ed)
+	    WSINP_SET_GENERIC_ENABLE_DATA( ws, dev.pik, &ed)
 	    /* Invoke the enable or disable procs when the mode changes. */
 	    if ( args->mode == POP_REQ ) {
 		if ( old_mode == POP_EVENT || old_mode == POP_SAMPLE )
@@ -1589,8 +1602,10 @@ phg_ws_inp_set_mode( ws, args )
 	    old_mode = dev.str->mode;
 	    dev.str->mode = args->mode;
 	    dev.str->esw = args->echo;
-	    SET_GENERIC_ENABLE_DATA( ws, dev.str, &ed)
+	    WSINP_SET_GENERIC_ENABLE_DATA( ws, dev.str, &ed)
 	    break;
+        default:
+            break;
     }
     if ( okay ) {
 	md.dev_num = args->dev;
@@ -1611,22 +1626,31 @@ phg_ws_inp_set_mode( ws, args )
     XFlush( ws->display );
 }
 
-void
-phg_ws_inp_request( ws, class, dev_num, ret)
-    Ws				*ws;
-    Phg_args_idev_class		class;
-    Pint			dev_num;
-    Phg_ret			*ret;
+/*******************************************************************************
+ * phg_ws_inp_request
+ *
+ * DESCR:       Request input from device
+ * RETURNS:     N/A
+ */
+
+void phg_ws_inp_request(
+    Ws *ws,
+    Phg_args_idev_class class,
+    Pint dev_num,
+    Phg_ret *ret
+    )
 {
-    Ws_input_ws				*iws = &ws->in_ws;
-    register Ws_inp_device_handle	dev;
-    Sin_enable_data			ed;
-    Sin_input_class			sin_class;
-    Pop_mode				cur_mode;
-    int					okay = !0;
+    Ws_input_ws *iws = &ws->in_ws;
+    Ws_inp_device_handle dev;
+    Sin_enable_data ed;
+    Sin_input_class sin_class;
+    Pop_mode cur_mode;
+    int okay = TRUE;
 
     ret->err = -1;
+#ifdef TODO
     phg_wsx_update_ws_rect( ws );
+#endif
     switch ( class) {
         case PHG_ARGS_INP_LOC3:
         case PHG_ARGS_INP_LOC:
@@ -1646,7 +1670,7 @@ phg_ws_inp_request( ws, class, dev_num, ret)
 	    sin_class = SIN_PICK;
 	    dev.pik = &iws->devs.pick[dev_num-1];
 	    if ( (cur_mode = dev.pik->mode) == POP_REQ)
-		SET_GENERIC_ENABLE_DATA( ws, dev.pik, &ed)
+		WSINP_SET_GENERIC_ENABLE_DATA( ws, dev.pik, &ed)
 	    if ( ws->pick_enable )
 		okay = (*ws->pick_enable)( ws, dev.pik );
 	    break;
@@ -1655,22 +1679,24 @@ phg_ws_inp_request( ws, class, dev_num, ret)
 	    dev.val = &iws->devs.valuator[dev_num-1];
 	    cur_mode = dev.val->mode;
 	    if ( (cur_mode = dev.val->mode) == POP_REQ)
-		SET_GENERIC_ENABLE_DATA( ws, dev.val, &ed)
+		WSINP_SET_GENERIC_ENABLE_DATA( ws, dev.val, &ed)
 	    break;
         case PHG_ARGS_INP_CHC:
 	    sin_class = SIN_CHOICE;
 	    dev.cho = &iws->devs.choice[dev_num-1];
 	    cur_mode = dev.cho->mode;
 	    if ( (cur_mode = dev.cho->mode) == POP_REQ)
-		SET_GENERIC_ENABLE_DATA( ws, dev.cho, &ed)
+		WSINP_SET_GENERIC_ENABLE_DATA( ws, dev.cho, &ed)
 	    break;
         case PHG_ARGS_INP_STR:
 	    sin_class = SIN_STRING;
 	    dev.str = &iws->devs.string[dev_num-1];
 	    cur_mode = dev.str->mode;
 	    if ( (cur_mode = dev.str->mode) == POP_REQ)
-		SET_GENERIC_ENABLE_DATA( ws, dev.str, &ed)
+		WSINP_SET_GENERIC_ENABLE_DATA( ws, dev.str, &ed)
 	    break;
+        default:
+            break;
     }
 
     if ( cur_mode != POP_REQ ) {
@@ -1685,167 +1711,249 @@ phg_ws_inp_request( ws, class, dev_num, ret)
     XFlush( ws->display );
 }
 
-static void
-sample_locator( iws, loc, revt )
-    Ws_input_ws		*iws;
-    Ws_inp_loc		*loc;
-    Phg_ret_inp_event	*revt;
+/*******************************************************************************
+ * sample_locator
+ *
+ * DESCR:       Sample locator device helper function
+ * RETURNS:     N/A
+ */
+
+static void sample_locator(
+    Ws_input_ws *iws,
+    Ws_inp_loc *loc,
+    Phg_ret_inp_event *revt
+    )
 {
-    Sin_input_event		event;
+    Sin_input_event event;
 
     phg_sin_sample( iws->sin_handle, SIN_LOCATOR, loc->num, &event);
     revt->id.class = PIN_LOC;
     revt->data.loc = event.data.locator.evt;
 }
 
-static void
-sample_stroke( iws, stk, revt )
-    Ws_input_ws		*iws;
-    Ws_inp_stroke	*stk;
-    Phg_ret_inp_event	*revt;
+/*******************************************************************************
+ * sample_stroke
+ *
+ * DESCR:       Sample stroke device helper function
+ * RETURNS:     N/A
+ */
+
+static void sample_stroke(
+    Ws_input_ws *iws,
+    Ws_inp_stroke *stk,
+    Phg_ret_inp_event *revt
+    )
 {
-    Sin_input_event		event;
+    Sin_input_event event;
 
     phg_sin_sample( iws->sin_handle, SIN_STROKE, stk->num, &event);
     revt->id.class = PIN_STROKE;
     revt->data.stk = event.data.stroke.evt;
 }
 
-static void
-sample_choice( iws, choice, revt )
-    Ws_input_ws		*iws;
-    Ws_inp_choice	*choice;
-    Phg_ret_inp_event	*revt;
+/*******************************************************************************
+ * sample_choice
+ *
+ * DESCR:       Sample choice device helper function
+ * RETURNS:     N/A
+ */
+
+static void sample_choice(
+    Ws_input_ws *iws,
+    Ws_inp_choice *choice,
+    Phg_ret_inp_event *revt
+    )
 {
-    Sin_input_event		event;
+    Sin_input_event event;
 
     phg_sin_sample( iws->sin_handle, SIN_CHOICE, choice->num, &event);
     revt->id.class = PIN_CHOICE;
     revt->data.chc = event.data.choice.evt;
 }
 
-static void
-sample_valuator( iws, val, revt )
-    Ws_input_ws		*iws;
-    Ws_inp_val		*val;
-    Phg_ret_inp_event	*revt;
+/*******************************************************************************
+ * sample_valuator
+ *
+ * DESCR:       Sample valuator device helper function
+ * RETURNS:     N/A
+ */
+
+static void sample_valuator(
+    Ws_input_ws *iws,
+    Ws_inp_val *val,
+    Phg_ret_inp_event *revt
+    )
 {
-    Sin_input_event		event;
+    Sin_input_event event;
 
     phg_sin_sample( iws->sin_handle, SIN_VALUATOR, val->num, &event);
     revt->id.class = PIN_VAL;
     revt->data.val = event.data.valuator.value;
 }
 
-static void
-sample_pick( iws, pick, revt )
-    Ws_input_ws		*iws;
-    Ws_inp_pick		*pick;
-    Phg_ret_inp_event	*revt;
+/*******************************************************************************
+ * sample_pick
+ *
+ * DESCR:       Sample pick device helper function
+ * RETURNS:     N/A
+ */
+
+static void sample_pick(
+    Ws_input_ws *iws,
+    Ws_inp_pick *pick,
+    Phg_ret_inp_event *revt
+    )
 {
-    Sin_input_event		event;
+    Sin_input_event event;
 
     phg_sin_sample( iws->sin_handle, SIN_PICK, pick->num, &event);
     revt->id.class = PIN_PICK;
     revt->data.pik = event.data.pick.evt;
 }
 
-static void
-sample_string( iws, str, revt )
-    Ws_input_ws		*iws;
-    Ws_inp_string	*str;
-    Phg_ret_inp_event	*revt;
+/*******************************************************************************
+ * sample_string
+ *
+ * DESCR:       Sample string device helper function
+ * RETURNS:     N/A
+ */
+
+static void sample_string(
+    Ws_input_ws *iws,
+    Ws_inp_string *str,
+    Phg_ret_inp_event *revt
+    )
 {
-    Sin_input_event		event;
+    Sin_input_event event;
 
     phg_sin_sample( iws->sin_handle, SIN_STRING, str->num, &event);
     revt->id.class = PIN_STRING;
     revt->data.str = event.data.string.evt;
 }
-    
-void
-phg_ws_inp_sample( ws, class, dev_num, ret)
-    Ws				*ws;
-    Phg_args_idev_class		class;
-    Pint			dev_num;
-    Phg_ret			*ret;
-{
-    Ws_input_ws			*iws = &ws->in_ws;
-    Ws_inp_device_handle	dev;
-    Pop_mode			cur_mode;
-    void			(*sample)();
 
-    switch ( class) {
+/*******************************************************************************
+ * phg_ws_inp_sample
+ *
+ * DESCR:       Sample device
+ * RETURNS:     N/A
+ */
+
+void phg_ws_inp_sample(
+    Ws *ws,
+    Phg_args_idev_class class,
+    Pint dev_num,
+    Phg_ret *ret
+    )
+{
+    Ws_input_ws *iws = &ws->in_ws;
+    Ws_inp_device_handle dev;
+    Pop_mode cur_mode;
+
+    switch (class) {
         case PHG_ARGS_INP_LOC3:
         case PHG_ARGS_INP_LOC:
 	    dev.loc = &iws->devs.locator[dev_num-1];
 	    cur_mode = dev.loc->mode;
-	    sample = sample_locator;
+            if (cur_mode == POP_SAMPLE) {
+	       sample_locator(iws, dev.loc, &ret->data.inp_event);
+            }
+            else {
+	        ret->err = ERR252;
+	        ERR_BUF(ws->erh, ERR252);
+            }
 	    break;
         case PHG_ARGS_INP_STK3:
         case PHG_ARGS_INP_STK:
 	    dev.stk = &iws->devs.stroke[dev_num-1];
 	    cur_mode = dev.stk->mode;
-	    sample = sample_stroke;
+            if (cur_mode == POP_SAMPLE) {
+	       sample_stroke(iws, dev.stk, &ret->data.inp_event);
+            }
+            else {
+	        ret->err = ERR252;
+	        ERR_BUF(ws->erh, ERR252);
+            }
 	    break;
+        case PHG_ARGS_INP_VAL3:
         case PHG_ARGS_INP_VAL:
 	    dev.val = &iws->devs.valuator[dev_num-1];
 	    cur_mode = dev.val->mode;
-	    sample = sample_valuator;
+            if (cur_mode == POP_SAMPLE) {
+	       sample_valuator(iws, dev.val, &ret->data.inp_event);
+            }
+            else {
+	        ret->err = ERR252;
+	        ERR_BUF(ws->erh, ERR252);
+            }
 	    break;
+        case PHG_ARGS_INP_CHC3:
         case PHG_ARGS_INP_CHC:
 	    dev.cho = &iws->devs.choice[dev_num-1];
 	    cur_mode = dev.cho->mode;
-	    sample = sample_choice;
+            if (cur_mode == POP_SAMPLE) {
+	       sample_choice(iws, dev.cho, &ret->data.inp_event);
+            }
+            else {
+	        ret->err = ERR252;
+	        ERR_BUF(ws->erh, ERR252);
+            }
 	    break;
+        case PHG_ARGS_INP_PIK3:
         case PHG_ARGS_INP_PIK:
 	    dev.pik = &iws->devs.pick[dev_num-1];
 	    cur_mode = dev.pik->mode;
-	    sample = sample_pick;
+            if (cur_mode == POP_SAMPLE) {
+	       sample_pick(iws, dev.pik, &ret->data.inp_event);
+            }
+            else {
+	        ret->err = ERR252;
+	        ERR_BUF(ws->erh, ERR252);
+            }
 	    break;
+        case PHG_ARGS_INP_STR3:
         case PHG_ARGS_INP_STR:
 	    dev.str = &iws->devs.string[dev_num-1];
 	    cur_mode = dev.str->mode;
-	    sample = sample_string;
+            if (cur_mode == POP_SAMPLE) {
+	       sample_string(iws, dev.str, &ret->data.inp_event);
+            }
+            else {
+	        ret->err = ERR252;
+	        ERR_BUF(ws->erh, ERR252);
+            }
 	    break;
     }
-
-    if ( cur_mode != POP_SAMPLE ) {
-	ret->err = ERR252;
-	ERR_BUF( ws->erh, ERR252);
-
-    } else {
-	ret->err = 0;
-        /* why dev.pik? It doesn't, matter they are all pointers. */
-	(*sample)( iws, dev.pik, &ret->data.inp_event);
-    }
 }
-
 
-void
-phg_ws_inp_repaint( ws, num_rects, rects )
-    Ws			*ws;
-    int			num_rects;
-    XRectangle		*rects;
+/*******************************************************************************
+ * phg_ws_inp_repaint
+ *
+ * DESCR:       Repaint device
+ * RETURNS:     N/A
+ */
+
+void phg_ws_inp_repaint(
+    Ws *ws,
+    Pint num_rects,
+    XRectangle *rects
+    )
 {
     phg_sin_repaint( ws->in_ws.sin_handle, num_rects, rects );
 }
 
-#define COPY_COMMON_STATE_FIELDS( _st, _dev ) \
-  { \
-    (_st)->mode = (_dev)->mode; \
-    (_st)->esw = (_dev)->esw; \
-    (_st)->pet = (_dev)->pet; \
-    (_st)->e_volume = (_dev)->e_volume; \
-    (_st)->record = (_dev)->record; \
-  }
+/*******************************************************************************
+ * phg_ws_inp_inq_dev_state
+ *
+ * DESCR:       Inquire device state
+ * RETURNS:     N/A
+ */
 
-void
-phg_ws_inp_inq_dev_state( ws, class, num, ret )
-    Ws				*ws;
-    Phg_args_idev_class		class;
-    Pint			num;
-    Phg_ret			*ret;
+void phg_ws_inp_inq_dev_state(
+    Ws *ws,
+    Phg_args_idev_class class,
+    Pint num,
+    Phg_ret *ret
+    )
 {
     ret->err = 0;
     switch ( class ) {
@@ -1854,7 +1962,7 @@ phg_ws_inp_inq_dev_state( ws, class, num, ret )
 	    Ws_inp_loc	*dev = WS_INP_DEV( ws, locator, num);
 	    Plocst3	*st = &ret->data.inp_state.loc;
 
-	    COPY_COMMON_STATE_FIELDS( st, dev )
+	    WSINP_COPY_COMMON_STATE_FIELDS( st, dev )
 	    st->loc = dev->loc;
 	    } break;
 
@@ -1863,7 +1971,7 @@ phg_ws_inp_inq_dev_state( ws, class, num, ret )
 	    Ws_inp_stroke	*dev = WS_INP_DEV( ws, stroke, num);
 	    Pstrokest3		*st = &ret->data.inp_state.stroke;
 
-	    COPY_COMMON_STATE_FIELDS( st, dev )
+	    WSINP_COPY_COMMON_STATE_FIELDS( st, dev )
 	    st->stroke = dev->stroke;
 	    } break;
 
@@ -1873,10 +1981,12 @@ phg_ws_inp_inq_dev_state( ws, class, num, ret )
 	    Ppickst3		*st = &ret->data.inp_state.pick;
 	    Phg_ret		ret_filt;
 
-	    COPY_COMMON_STATE_FIELDS( st, dev )
+	    WSINP_COPY_COMMON_STATE_FIELDS( st, dev )
 	    st->pick = dev->pick;
 	    st->order = dev->order;
+#ifdef TODO
 	    phg_wsx_inq_name_set( ws, PHG_ARGS_FLT_PICK, num, &ret_filt );
+#endif
 	    if ( ret_filt.err )
 		ret->err = ret_filt.err;
 	    else {
@@ -1890,7 +2000,7 @@ phg_ws_inp_inq_dev_state( ws, class, num, ret )
 	    Ws_inp_val		*dev = WS_INP_DEV( ws, valuator, num);
 	    Pvalst3		*st = &ret->data.inp_state.val;
 
-	    COPY_COMMON_STATE_FIELDS( st, dev )
+	    WSINP_COPY_COMMON_STATE_FIELDS( st, dev )
 	    st->val = dev->val;
 	    switch ( dev->pet ) {
 		case -1:
@@ -1915,7 +2025,7 @@ phg_ws_inp_inq_dev_state( ws, class, num, ret )
 	    Ws_inp_choice	*dev = WS_INP_DEV( ws, choice, num);
 	    Pchoicest3		*st = &ret->data.inp_state.choice.state;
 
-	    COPY_COMMON_STATE_FIELDS( st, dev )
+	    WSINP_COPY_COMMON_STATE_FIELDS( st, dev )
 	    st->choice = dev->choice;
 	    switch ( st->pet ) {
 		case 3:
@@ -1932,23 +2042,28 @@ phg_ws_inp_inq_dev_state( ws, class, num, ret )
 	    Ws_inp_string	*dev = WS_INP_DEV( ws, string, num);
 	    Pstringst3		*st = &ret->data.inp_state.string.state;
 
-	    COPY_COMMON_STATE_FIELDS( st, dev )
+	    WSINP_COPY_COMMON_STATE_FIELDS( st, dev )
 	    st->string = dev->string;
 	    ret->data.inp_state.string.length = dev->length;
 	    } break;
     }
 }
-
 
-void
-phg_ws_inp_resize( ws, old_rect )
-    Ws		*ws;
-    XRectangle	*old_rect;
+/*******************************************************************************
+ * phg_ws_inp_resize
+ *
+ * DESCR:       Resize input device
+ * RETURNS:     N/A
+ */
+
+void phg_ws_inp_resize(
+    Ws *ws,
+    XRectangle *old_rect
+    )
 {
-    Ws_input_ws		*iws = &ws->in_ws;
-    Sin_enable_data	ed;
-
-    register int	i;
+    Ws_input_ws *iws = &ws->in_ws;
+    Sin_enable_data ed;
+    int i;
 
     /* TODO: update a device only if it's active.  All this data gets
      * updated anyway when the device *becomes* active.
@@ -1969,42 +2084,50 @@ phg_ws_inp_resize( ws, old_rect )
 
     for ( i = 0; i < iws->num_devs.pick; i++) {
 	Ws_inp_pick	*dev = &iws->devs.pick[i];
-	SET_GENERIC_ENABLE_DATA( ws, dev, &ed)
+	WSINP_SET_GENERIC_ENABLE_DATA( ws, dev, &ed)
 	phg_sin_resize_dev( iws->sin_handle, SIN_PICK, dev->num,
 	    &ed, old_rect, &ws->ws_rect );
     }
 
     for ( i = 0; i < iws->num_devs.choice; i++) {
 	Ws_inp_choice	*dev = &iws->devs.choice[i];
-	SET_GENERIC_ENABLE_DATA( ws, dev, &ed)
+	WSINP_SET_GENERIC_ENABLE_DATA( ws, dev, &ed)
 	phg_sin_resize_dev( iws->sin_handle, SIN_CHOICE, dev->num,
 	    &ed, old_rect, &ws->ws_rect );
     }
 
     for ( i = 0; i < iws->num_devs.val; i++) {
 	Ws_inp_val	*dev = &iws->devs.valuator[i];
-	SET_GENERIC_ENABLE_DATA( ws, dev, &ed)
+	WSINP_SET_GENERIC_ENABLE_DATA( ws, dev, &ed)
 	phg_sin_resize_dev( iws->sin_handle, SIN_VALUATOR, dev->num,
 	    &ed, old_rect, &ws->ws_rect );
     }
 
     for ( i = 0; i < iws->num_devs.string; i++) {
 	Ws_inp_string	*dev = &iws->devs.string[i];
-	SET_GENERIC_ENABLE_DATA( ws, dev, &ed)
+	WSINP_SET_GENERIC_ENABLE_DATA( ws, dev, &ed)
 	phg_sin_resize_dev( iws->sin_handle, SIN_STRING, dev->num,
 	    &ed, old_rect, &ws->ws_rect );
     }
 }
-
 
-static void
-overlay_event( display, window, parent, event )
-    Display	*display;
-    Window	window;
-    Window	parent;
-    XEvent	*event;
+/*******************************************************************************
+ * overlay_event
+ *
+ * DESCR:       Check for event on overlay helper function
+ * RETURNS:     N/A
+ */
+
+static void overlay_event(
+    Display *display,
+    Window window,
+    caddr_t client_data,
+    XEvent *event
+    )
 {
-#ifdef DIAGNOSTIC
+    Window parent = (Window) client_data;
+
+#ifdef DEBUG
     fprintf( stderr, "Got OVERLAY event %s on window %d on display 0x%x\n", 
 	eventNames[event->type], window, display);
 #endif
@@ -2016,48 +2139,64 @@ overlay_event( display, window, parent, event )
 	break;
     }
 }
-
 
-static void
-overlay_parent_resize( display, parent, overlay, event )
-    Display	*display;
-    Window	parent;
-    Window	overlay;
-    XEvent	*event;
+/*******************************************************************************
+ * overlay_parent_resize
+ *
+ * DESCR:       Resize overlay helper function
+ * RETURNS:     N/A
+ */
+
+static void overlay_parent_resize(
+    Display *display,
+    Window parent,
+    caddr_t client_data,
+    XEvent *event
+    )
 {
-    XResizeWindow( display, overlay, (unsigned int)event->xconfigure.width,
-									(unsigned int)event->xconfigure.height );
+    Window overlay = (Window) client_data;
+
+    XResizeWindow( display, overlay,
+                   (unsigned int)event->xconfigure.width,
+		   (unsigned int)event->xconfigure.height );
 }
-
 
-Window
-phg_wsx_create_overlay( ws )
-    Ws		*ws;
+/*******************************************************************************
+ * phg_wsx_create_overlay
+ *
+ * DESCR:       Create overlay window
+ * RETURNS:     Overlay window
+ */
+
+Window phg_wsx_create_overlay(
+    Ws *ws
+    )
 {
-    Window			win;
-    XWindowAttributes		gattrs;
-    XSetWindowAttributes	sattrs;
-    Display			*display = ws->display;
-    Drawable			parent = ws->drawable_id;
+    Window win;
+    XWindowAttributes gattrs;
+    XSetWindowAttributes sattrs;
+    Display *display = ws->display;
+    Drawable parent = ws->drawable_id;
 
     XGetWindowAttributes(display, (Window)parent, &gattrs);
     sattrs.win_gravity = NorthWestGravity;
-    if ( win = XCreateWindow( display, (Window)parent, 0, 0,
+    win = XCreateWindow( display, (Window)parent, 0, 0,
 	    (unsigned)gattrs.width, (unsigned)gattrs.height, (unsigned)0,
-	    0, InputOnly, (Visual *)NULL, CWWinGravity, &sattrs ) ) {
+	    0, InputOnly, (Visual *)NULL, CWWinGravity, &sattrs );
+    if ( win ) {
 	/* Set up to propogate input events to parent. */
-	(void)phg_ntfy_register_event( display, win, KeyPress,
+	(void)phg_sin_evt_register(PHG_EVT_TABLE, display, win, KeyPress,
 	    (caddr_t)parent, overlay_event );
-	(void)phg_ntfy_register_event( display, win, KeyRelease,
+	(void)phg_sin_evt_register(PHG_EVT_TABLE, display, win, KeyRelease,
 	    (caddr_t)parent, overlay_event );
-	(void)phg_ntfy_register_event( display, win, ButtonPress,
+	(void)phg_sin_evt_register(PHG_EVT_TABLE, display, win, ButtonPress,
 	    (caddr_t)parent, overlay_event );
-	(void)phg_ntfy_register_event( display, win, ButtonRelease,
+	(void)phg_sin_evt_register(PHG_EVT_TABLE, display, win, ButtonRelease,
 	    (caddr_t)parent, overlay_event );
 
 	/* Set up to resize overlay when parent is resized. */
-	(void)phg_ntfy_register_event( display, parent, ConfigureNotify,
-	    (caddr_t)win, overlay_parent_resize );
+	(void)phg_sin_evt_register(PHG_EVT_TABLE, display, parent,
+	    ConfigureNotify, (caddr_t)win, overlay_parent_resize );
 
 	/* Let the input device initialization select events. */
 	XSelectInput( display, win, (long)0 );
@@ -2068,17 +2207,23 @@ phg_wsx_create_overlay( ws )
     }
     return win;
 }
-
 
-void
-phg_wsx_destroy_overlay( display, overlay, parent )
-    Display	*display;
-    Window	overlay;
-    Drawable	parent;
+/*******************************************************************************
+ * phg_wsx_destroy_overlay
+ *
+ * DESCR:       Destroy overlay window
+ * RETURNS:     N/A
+ */
+
+void phg_wsx_destroy_overlay(
+    Display *display,
+    Window overlay,
+    Drawable parent
+    )
 {
-    phg_ntfy_unregister_window( display, overlay );
-    phg_ntfy_unregister_event( display, parent, ConfigureNotify, overlay );
+    phg_sin_evt_unregister_window( PHG_EVT_TABLE, display, overlay );
+    phg_sin_evt_unregister( PHG_EVT_TABLE, display, parent,
+        ConfigureNotify, (caddr_t)overlay );
     XDestroyWindow( display, overlay );
 }
-#endif
 

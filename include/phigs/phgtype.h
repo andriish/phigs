@@ -78,6 +78,64 @@ typedef union {
 } Phg_inp_event_data;
 
 typedef struct {
+   Pop_mode     mode;
+   Pecho_switch esw;
+   Ploc3        loc;
+   Pint         pet;
+   Plimit3      e_volume;
+   Ploc_data3   record;
+} Plocst3;
+
+typedef struct {
+   Pop_mode      mode;
+   Pecho_switch  esw;
+   Pint_list     inclusion_filter;
+   Pint_list     exclusion_filter;
+   Ppick         pick;
+   Pint          pet;
+   Plimit3       e_volume;
+   Ppick_data3   record;
+   Ppath_order   order;
+} Ppickst3;
+
+typedef struct {
+   Pop_mode      mode;
+   Pecho_switch  esw;
+   Pstroke3      stroke;
+   Pint          pet;
+   Plimit3       e_volume;
+   Pstroke_data3 record;
+} Pstrokest3;
+
+typedef struct {
+   Pop_mode     mode;
+   Pecho_switch esw;
+   Pfloat       val;
+   Pint         pet;
+   Plimit3      e_volume;
+   Pint         counts[4];
+   Pval_data3   record;
+} Pvalst3;
+
+typedef struct {
+   Pop_mode      mode;
+   Pecho_switch  esw;
+   Pchoice       choice;
+   Pint          pet;
+   Plimit3       e_volume;
+   Pchoice_data3 record;
+} Pchoicest3;
+
+typedef struct {
+   Pop_mode      mode;
+   Pecho_switch  esw;
+   char          *string;
+   Pint          pet;
+   Plimit3       e_volume;
+   Pstring_data3 record;
+} Pstringst3;
+
+typedef struct {
    Pint      ws;
    Pin_class class;
    Pint      dev;

@@ -79,6 +79,13 @@ typedef enum {
    PHG_ARGS_INP_STR3
 } Phg_args_idev_class;
 
+typedef enum {
+   PHG_ARGS_FLT_HIGH,
+   PHG_ARGS_FLT_INVIS,
+   PHG_ARGS_FLT_DRAWABLE,
+   PHG_ARGS_FLT_PICK
+} Phg_args_flt_type;
+
 typedef struct {
    Pint       el_size;
    Pelem_type el_type;
@@ -172,6 +179,13 @@ typedef struct {
    Plimit3             echo_volume;
    Phg_args_init_data  data;
 } Phg_args_inp_init_dev;
+
+typedef struct {
+   Phg_args_idev_class class;
+   Pint                dev;
+   Pop_mode            mode;
+   Pecho_switch        echo;
+} Phg_args_set_mode_data;
 
 #endif
 

@@ -92,6 +92,31 @@ typedef struct {
    Phg_ret_inp_event    event;
 } Phg_ret_inp_request;
 
+typedef struct {
+   Pint       length;
+   char       *strings;
+   Pchoicest3 state;
+} Phg_ret_choice_state;
+
+typedef struct {
+   Pint       length;
+   Pstringst3 state;
+} Phg_ret_string_state;
+
+typedef union {
+   Plocst3              loc;
+   Ppickst3             pick;
+   Pstrokest3           stroke;
+   Pvalst3              val;
+   Phg_ret_choice_state choice;
+   Phg_ret_string_state string;
+} Phg_ret_inp_state;
+
+typedef struct {
+   Pint_list incl;
+   Pint_list excl;
+} Phg_ret_filter;
+
 typedef union {
    Pint                 idata;
    Pfloat               fdata;
@@ -106,7 +131,9 @@ typedef union {
    Phg_ret_update_state update_state;
    Phg_ret_rep          rep;
    Phg_ret_hlhsr_mode   hlhsr_mode;
+   Phg_ret_filter       filter;
    Phg_ret_inp_request  inp_request;
+   Phg_ret_inp_state    inp_state;
    Phg_ret_inp_event    inp_event;
 } Phg_ret_data;
 
