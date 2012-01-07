@@ -112,9 +112,20 @@ static void wsb_load_funcs(
     ws->resolve_stroke = NULL;
     ws->resolve_pick = NULL;
     ws->map_initial_points = NULL;
+
+    /* Not used by all workstations */
     ws->valid_pick_path = NULL;
+    ws->pick_enable = NULL;
     ws->pick_disable = NULL;
     ws->point_in_viewport = NULL;
+
+    /* Initialized by input module */
+    ws->init_device = NULL;
+    ws->set_device_mode = NULL;
+    ws->request_device = NULL;
+    ws->sample_device = NULL;
+    ws->input_repaint = NULL;
+    ws->inq_inp_dev_state = NULL;
 }
 
 /* 

@@ -302,9 +302,15 @@ typedef struct _Ws {
                    Ppoint3 *wc_pts,
                    XPoint *dwbl_pts
                    );
+
+   /* Not used by all workstations */
    int          (*valid_pick_path)(
                    struct _Ws *ws,
                    Ppick *pick
+                   );
+   int          (*pick_enable)(
+                   struct _Ws *ws,
+                   Ws_inp_pick *dev
                    );
    void         (*pick_disable)(
                    struct _Ws *ws,
@@ -313,6 +319,39 @@ typedef struct _Ws {
    int          (*point_in_viewport)(
                    struct _Ws *ws,
                    XPoint *pt
+                   );
+
+   /* Initialized by input module */
+   void         (*init_device)(
+                   struct _Ws *ws,
+                   Phg_args_inp_init_dev *args
+                   );
+   void         (*set_device_mode)(
+                   struct _Ws *ws,
+                   Phg_args_set_mode_data *args
+                   );
+   void         (*request_device)(
+                   struct _Ws *ws,
+                   Phg_args_idev_class class,
+                   Pint dev_num,
+                   Phg_ret *ret
+                   );
+   void         (*sample_device)(
+                   struct _Ws *ws,
+                   Phg_args_idev_class class,
+                   Pint dev_num,
+                   Phg_ret *ret
+                   );
+   void         (*input_repaint)(
+                   struct _Ws *ws,
+                   Pint num_rects,
+                   XRectangle *rects
+                   );
+   void         (*inq_inp_dev_state)(
+                   struct _Ws *ws,
+                   Phg_args_idev_class class,
+                   Pint num,
+                   Phg_ret *ret
                    );
 } Ws;
 
