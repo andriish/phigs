@@ -147,6 +147,17 @@ void phg_sin_evt_dispatch(
    );
 
 /*******************************************************************************
+ * phg_sin_evt_name
+ *
+ * DESCR:       Get event type name
+ * RETURNS:     Pointer to string
+ */
+
+char* phg_sin_evt_name(
+   XEvent *event
+   );
+
+/*******************************************************************************
  * phg_sin_evt_print
  *
  * DESCR:       Print event type name

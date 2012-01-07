@@ -257,6 +257,11 @@ void phg_sin_init_device(
 {
     Sin_input_device *dev = SIN_DEV(iws, class, dev_num);
 
+#ifdef DEBUG
+    printf("sin: phg_sin_init_device\n");
+    printf("\tDevice class: %d\n", class);
+#endif
+
     if ( !dev->flags.exists )
 	return;
 

@@ -88,6 +88,10 @@ void phg_sin_ws_window_event_proc(
     Sin_input_ws *ws = (Sin_input_ws *) handle;
     Sin_notify_data *nd, *next;
 
+#ifdef DEBUG
+    printf("sin_ws: phg_sin_ws_window_event_proc\n");
+#endif
+
     if ( BREAK_EVENT(event) && phg_sin_ws_break( ws ) )
 	return;	/* received and acted on a BREAK. */
     else if ( event->type == EnterNotify )
@@ -102,9 +106,16 @@ void phg_sin_ws_window_event_proc(
      * thus we check it before each trip through the loop.
      */
     for ( nd = ws->notify_list; nd && ws->notify_list; nd = next ) {
+#ifdef DEBUG
+        printf("\tNotify %x\n", (unsigned) nd);
+#endif
 	next = nd->next; /* remember next node in case list changes */
-	if ( nd->window == window && nd->notify )
+	if ( nd->window == window && nd->notify ) {
+#ifdef DEBUG
+            printf("\tCall notify func\n");
+#endif
 	    (*nd->notify)( ws, nd->handle, window, event);
+        }
     }
 }
 

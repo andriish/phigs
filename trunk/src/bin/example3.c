@@ -32,6 +32,46 @@ void print_event(XEvent *event)
     printf("\tWindow = %x\n", (unsigned) event->xany.window);
 }
 
+void prepare_ws(Pint ws_id)
+{
+   Ppoint3 position = {0.0, 0.0, 0.0};
+   Plimit3 e_volume = {0.0, 1.0, 0.0, 1.0, 0.0, 1.0};
+
+   Ws_handle wsh = PHG_WSID(ws_id);
+   Wst_input_wsdt *idt = &wsh->type->desc_tbl.phigs_dt.in_dt;
+
+   /* Default locator */
+   idt->num_devs.loc = 1;
+   memcpy(&idt->locators[0].position, &position, sizeof(Ppoint3));
+   memcpy(&idt->locators[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->locators[0].record.pets.pet_r1.unused = 0;
+
+   /* Default stroke */
+   idt->num_devs.stroke = 1;
+   memcpy(&idt->strokes[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->strokes[0].record.pets.pet_r1.unused = 0;
+
+   /* Default pick */
+   idt->num_devs.pick = 1;
+   memcpy(&idt->picks[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->picks[0].record.pets.pet_r1.unused = 0;
+
+   /* Default valuator */
+   idt->num_devs.val = 1;
+   memcpy(&idt->valuators[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->valuators[0].record.pets.pet_r1.unused = 0;
+
+   /* Default choice */
+   idt->num_devs.choice = 1;
+   memcpy(&idt->choices[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->choices[0].record.pets.pet_r1.unused = 0;
+
+   /* Default string */
+   idt->num_devs.string = 1;
+   memcpy(&idt->strings[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->strings[0].record.pets.pet_r1.unused = 0;
+}
+
 Ws* phg_open_ws(Pint ws_id)
 {
    Ws_handle wsh;
@@ -72,6 +112,7 @@ int main(void)
 
    popen_phigs(NULL, 0);
    popen_ws(WS_0, NULL, PWST_OUTPUT_TRUE);
+   prepare_ws(WS_0);
    wsh = phg_open_ws(WS_0);
 
    printf("Output window %x\n", (unsigned) wsh->drawable_id);
