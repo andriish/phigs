@@ -77,6 +77,18 @@ Ws* phg_open_ws(Pint ws_id)
    Ws_handle wsh;
    Input_q_handle input_q;
 
+#if 0
+   unsigned long event_mask = 
+      KeyPressMask |
+      KeyReleaseMask |
+      ButtonPressMask |
+      ButtonReleaseMask |
+      EnterWindowMask |
+      LeaveWindowMask |
+      PointerMotionHintMask |
+      ExposureMask;
+#endif
+
    wsh = PHG_WSID(ws_id);
    wsh->input_overlay_window = phg_wsx_create_overlay(wsh);
 
@@ -94,8 +106,7 @@ Ws* phg_open_ws(Pint ws_id)
          wsh = NULL;
       }
       else {
-#if TODO
-         event_mask = StructureNotifyMask;
+#if 0
          XSelectInput(wsh->display, wsh->drawable_id, event_mask);
 #endif
       }
@@ -104,6 +115,28 @@ Ws* phg_open_ws(Pint ws_id)
    return wsh;
 }
 
+void init_locator(Ws *wsh)
+{
+   Phg_args_set_mode_data args;
+
+   args.mode = POP_SAMPLE;
+   args.class = PHG_ARGS_INP_LOC;
+   args.dev = 1;
+   (*wsh->set_device_mode)(wsh, &args);
+}
+
+void sample_locator(Ws *wsh)
+{
+   Phg_ret ret;
+
+   (*wsh->sample_device)(wsh, PHG_ARGS_INP_LOC, 1, &ret);
+   if (ret.err == 0) {
+      printf("Error sampling locator\n");
+   }
+   else {
+      printf("Sampled locator.\n");
+   }
+}
 
 int main(void)
 {
@@ -118,6 +151,8 @@ int main(void)
    printf("Output window %x\n", (unsigned) wsh->drawable_id);
    printf("Input  window %x\n", (unsigned) wsh->input_overlay_window);
 
+   init_locator(wsh);
+
    if (wsh != NULL) {
       printf("Waiting for events...\n");
       while (1) {
@@ -128,6 +163,7 @@ int main(void)
             while (XCheckTypedEvent(wsh->display, Expose, &event));
             (*wsh->redraw_all)(wsh, PFLAG_ALWAYS);
          }
+         sample_locator(wsh);
       }
    }
 

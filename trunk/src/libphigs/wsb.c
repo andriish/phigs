@@ -108,7 +108,7 @@ static void wsb_load_funcs(
     ws->inq_representation = phg_wsb_inq_rep;
     ws->inq_disp_update_state = phg_wsb_inq_disp_update_state;
     ws->inq_hlhsr_mode = phg_wsb_inq_hlhsr_mode;
-    ws->resolve_locator = NULL;
+    ws->resolve_locator = phg_wsb_resolve_locator;
     ws->resolve_stroke = NULL;
     ws->resolve_pick = NULL;
     ws->map_initial_points = phg_wsb_map_initial_points;
@@ -1599,6 +1599,26 @@ int phg_wsb_map_initial_points(
     )
 {
     printf("map_initial_points not defined\n");
+
+    return 1;
+}
+
+/*******************************************************************************
+ * phg_wsb_resolve_locator
+ *
+ * DESCR:       Resolve locator device
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wsb_resolve_locator(
+    Ws *ws,
+    Ws_point *dc_pt,
+    int determine_z,
+    Pint *view_index,
+    Ppoint3 *wc_pt
+    )
+{
+    printf("resolve_locator not defined\n");
 
     return 1;
 }
