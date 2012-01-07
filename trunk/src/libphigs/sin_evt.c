@@ -23,6 +23,45 @@
 #include <phigs/phg.h>
 #include <phigs/private/evtP.h>
 
+static char *eventNames[] = {
+   "Illegal Event",
+   "Illegal Event",
+   "KeyPress",
+   "KeyRelease",
+   "ButtonPress",
+   "ButtonRelease",
+   "MotionNotify",
+   "EnterNotify",
+   "LeaveNotify",
+   "FocusIn",
+   "FocusOut",
+   "KeymapNotify",
+   "Expose",
+   "GraphicsExpose",
+   "NoExpose",
+   "VisibilityNotify",
+   "CreateNotify",
+   "DestroyNotify",
+   "UnmapNotify",
+   "MapNotify",
+   "MapRequest",
+   "ReparentNotify",
+   "ConfigureNotify",
+   "ConfigureRequest",
+   "GravityNotify",
+   "ResizeRequest",
+   "CirculateNotify",
+   "CirculateRequest",
+   "PropertyNotify",
+   "SelectionClear",
+   "SelectionRequest",
+   "SelectionNotify",
+   "ColormapNotify",
+   "ClientMessage",
+   "MappingNotify",
+   "unknown event type"
+};
+
 /*******************************************************************************
  * phg_sin_evt_tbl_create
  *
@@ -246,5 +285,19 @@ void phg_sin_evt_dispatch(
                          event);
       }
    }
+}
+
+/*******************************************************************************
+ * phg_sin_evt_print
+ *
+ * DESCR:       Print event type name
+ * RETURNS:     N/A
+ */
+
+void phg_sin_evt_print(
+   XEvent *event
+   )
+{
+   printf("%-14s", eventNames[event->type]);
 }
 

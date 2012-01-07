@@ -111,7 +111,7 @@ static void wsb_load_funcs(
     ws->resolve_locator = NULL;
     ws->resolve_stroke = NULL;
     ws->resolve_pick = NULL;
-    ws->map_initial_points = NULL;
+    ws->map_initial_points = phg_wsb_map_initial_points;
 
     /* Not used by all workstations */
     ws->valid_pick_path = NULL;
@@ -1581,5 +1581,27 @@ void phg_wsb_inq_rep(
             /* Default */
             break;
     }
+}
+
+/*******************************************************************************
+ * phg_wsb_map_initial_points
+ *
+ * DESCR:       Map initial points
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wsb_map_initial_points(
+    Ws *ws,
+    Pint view_index,
+    Pint *num_pts,
+    Ppoint3 *wc_pts,
+    XPoint *dwbl_pts
+    )
+{
+#ifdef DEBUG
+   printf("wsb: map_initial_points\n");
+#endif
+
+    return 1;
 }
 

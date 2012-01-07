@@ -146,5 +146,16 @@ void phg_sin_evt_dispatch(
    XEvent *event
    );
 
+/*******************************************************************************
+ * phg_sin_evt_print
+ *
+ * DESCR:       Print event type name
+ * RETURNS:     N/A
+ */
+
+void phg_sin_evt_print(
+   XEvent *event
+   );
+
 #endif /* _evtP_h */
 

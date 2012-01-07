@@ -217,6 +217,11 @@ int phg_sin_dev_start(
 {
     int	i;
 
+#ifdef DEBUG
+   printf("sin_dev: phg_sin_dev_start\n");
+   printf("\tinput_window = %x\n", (unsigned) ws->input_window);
+#endif
+
     /* Start up input processing for the input window. */
     for ( i = 0; i < NUM_COMMON_EVENTS; i++ ) {
 	(void)phg_sin_evt_register( PHG_EVT_TABLE, ws->display,
@@ -239,6 +244,11 @@ void phg_sin_dev_stop(
     )
 {
     int	i;
+
+#ifdef DEBUG
+   printf("sin_dev: phg_sin_dev_stop\n");
+   printf("\tinput_window = %x\n", (unsigned) ws->input_window);
+#endif
 
     for ( i = 0; i < NUM_COMMON_EVENTS; i++ ) {
 	phg_sin_evt_unregister( PHG_EVT_TABLE, ws->display, ws->input_window,
@@ -323,6 +333,11 @@ void phg_sin_dev_init_devices(
 
     int i;
     Sin_input_device *dev;
+
+#ifdef DEBUG
+   printf("sin_dev: phg_sin_dev_init_devices\n");
+   printf("\tinput_window = %x\n", (unsigned) ws->input_window);
+#endif
 
     /* Assign initial and default workstation data */
     ws->notify_list = NULL;

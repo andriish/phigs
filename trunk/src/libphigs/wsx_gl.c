@@ -477,6 +477,10 @@ static void wsx_gl_resize_window(
    int h
    )
 {
+#ifdef DEBUG
+   printf("wsgl_gl_resize_window: %d %d\n", w, h);
+#endif
+
    XResizeWindow(ws->display,
                  ws->drawable_id,
                  w,
