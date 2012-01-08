@@ -199,6 +199,7 @@ struct _Phg_args_open_ws;
 
 typedef struct {
    Node          node;
+   Err_handle    erh;
    Pint          wsid;
    Pint          ws_type;
    Wst_dt        desc_tbl;
@@ -225,6 +226,7 @@ typedef struct {
  */
 
 Wst* phg_wst_create(
+   Err_handle erh,
    Pint ws_type
    );
 
@@ -237,6 +239,7 @@ Wst* phg_wst_create(
 
 int phg_wst_init(
    Wst *wst,
+   Err_handle erh,
    Pint ws_type
    );
 

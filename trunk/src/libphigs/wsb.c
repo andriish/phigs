@@ -393,18 +393,20 @@ Ws* phg_wsb_open_ws(
     if ( !(ws = wsgl_create( args )) )
 	return ws;
 
+    /* Store workstation type parameters */
+    ws->type = args->type;
+    ws->erh = ws->type->erh;
+    ws->category = ws->type->desc_tbl.phigs_dt.ws_category;
+    ws->current_colour_model =
+        ws->type->desc_tbl.phigs_dt.out_dt.default_colour_model;
+
+    wsb_load_funcs( ws );
+
     if ( !wsgl_open_window( ws, args ) )
         goto abort;
 
     (void)XGetWindowAttributes( ws->display, ws->drawable_id, &wattr );
     WS_SET_WS_RECT( ws, &wattr )
-
-    /* Store workstation type */
-    ws->type = args->type;
-
-    ws->current_colour_model =
-        ws->type->desc_tbl.phigs_dt.out_dt.default_colour_model;
-    ws->category = ws->type->desc_tbl.phigs_dt.ws_category;
 
     /* NOTE:
      * Css filled in by popen_ws
@@ -412,6 +414,7 @@ Ws* phg_wsb_open_ws(
 
     if ( !init_output_state( ws ) )
 	goto abort;
+
     init_update_state( ws );
 
     /* NOTE:
@@ -419,8 +422,6 @@ Ws* phg_wsb_open_ws(
      */
     if (!phg_wsb_create_LUTs(ws))
         goto abort;
-
-    wsb_load_funcs( ws );
 
     if ( ! init_attributes( ws ) )
         goto abort;
@@ -1619,9 +1620,12 @@ int phg_wsb_resolve_locator(
     )
 {
     /* Temporary dummy method */
+    *view_index = 0;
     wc_pt->x = dc_pt->x;
     wc_pt->y = dc_pt->y;
-    wc_pt->z = 0.0;
+    if (determine_z) {
+        wc_pt->z = 0.0;
+    }
 
     return 1;
 }

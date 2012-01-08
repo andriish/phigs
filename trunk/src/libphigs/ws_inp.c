@@ -1897,6 +1897,7 @@ void phg_ws_inp_sample(
 	    dev.loc = &iws->devs.locator[dev_num-1];
 	    cur_mode = dev.loc->mode;
             if (cur_mode == POP_SAMPLE) {
+               ret->err = 0;
 	       sample_locator(iws, dev.loc, &ret->data.inp_event);
             }
             else {
@@ -1910,6 +1911,7 @@ void phg_ws_inp_sample(
 	    cur_mode = dev.stk->mode;
             if (cur_mode == POP_SAMPLE) {
 	       sample_stroke(iws, dev.stk, &ret->data.inp_event);
+               ret->err = 0;
             }
             else {
 	        ret->err = ERR252;
@@ -1922,6 +1924,7 @@ void phg_ws_inp_sample(
 	    cur_mode = dev.val->mode;
             if (cur_mode == POP_SAMPLE) {
 	       sample_valuator(iws, dev.val, &ret->data.inp_event);
+               ret->err = 0;
             }
             else {
 	        ret->err = ERR252;
@@ -1934,6 +1937,7 @@ void phg_ws_inp_sample(
 	    cur_mode = dev.cho->mode;
             if (cur_mode == POP_SAMPLE) {
 	       sample_choice(iws, dev.cho, &ret->data.inp_event);
+               ret->err = 0;
             }
             else {
 	        ret->err = ERR252;
@@ -1946,6 +1950,7 @@ void phg_ws_inp_sample(
 	    cur_mode = dev.pik->mode;
             if (cur_mode == POP_SAMPLE) {
 	       sample_pick(iws, dev.pik, &ret->data.inp_event);
+               ret->err = 0;
             }
             else {
 	        ret->err = ERR252;
@@ -1958,6 +1963,7 @@ void phg_ws_inp_sample(
 	    cur_mode = dev.str->mode;
             if (cur_mode == POP_SAMPLE) {
 	       sample_string(iws, dev.str, &ret->data.inp_event);
+               ret->err = 0;
             }
             else {
 	        ret->err = ERR252;

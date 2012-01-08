@@ -81,9 +81,20 @@ void popen_phigs(
    }
 
    list_init(&PHG_WST_LIST);
-   wst = wsx_gl_create();
+   wst = wsx_gl_create(PHG_ERH, PCAT_OUT);
    if (wst == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
+      phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
+      phg_css_destroy(PHG_CSS);
+      phg_psl_destroy(PHG_PSL);
+      goto abort;
+   }
+   list_add(&PHG_WST_LIST, &wst->node);
+
+   wst = wsx_gl_create(PHG_ERH, PCAT_OUTIN);
+   if (wst == NULL) {
+      ERR_REPORT(PHG_ERH, ERR900);
+      phg_wst_destroy((Wst *) list_get(&PHG_WST_LIST));
       phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
@@ -94,6 +105,8 @@ void popen_phigs(
    PHG_WS_LIST = (Ws_handle *) malloc(sizeof(Ws_handle) * MAX_NO_OPEN_WS);
    if (PHG_WS_LIST == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
+      phg_wst_destroy((Wst *) list_get(&PHG_WST_LIST));
+      phg_wst_destroy((Wst *) list_get(&PHG_WST_LIST));
       phg_wst_destroy(wst);
       phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
       phg_css_destroy(PHG_CSS);

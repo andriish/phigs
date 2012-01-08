@@ -1272,5 +1272,47 @@ void peval_view_map_matrix(
     Pmatrix m                  /* OUT view mapping matrix */
     );
 
+/*******************************************************************************
+ * pset_loc_mode
+ *
+ * DESCR:       Set locator input device mode
+ * RETURNS:     N/A
+ */
+
+void pset_loc_mode(
+   Pint ws_id,
+   Pint loc_num,
+   Pop_mode op_mode,
+   Pecho_switch echo_switch
+   );
+
+/*******************************************************************************
+ * psample_loc
+ *
+ * DESCR:       Sample locator device
+ * RETURNS:     N/A
+ */
+
+void psample_loc(
+   Pint ws_id,
+   Pint loc_num,
+   Pint *view_ind,
+   Ppoint *loc_pos
+   );
+
+/*******************************************************************************
+ * psample_loc3
+ *
+ * DESCR:       Sample locator device 3D
+ * RETURNS:     N/A
+ */
+
+void psample_loc3(
+   Pint ws_id,
+   Pint loc_num,
+   Pint *view_ind,
+   Ppoint3 *loc_pos
+   );
+
 #endif /* _phigsfunc_h */
 

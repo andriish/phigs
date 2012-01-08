@@ -30,6 +30,7 @@
  */
 
 Wst* phg_wst_create(
+   Err_handle erh,
    Pint ws_type
    )
 {
@@ -37,10 +38,10 @@ Wst* phg_wst_create(
 
    wst = (Wst *) malloc(sizeof(Wst));
    if (wst == NULL) {
-      ERR_REPORT(PHG_ERH, ERR900);
+      ERR_REPORT(erh, ERR900);
    }
-   else if (!phg_wst_init(wst, ws_type)) {
-      ERR_REPORT(PHG_ERH, ERR900);
+   else if (!phg_wst_init(wst, erh, ws_type)) {
+      ERR_REPORT(erh, ERR900);
    }
 
    return wst;
@@ -55,10 +56,12 @@ Wst* phg_wst_create(
 
 int phg_wst_init(
    Wst *wst,
+   Err_handle erh,
    Pint ws_type
    )
 {
    wst->wsid = -1;
+   wst->erh = erh;
    wst->ws_type = ws_type;
 
    return TRUE;

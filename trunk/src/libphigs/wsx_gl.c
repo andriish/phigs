@@ -123,7 +123,7 @@ static void init_output_ws_dt(
  * RETURNS:	N/A
  */
 
-void init_views(
+static void init_views(
     Wst_phigs_dt *ws_dt
     )
 {
@@ -226,6 +226,53 @@ void init_views(
 }
 
 /*******************************************************************************
+ * init_devices
+ *
+ * DESCR:	Helper function to initialize input devices
+ * RETURNS:	N/A
+ */
+
+static void init_devices(
+    Wst *wst
+    )
+{
+   Ppoint3 position = {0.0, 0.0, 0.0};
+   Plimit3 e_volume = {0.0, 1.0, 0.0, 1.0, 0.0, 1.0};
+   Wst_input_wsdt *idt = &wst->desc_tbl.phigs_dt.in_dt;
+
+   /* Default locator */
+   idt->num_devs.loc = 1;
+   memcpy(&idt->locators[0].position, &position, sizeof(Ppoint3));
+   memcpy(&idt->locators[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->locators[0].record.pets.pet_r1.unused = 0;
+
+   /* Default stroke */
+   idt->num_devs.stroke = 1;
+   memcpy(&idt->strokes[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->strokes[0].record.pets.pet_r1.unused = 0;
+
+   /* Default pick */
+   idt->num_devs.pick = 1;
+   memcpy(&idt->picks[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->picks[0].record.pets.pet_r1.unused = 0;
+
+   /* Default valuator */
+   idt->num_devs.val = 1;
+   memcpy(&idt->valuators[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->valuators[0].record.pets.pet_r1.unused = 0;
+
+   /* Default choice */
+   idt->num_devs.choice = 1;
+   memcpy(&idt->choices[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->choices[0].record.pets.pet_r1.unused = 0;
+
+   /* Default string */
+   idt->num_devs.string = 1;
+   memcpy(&idt->strings[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->strings[0].record.pets.pet_r1.unused = 0;
+}
+
+/*******************************************************************************
  * wsx_gl_create
  *
  * DESCR:	Create workstation type
@@ -233,14 +280,30 @@ void init_views(
  */
 
 Wst* wsx_gl_create(
-   void
+   Err_handle erh,
+   Pws_cat category
    )
 {
    Wst *wst;
+   Pint ws_type;
 
-   wst = phg_wst_create(PWST_OUTPUT_TRUE);
+   switch (category) {
+      case PCAT_OUT:
+         ws_type = PWST_OUTPUT_TRUE;
+         break;
+
+      case PCAT_OUTIN:
+         ws_type = PWST_OUTIN_TRUE;
+         break;
+
+      default:
+         ws_type = PWST_OUTPUT_TRUE;
+         break;
+   }
+
+   wst = phg_wst_create(erh, ws_type);
    if (wst != NULL) {
-      if (!wsx_gl_init(wst)) {
+      if (!wsx_gl_init(wst, category)) {
          wst = NULL;
       }
    }
@@ -256,7 +319,8 @@ Wst* wsx_gl_create(
  */
 
 int wsx_gl_init(
-   Wst *wst
+   Wst *wst,
+   Pws_cat category
    )
 {
    Display *display;
@@ -273,7 +337,7 @@ int wsx_gl_init(
 
    dt = &wst->desc_tbl.phigs_dt;
 
-   dt->ws_category = PCAT_OUT;
+   dt->ws_category = category;
    dt->dev_coords[0] = (float) DisplayWidth(display, screen_num);
    dt->dev_coords[1] = (float) DisplayHeight(display, screen_num);
    dt->dev_coords[2] = 1.0;
@@ -293,6 +357,12 @@ int wsx_gl_init(
 
    /* Initialize workstation output attributes */
    init_output_ws_dt(&dt->out_dt);
+
+   if (category == PCAT_OUTIN) {
+
+      /* Initialize input devices */
+      init_devices(wst);
+   }
 
 #ifdef DEBUG
    printf("Added wsx_gl with coords: %f %f %f\n",
@@ -369,6 +439,7 @@ static int wsx_gl_open_window(
    XSetWindowAttributes wattr;
    Wst_phigs_dt *dt;
    Wsgl *wsgl;
+   Input_q_handle input_q;
 
    wsgl = ws->render_context;
    dt = &args->type->desc_tbl.phigs_dt;
@@ -454,6 +525,29 @@ static int wsx_gl_open_window(
                           arglist,
                           0,
                           NULL);
+
+   if (dt->ws_category == PCAT_OUTIN) {
+
+      ws->input_overlay_window = phg_wsx_create_overlay(ws);
+      if (ws->input_overlay_window == 0) {
+         XDestroyWindow(ws->display, ws->drawable_id);
+         return FALSE;
+      }
+
+      input_q = phg_sin_q_create(ws->type->erh);
+      if (input_q == NULL) {
+         XDestroyWindow(ws->display, ws->input_overlay_window);
+         XDestroyWindow(ws->display, ws->drawable_id);
+         return FALSE;
+      }
+
+      if (!phg_ws_input_init(ws, input_q)) {
+         free(input_q);
+         XDestroyWindow(ws->display, ws->input_overlay_window);
+         XDestroyWindow(ws->display, ws->drawable_id);
+         return FALSE;
+      }
+   }
 
    XMapWindow(ws->display, ws->drawable_id);
 
