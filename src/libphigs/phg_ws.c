@@ -81,8 +81,7 @@ void popen_ws(
             /* Add workstation to info list */
             phg_psl_add_ws(PHG_PSL, ws_id, NULL, wst);
 
-            /* Add workstation to global list of open workstations */
-            PHG_WSID(ws_id)->erh = PHG_ERH;
+            /* Set structure database handle for workstation */
             PHG_WSID(ws_id)->out_ws.model.b.cssh = PHG_CSS;
 
             /* Store workstation id in workstation structure */

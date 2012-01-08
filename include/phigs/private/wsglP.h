@@ -210,7 +210,8 @@ void wsgl_render_element(
  */
 
 Wst* wsx_gl_create(
-   void
+   Err_handle erh,
+   Pws_cat category
    );
 
 /*******************************************************************************
@@ -221,7 +222,8 @@ Wst* wsx_gl_create(
  */
 
 int wsx_gl_init(
-   Wst *wst
+   Wst *wst,
+   Pws_cat category
    );
 
 extern unsigned char *wsgl_hatch_tbl[];
