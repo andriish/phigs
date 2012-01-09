@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <phigs/phg.h>
+#include <phigs/private/sinqP.h>
 
 /*******************************************************************************
  * input_ws_open
@@ -225,6 +226,165 @@ void psample_loc3(
       else {
          ERR_REPORT(PHG_ERH, ERR250);
       }
+   }
+}
+
+/*******************************************************************************
+ * inp_wait
+ *
+ * DESCR:       Wait for input helper function
+ * RETURNS:     N/A
+ */
+
+static void inp_await(
+   Phg_ret *ret
+   )
+{
+   Sin_input_event *event;
+   Pevent *ev_id = &ret->data.inp_event.id;
+   Phg_inp_event_data *ed = &ret->data.inp_event.data;
+
+   ret->err = 0;
+   event = phg_sin_q_next_event(PHG_INPUT_Q);
+   if (event != NULL) {
+      if (SIN_Q_OVERFLOWED(PHG_INPUT_Q)) {
+         ERR_BUF(PHG_ERH, ERR256);
+      }
+      ev_id->ws = event->wsid;
+      ev_id->dev = event->dev_num;
+      ev_id->class = event->dev_class;
+      SIN_Q_SET_CUR_SIMUL_ID(PHG_INPUT_Q, event);
+
+      switch (ev_id->class) {
+         case PIN_LOC:
+            ed->loc = event->data.locator.evt;
+            break;
+
+         /* TODO: Check if anything is needed to copy for other device types */
+
+         default:
+            break;
+      }
+
+      phg_sin_q_deque_event(PHG_INPUT_Q);
+   }
+   else {
+     ev_id->class = PIN_NONE;
+     if (SIN_Q_OVERFLOWED(PHG_INPUT_Q)) {
+        SIN_Q_CLEAR_OVERFLOW(PHG_INPUT_Q);
+     }
+   }
+}
+
+/*******************************************************************************
+ * pwait_event
+ *
+ * DESCR:       Wait for event to occur
+ * RETURNS:     N/A
+ */
+
+void pawait_event(
+   Pfloat timeout,
+   Pint *ws_id,
+   Pin_class *class,
+   Pint *in_num
+   )
+{
+   Phg_ret ret;
+   Phg_ret_inp_event *revt = &ret.data.inp_event;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_await_event);
+
+   if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      ERR_REPORT(PHG_ERH, ERR3);
+   }
+   else {
+      /* TODO: Find out what to do with the timeout parameter  */
+
+      inp_await(&ret);
+      if (ret.err == 0) {
+         *ws_id = revt->id.ws;
+         *class = revt->id.class;
+         *in_num = revt->id.dev;
+
+         /* TODO: Investigate if we need copy something here */
+
+         PSL_CLEAR_CUR_EVENT(PHG_PSL);
+         PSL_SET_CUR_EVENT_ID(PHG_PSL, revt->id);
+         if (revt->id.class != PIN_NONE) {
+            PSL_SET_CUR_EVENT_DATA(PHG_PSL, revt->data);
+         }
+      }
+      else {
+         ERR_FLUSH(PHG_ERH);
+      }
+   }
+}
+
+/*******************************************************************************
+ * check_event_class
+ *
+ * DESCR:       Helper function to check input class of event on queue
+ * RETURNS:     TRUE or FALSE
+ */
+
+static int check_event_class(
+   Pin_class class,
+   Pint fn_id
+   )
+{
+   int status = TRUE;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, fn_id);
+
+   if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      ERR_REPORT(PHG_ERH, ERR3);
+      status = FALSE;
+   }
+   else if (PSL_CUR_EVENT_CLASS(PHG_PSL) != class) {
+      ERR_REPORT(PHG_ERH, ERR259);
+      status = FALSE;
+   }
+
+   return status;
+}
+
+/*******************************************************************************
+ * pget_loc
+ *
+ * DESCR:       Get locator event from event queue
+ * RETURNS:     N/A
+ */
+
+void pget_loc(
+   Pint *view_ind,
+   Ppoint *loc_pos
+   )
+{
+   if (check_event_class(PIN_LOC, Pfn_get_loc)) {
+      *view_ind = PSL_CUR_EVENT_DATA(PHG_PSL, loc).view_ind;
+      loc_pos->x = PSL_CUR_EVENT_DATA(PHG_PSL, loc).position.x;
+      loc_pos->y = PSL_CUR_EVENT_DATA(PHG_PSL, loc).position.y;
+   }
+}
+
+/*******************************************************************************
+ * pget_loc3
+ *
+ * DESCR:       Get locator event from event queue 3D
+ * RETURNS:     N/A
+ */
+
+void pget_loc3(
+   Pint *view_ind,
+   Ppoint3 *loc_pos
+   )
+{
+   if (check_event_class(PIN_LOC, Pfn_get_loc3)) {
+      *view_ind = PSL_CUR_EVENT_DATA(PHG_PSL, loc).view_ind;
+      loc_pos->x = PSL_CUR_EVENT_DATA(PHG_PSL, loc).position.x;
+      loc_pos->y = PSL_CUR_EVENT_DATA(PHG_PSL, loc).position.y;
+      loc_pos->z = PSL_CUR_EVENT_DATA(PHG_PSL, loc).position.z;
    }
 }
 

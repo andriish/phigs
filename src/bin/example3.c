@@ -38,7 +38,7 @@ void sample_locator(Pint ws_id)
    Ppoint3 loc_pos;
 
    psample_loc3(ws_id, 1, &view_ind, &loc_pos);
-   printf("Locator sample: #%-2d:\t[%f, %f, %f]\n",
+   printf("Locator sample #%-2d:\t[%f, %f, %f]\n",
           view_ind,
           loc_pos.x,
           loc_pos.y,
@@ -48,20 +48,22 @@ void sample_locator(Pint ws_id)
 int locator_event(void)
 {
    int ret;
-   Sin_input_event *event;
+   Pin_class class;
+   Pint ws_id, in_num, view_ind;
+   Ppoint3 loc_pos;
 
-   event = phg_sin_q_next_event(PHG_INPUT_Q);
-   if (event != NULL) {
-      SIN_Q_SET_CUR_SIMUL_ID(PHG_INPUT_Q, event);
-      printf("Locator event: %f %f %f\n",
-             event->data.locator.evt.position.x,
-             event->data.locator.evt.position.y,
-             event->data.locator.evt.position.z);
-      phg_sin_q_deque_event(PHG_INPUT_Q);
-      ret = 1;
+   if (SIN_Q_EMPTY(PHG_INPUT_Q)) {
+      ret = FALSE;
    }
    else {
-      ret = 0;
+      pawait_event(1.0, &ws_id, &class, &in_num);
+      pget_loc3(&view_ind, &loc_pos);
+      printf("Locator event #%-2d:\t[%f, %f, %f]\n",
+             view_ind,
+             loc_pos.x,
+             loc_pos.y,
+             loc_pos.z);
+      ret = TRUE;
    }
 
    return ret;
@@ -79,8 +81,8 @@ int main(void)
    printf("Output window %x\n", (unsigned) wsh->drawable_id);
    printf("Input  window %x\n", (unsigned) wsh->input_overlay_window);
 
-   pset_loc_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   //pset_loc_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
+   //pset_loc_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
+   pset_loc_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
 
    if (wsh != NULL) {
       while (1) {
@@ -91,8 +93,8 @@ int main(void)
             while (XCheckTypedEvent(wsh->display, Expose, &event));
             (*wsh->redraw_all)(wsh, PFLAG_ALWAYS);
          }
-         sample_locator(WS_0);
-         //locator_event();
+         //sample_locator(WS_0);
+         locator_event();
       }
    }
 
