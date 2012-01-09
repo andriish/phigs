@@ -78,7 +78,7 @@ static void activate_loc(
     );
 
 static void deactivate_loc(
-    register Dev_data *dev,
+    Dev_data *dev,
     Sin_window_table *cvs_tbl
     );
 
@@ -449,7 +449,7 @@ static void process_stroke_event(
 }
 
 static void stroke_event_func(
-    register Dev_data *dev,
+    Dev_data *dev,
     Sin_window_table *cvs_tbl,
     Window window,
     Sin_cvs_event *event
@@ -486,12 +486,16 @@ static void activate_loc(
     Sin_window_table *cvs_tbl
     )
 {
+#ifdef DEBUG
+    printf("sin_cvs: activate_loc");
+#endif
+
     reset_device( dev );
     attach_to_triggers( dev, cvs_tbl, locator_event_func );
 }
 
 static void deactivate_loc(
-    register Dev_data *dev,
+    Dev_data *dev,
     Sin_window_table *cvs_tbl
     )
 {
@@ -504,6 +508,10 @@ static void activate_stroke(
     Sin_window_table *cvs_tbl
     )
 {
+#ifdef DEBUG
+    printf("sin_cvs: activate_stroke");
+#endif
+
     reset_device( dev );
     attach_to_triggers( dev, cvs_tbl, stroke_event_func );
     echo_stroke( dev, SIN_ECHO_ALL_POINTS );
@@ -524,6 +532,10 @@ static void activate_pick(
     Sin_window_table *cvs_tbl
     )
 {
+#ifdef DEBUG
+    printf("sin_cvs: activate_pick");
+#endif
+
     reset_device( dev );
     attach_to_triggers( dev, cvs_tbl, pick_event_func );
 }
@@ -726,8 +738,8 @@ void phg_sin_cvs_device_resize(
 	    dev->measure->data.pt.y += delta;
 	    break;
 	case SIN_STROKE: {
-	    register Sin_window_pt	*pt = dev->measure->data.pts;
-	    register int		i;
+	    Sin_window_pt *pt = dev->measure->data.pts;
+	    int	i;
 	    for ( i = 0; i < dev->measure->count; i++, pt++ )
 		pt->y += delta;
 	    } break;

@@ -439,7 +439,6 @@ static int wsx_gl_open_window(
    XSetWindowAttributes wattr;
    Wst_phigs_dt *dt;
    Wsgl *wsgl;
-   Input_q_handle input_q;
 
    wsgl = ws->render_context;
    dt = &args->type->desc_tbl.phigs_dt;
@@ -534,15 +533,7 @@ static int wsx_gl_open_window(
          return FALSE;
       }
 
-      input_q = phg_sin_q_create(ws->type->erh);
-      if (input_q == NULL) {
-         XDestroyWindow(ws->display, ws->input_overlay_window);
-         XDestroyWindow(ws->display, ws->drawable_id);
-         return FALSE;
-      }
-
-      if (!phg_ws_input_init(ws, input_q)) {
-         free(input_q);
+      if (!phg_ws_input_init(ws, args->input_q)) {
          XDestroyWindow(ws->display, ws->input_overlay_window);
          XDestroyWindow(ws->display, ws->drawable_id);
          return FALSE;

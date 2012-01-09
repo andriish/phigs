@@ -23,21 +23,6 @@
 
 #define MAX_NO_OPEN_WS                         10
 
-#define PSL_SYS_STATE(psl) \
-   ((psl)->phg_sys_state)
-
-#define PSL_WS_STATE(psl) \
-   ((psl)->phg_ws_state)
-
-#define PSL_STRUCT_STATE(psl) \
-   ((psl)->phg_struct_state)
-
-#define PSL_OPEN_STRUCT(psl) \
-   ((psl)->open_struct)
-
-#define PSL_EDIT_MODE(psl) \
-   ((psl)->edit_mode)
-
 typedef struct {
    Pint       used;                            /* Mark if workstation is used */
    Pint       wsid;                            /* Workstation id */
@@ -46,15 +31,48 @@ typedef struct {
 } Psl_ws_info;
 
 typedef struct {
-   Psys_st     phg_sys_state;                  /* System state */
-   Pws_st      phg_ws_state;                   /* Workstation state */
-   Pstruct_st  phg_struct_state;               /* Structure state */
-   Psl_ws_info open_ws[MAX_NO_OPEN_WS];        /* Info list for workstations */
-   Pedit_mode  edit_mode;                      /* Structure edit mode */
-   Pint        open_struct;                    /* Open structure */
+   Pevent             id;
+   Phg_inp_event_data data;
+} Psl_inp_event;
+
+typedef struct {
+   Psys_st       phg_sys_state;                /* System state */
+   Pws_st        phg_ws_state;                 /* Workstation state */
+   Pstruct_st    phg_struct_state;             /* Structure state */
+   Psl_ws_info   open_ws[MAX_NO_OPEN_WS];      /* Info list for workstations */
+   Psl_inp_event cur_event;                    /* Event gotten by pwait_event */
+   Pedit_mode    edit_mode;                    /* Structure edit mode */
+   Pint          open_struct;                  /* Open structure */
 } Phg_state_list;
 
 typedef Phg_state_list *Psl_handle;
+
+#define PSL_SYS_STATE(_psl) \
+   ((_psl)->phg_sys_state)
+
+#define PSL_WS_STATE(_psl) \
+   ((_psl)->phg_ws_state)
+
+#define PSL_STRUCT_STATE(_psl) \
+   ((_psl)->phg_struct_state)
+
+#define PSL_SET_CUR_EVENT_ID(_psl, _id) \
+   ((_psl)->cur_event.id = (_id))
+
+#define PSL_SET_CUR_EVENT_DATA(_psl, _data) \
+   ((_psl)->cur_event.data = (_data))
+
+#define PSL_CUR_EVENT_CLASS(_psl) \
+   ((_psl)->cur_event.id.class)
+
+#define PSL_CUR_EVENT_DATA(_psl, _class) \
+   ((_psl)->cur_event.data._class)
+
+#define PSL_OPEN_STRUCT(_psl) \
+   ((_psl)->open_struct)
+
+#define PSL_EDIT_MODE(_psl) \
+   ((_psl)->edit_mode)
 
 /*******************************************************************************
  * phg_psl_create

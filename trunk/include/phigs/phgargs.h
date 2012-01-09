@@ -101,6 +101,8 @@ typedef struct {
 typedef struct _Phg_args_open_ws {
    Pint wsid;
    Wst  *type;
+   Err_handle erh;
+   Input_q_handle input_q;
    char *window_name;
    char *icon_name;
 } Phg_args_open_ws;
