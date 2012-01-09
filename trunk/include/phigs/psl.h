@@ -68,6 +68,27 @@ typedef Phg_state_list *Psl_handle;
 #define PSL_CUR_EVENT_DATA(_psl, _class) \
    ((_psl)->cur_event.data._class)
 
+#define PSL_CLEAR_CUR_EVENT( _psl) \
+    {   switch ((_psl)->cur_event.id.class) { \
+          case PIN_STROKE: \
+            if ( (_psl)->cur_event.data.stk.num_points > 0) \
+                free(((_psl)->cur_event.data.stk.points)); \
+            break; \
+          case PIN_PICK: \
+            if ( (_psl)->cur_event.data.pik.status == PIN_STATUS_OK \
+                && (_psl)->cur_event.data.pik.pick_path.depth > 0) \
+                free(((_psl)->cur_event.data.pik.pick_path.path_list)); \
+            break; \
+          case PIN_STRING: \
+            if ( (_psl)->cur_event.data.str.length > 0) \
+                free(((_psl)->cur_event.data.str.string)); \
+            break; \
+          default: \
+            break; \
+        } \
+        (_psl)->cur_event.id.class = PIN_NONE; \
+    }
+
 #define PSL_OPEN_STRUCT(_psl) \
    ((_psl)->open_struct)
 

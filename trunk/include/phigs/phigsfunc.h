@@ -1314,5 +1314,43 @@ void psample_loc3(
    Ppoint3 *loc_pos
    );
 
+/*******************************************************************************
+ * pwait_event
+ *
+ * DESCR:       Wait for event to occur
+ * RETURNS:     N/A
+ */
+
+void pawait_event(
+   Pfloat timeout,
+   Pint *ws_id,
+   Pin_class *class,
+   Pint *in_num
+   );
+
+/*******************************************************************************
+ * pget_loc
+ *
+ * DESCR:       Get locator event from event queue
+ * RETURNS:     N/A
+ */
+
+void pget_loc(
+   Pint *view_ind,
+   Ppoint *loc_pos
+   );
+
+/*******************************************************************************
+ * pget_loc3
+ *
+ * DESCR:       Get locator event from event queue 3D
+ * RETURNS:     N/A
+ */
+
+void pget_loc3(
+   Pint *view_ind,
+   Ppoint3 *loc_pos
+   );
+
 #endif /* _phigsfunc_h */
 
