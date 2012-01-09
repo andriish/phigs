@@ -80,10 +80,20 @@ void popen_phigs(
       goto abort;
    }
 
+   PHG_INPUT_Q = phg_sin_q_create(PHG_ERH);
+   if (PHG_INPUT_Q == NULL) {
+      ERR_REPORT(PHG_ERH, ERR900);
+      phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
+      phg_css_destroy(PHG_CSS);
+      phg_psl_destroy(PHG_PSL);
+      goto abort;
+   }
+
    list_init(&PHG_WST_LIST);
    wst = wsx_gl_create(PHG_ERH, PCAT_OUT);
    if (wst == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
+      free(PHG_INPUT_Q);
       phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
@@ -95,6 +105,7 @@ void popen_phigs(
    if (wst == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
       phg_wst_destroy((Wst *) list_get(&PHG_WST_LIST));
+      free(PHG_INPUT_Q);
       phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
@@ -107,6 +118,7 @@ void popen_phigs(
       ERR_REPORT(PHG_ERH, ERR900);
       phg_wst_destroy((Wst *) list_get(&PHG_WST_LIST));
       phg_wst_destroy((Wst *) list_get(&PHG_WST_LIST));
+      free(PHG_INPUT_Q);
       phg_wst_destroy(wst);
       phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
       phg_css_destroy(PHG_CSS);

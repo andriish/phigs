@@ -171,6 +171,10 @@ int phg_sin_ws_set_event_func(
     Sin_notify_data *nd;
     int	status = FALSE;
 
+#ifdef DEBUG
+    printf("sin_ws: phg_sin_ws_set_event_func\n");
+#endif
+
     nd = (Sin_notify_data*)calloc((unsigned)1, sizeof(Sin_notify_data));
     if ( nd ) {
 	status = TRUE;
@@ -249,6 +253,10 @@ void phg_sin_ws_load_event(
     Sin_input_event *event
     )
 {
+#ifdef DEBUG
+    printf("sin_ws: phg_sin_ws_load_event\n");
+#endif
+
     event->wsid = dev->wsid;
     event->dev_num = dev->num;
     switch( dev->class) {
@@ -342,6 +350,10 @@ int phg_sin_ws_enque_events(
     Sin_input_event *event;
     Sin_event_queue *queue;
     int	status = SIN_EVENT_NOT_ENQUED_FLAG, simul_id;
+
+#ifdef DEBUG
+    printf("sin_ws: phg_sin_ws_enque_events\n");
+#endif
 
     queue = (*devs)->ws->queue;
     if ( SIN_Q_ENOUGH_ROOM( queue, count) && !SIN_Q_OVERFLOWED( queue) ) {
@@ -588,6 +600,10 @@ void phg_sin_ws_flush_event_buffer(
     Sin_input_device **devs;
     int	i;
     int	status;
+
+#ifdef DEBUG
+    printf("sin_ws: phg_sin_ws_flush_event_buffer\n");
+#endif
 
     /* Put all the events on the queue. */
     if ( ev_buf->count > 0) {

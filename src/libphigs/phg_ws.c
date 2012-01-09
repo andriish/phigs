@@ -69,6 +69,8 @@ void popen_ws(
          memset(&args, 0, sizeof(Phg_args_open_ws));
          args.wsid = ws_id;
          args.type = wst;
+         args.erh = PHG_ERH;
+         args.input_q = PHG_INPUT_Q;
          args.window_name = default_window_name;
          args.icon_name = default_icon_name;
 

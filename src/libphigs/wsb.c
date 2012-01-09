@@ -395,7 +395,7 @@ Ws* phg_wsb_open_ws(
 
     /* Store workstation type parameters */
     ws->type = args->type;
-    ws->erh = ws->type->erh;
+    ws->erh = args->erh;
     ws->category = ws->type->desc_tbl.phigs_dt.ws_category;
     ws->current_colour_model =
         ws->type->desc_tbl.phigs_dt.out_dt.default_colour_model;
