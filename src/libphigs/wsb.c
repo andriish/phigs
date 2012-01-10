@@ -108,16 +108,16 @@ static void wsb_load_funcs(
     ws->inq_representation = phg_wsb_inq_rep;
     ws->inq_disp_update_state = phg_wsb_inq_disp_update_state;
     ws->inq_hlhsr_mode = phg_wsb_inq_hlhsr_mode;
-    ws->resolve_locator = phg_wsb_resolve_locator;
-    ws->resolve_stroke = NULL;
-    ws->resolve_pick = NULL;
     ws->map_initial_points = phg_wsb_map_initial_points;
+    ws->resolve_locator = phg_wsb_resolve_locator;
+    ws->point_in_viewport = phg_wsb_point_in_viewport;
+    ws->resolve_stroke = phg_wsb_resolve_stroke;
+    ws->resolve_pick = NULL;
 
     /* Not used by all workstations */
     ws->valid_pick_path = NULL;
     ws->pick_enable = NULL;
     ws->pick_disable = NULL;
-    ws->point_in_viewport = NULL;
 
     /* Initialized by input module */
     ws->init_device = NULL;
@@ -1599,9 +1599,7 @@ int phg_wsb_map_initial_points(
     XPoint *dwbl_pts
     )
 {
-    printf("map_initial_points not defined\n");
-
-    return 1;
+    return TRUE;
 }
 
 /*******************************************************************************
@@ -1628,5 +1626,49 @@ int phg_wsb_resolve_locator(
     }
 
     return 1;
+}
+
+/*******************************************************************************
+ * phg_wsb_point_in_viewport
+ *
+ * DESCR:       Test if point is within viewport
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wsb_point_in_viewport(
+    Ws *ws,
+    XPoint *pt
+    )
+{
+   return TRUE;
+}
+
+/*******************************************************************************
+ * phg_wsb_resolve_stroke
+ *
+ * DESCR:       Resolve stroke device
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wsb_resolve_stroke(
+    Ws *ws,
+    Pint num_pts,
+    Ws_point *dc_pts,
+    int determine_z,
+    Pint *view_index,
+    Ppoint_list3 *wc_pts
+    )
+{
+    int i;
+
+    *view_index = 0;
+    wc_pts->num_points = num_pts;
+    for (i = 0; i < num_pts; i++) {
+       wc_pts->points[i].x = dc_pts[i].x;
+       wc_pts->points[i].y = dc_pts[i].y;
+       wc_pts->points[i].z = 0.0;
+    }
+
+    return TRUE;
 }
 

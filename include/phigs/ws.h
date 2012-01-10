@@ -273,14 +273,25 @@ typedef struct _Ws {
                    Phg_args_rep_type rep_type,
                    Phg_ret *ret
                    );
-    int         (*resolve_locator)(
+   int          (*map_initial_points)(
+                   struct _Ws *ws,
+                   Pint view_index,
+                   Pint *num_pts,
+                   Ppoint3 *wc_pts,
+                   XPoint *dwbl_pts
+                   );
+   int          (*resolve_locator)(
                    struct _Ws *ws,
                    Ws_point *dc_pt,
                    int determine_z,
                    Pint *view_index,
                    Ppoint3 *wc_pt
                    );
-    int         (*resolve_stroke)(
+   int          (*point_in_viewport)(
+                   struct _Ws *ws,
+                   XPoint *pt
+                   );
+   int         (*resolve_stroke)(
                    struct _Ws *ws,
                    Pint num_pts,
                    Ws_point *dc_pts,
@@ -295,13 +306,6 @@ typedef struct _Ws {
                    Ws_point *dc_pt,
                    Ppick *pick
                    );
-   int          (*map_initial_points)(
-                   struct _Ws *ws,
-                   Pint view_index,
-                   Pint *num_pts,
-                   Ppoint3 *wc_pts,
-                   XPoint *dwbl_pts
-                   );
 
    /* Not used by all workstations */
    int          (*valid_pick_path)(
@@ -315,10 +319,6 @@ typedef struct _Ws {
    void         (*pick_disable)(
                    struct _Ws *ws,
                    Ws_inp_pick *dev
-                   );
-   int          (*point_in_viewport)(
-                   struct _Ws *ws,
-                   XPoint *pt
                    );
 
    /* Initialized by input module */
@@ -601,6 +601,34 @@ int phg_wsb_resolve_locator(
     int determine_z,
     Pint *view_index,
     Ppoint3 *wc_pt
+    );
+
+/*******************************************************************************
+ * phg_wsb_point_in_viewport
+ *
+ * DESCR:       Test if point is within viewport
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wsb_point_in_viewport(
+    Ws *ws,
+    XPoint *pt
+    );
+
+/*******************************************************************************
+ * phg_wsb_resolve_stroke
+ *
+ * DESCR:       Resolve stroke device
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wsb_resolve_stroke(
+    Ws *ws,
+    Pint num_pts,
+    Ws_point *dc_pts,
+    int determine_z,
+    Pint *view_index,
+    Ppoint_list3 *wc_pts
     );
 
 /*******************************************************************************
