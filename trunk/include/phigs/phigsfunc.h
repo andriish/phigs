@@ -1287,6 +1287,20 @@ void pset_loc_mode(
    );
 
 /*******************************************************************************
+ * pset_stroke_mode
+ *
+ * DESCR:       Set stroke input device mode
+ * RETURNS:     N/A
+ */
+
+void pset_stroke_mode(
+   Pint ws_id,
+   Pint stroke_num,
+   Pop_mode op_mode,
+   Pecho_switch echo_switch
+   );
+
+/*******************************************************************************
  * psample_loc
  *
  * DESCR:       Sample locator device
@@ -1312,6 +1326,34 @@ void psample_loc3(
    Pint loc_num,
    Pint *view_ind,
    Ppoint3 *loc_pos
+   );
+
+/*******************************************************************************
+ * psample_stroke
+ *
+ * DESCR:       Sample stroke device
+ * RETURNS:     N/A
+ */
+
+void psample_stroke(
+   Pint ws_id,
+   Pint stroke_num,
+   Pint *view_ind,
+   Ppoint_list *stroke
+   );
+
+/*******************************************************************************
+ * psample_stroke3
+ *
+ * DESCR:       Sample stroke device 3D
+ * RETURNS:     N/A
+ */
+
+void psample_stroke3(
+   Pint ws_id,
+   Pint stroke_num,
+   Pint *view_ind,
+   Ppoint_list3 *stroke
    );
 
 /*******************************************************************************

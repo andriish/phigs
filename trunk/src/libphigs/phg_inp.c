@@ -142,6 +142,33 @@ void pset_loc_mode(
 }
 
 /*******************************************************************************
+ * pset_stroke_mode
+ *
+ * DESCR:       Set stroke input device mode
+ * RETURNS:     N/A
+ */
+
+void pset_stroke_mode(
+   Pint ws_id,
+   Pint stroke_num,
+   Pop_mode op_mode,
+   Pecho_switch echo_switch
+   )
+{
+   Wst_input_wsdt *idt;
+
+   idt = input_ws_open(ws_id, Pfn_set_stroke_mode, NULL, NULL);
+   if (idt != NULL) {
+      if ((stroke_num > 0) &&  (stroke_num <= idt->num_devs.stroke)) {
+         set_mode(ws_id, PHG_ARGS_INP_STK, stroke_num, op_mode, echo_switch);
+      }
+      else {
+         ERR_REPORT(PHG_ERH, ERR250);
+      }
+   }
+}
+
+/*******************************************************************************
  * sample_device
  *
  * DESCR:       Sample device helper function
@@ -230,6 +257,92 @@ void psample_loc3(
 }
 
 /*******************************************************************************
+ * psample_stroke
+ *
+ * DESCR:       Sample stroke device
+ * RETURNS:     N/A
+ */
+
+void psample_stroke(
+   Pint ws_id,
+   Pint stroke_num,
+   Pint *view_ind,
+   Ppoint_list *stroke
+   )
+{
+   int i;
+   Phg_ret ret;
+   Wst_input_wsdt *idt;
+   Pstroke3 *stk;
+
+   idt = input_ws_open(ws_id, Pfn_sample_stroke, NULL, NULL);
+   if (idt != NULL) {
+      if ((stroke_num > 0) &&  (stroke_num <= idt->num_devs.stroke)) {
+         sample_device(ws_id, stroke_num, PHG_ARGS_INP_STK, &ret);
+         if (ret.err == 0) {
+            stk = &ret.data.inp_event.data.stk;
+            *view_ind = stk->view_ind;
+            stroke->num_points = stk->num_points;
+            if (stk->num_points > 0) {
+               for (i = 0; i < stk->num_points; i++) {
+                  stroke->points[i].x = stk->points[i].x;
+                  stroke->points[i].y = stk->points[i].y;
+               }
+            }
+            else {
+               stroke->num_points = 0;
+            }
+         }
+      }
+      else {
+         ERR_REPORT(PHG_ERH, ERR250);
+      }
+   }
+}
+
+/*******************************************************************************
+ * psample_stroke3
+ *
+ * DESCR:       Sample stroke device 3D
+ * RETURNS:     N/A
+ */
+
+void psample_stroke3(
+   Pint ws_id,
+   Pint stroke_num,
+   Pint *view_ind,
+   Ppoint_list3 *stroke
+   )
+{
+   Phg_ret ret;
+   Wst_input_wsdt *idt;
+   Pstroke3 *stk;
+
+   idt = input_ws_open(ws_id, Pfn_sample_stroke3, NULL, NULL);
+   if (idt != NULL) {
+      if ((stroke_num > 0) &&  (stroke_num <= idt->num_devs.stroke)) {
+         sample_device(ws_id, stroke_num, PHG_ARGS_INP_STK3, &ret);
+         if (ret.err == 0) {
+            stk = &ret.data.inp_event.data.stk;
+            *view_ind = stk->view_ind;
+            stroke->num_points = stk->num_points;
+            if (stk->num_points > 0) {
+               memcpy(&stroke->points,
+                      &stk->points,
+                      stk->num_points * sizeof(Ppoint3));
+            }
+            else {
+               stroke->num_points = 0;
+            }
+         }
+      }
+      else {
+         ERR_REPORT(PHG_ERH, ERR250);
+      }
+   }
+}
+
+/*******************************************************************************
  * inp_wait
  *
  * DESCR:       Wait for input helper function
@@ -286,7 +399,7 @@ static void inp_await(
 void pawait_event(
    Pfloat timeout,
    Pint *ws_id,
-   Pin_class *class,
+   Pin_class *dev_class,
    Pint *in_num
    )
 {
@@ -304,7 +417,7 @@ void pawait_event(
       inp_await(&ret);
       if (ret.err == 0) {
          *ws_id = revt->id.ws;
-         *class = revt->id.class;
+         *dev_class = revt->id.class;
          *in_num = revt->id.dev;
 
          /* TODO: Investigate if we need copy something here */
@@ -329,7 +442,7 @@ void pawait_event(
  */
 
 static int check_event_class(
-   Pin_class class,
+   Pin_class dev_class,
    Pint fn_id
    )
 {
@@ -341,7 +454,7 @@ static int check_event_class(
       ERR_REPORT(PHG_ERH, ERR3);
       status = FALSE;
    }
-   else if (PSL_CUR_EVENT_CLASS(PHG_PSL) != class) {
+   else if (PSL_CUR_EVENT_CLASS(PHG_PSL) != dev_class) {
       ERR_REPORT(PHG_ERH, ERR259);
       status = FALSE;
    }

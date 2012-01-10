@@ -34,15 +34,32 @@ void print_event(XEvent *event)
 
 void sample_locator(Pint ws_id)
 {
-   int view_ind;
+   Pint view_ind;
    Ppoint3 loc_pos;
 
    psample_loc3(ws_id, 1, &view_ind, &loc_pos);
-   printf("Locator sample #%-2d:\t[%f, %f, %f]\n",
+   printf("Sample locator #%-2d:\t[%f, %f, %f]\n",
           view_ind,
           loc_pos.x,
           loc_pos.y,
           loc_pos.z);
+}
+
+Ppoint3 stroke_points[100];
+Ppoint_list3 stroke = {0, stroke_points};
+void sample_stroke(Pint ws_id)
+{
+   int i;
+   Pint view_ind;
+
+   psample_stroke3(ws_id, 1, &view_ind, &stroke);
+   printf("Sample stroke #%-2d:\n", view_ind);
+   for (i = 0; i < stroke.num_points; i++) {
+      printf("\t[%f, %f, %f]\n",
+             stroke.points[i].x,
+             stroke.points[i].y,
+             stroke.points[i].z);
+   }
 }
 
 int locator_event(void)
@@ -82,7 +99,8 @@ int main(void)
    printf("Input  window %x\n", (unsigned) wsh->input_overlay_window);
 
    //pset_loc_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   pset_loc_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
+   //pset_loc_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
+   pset_stroke_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
 
    if (wsh != NULL) {
       while (1) {
@@ -94,7 +112,8 @@ int main(void)
             (*wsh->redraw_all)(wsh, PFLAG_ALWAYS);
          }
          //sample_locator(WS_0);
-         locator_event();
+         //locator_event();
+         sample_stroke(WS_0);
       }
    }
 
