@@ -191,7 +191,13 @@ typedef struct {
 } Wst_phigs_dt;
 
 typedef struct {
+   Pint num_pick_device_types;
+   Pint *pick_device_types;
+} Wst_xwin_dt;
+
+typedef struct {
    Wst_phigs_dt    phigs_dt;
+   Wst_xwin_dt     xwin_dt;
 } Wst_dt;
 
 struct _Ws;
