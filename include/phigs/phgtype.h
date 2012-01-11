@@ -21,6 +21,8 @@
 #ifndef _phgtype_h
 #define _phgtype_h
 
+#include <sys/types.h>
+
 #ifndef TRUE
 #define TRUE     1
 #endif
@@ -145,7 +147,7 @@ struct _Sin_event_queue;
 typedef struct _Sin_event_queue *Input_q_handle;
 
 typedef struct {
-   char     *buf;
+   caddr_t  buf;
    unsigned size;
 } Phg_scratch;
 

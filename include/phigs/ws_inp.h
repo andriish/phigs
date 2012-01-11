@@ -120,8 +120,7 @@ typedef struct _Ws_input_ws {
    } devs;
    Sin_handle       sin_handle;
    Input_q_handle   input_queue;
-   caddr_t          scratch;
-   unsigned         scratch_size;
+   Phg_scratch      scratch;
 } Ws_input_ws;
 
 #define WS_INP_DEV( _wsh, _class, _num ) \
