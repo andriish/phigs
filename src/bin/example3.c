@@ -45,12 +45,12 @@ void sample_locator(Pint ws_id)
           loc_pos.z);
 }
 
-Ppoint3 stroke_points[100];
-Ppoint_list3 stroke = {0, stroke_points};
 void sample_stroke(Pint ws_id)
 {
    int i;
    Pint view_ind;
+   Ppoint3 stroke_points[100];
+   Ppoint_list3 stroke = {0, stroke_points};
 
    psample_stroke3(ws_id, 1, &view_ind, &stroke);
    printf("Sample stroke #%-2d:\n", view_ind);

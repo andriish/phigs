@@ -240,6 +240,9 @@ static void init_devices(
    Plimit3 e_volume = {0.0, 1.0, 0.0, 1.0, 0.0, 1.0};
    Wst_input_wsdt *idt = &wst->desc_tbl.phigs_dt.in_dt;
 
+   wst->desc_tbl.xwin_dt.num_pick_device_types = 0;
+   wst->desc_tbl.xwin_dt.pick_device_types = NULL;
+
    /* Default locator */
    idt->num_devs.loc = 1;
    memcpy(&idt->locators[0].position, &position, sizeof(Ppoint3));

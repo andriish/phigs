@@ -1127,7 +1127,6 @@ static int init_input_state(
 	}
     }
 
-#ifdef TODO
     {
 	Ws_inp_pick	*pick = iws->devs.pick;
 	Wst_defpick	*def_pick = idt->picks;
@@ -1150,13 +1149,14 @@ static int init_input_state(
 	    pick->pick.pick_path.path_list = NULL;
 	    pick->ap_size = 5.0;	/* DC units */
 	    pick->dev_type = i >= num_dev_types ? dev_types[0] : dev_types[i];
+#ifdef TODO
 	    (void)PEXCreateNameSet( ws->display,
 		pick->filter.incl = XAllocID(ws->display) );
 	    (void)PEXCreateNameSet( ws->display,
 		pick->filter.excl = XAllocID(ws->display) );
+#endif
 	}
     }
-#endif
 
     {
 	Ws_inp_val	*val = iws->devs.valuator;
