@@ -353,6 +353,7 @@ static void inp_await(
    Phg_ret *ret
    )
 {
+   unsigned size;
    Sin_input_event *event;
    Pevent *ev_id = &ret->data.inp_event.id;
    Phg_inp_event_data *ed = &ret->data.inp_event.data;
@@ -371,6 +372,23 @@ static void inp_await(
       switch (ev_id->class) {
          case PIN_LOC:
             ed->loc = event->data.locator.evt;
+            break;
+
+         case PIN_STROKE:
+            size = event->data.stroke.evt.num_points * sizeof(Ppoint3);
+            if ((size > 0) && (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size))) {
+               ERR_BUF(PHG_ERH, ERR900);
+               ret->err = ERR900;
+               free(ed->stk.points);
+            }
+            else {
+               ed->stk = event->data.stroke.evt;
+               if (size > 0) {
+                  memcpy(PHG_SCRATCH.buf, ed->stk.points, size);
+                  free(ed->stk.points);
+                  ed->stk.points = (Ppoint3 *) PHG_SCRATCH.buf;
+               }
+            }
             break;
 
          /* TODO: Check if anything is needed to copy for other device types */
@@ -404,6 +422,8 @@ void pawait_event(
    )
 {
    Phg_ret ret;
+   unsigned size;
+   Ppoint3 *pts;
    Phg_ret_inp_event *revt = &ret.data.inp_event;
 
    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_await_event);
@@ -420,7 +440,27 @@ void pawait_event(
          *dev_class = revt->id.class;
          *in_num = revt->id.dev;
 
-         /* TODO: Investigate if we need copy something here */
+         switch (revt->id.class) {
+            case PIN_STROKE:
+               size = revt->data.stk.num_points * sizeof(Ppoint3);
+               if (size > 0) {
+                  pts = (Ppoint3 *) malloc(size);
+                  if (pts == NULL) {
+                     ERR_REPORT(PHG_ERH, ERR900);
+                     revt->data.stk.num_points = 0;
+                  }
+                  else {
+                     memcpy(pts, revt->data.stk.points, size);
+                     revt->data.stk.points = pts;
+                  }
+               }
+               break;
+
+               /* TODO: Investigate things to copy for other device types */
+
+               default:
+                  break;
+         }
 
          PSL_CLEAR_CUR_EVENT(PHG_PSL);
          PSL_SET_CUR_EVENT_ID(PHG_PSL, revt->id);
@@ -498,6 +538,56 @@ void pget_loc3(
       loc_pos->x = PSL_CUR_EVENT_DATA(PHG_PSL, loc).position.x;
       loc_pos->y = PSL_CUR_EVENT_DATA(PHG_PSL, loc).position.y;
       loc_pos->z = PSL_CUR_EVENT_DATA(PHG_PSL, loc).position.z;
+   }
+}
+
+/*******************************************************************************
+ * pget_stroke
+ *
+ * DESCR:       Get stroke event from event queue
+ * RETURNS:     N/A
+ */
+
+void pget_stroke(
+   Pint *view_ind,
+   Ppoint_list *stroke
+   )
+{
+   int i;
+   Pstroke *stk;
+
+   if (check_event_class(PIN_STROKE, Pfn_get_stroke)) {
+      stk = &PSL_CUR_EVENT_DATA(PHG_PSL, stk);
+      *view_ind = stk->view_ind;
+      stroke->num_points = stk->num_points;
+      for (i = 0; i < stk->num_points; i++) {
+         stroke->points[i].x = stk->points[i].x;
+         stroke->points[i].y = stk->points[i].y;
+      }
+   }
+}
+
+/*******************************************************************************
+ * pget_stroke3
+ *
+ * DESCR:       Get stroke event from event queue 3D
+ * RETURNS:     N/A
+ */
+
+void pget_stroke3(
+   Pint *view_ind,
+   Ppoint_list3 *stroke
+   )
+{
+   Pstroke3 *stk;
+
+   if (check_event_class(PIN_STROKE, Pfn_get_stroke3)) {
+      stk = &PSL_CUR_EVENT_DATA(PHG_PSL, stk);
+      *view_ind = stk->view_ind;
+      stroke->num_points = stk->num_points;
+      if (stk->num_points > 0) {
+         memcpy(stroke->points, stk->points, stk->num_points * sizeof(Ppoint3));
+      }
    }
 }
 

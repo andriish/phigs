@@ -51,6 +51,7 @@ void popen_phigs(
    if (phg == NULL) {
       goto abort;
    }
+   memset(phg, 0, sizeof(Phg_struct));
 
    PHG_ERH = phg_erh_create(error_file);
    if (PHG_ERH == NULL) {

@@ -1394,5 +1394,29 @@ void pget_loc3(
    Ppoint3 *loc_pos
    );
 
+/*******************************************************************************
+ * pget_stroke
+ *
+ * DESCR:       Get stroke event from event queue
+ * RETURNS:     N/A
+ */
+
+void pget_stroke(
+   Pint *view_ind,
+   Ppoint_list *stroke
+   );
+
+/*******************************************************************************
+ * pget_stroke3
+ *
+ * DESCR:       Get stroke event from event queue 3D
+ * RETURNS:     N/A
+ */
+
+void pget_stroke3(
+   Pint *view_ind,
+   Ppoint_list3 *stroke
+   );
+
 #endif /* _phigsfunc_h */
 
