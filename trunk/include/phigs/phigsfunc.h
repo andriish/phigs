@@ -1447,5 +1447,18 @@ void pget_stroke3(
    Ppoint_list3 *stroke
    );
 
+/*******************************************************************************
+ * pget_pick
+ *
+ * DESCR:       Get pick event from event queue
+ * RETURNS:     N/A
+ */
+
+void pget_pick(
+   Pint depth,
+   Pin_status *in_status,
+   Ppick_path *pick
+   );
+
 #endif /* _phigsfunc_h */
 

@@ -428,6 +428,7 @@ static void inp_await(
    )
 {
    unsigned size;
+   Ppick *pick;
    Sin_input_event *event;
    Pevent *ev_id = &ret->data.inp_event.id;
    Phg_inp_event_data *ed = &ret->data.inp_event.data;
@@ -465,6 +466,25 @@ static void inp_await(
             }
             break;
 
+         case PIN_PICK:
+            pick = &event->data.pick.evt;
+            ed->pik = *pick;
+            if (pick->status == PIN_STATUS_OK) {
+               size = pick->pick_path.depth * sizeof(Ppick_path_elem);
+               if ((size > 0) && (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size))) {
+                  ERR_BUF(PHG_ERH, ERR900);
+                  ret->err = ERR900;
+                  free(pick->pick_path.path_list);
+               }
+               else if (size > 0) {
+                  memcpy(PHG_SCRATCH.buf, pick->pick_path.path_list, size);
+                  free(pick->pick_path.path_list);
+                  ed->pik.pick_path.path_list = (Ppick_path_elem *)
+                     PHG_SCRATCH.buf;
+               }
+            }
+            break;
+
          /* TODO: Check if anything is needed to copy for other device types */
 
          default:
@@ -498,6 +518,7 @@ void pawait_event(
    Phg_ret ret;
    unsigned size;
    Ppoint3 *pts;
+   Ppick_path_elem *path;
    Phg_ret_inp_event *revt = &ret.data.inp_event;
 
    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_await_event);
@@ -529,6 +550,26 @@ void pawait_event(
                   }
                }
                break;
+
+               case PIN_PICK:
+                  if (revt->data.pik.status == PIN_STATUS_OK) {
+                     size = revt->data.pik.pick_path.depth *
+                            sizeof(Ppick_path_elem);
+                     if (size > 0) {
+                        path = (Ppick_path_elem *) malloc(size);
+                        if (path == NULL) {
+                           ERR_REPORT(PHG_ERH, ERR900);
+                           revt->data.pik.status = PIN_STATUS_NONE;
+                        }
+                        else {
+                           memcpy(path,
+                                  revt->data.pik.pick_path.path_list,
+                                  size);
+                           revt->data.pik.pick_path.path_list = path;
+                        }
+                     }
+                  }
+                  break;
 
                /* TODO: Investigate things to copy for other device types */
 
@@ -628,7 +669,7 @@ void pget_stroke(
    )
 {
    int i;
-   Pstroke *stk;
+   Pstroke3 *stk;
 
    if (check_event_class(PIN_STROKE, Pfn_get_stroke)) {
       stk = &PSL_CUR_EVENT_DATA(PHG_PSL, stk);
@@ -661,6 +702,37 @@ void pget_stroke3(
       stroke->num_points = stk->num_points;
       if (stk->num_points > 0) {
          memcpy(stroke->points, stk->points, stk->num_points * sizeof(Ppoint3));
+      }
+   }
+}
+
+/*******************************************************************************
+ * pget_pick
+ *
+ * DESCR:       Get pick event from event queue
+ * RETURNS:     N/A
+ */
+
+void pget_pick(
+   Pint depth,
+   Pin_status *in_status,
+   Ppick_path *pick
+   )
+{
+   Ppick *pik;
+   Pint depth_limit;
+
+   if (check_event_class(PIN_PICK, Pfn_get_pick)) {
+      pik = &PSL_CUR_EVENT_DATA(PHG_PSL, pik);
+      *in_status = pik->status;
+      if (pik->status == PIN_STATUS_OK) {
+         pick->depth = pik->pick_path.depth;
+         depth_limit = PHG_MIN(depth, pik->pick_path.depth);
+         if (depth_limit > 0) {
+            memcpy(pick->path_list,
+                   pik->pick_path.path_list,
+                   depth_limit * sizeof(Ppick_path_elem));
+         }
       }
    }
 }
