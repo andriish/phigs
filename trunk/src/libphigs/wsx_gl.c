@@ -229,10 +229,10 @@ static void init_views(
  * init_devices
  *
  * DESCR:	Helper function to initialize input devices
- * RETURNS:	N/A
+ * RETURNS:	TRUE or FALSE
  */
 
-static void init_devices(
+int init_devices(
     Wst *wst
     )
 {
@@ -240,8 +240,11 @@ static void init_devices(
    Plimit3 e_volume = {0.0, 1.0, 0.0, 1.0, 0.0, 1.0};
    Wst_input_wsdt *idt = &wst->desc_tbl.phigs_dt.in_dt;
 
-   wst->desc_tbl.xwin_dt.num_pick_device_types = 0;
-   wst->desc_tbl.xwin_dt.pick_device_types = NULL;
+   wst->desc_tbl.xwin_dt.num_pick_device_types = 1;
+   wst->desc_tbl.xwin_dt.pick_device_types = (Pint *) malloc(sizeof(Pint));
+   if (wst->desc_tbl.xwin_dt.pick_device_types == NULL) {
+      return FALSE;
+   }
 
    /* Default locator */
    idt->num_devs.loc = 1;
@@ -274,6 +277,8 @@ static void init_devices(
    idt->num_devs.string = 1;
    memcpy(&idt->strings[0].e_volume, &e_volume, sizeof(Plimit3));
    idt->strings[0].record.pets.pet_r1.unused = 0;
+
+   return TRUE;
 }
 
 /*******************************************************************************
@@ -365,7 +370,9 @@ int wsx_gl_init(
    if (category == PCAT_OUTIN) {
 
       /* Initialize input devices */
-      init_devices(wst);
+      if (!init_devices(wst)) {
+         return FALSE;
+      }
    }
 
 #ifdef DEBUG
