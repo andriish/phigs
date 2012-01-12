@@ -81,7 +81,6 @@ void sample_pick(Pint ws_id)
    }
 }
 
-
 int locator_event(void)
 {
    int ret;
@@ -133,6 +132,39 @@ int stroke_event(void)
    return ret;
 }
 
+int pick_event(void)
+{
+   int i, ret;
+   Pin_class class;
+   Pint ws_id, in_num;
+   Pin_status status;
+   Ppick_path_elem path_list[10];
+   Ppick_path pick = {0, path_list};
+
+   if (SIN_Q_EMPTY(PHG_INPUT_Q)) {
+      ret = FALSE;
+   }
+   else {
+      pawait_event(1.0, &ws_id, &class, &in_num);
+      pget_pick(10, &status, &pick);
+      if (status == PIN_STATUS_OK) {
+         printf("Pick event #%-d:\n", pick.depth);
+         for (i = 0; i < pick.depth; i++) {
+            printf("\tStruct = %d\tPick id = %d\t Element position = %d\n",
+                   pick.path_list[i].struct_id,
+                   pick.path_list[i].pick_id,
+                   pick.path_list[i].elem_pos);
+         }
+         ret = TRUE;
+      }
+      else {
+         ret = FALSE;
+      }
+   }
+
+   return ret;
+}
+
 int main(void)
 {
    Ws *wsh;
@@ -149,7 +181,8 @@ int main(void)
    //pset_loc_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
    //pset_stroke_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
    //pset_stroke_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
-   pset_pick_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
+   //pset_pick_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
+   pset_pick_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
 
    if (wsh != NULL) {
       while (1) {
@@ -164,7 +197,8 @@ int main(void)
          //locator_event();
          //sample_stroke(WS_0);
          //stroke_event();
-         sample_pick(WS_0);
+         //sample_pick(WS_0);
+         pick_event();
       }
    }
 
