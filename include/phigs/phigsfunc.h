@@ -1301,6 +1301,20 @@ void pset_stroke_mode(
    );
 
 /*******************************************************************************
+ * pset_pick_mode
+ *
+ * DESCR:       Set pick input device mode
+ * RETURNS:     N/A
+ */
+
+void pset_pick_mode(
+   Pint ws_id,
+   Pint pick_num,
+   Pop_mode op_mode,
+   Pecho_switch echo_switch
+   );
+
+/*******************************************************************************
  * psample_loc
  *
  * DESCR:       Sample locator device
@@ -1354,6 +1368,21 @@ void psample_stroke3(
    Pint stroke_num,
    Pint *view_ind,
    Ppoint_list3 *stroke
+   );
+
+/*******************************************************************************
+ * psample_pick
+ *
+ * DESCR:       Sample pick device
+ * RETURNS:     N/A
+ */
+
+void psample_pick(
+   Pint ws_id,
+   Pint pick_num,
+   Pint depth,
+   Pin_status *pick_in_status,
+   Ppick_path *pick
    );
 
 /*******************************************************************************

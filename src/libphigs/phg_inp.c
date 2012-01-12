@@ -169,6 +169,33 @@ void pset_stroke_mode(
 }
 
 /*******************************************************************************
+ * pset_pick_mode
+ *
+ * DESCR:       Set pick input device mode
+ * RETURNS:     N/A
+ */
+
+void pset_pick_mode(
+   Pint ws_id,
+   Pint pick_num,
+   Pop_mode op_mode,
+   Pecho_switch echo_switch
+   )
+{
+   Wst_input_wsdt *idt;
+
+   idt = input_ws_open(ws_id, Pfn_set_stroke_mode, NULL, NULL);
+   if (idt != NULL) {
+      if ((pick_num > 0) &&  (pick_num <= idt->num_devs.pick)) {
+         set_mode(ws_id, PHG_ARGS_INP_PIK, pick_num, op_mode, echo_switch);
+      }
+      else {
+         ERR_REPORT(PHG_ERH, ERR250);
+      }
+   }
+}
+
+/*******************************************************************************
  * sample_device
  *
  * DESCR:       Sample device helper function
@@ -334,6 +361,53 @@ void psample_stroke3(
             else {
                stroke->num_points = 0;
             }
+         }
+      }
+      else {
+         ERR_REPORT(PHG_ERH, ERR250);
+      }
+   }
+}
+
+/*******************************************************************************
+ * psample_pick
+ *
+ * DESCR:       Sample pick device
+ * RETURNS:     N/A
+ */
+
+void psample_pick(
+   Pint ws_id,
+   Pint pick_num,
+   Pint depth,
+   Pin_status *pick_in_status,
+   Ppick_path *pick
+   )
+{
+   Phg_ret ret;
+   Wst_input_wsdt *idt;
+   Ppick *pik;
+   Pint depth_limit;
+
+   idt = input_ws_open(ws_id, Pfn_sample_pick, NULL, NULL);
+   if (idt != NULL) {
+      if ((pick_num > 0) &&  (pick_num <= idt->num_devs.pick)) {
+         sample_device(ws_id, pick_num, PHG_ARGS_INP_PIK, &ret);
+         if (ret.err == 0) {
+            pik = &ret.data.inp_event.data.pik;
+            *pick_in_status = pik->status;
+            if (pik->status == PIN_STATUS_OK) {
+               pick->depth = pik->pick_path.depth;
+               depth_limit = PHG_MIN(depth, pik->pick_path.depth);
+               if (depth_limit > 0) {
+                  memcpy(pick->path_list,
+                         pik->pick_path.path_list,
+                         depth_limit * sizeof(Ppick_path_elem));
+               }
+            }
+         }
+         else {
+            *pick_in_status = PIN_STATUS_NONE;
          }
       }
       else {

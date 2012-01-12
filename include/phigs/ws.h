@@ -632,6 +632,21 @@ int phg_wsb_resolve_stroke(
     );
 
 /*******************************************************************************
+ * phg_wsb_resolve_pick
+ *
+ * DESCR:       Resolve pick device
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wsb_resolve_pick(
+    Ws *ws,
+    Ws_inp_pick *dev,
+    int echo,
+    Ws_point *dc_pt,
+    Ppick *pick
+    );
+
+/*******************************************************************************
  * phg_wsb_create_LUTs
  *  
  * DESCR:       Create workstation lookup tables

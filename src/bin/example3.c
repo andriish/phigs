@@ -62,6 +62,26 @@ void sample_stroke(Pint ws_id)
    }
 }
 
+void sample_pick(Pint ws_id)
+{
+   int i;
+   Pin_status status;
+   Ppick_path_elem path_list[10];
+   Ppick_path pick = {0, path_list};
+
+   psample_pick(ws_id, 1, 10, &status, &pick);
+   if (status == PIN_STATUS_OK) {
+      printf("Sample pick #%-d:\n", pick.depth);
+      for (i = 0; i < pick.depth; i++) {
+         printf("\tStruct = %d\tPick id = %d\t Element position = %d\n",
+                pick.path_list[i].struct_id,
+                pick.path_list[i].pick_id,
+                pick.path_list[i].elem_pos);
+      }
+   }
+}
+
+
 int locator_event(void)
 {
    int ret;
@@ -128,7 +148,8 @@ int main(void)
    //pset_loc_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
    //pset_loc_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
    //pset_stroke_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   pset_stroke_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
+   //pset_stroke_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
+   pset_pick_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
 
    if (wsh != NULL) {
       while (1) {
@@ -142,7 +163,8 @@ int main(void)
          //sample_locator(WS_0);
          //locator_event();
          //sample_stroke(WS_0);
-         stroke_event();
+         //stroke_event();
+         sample_pick(WS_0);
       }
    }
 

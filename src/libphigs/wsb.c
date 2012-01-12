@@ -112,7 +112,7 @@ static void wsb_load_funcs(
     ws->resolve_locator = phg_wsb_resolve_locator;
     ws->point_in_viewport = phg_wsb_point_in_viewport;
     ws->resolve_stroke = phg_wsb_resolve_stroke;
-    ws->resolve_pick = NULL;
+    ws->resolve_pick = phg_wsb_resolve_pick;
 
     /* Not used by all workstations */
     ws->valid_pick_path = NULL;
@@ -1599,6 +1599,7 @@ int phg_wsb_map_initial_points(
     XPoint *dwbl_pts
     )
 {
+    /* Temporary dummy method */
     return TRUE;
 }
 
@@ -1640,6 +1641,7 @@ int phg_wsb_point_in_viewport(
     XPoint *pt
     )
 {
+    /* Temporary dummy method */
    return TRUE;
 }
 
@@ -1661,6 +1663,7 @@ int phg_wsb_resolve_stroke(
 {
     int i;
 
+    /* Temporary dummy method */
     *view_index = 0;
     wc_pts->num_points = num_pts;
     for (i = 0; i < num_pts; i++) {
@@ -1668,6 +1671,42 @@ int phg_wsb_resolve_stroke(
        wc_pts->points[i].y = dc_pts[i].y;
        wc_pts->points[i].z = 0.0;
     }
+
+    return TRUE;
+}
+
+/*******************************************************************************
+ * phg_wsb_resolve_pick
+ *
+ * DESCR:       Resolve pick device
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wsb_resolve_pick(
+    Ws *ws,
+    Ws_inp_pick *dev,
+    int echo,
+    Ws_point *dc_pt,
+    Ppick *pick
+    )
+{
+    Pint i;
+
+    /* Temporary dummy method */
+    pick->pick_path.depth = 5;
+    pick->pick_path.path_list = (Ppick_path_elem *)
+        malloc(sizeof(Ppick_path_elem) * pick->pick_path.depth);
+    if (pick->pick_path.path_list == NULL) {
+       pick->status = PIN_STATUS_NONE;
+    }
+    else {
+       pick->status = PIN_STATUS_OK;
+       for (i = 0; i < pick->pick_path.depth; i++) {
+          pick->pick_path.path_list[i].struct_id = dc_pt->x;
+          pick->pick_path.path_list[i].pick_id = dc_pt->y;
+          pick->pick_path.path_list[i].elem_pos = i;
+       }
+   }
 
     return TRUE;
 }
