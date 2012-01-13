@@ -187,7 +187,7 @@ void wsgl_begin_rendering(
  */
 
 void wsgl_end_rendering(
-   void
+   Ws *ws
    );
 
 /*******************************************************************************

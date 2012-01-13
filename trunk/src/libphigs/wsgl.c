@@ -356,10 +356,10 @@ void wsgl_flush(
              ws_xform.scale.z);
 #endif
 
-      glViewport((GLint)   ws_xform.offset.x,
-                 (GLint)   ws_xform.offset.y,
-                 (GLsizei) ws_xform.scale.x,
-                 (GLsizei) ws_xform.scale.y);
+      glViewport((GLint)   (ws_xform.offset.x - ws_xform.scale.x),
+                 (GLint)   (ws_xform.offset.y - ws_xform.scale.y),
+                 (GLsizei) (ws_xform.scale.x * 2.0),
+                 (GLsizei) (ws_xform.scale.y * 2.0));
 
       glDepthRange(ws_xform.scale.z, ws_xform.offset.z);
 
@@ -408,15 +408,6 @@ void wsgl_flush(
                 wsgl->background.val.general.y,
                 wsgl->background.val.general.z,
                 0.0);
-
-   if (ws->has_double_buffer)
-   {
-      glXSwapBuffers(ws->display, ws->drawable_id);
-   }
-   else
-   {
-      glFlush();
-   }
 }
 
 /*******************************************************************************
@@ -495,13 +486,21 @@ void wsgl_begin_rendering(
  */
 
 void wsgl_end_rendering(
-   void
+   Ws *ws
    )
 {
 #ifdef DEBUG
    printf("End rendering\n");
 #endif
 
+   if (ws->has_double_buffer)
+   {
+      glXSwapBuffers(ws->display, ws->drawable_id);
+   }
+   else
+   {
+      glFlush();
+   }
 }
 
 /*******************************************************************************
