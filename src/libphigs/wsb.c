@@ -602,7 +602,7 @@ void phg_wsb_traverse_all_postings(
 	    phg_wsb_traverse_net( ws, post_str->structh );
 	    post_str = post_str->higher;
 	}
-        wsgl_end_rendering();
+        wsgl_end_rendering(ws);
 	owsb->surf_state = PSURF_NOT_EMPTY;
     }
 }

@@ -25,9 +25,11 @@
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>
 
-#define WIDTH  0.9
-#define HEIGHT 0.9
-#define SPACE  1.0
+#define WIDTH   0.8
+#define HEIGHT  0.8
+#define SPACE   0.9
+#define DEPTH  -0.2
+#define LOW     0.2
 
 #define FILL_STYLE PSTYLE_SOLID
 #define FILL_STYLE_IND 4
@@ -108,7 +110,7 @@ int main(int argc, char *argv[])
 
    tvec3.delta_x = 0.0;
    tvec3.delta_y = 0.0;
-   tvec3.delta_z = 0.0;
+   tvec3.delta_z = DEPTH;
    ptranslate3(&tvec3, &errnum, tran3);
    protate_x(-3.14 / 4.0, &errnum, rot3);
 
@@ -203,7 +205,7 @@ int main(int argc, char *argv[])
 
          case KeyPress:
             popen_struct(1);
-            tvec3.delta_y = -SPACE;
+            tvec3.delta_y = -LOW;
             ptranslate3(&tvec3, &errnum, tran3);
             pset_elem_ptr(0);
             pset_elem_ptr_label(10);
@@ -226,7 +228,7 @@ int main(int argc, char *argv[])
             pset_edit_mode(PEDIT_INSERT);
             tvec3.delta_x = -SPACE;
             tvec3.delta_y = 0.0;
-            tvec3.delta_z = 0.0;
+            tvec3.delta_z = DEPTH;
             ptranslate3(&tvec3, &errnum, tran3);
             pset_local_tran3(tran3, PTYPE_REPLACE);
             //pset_hlhsr_id(PHIGS_HLHSR_ID_OFF);

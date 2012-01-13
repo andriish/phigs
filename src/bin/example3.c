@@ -23,7 +23,18 @@
 
 #include <phigs/phg.h>
 
-#define WS_0 0
+#define WS_0                   0
+
+#define STRUCT_0               0
+
+Ppoint quad_pts[4] = {
+   {0.0, 0.0},
+   {1.0, 0.0},
+   {1.0, 1.0},
+   {0.0, 1.0}
+};
+Ppoint_list quad = {4, quad_pts};
+Pgcolr blue;
 
 void print_event(XEvent *event)
 {
@@ -176,6 +187,18 @@ int main(void)
    wsh = PHG_WSID(WS_0);
    printf("Output window %x\n", (unsigned) wsh->drawable_id);
    printf("Input  window %x\n", (unsigned) wsh->input_overlay_window);
+
+   blue.type = PMODEL_RGB;
+   blue.val.general.x = 0.0;
+   blue.val.general.y = 0.0;
+   blue.val.general.z = 1.0;
+
+   popen_struct(STRUCT_0);
+   pset_int_colr(&blue);
+   pfill_area(&quad);
+   pclose_struct();
+
+   ppost_struct(WS_0, STRUCT_0, 0);
 
    //pset_loc_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
    //pset_loc_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
