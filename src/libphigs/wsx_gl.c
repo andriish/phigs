@@ -141,8 +141,9 @@ static void init_views(
     view[0].clip_limit.x_max = view[0].clip_limit.y_max =
 	view[0].clip_limit.z_max = 1.0;
     view[0].xy_clip = view[0].back_clip = view[0].front_clip = PIND_CLIP;
-    for ( i = 1; i < WST_MIN_PREDEF_VIEW_REPS; i++ )
-	view[i] = view[0];
+    for ( i = 1; i < WST_MIN_PREDEF_VIEW_REPS; i++ ) {
+        memcpy(&view[i], &view[0], sizeof(Pview_rep3));
+    }
 
     /* Predefined some interesting views. */
     /* View 1: parallel front view in lower left corner of ws window.

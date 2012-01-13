@@ -24,8 +24,11 @@
 #include <phigs/phg.h>
 
 #define WS_0                   0
-
 #define STRUCT_0               0
+#define WIN_X0                 0.0
+#define WIN_X1                 1.0
+#define WIN_Y0                 0.0
+#define WIN_Y1                 1.0
 
 Ppoint quad_pts[4] = {
    {0.0, 0.0},
@@ -34,6 +37,7 @@ Ppoint quad_pts[4] = {
    {0.0, 1.0}
 };
 Ppoint_list quad = {4, quad_pts};
+Plimit win = {WIN_X0, WIN_X1, WIN_Y0, WIN_Y1};
 Pgcolr blue;
 
 void print_event(XEvent *event)
@@ -183,6 +187,7 @@ int main(void)
 
    popen_phigs(NULL, 0);
    popen_ws(WS_0, NULL, PWST_OUTIN_TRUE);
+   pset_ws_win(WS_0, &win);
 
    wsh = PHG_WSID(WS_0);
    printf("Output window %x\n", (unsigned) wsh->drawable_id);
@@ -201,11 +206,11 @@ int main(void)
    ppost_struct(WS_0, STRUCT_0, 0);
 
    //pset_loc_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   //pset_loc_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
+   pset_loc_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
    //pset_stroke_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
    //pset_stroke_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
    //pset_pick_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   pset_pick_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
+   //pset_pick_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
 
    if (wsh != NULL) {
       while (1) {
@@ -217,11 +222,11 @@ int main(void)
             (*wsh->redraw_all)(wsh, PFLAG_ALWAYS);
          }
          //sample_locator(WS_0);
-         //locator_event();
+         locator_event();
          //sample_stroke(WS_0);
          //stroke_event();
          //sample_pick(WS_0);
-         pick_event();
+         //pick_event();
       }
    }
 

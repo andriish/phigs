@@ -278,6 +278,9 @@ static int init_output_state(
     owsb->ws_viewport_pending = PUPD_NOT_PEND;
     wsgl_set_viewport(ws, &owsb->ws_viewport);
 
+    wsgl_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
+        &owsb->ws_xform );
+
     /* Initialize the list of posted structs. */
     owsb->posted.lowest.higher = &owsb->posted.highest;
     owsb->posted.lowest.lower = NULL;
@@ -1312,19 +1315,20 @@ static int phg_view_ref_add(
         printf("View reference %d was already in list, deleted.\n", id);
 #endif
         /* Replace view */
-        vi->viewrep = vrep;
+        memcpy(vi->viewrep, vrep, sizeof(Pview_rep3));
         status = 1;
     }
 
     else {
         /* Create new node */
-        vref = (Ws_view_ref *) malloc(sizeof(Ws_view_ref));
+        vref = (Ws_view_ref *) malloc(sizeof(Ws_view_ref) + sizeof(Pview_rep3));
         if (vref == NULL) {
             status = 0;
         }
         else {
             vref->id = id;
-            vref->viewrep = vrep;
+            vref->viewrep = (Pview_rep3 *) &vref[1];
+            memcpy(vref->viewrep, vrep, sizeof(Pview_rep3));
 
             /* Enqueue new node into list based on priority */
             list_enqueue(&owsb->view_refs, &vref->node, priority);
@@ -1585,6 +1589,30 @@ void phg_wsb_inq_rep(
 }
 
 /*******************************************************************************
+ * update_inv_view_xform
+ *
+ * DESCR:       Update inverse transform helper function
+ * RETURNS:     N/A
+ */
+
+static void update_inv_view_xform(
+    Ws_view_ref *view_ref
+    )
+{
+    Pview_rep3 *viewrep;
+
+    /* Calculate the inverse xform, if necessary. */
+    if (view_ref->npc_to_wc_state == WS_INV_NOT_CURRENT) {
+        viewrep = view_ref->viewrep;
+        phg_mat_mul(view_ref->npc_to_wc,
+                    viewrep->map_matrix,
+                    viewrep->ori_matrix);
+        phg_mat_inv(view_ref->npc_to_wc);
+        view_ref->npc_to_wc_state = WS_INV_CURRENT;
+    }
+}
+
+/*******************************************************************************
  * phg_wsb_map_initial_points
  *
  * DESCR:       Map initial points
@@ -1618,15 +1646,82 @@ int phg_wsb_resolve_locator(
     Ppoint3 *wc_pt
     )
 {
-    /* Temporary dummy method */
-    *view_index = 0;
-    wc_pt->x = dc_pt->x;
-    wc_pt->y = dc_pt->y;
-    if (determine_z) {
-        wc_pt->z = 0.0;
+    Ppoint3 npc_pt;
+    Ws_view_ref *view_ref;
+    Pview_rep3 *viewrep;
+    Wsb_output_ws *owsb = &ws->out_ws.model.b;
+    Ws_xform *wsxf = &owsb->ws_xform;
+    Plimit3 *ws_win = &owsb->ws_window;
+    int status = FALSE;
+
+#ifdef DEBUG
+    printf("Ws transform: (%f, %f, %f) (%f, %f, %f)\n",
+           wsxf->offset.x, wsxf->offset.y, wsxf->offset.z,
+           wsxf->scale.x, wsxf->scale.y, wsxf->scale.z);
+#endif
+
+    /* Apply the inverse WS transform and see if it's in the ws window.
+     * Can't just check against the viewport boundaries because the
+     * window may be smaller if the aspect ratios are different.
+     */
+    WS_DC_TO_NPC2(wsxf, dc_pt, &npc_pt)
+#ifdef DEBUG
+    printf("Device coordinate (%d, %d) to world coordinate (%f, %f %f)\n",
+           dc_pt->x, dc_pt->y, npc_pt.x, npc_pt.y, npc_pt.z);
+    printf("Check against workstation window: (%f, %f) (%f, %f)\n",
+           ws_win->x_min, ws_win->y_min, ws_win->x_max, ws_win->y_max);
+#endif
+    if ((npc_pt.x >= ws_win->x_min) && (npc_pt.x <= ws_win->x_max) &&
+        (npc_pt.y >= ws_win->y_min) && (npc_pt.y <= ws_win->y_max)) {
+
+        /* Find the highest priority view that contains the point. */
+        for (view_ref = (Ws_view_ref *) LIST_HEAD(&owsb->view_refs);
+             view_ref != NULL;
+             view_ref = (Ws_view_ref *) NODE_NEXT(&view_ref->node)) {
+
+             viewrep = view_ref->viewrep;
+#ifdef DEBUG
+             printf("%x\n", (unsigned) viewrep);
+             printf("Check against #%-2d: (%f, %f, %f) (%f %f %f)\n",
+                    view_ref->id,
+                    viewrep->clip_limit.x_min,
+                    viewrep->clip_limit.y_min,
+                    viewrep->clip_limit.z_min,
+                    viewrep->clip_limit.x_max,
+                    viewrep->clip_limit.y_max,
+                    viewrep->clip_limit.z_max);
+#endif
+             /* Check if point is within limit */
+             if (WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_pt)) {
+#ifdef DEBUG
+                printf("Point is within clip limits for view: %d\n",
+                       view_ref->id);
+#endif
+
+                /* Calculate the inverse xform if necessary. */
+                if (view_ref->npc_to_wc_state == WS_INV_NOT_CURRENT) {
+                    update_inv_view_xform(view_ref);
+#ifdef DEBUG
+                    printf("Update inverse tranformation for view: %d\n",
+                           view_ref->id);
+                    phg_mat_print(view_ref->npc_to_wc);
+                    printf("\n");
+#endif
+                }
+
+                /* Map point to WC if xform invertible. */
+                if (view_ref->npc_to_wc_state == WS_INV_CURRENT) {
+                    if (phg_tranpt3(&npc_pt, view_ref->npc_to_wc, wc_pt)) {
+                        *view_index = view_ref->id;
+                        status = TRUE;
+                        break;  /* out of the for on view index */
+                    }
+                }
+            }
+        }
     }
 
-    return 1;
+    return status;
 }
 
 /*******************************************************************************
