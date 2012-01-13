@@ -53,11 +53,19 @@ typedef enum {
    WS_POST_CSS_DELETE
 } Ws_delete_flag;
 
+typedef enum {
+   WS_INV_NOT_CURRENT,
+   WS_INV_CURRENT,
+   WS_INT_NOT_INVERTIBLE
+} Ws_inverse_state;
+
 typedef struct {
-   Node       node;
-   Pint       id;
-   Pint       priority;
-   Pview_rep3 *viewrep;
+   Node             node;
+   Pint             id;
+   Pint             priority;
+   Pview_rep3       *viewrep;
+   Ws_inverse_state npc_to_wc_state;
+   Pmatrix3         npc_to_wc;
 } Ws_view_ref;
 
 typedef struct _Ws_post_str {
@@ -99,6 +107,7 @@ typedef struct {
    Pupd_st             ws_viewport_pending;
    Plimit3             req_ws_window;
    Plimit3             req_ws_viewport;
+   Ws_xform            ws_xform;
 
    /* Views */
    List                view_refs;
@@ -395,6 +404,14 @@ typedef struct _Ws {
 #define WS_DC_TO_DRWBL2( _wsh, _dcp, _dwp ) \
     ((_dwp)->x = (_dcp)->x, \
      (_dwp)->y = (_wsh)->ws_rect.height - (_dcp)->y)
+
+#define WS_DC_TO_NPC2(_wsxf, _dc, _npc) \
+    (_npc)->x = ( (_dc)->x - (_wsxf)->offset.x) / (_wsxf)->scale.x; \
+    (_npc)->y = ( (_dc)->y - (_wsxf)->offset.y) / (_wsxf)->scale.y;
+
+#define WS_PT_IN_LIMIT2( lim, pt) \
+    (  (pt)->x >= (lim)->x_min && (pt)->x <= (lim)->x_max \
+    && (pt)->y >= (lim)->y_min && (pt)->y <= (lim)->y_max)
 
 Ws* phg_wsb_open_ws(
     Phg_args_open_ws *args,
