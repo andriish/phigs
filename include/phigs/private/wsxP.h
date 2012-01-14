@@ -71,6 +71,18 @@ void phg_wsx_destroy(
    );
 
 /*******************************************************************************
+ * phg_wsx_open_gl_display
+ *
+ * DESCR:       Open dipslay with OpenGL extension
+ * RETURNS:     N/A
+ */
+
+Display* phg_wsx_open_gl_display(
+   char *name,
+   Pint *err_ind
+   );
+
+/*******************************************************************************
  * phg_wsx_find_best_visual
  *
  * DESCR:       Find best matching visual
