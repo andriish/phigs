@@ -110,7 +110,9 @@ typedef struct {
    Ws_xform            ws_xform;
 
    /* Views */
-   List                view_refs;
+   Pupd_st             views_pending;
+   List                pending_views;
+   List                views;
 
    /* Structures */
    Ws_posted_structs   posted;

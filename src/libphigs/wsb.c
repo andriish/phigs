@@ -61,7 +61,7 @@ WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
 ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
-******************************************************************/
+******************************************************************************/
 
 /* PEX/PHIGS workstation utility functions for the B model (client side
  * workstations and structure storage).
@@ -374,14 +374,16 @@ int init_viewrep(
     return 1;
 }
 
-static void init_view_refs(
+static void init_views(
     Ws *ws
     )
 {
     Ws_output_ws  *ows = &ws->out_ws;
     Wsb_output_ws *owsb = &ows->model.b;
 
-    list_init(&owsb->view_refs);
+    owsb->views_pending = PUPD_NOT_PEND;
+    list_init(&owsb->pending_views);
+    list_init(&owsb->views);
 }
 
 Ws* phg_wsb_open_ws(
@@ -429,7 +431,7 @@ Ws* phg_wsb_open_ws(
     if ( ! init_attributes( ws ) )
         goto abort;
 
-    init_view_refs( ws );
+    init_views( ws );
 
     if ( ! init_viewrep( ws ) )
         goto abort;
@@ -504,12 +506,40 @@ void phg_wsb_redraw_all(
     ws->out_ws.model.b.vis_rep = PVISUAL_ST_CORRECT;
 }
 
+static Ws_view_ref* phg_wsb_remdup_view(
+    List *list,
+    Pint id
+    )
+{
+    Ws_view_ref *vref;
+    Ws_view_ref *dup = NULL;
+
+    for (vref = (Ws_view_ref *) LIST_HEAD(list);
+         vref != NULL;
+         vref = (Ws_view_ref *) NODE_NEXT(&vref->node)) {
+        if (id == vref->id) {
+            dup = vref;
+            break;
+        }
+    }
+
+    if (dup != NULL) {
+#ifdef DEBUG
+       printf("wsb: Found duplicate view: %d\n", vref->id);
+#endif
+       list_remove(list, &dup->node);
+    }
+
+    return dup;
+}
+
 /* Make all "requested" and pending data current. */
 void phg_wsb_make_requested_current(
     Ws *ws
     )
 {
-    Wsb_output_ws	*owsb = &ws->out_ws.model.b;
+    Ws_view_ref *vref, *dupref;
+    Wsb_output_ws *owsb = &ws->out_ws.model.b;
 
     /* WS transform */
     if ( owsb->ws_window_pending == PUPD_PEND
@@ -535,6 +565,42 @@ void phg_wsb_make_requested_current(
 #ifdef DEBUG
             printf("wsb: Compute transform\n");
 #endif
+        wsgl_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
+            &owsb->ws_xform );
+
+    }
+
+    /* Pending views */
+    if (owsb->views_pending == PUPD_PEND) {
+#ifdef DEBUG
+       printf("wsb: Views pending\n");
+#endif
+       vref = (Ws_view_ref *) list_get(&owsb->pending_views);
+       while (vref != NULL) {
+#ifdef DEBUG
+           printf("wsb: Flush view with %d with priority %d\n",
+                  vref->id, vref->priority);
+#endif
+           /* Remove duplicated views */
+           dupref = phg_wsb_remdup_view(&owsb->views, vref->id);
+           if (dupref != NULL) {
+              free(dupref);
+           }
+
+           list_enqueue(&owsb->views, &vref->node, vref->priority);
+           vref = (Ws_view_ref *) list_get(&owsb->pending_views);
+       }
+#ifdef DEBUG
+       {
+          Ws_view_ref *v;
+          for (v = (Ws_view_ref *) LIST_HEAD(&owsb->views);
+               v != NULL;
+               v = (Ws_view_ref *) NODE_NEXT(&v->node)) {
+             printf("wsb: View %d with priority: %d\n", v->id, v->priority);
+          }
+       }
+#endif
+       owsb->views_pending = PUPD_NOT_PEND;
     }
 
     /* Other pending data */
@@ -1291,7 +1357,7 @@ void phg_wsb_set_ws_vp(
     }
 }
 
-static int phg_view_ref_add(
+static int phg_wsb_add_view(
     Ws *ws,
     Pint id,
     Pint priority,
@@ -1299,50 +1365,24 @@ static int phg_view_ref_add(
     )
 {
     int status;
-    Ws_view_ref *vref, *vi;
+    Ws_view_ref *vref;
     Ws_output_ws  *ows = &ws->out_ws;
     Wsb_output_ws *owsb = &ows->model.b;
 
-    /* Check if view already is in list */
-    for (vi = (Ws_view_ref *) LIST_HEAD(&owsb->view_refs);
-         (vi != NULL) && (vi->id != id);
-         vi = (Ws_view_ref *) NODE_NEXT(&vi->node))
-        ;
-
-    /* If node already was in list, delete it */
-    if (vi != NULL) {
-#ifdef DEBUG
-        printf("View reference %d was already in list, deleted.\n", id);
-#endif
-        /* Replace view */
-        memcpy(vi->viewrep, vrep, sizeof(Pview_rep3));
-        status = 1;
+    /* Create new node */
+    vref = (Ws_view_ref *) malloc(sizeof(Ws_view_ref) + sizeof(Pview_rep3));
+    if (vref == NULL) {
+        status = FALSE;
     }
-
     else {
-        /* Create new node */
-        vref = (Ws_view_ref *) malloc(sizeof(Ws_view_ref) + sizeof(Pview_rep3));
-        if (vref == NULL) {
-            status = 0;
-        }
-        else {
-            vref->id = id;
-            vref->viewrep = (Pview_rep3 *) &vref[1];
-            memcpy(vref->viewrep, vrep, sizeof(Pview_rep3));
-
-            /* Enqueue new node into list based on priority */
-            list_enqueue(&owsb->view_refs, &vref->node, priority);
-            status = 1;
-        }
+        vref->id = id;
+        vref->priority = priority;
+        vref->viewrep = (Pview_rep3 *) &vref[1];
+        memcpy(vref->viewrep, vrep, sizeof(Pview_rep3));
+        list_add(&owsb->pending_views, &vref->node);
+        owsb->views_pending = PUPD_PEND;
+        status = TRUE;
     }
-
-#ifdef DEBUG
-    for (vi = (Ws_view_ref *) LIST_HEAD(&owsb->view_refs);
-         vi != NULL;
-         vi = (Ws_view_ref *) NODE_NEXT(&vi->node)) {
-        printf("View #%d, priority = %d\n", vi->id, vi->node.key);
-    }
-#endif
 
     return status;
 }
@@ -1390,7 +1430,7 @@ void phg_wsb_set_rep(
             printf("Set view: %d\n", rep->index);
 #endif
             phg_wsb_set_LUT_entry(ws, type, rep, NULL);
-            if (!phg_view_ref_add(ws,
+            if (!phg_wsb_add_view(ws,
                                   rep->index,
                                   rep->index,
                                   &rep->bundl.viewrep)) {
@@ -1675,7 +1715,7 @@ int phg_wsb_resolve_locator(
         (npc_pt.y >= ws_win->y_min) && (npc_pt.y <= ws_win->y_max)) {
 
         /* Find the highest priority view that contains the point. */
-        for (view_ref = (Ws_view_ref *) LIST_HEAD(&owsb->view_refs);
+        for (view_ref = (Ws_view_ref *) LIST_HEAD(&owsb->views);
              view_ref != NULL;
              view_ref = (Ws_view_ref *) NODE_NEXT(&view_ref->node)) {
 
