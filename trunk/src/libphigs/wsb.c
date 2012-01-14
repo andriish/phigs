@@ -398,21 +398,16 @@ Ws* phg_wsb_open_ws(
     Wst_xwin_dt *xdt;
 
     ret->err = -1;
-    if ( !(ws = phg_wsx_create( args )) )
+    ws = phg_wsx_create(args);
+    if (ws == NULL) {
 	return ws;
-
-    /* Store workstation type parameters */
-    ws->type = args->type;
-    ws->erh = args->erh;
-    ws->category = ws->type->desc_tbl.phigs_dt.ws_category;
-    ws->current_colour_model =
-        ws->type->desc_tbl.phigs_dt.out_dt.default_colour_model;
+    }
 
     wsb_load_funcs( ws );
 
+    /* Store workstation type parameters */
     dt = &args->type->desc_tbl.phigs_dt;
     xdt = &args->type->desc_tbl.xwin_dt;
-
     xdt->tool.x            = 0;
     xdt->tool.y            = 0;
     xdt->tool.width        = (unsigned) dt->dev_coords[0] / 2;
@@ -421,33 +416,15 @@ Ws* phg_wsb_open_ws(
     strncpy(xdt->tool.label, args->window_name, PHIGS_MAX_NAME_LEN);
     strncpy(xdt->tool.icon_label, args->icon_name, PHIGS_MAX_NAME_LEN);
 
-    switch (args->type->ws_type) {
-        case PWST_OUTPUT_TRUE:
-        case PWST_OUTIN_TRUE:
-            ws->current_colour_model = PMODEL_RGB;
-            ws->has_double_buffer = FALSE;
-            break;
-
-        case PWST_OUTPUT_TRUE_DB:
-        case PWST_OUTIN_TRUE_DB:
-            ws->current_colour_model = PMODEL_RGB;
-            ws->has_double_buffer = TRUE;
-            break;
-
-        default:
-            ws->current_colour_model = PINDIRECT;
-            ws->has_double_buffer = FALSE;
-            break;
-    }
-
     ws->display = XOpenDisplay(NULL);
     if (ws->display == NULL) {
-       fprintf(stderr, "Error - Unable to open display\n");
+       ERR_BUF(ws->erh, ERRN200);
        goto abort;
     }
 
-    if ( !phg_wsx_setup_tool( ws, NULL, args->type) )
+    if (!phg_wsx_setup_tool(ws, NULL, args->type)) {
        goto abort;
+    }
 
     if (dt->ws_category == PCAT_OUTIN) {
 
@@ -467,28 +444,36 @@ Ws* phg_wsb_open_ws(
     (void)XGetWindowAttributes( ws->display, ws->drawable_id, &wattr );
     WS_SET_WS_RECT( ws, &wattr )
 
-    /* NOTE:
-     * Css filled in by popen_ws
-     */
+    /* Setup workstation attributes */
+    ws->current_colour_model =
+        ws->type->desc_tbl.phigs_dt.out_dt.default_colour_model;
+    ws->category = ws->type->desc_tbl.phigs_dt.ws_category;
+    ws->has_double_buffer =
+        ws->type->desc_tbl.phigs_dt.out_dt.has_double_buffer;
+    ws->out_ws.model.b.cssh = args->cssh;
 
-    if ( !init_output_state( ws ) )
+    if (!init_output_state(ws)) {
 	goto abort;
+    }
 
-    init_update_state( ws );
+    init_update_state(ws);
 
     /* NOTE:
      * Setup colourmap if used here
      */
-    if (!phg_wsb_create_LUTs(ws))
+    if (!phg_wsb_create_LUTs(ws)) {
         goto abort;
+    }
 
-    if ( ! init_attributes( ws ) )
+    if (!init_attributes(ws)) {
         goto abort;
+    }
 
     init_views( ws );
 
-    if ( ! init_viewrep( ws ) )
+    if (!init_viewrep(ws)) {
         goto abort;
+    }
 
     /* Fill in the return data. */
     ret->err = 0;

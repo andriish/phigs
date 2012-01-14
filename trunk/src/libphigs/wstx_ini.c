@@ -40,7 +40,8 @@
  */
 
 static void init_output_ws_dt(
-   Wst_output_wsdt *wsdt
+   Wst_output_wsdt *wsdt,
+   Pint ws_type
    )
 {
    Pgcolr fg;
@@ -48,7 +49,25 @@ static void init_output_ws_dt(
    wsdt->ws_class             = PCLASS_RASTER;
    wsdt->deferral_mode        = PDEFER_ASAP;
    wsdt->modification_mode    = PMODE_UQUM;
-   wsdt->default_colour_model = PMODEL_RGB;
+
+   switch (ws_type) {
+      case PWST_OUTPUT_TRUE:
+      case PWST_OUTIN_TRUE:
+         wsdt->default_colour_model = PMODEL_RGB;
+         wsdt->has_double_buffer    = FALSE;
+         break;
+
+      case PWST_OUTPUT_TRUE_DB:
+      case PWST_OUTIN_TRUE_DB:
+         wsdt->default_colour_model = PMODEL_RGB;
+         wsdt->has_double_buffer    = TRUE;
+         break;
+
+      default:
+         wsdt->default_colour_model = PINDIRECT;
+         wsdt->has_double_buffer    = FALSE;
+         break;
+   }
 
    /* Set foreground colour */
    fg.type = PMODEL_RGB;
@@ -333,7 +352,7 @@ int phg_wstx_init(
    init_views(dt);
 
    /* Initialize workstation output attributes */
-   init_output_ws_dt(&dt->out_dt);
+   init_output_ws_dt(&dt->out_dt, wst->ws_type);
 
    if (category == PCAT_OUTIN) {
 

@@ -110,6 +110,7 @@ typedef struct _Phg_args_open_ws {
    Pint wsid;
    Wst  *type;
    Err_handle erh;
+   Css_handle cssh;
    size_t memory;
    Input_q_handle input_q;
    char *window_name;

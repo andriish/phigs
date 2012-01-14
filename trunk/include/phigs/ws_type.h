@@ -164,6 +164,7 @@ typedef struct {
 
    /* Colour */
    Pint                default_colour_model;
+   int                 has_double_buffer;
 } Wst_output_wsdt;
 
 typedef struct {
