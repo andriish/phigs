@@ -21,6 +21,9 @@
 #ifndef _phigs_h
 #define _phigs_h
 
+/* Max name length */
+#define PHIGS_MAX_NAME_LEN   255
+
 /* Line types */
 #define PLINE_SOLID            1
 #define PLINE_DASH             2

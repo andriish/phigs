@@ -193,8 +193,18 @@ typedef struct {
 } Wst_phigs_dt;
 
 typedef struct {
-   Pint num_pick_device_types;
-   Pint *pick_device_types;
+   int           x, y;
+   unsigned int  width, height;
+   unsigned int  border_width;
+   unsigned long background;
+   char          label[PHIGS_MAX_NAME_LEN + 1];
+   char          icon_label[PHIGS_MAX_NAME_LEN + 1];
+} Wst_xtool_dt;
+
+typedef struct {
+   Pint         num_pick_device_types;
+   Pint         *pick_device_types;
+   Wst_xtool_dt tool;
 } Wst_xwin_dt;
 
 typedef struct {

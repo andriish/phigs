@@ -74,6 +74,7 @@ SOFTWARE.
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
 #include <phigs/private/wsglP.h>
+#include <phigs/private/wsxP.h>
 #include <phigs/css.h>
 #include <phigs/alloc.h>
 
@@ -395,7 +396,7 @@ Ws* phg_wsb_open_ws(
     Ws			*ws;
 
     ret->err = -1;
-    if ( !(ws = wsgl_create( args )) )
+    if ( !(ws = phg_wsx_create( args )) )
 	return ws;
 
     /* Store workstation type parameters */

@@ -143,30 +143,6 @@ static void phg_draw_text(
 #endif /*NOT_YET*/
 
 /*******************************************************************************
- * wsgl_create
- *
- * DESCR:	Create renderer for workstation
- * RETURNS:	Pointer to workstation or NULL
- */
-
-Ws* wsgl_create(
-   Phg_args_open_ws *args
-   )
-{
-   Ws_handle wsh;
-
-   wsh = malloc(sizeof(Ws));
-   if (wsh == NULL)
-      return NULL;
-
-   memset(wsh, 0, sizeof(Ws));
-   if (!wsgl_init(wsh))
-      return NULL;
-
-   return wsh;
-}
-
-/*******************************************************************************
  * wsgl_init
  *
  * DESCR:	Initialize renderer
