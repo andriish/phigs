@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
    plabel(30);
    pclose_struct();
 
-   popen_ws(0, NULL, PWST_OUTPUT_TRUE);
+   popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);
    vp.x_min = VP_X0;
    vp.x_max = VP_X1;
    vp.y_min = VP_Y0;

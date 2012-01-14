@@ -186,7 +186,7 @@ int main(void)
    XEvent event;
 
    popen_phigs(NULL, 0);
-   popen_ws(WS_0, NULL, PWST_OUTIN_TRUE);
+   popen_ws(WS_0, NULL, PWST_OUTIN_TRUE_DB);
    pset_ws_win(WS_0, &win);
 
    wsh = PHG_WSID(WS_0);

@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
    pexec_struct(1);
    pclose_struct();
 
-   popen_ws(0, NULL, PWST_OUTPUT_TRUE);
+   popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);
    vp.x_min =   0.0;
    vp.x_max = 400.0;
    vp.y_min =   0.0;
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
    col_rep.rgb.blue = 0.0;
    pset_colr_rep(0, 1, &col_rep);
 
-   popen_ws(1, NULL, PWST_OUTPUT_TRUE);
+   popen_ws(1, NULL, PWST_OUTPUT_TRUE_DB);
    vp.x_min =   0.0;
    vp.x_max = 300.0;
    vp.y_min =   0.0;

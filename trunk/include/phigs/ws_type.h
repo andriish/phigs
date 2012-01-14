@@ -24,6 +24,8 @@
 /* Workstation types */
 #define PWST_OUTPUT_TRUE                 0
 #define PWST_OUTIN_TRUE                  1
+#define PWST_OUTPUT_TRUE_DB              2
+#define PWST_OUTIN_TRUE_DB               3
 
 /* Default tables */
 #define WST_MIN_PREDEF_LINE_REPS         1

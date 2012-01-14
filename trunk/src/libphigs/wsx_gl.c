@@ -26,29 +26,12 @@
 #include <GL/glu.h>
 #include <GL/glx.h>
 #include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xmu/StdCmap.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
 #include <phigs/private/wsglP.h>
 
-static int glConfig[] = {
-   GLX_DOUBLEBUFFER,
-   GLX_RGBA,
-   GLX_DEPTH_SIZE, 16,
-   GLX_RED_SIZE, 1,
-   GLX_GREEN_SIZE, 1,
-   GLX_BLUE_SIZE, 1,
-   None
-};
-
 static char *arglist[] = {""};
-
-static Colormap wsx_gl_get_sharable_colormap(
-   XVisualInfo *vi,
-   Display *dpy
-   );
 
 static int wsx_gl_open_window(
    Ws *ws,
@@ -299,15 +282,15 @@ Wst* wsx_gl_create(
 
    switch (category) {
       case PCAT_OUT:
-         ws_type = PWST_OUTPUT_TRUE;
+         ws_type = PWST_OUTPUT_TRUE_DB;
          break;
 
       case PCAT_OUTIN:
-         ws_type = PWST_OUTIN_TRUE;
+         ws_type = PWST_OUTIN_TRUE_DB;
          break;
 
       default:
-         ws_type = PWST_OUTPUT_TRUE;
+         ws_type = PWST_OUTPUT_TRUE_DB;
          break;
    }
 
@@ -391,50 +374,6 @@ int wsx_gl_init(
 }
 
 /*******************************************************************************
- * wsx_gl_get_sharable_colormap
- *
- * DESCR:	Get sharable colormap
- * RETURNS:	Colormap
- */
-
-static Colormap wsx_gl_get_sharable_colormap(
-   XVisualInfo *vi,
-   Display *dpy
-   )
-{
-  Status status;
-  XStandardColormap *standardCmaps;
-  Colormap cmap;
-  int i, numCmaps;
-
-  /* True color only */
-  if (vi->class != TrueColor) {
-    fprintf(stderr, "Only true color supported\n");
-    exit(1);
-  }
-
-  /* If no standard colormap but TrueColor make an unshared one */
-  status = XmuLookupStandardColormap(dpy, vi->screen, vi->visualid,
-                vi->depth, XA_RGB_DEFAULT_MAP, False, True);
-  if (status == 1) {
-    status = XGetRGBColormaps(dpy, RootWindow(dpy, vi->screen),
-                &standardCmaps, &numCmaps, XA_RGB_DEFAULT_MAP);
-
-    if (status == 1)
-      for (i = 0; i < numCmaps; i++)
-        if (standardCmaps[i].visualid == vi->visualid) {
-          cmap = standardCmaps[i].colormap;
-          XFree(standardCmaps);
-          return cmap;
-        }
-  }
-
-  cmap = XCreateColormap(dpy, RootWindow(dpy, vi->screen),
-                vi->visual, AllocNone);
-  return cmap;
-}
-
-/*******************************************************************************
  * wsx_gl_open_window
  *
  * DESCR:	Open render window for workstation
@@ -446,6 +385,7 @@ static int wsx_gl_open_window(
    Phg_args_open_ws *args
    )
 {
+   Pint err_ind;
    XVisualInfo *vi;
    Colormap cmap;
    XSetWindowAttributes wattr;
@@ -471,10 +411,10 @@ static int wsx_gl_open_window(
       return 0;
    }
 
-  ws->ws_rect.x      = 0;
-  ws->ws_rect.y      = 0;
-  ws->ws_rect.width  = (int) dt->dev_coords[0] / 2;
-  ws->ws_rect.height = ws->ws_rect.width;
+   ws->ws_rect.x      = 0;
+   ws->ws_rect.y      = 0;
+   ws->ws_rect.width  = (int) dt->dev_coords[0] / 2;
+   ws->ws_rect.height = ws->ws_rect.width;
 
 #ifdef DEBUG
    printf("Window dimensions: %d %d\n"
@@ -485,36 +425,37 @@ static int wsx_gl_open_window(
           ws->ws_rect.height);
 #endif
 
-   if (!glXQueryExtension(ws->display, NULL, NULL)) {
-      fprintf(stderr, "No Open GL support\n");
+   phg_wsgl_find_best_visual(ws, args->type, &vi, &cmap, &err_ind);
+   if (err_ind != 0) {
+      ERR_REPORT(args->erh, err_ind);
       return FALSE;
    }
 
-   ws->has_double_buffer = TRUE;
-   ws->current_colour_model = PMODEL_RGB;
-   vi = glXChooseVisual(ws->display,
-                        DefaultScreen(ws->display),
-                        glConfig);
-   if (vi == NULL) {
-      vi = glXChooseVisual(ws->display,
-                           DefaultScreen(ws->display),
-                           &glConfig[1]);
-      fprintf(stderr, "No Open GL with double buffer found\n");
-      if (vi == NULL) {
-         fprintf(stderr, "No Open GL capable visual found\n");
-         return FALSE;
-      }
-      ws->has_double_buffer = FALSE;
+   switch (args->type->ws_type) {
+      case PWST_OUTPUT_TRUE:
+      case PWST_OUTIN_TRUE:
+         ws->current_colour_model = PMODEL_RGB;
+         ws->has_double_buffer = FALSE;
+         break;
+
+      case PWST_OUTPUT_TRUE_DB:
+      case PWST_OUTIN_TRUE_DB:
+         ws->current_colour_model = PMODEL_RGB;
+         ws->has_double_buffer = TRUE;
+         break;
+
+      default:
+         ws->current_colour_model = PINDIRECT;
+         ws->has_double_buffer = FALSE;
+         break;
    }
 
-   cmap = wsx_gl_get_sharable_colormap(vi, ws->display);
-
-   wsgl->glx_context = glXCreateContext(ws->display, vi, NULL, True);
-   if (wsgl->glx_context == NULL) {
-      fprintf(stderr, "Unable to create Open GL context\n");
+   phg_wsgl_create_context(ws, vi, &wsgl->glx_context, &err_ind);
+   if (err_ind != 0) {
+      ERR_REPORT(args->erh, err_ind);
       return FALSE;
    }
-
+ 
    wattr.colormap = cmap;
    wattr.border_pixel = 0;
    wattr.event_mask = ExposureMask | StructureNotifyMask | KeyPressMask;
