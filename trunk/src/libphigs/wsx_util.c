@@ -72,6 +72,37 @@ static Colormap get_sharable_colormap(
 }
 
 /*******************************************************************************
+ * phg_wsx_open_gl_display
+ *
+ * DESCR:	Open dipslay with OpenGL extension
+ * RETURNS:	N/A
+ */
+
+Display* phg_wsx_open_gl_display(
+   char *name,
+   Pint *err_ind
+   )
+{
+   Display *display;
+   char *display_name;
+
+   display_name = XDisplayName(name);
+   display = XOpenDisplay(display_name);
+   if (display != NULL) {
+      if (!glXQueryExtension(display, NULL, NULL)) {
+         XCloseDisplay(display);
+         display = NULL;
+         *err_ind = ERRN201;
+      }
+   }
+   else {
+      *err_ind = ERRN200;
+   }
+
+   return display;
+}
+
+/*******************************************************************************
  * phg_wsx_find_best_visual
  *
  * DESCR:	Find best matching visual
@@ -91,60 +122,54 @@ void phg_wsx_find_best_visual(
    Display *dpy = ws->display;
    int status = FALSE;
 
-   if (!glXQueryExtension(ws->display, NULL, NULL)) {
-      *err_ind = ERRN201;
+   /* Select workstation type */
+   switch (wst->ws_type) {
+      case PWST_OUTPUT_TRUE:
+      case PWST_OUTIN_TRUE:
+          args[argc++] = GLX_RGBA;
+          args[argc++] = GLX_RED_SIZE;
+             args[argc++] = 1;
+          args[argc++] = GLX_GREEN_SIZE;
+             args[argc++] = 1;
+          args[argc++] = GLX_BLUE_SIZE;
+             args[argc++] = 1;
+          args[argc++] = GLX_DEPTH_SIZE;
+             args[argc++] = 16;
+          args[argc] = None;
+          status = TRUE;
+          break;
+
+       case PWST_OUTPUT_TRUE_DB:
+       case PWST_OUTIN_TRUE_DB:
+          args[argc++] = GLX_DOUBLEBUFFER;
+          args[argc++] = GLX_RGBA;
+          args[argc++] = GLX_RED_SIZE;
+             args[argc++] = 1;
+          args[argc++] = GLX_GREEN_SIZE;
+             args[argc++] = 1;
+          args[argc++] = GLX_BLUE_SIZE;
+             args[argc++] = 1;
+          args[argc++] = GLX_DEPTH_SIZE;
+             args[argc++] = 16;
+          args[argc] = None;
+          status = TRUE;
+          break;
+
+      default:
+         *err_ind = ERR52;
+         status = FALSE;
+         break;
    }
-   else {
 
-      /* Select workstation type */
-      switch (wst->ws_type) {
-         case PWST_OUTPUT_TRUE:
-         case PWST_OUTIN_TRUE:
-             args[argc++] = GLX_RGBA;
-             args[argc++] = GLX_RED_SIZE;
-                args[argc++] = 1;
-             args[argc++] = GLX_GREEN_SIZE;
-                args[argc++] = 1;
-             args[argc++] = GLX_BLUE_SIZE;
-                args[argc++] = 1;
-             args[argc++] = GLX_DEPTH_SIZE;
-                args[argc++] = 16;
-             args[argc] = None;
-             status = TRUE;
-             break;
-
-          case PWST_OUTPUT_TRUE_DB:
-          case PWST_OUTIN_TRUE_DB:
-             args[argc++] = GLX_DOUBLEBUFFER;
-             args[argc++] = GLX_RGBA;
-             args[argc++] = GLX_RED_SIZE;
-                args[argc++] = 1;
-             args[argc++] = GLX_GREEN_SIZE;
-                args[argc++] = 1;
-             args[argc++] = GLX_BLUE_SIZE;
-                args[argc++] = 1;
-             args[argc++] = GLX_DEPTH_SIZE;
-                args[argc++] = 16;
-             args[argc] = None;
-             status = TRUE;
-             break;
-
-         default:
-            *err_ind = ERR52;
-            status = FALSE;
-            break;
+   if (status == TRUE) {
+      *visual_info = glXChooseVisual(dpy, DefaultScreen(dpy), args);
+      if (*visual_info == NULL) {
+         *err_ind = ERRN205;
       }
-
-      if (status == TRUE) {
-         *visual_info = glXChooseVisual(dpy, DefaultScreen(dpy), args);
-         if (*visual_info == NULL) {
-            *err_ind = ERRN205;
-         }
-         else {
-            /* NOTE: Only call this for true colour */
-            *cmap = get_sharable_colormap(*visual_info, dpy);
-            *err_ind = 0;
-         }
+      else {
+         /* NOTE: Only call this for true colour */
+         *cmap = get_sharable_colormap(*visual_info, dpy);
+         *err_ind = 0;
       }
    }
 }

@@ -416,9 +416,9 @@ Ws* phg_wsb_open_ws(
     strncpy(xdt->tool.label, args->window_name, PHIGS_MAX_NAME_LEN);
     strncpy(xdt->tool.icon_label, args->icon_name, PHIGS_MAX_NAME_LEN);
 
-    ws->display = XOpenDisplay(NULL);
+    ws->display = phg_wsx_open_gl_display(NULL, &ret->err);
     if (ws->display == NULL) {
-       ERR_BUF(ws->erh, ERRN200);
+       ERR_BUF(ws->erh, ret->err);
        goto abort;
     }
 
@@ -461,6 +461,7 @@ Ws* phg_wsb_open_ws(
     /* NOTE:
      * Setup colourmap if used here
      */
+
     if (!phg_wsb_create_LUTs(ws)) {
         goto abort;
     }
@@ -469,7 +470,7 @@ Ws* phg_wsb_open_ws(
         goto abort;
     }
 
-    init_views( ws );
+    init_views(ws);
 
     if (!init_viewrep(ws)) {
         goto abort;
@@ -481,7 +482,7 @@ Ws* phg_wsb_open_ws(
     return ws;
 
 abort:
-    wsb_destroy_ws( ws );
+    wsb_destroy_ws(ws);
     return NULL;
 }
 
