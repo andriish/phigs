@@ -28,7 +28,7 @@
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>
 #include <phigs/ws.h>
-#include <phigs/private/wsglP.h>
+#include <phigs/private/wsxP.h>
 #include <phigs/private/evtP.h>
 
 Phg_handle phg;
@@ -91,7 +91,7 @@ void popen_phigs(
    }
 
    list_init(&PHG_WST_LIST);
-   wst = wsx_gl_create(PHG_ERH, PCAT_OUT);
+   wst = phg_wstx_create(PHG_ERH, PCAT_OUT);
    if (wst == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
       free(PHG_INPUT_Q);
@@ -102,7 +102,7 @@ void popen_phigs(
    }
    list_add(&PHG_WST_LIST, &wst->node);
 
-   wst = wsx_gl_create(PHG_ERH, PCAT_OUTIN);
+   wst = phg_wstx_create(PHG_ERH, PCAT_OUTIN);
    if (wst == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
       phg_wst_destroy((Wst *) list_get(&PHG_WST_LIST));

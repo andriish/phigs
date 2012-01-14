@@ -256,7 +256,7 @@ static int init_output_state(
     Ws *ws
     )
 {
-    Wsb_output_ws	*owsb = &ws->out_ws.model.b;
+    Wsb_output_ws *owsb = &ws->out_ws.model.b;
 
     /* Initialize the workstation transform. */
     owsb->req_ws_window.x_min = 0.0;
@@ -392,8 +392,10 @@ Ws* phg_wsb_open_ws(
     Phg_ret *ret
     )
 {
-    XWindowAttributes	wattr;
-    Ws			*ws;
+    XWindowAttributes wattr;
+    Ws *ws;
+    Wst_phigs_dt *dt;
+    Wst_xwin_dt *xdt;
 
     ret->err = -1;
     if ( !(ws = phg_wsx_create( args )) )
@@ -408,8 +410,59 @@ Ws* phg_wsb_open_ws(
 
     wsb_load_funcs( ws );
 
-    if ( !wsgl_open_window( ws, args ) )
-        goto abort;
+    dt = &args->type->desc_tbl.phigs_dt;
+    xdt = &args->type->desc_tbl.xwin_dt;
+
+    xdt->tool.x            = 0;
+    xdt->tool.y            = 0;
+    xdt->tool.width        = (unsigned) dt->dev_coords[0] / 2;
+    xdt->tool.height       = xdt->tool.width;
+    xdt->tool.border_width = 1;
+    strncpy(xdt->tool.label, args->window_name, PHIGS_MAX_NAME_LEN);
+    strncpy(xdt->tool.icon_label, args->icon_name, PHIGS_MAX_NAME_LEN);
+
+    switch (args->type->ws_type) {
+        case PWST_OUTPUT_TRUE:
+        case PWST_OUTIN_TRUE:
+            ws->current_colour_model = PMODEL_RGB;
+            ws->has_double_buffer = FALSE;
+            break;
+
+        case PWST_OUTPUT_TRUE_DB:
+        case PWST_OUTIN_TRUE_DB:
+            ws->current_colour_model = PMODEL_RGB;
+            ws->has_double_buffer = TRUE;
+            break;
+
+        default:
+            ws->current_colour_model = PINDIRECT;
+            ws->has_double_buffer = FALSE;
+            break;
+    }
+
+    ws->display = XOpenDisplay(NULL);
+    if (ws->display == NULL) {
+       fprintf(stderr, "Error - Unable to open display\n");
+       goto abort;
+    }
+
+    if ( !phg_wsx_setup_tool( ws, NULL, args->type) )
+       goto abort;
+
+    if (dt->ws_category == PCAT_OUTIN) {
+
+        ws->input_overlay_window = phg_wsx_create_overlay(ws);
+        if (ws->input_overlay_window == 0) {
+            XDestroyWindow(ws->display, ws->drawable_id);
+            goto abort;
+        }
+
+        if (!phg_ws_input_init(ws, args->input_q)) {
+            XDestroyWindow(ws->display, ws->input_overlay_window);
+            XDestroyWindow(ws->display, ws->drawable_id);
+            goto abort;
+        }
+    }
 
     (void)XGetWindowAttributes( ws->display, ws->drawable_id, &wattr );
     WS_SET_WS_RECT( ws, &wattr )
@@ -470,7 +523,7 @@ void wsb_destroy_ws(
     if ( ws ) {
 	if ( ws->display ) {
 	    if ( ws->drawable_id )
-		wsgl_release_window( ws );
+		phg_wsx_release_window( ws );
 
             /* NOTE:
              * Free renderer resource here if needed
@@ -479,7 +532,7 @@ void wsb_destroy_ws(
 
 	    XFlush( ws->display );
 	}
-	wsgl_destroy( ws );
+	phg_wsx_destroy( ws );
     }
 }
 
@@ -639,7 +692,7 @@ void phg_wsb_repaint_all(
         printf("wsb: Clear\n");
 #endif
 
-	wsgl_clear();
+	wsgl_clear(ws);
     }
     owsb->surf_state = PSURF_EMPTY;
 

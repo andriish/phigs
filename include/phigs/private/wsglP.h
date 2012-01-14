@@ -21,15 +21,11 @@
 #ifndef _wsglP_h
 #define _wsglP_h
 
-#include <X11/Xlib.h>
-#include <GL/glx.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
 
 typedef struct {
-   GLXContext      glx_context;
-   Wst             *type;
    Pattr_group     *attr_group;
    Plimit3         curr_win;
    Pint            win_changed;
@@ -55,36 +51,13 @@ int wsgl_init(
    );
 
 /*******************************************************************************
- * wsgl_open_window
+ * wsgl_close
  *
- * DESCR:       Open render window for workstation
- * RETURNS:     Zero on succcess, non zero on error
- */
-
-int wsgl_open_window(
-   Ws *ws,
-   Phg_args_open_ws *args
-   );
-
-/*******************************************************************************
- * wsgl_release_window
- *
- * DESCR:       Close render window for workstation
+ * DESCR:       Close 
  * RETURNS:     N/A
  */
 
-int wsgl_release_window(
-   Ws *ws
-   );
-
-/*******************************************************************************
- * wsgl_destroy
- *
- * DESCR:       Release workstation
- * RETURNS:     N/A
- */
-
-void wsgl_destroy(
+void wsgl_close(
    Ws *ws
    );
 
@@ -132,7 +105,7 @@ void wsgl_set_hlhsr_mode(
  */
 
 void wsgl_clear(
-   void
+   Ws *ws
    );
 
 /*******************************************************************************
@@ -190,59 +163,6 @@ void wsgl_end_rendering(
 void wsgl_render_element(
    Ws *ws,
    El_handle el
-   );
-
-/*******************************************************************************
- * phg_wsgl_find_best_visual
- *
- * DESCR:       Find best matching visual
- * RETURNS:     N/A
- */
-
-void phg_wsgl_find_best_visual(
-   Ws *ws,
-   Wst *wst,
-   XVisualInfo **visual_info,
-   Colormap *cmap,
-   Pint *err_ind
-   );
-
-/*******************************************************************************
- * phg_wsgl_create_context
- *
- * DESCR:       Create rendering context from visual info
- * RETURNS:     N/A
- */
-
-void phg_wsgl_create_context(
-   Ws *ws,
-   XVisualInfo *visual_info,
-   GLXContext *context,
-   Pint *err_ind
-   );
-
-/*******************************************************************************
- * wsx_gl_create
- *
- * DESCR:       Create workstation type
- * RETURNS:     Pointer to workstation type or NULL
- */
-
-Wst* wsx_gl_create(
-   Err_handle erh,
-   Pws_cat category
-   );
-
-/*******************************************************************************
- * wsx_gl_init
- *
- * DESCR:       Initialize workstation type
- * RETURNS:     TRUE or FALSE
- */
-
-int wsx_gl_init(
-   Wst *wst,
-   Pws_cat category
    );
 
 extern unsigned char *wsgl_hatch_tbl[];

@@ -34,7 +34,7 @@
 #include <phigs/private/wsglP.h>
 
 /*******************************************************************************
- * wsx_gl_get_sharable_colormap
+ * get_sharable_colormap
  *
  * DESCR:	Get sharable colormap
  * RETURNS:	Colormap
@@ -72,13 +72,13 @@ static Colormap get_sharable_colormap(
 }
 
 /*******************************************************************************
- * phg_wsgl_find_best_visual
+ * phg_wsx_find_best_visual
  *
  * DESCR:	Find best matching visual
  * RETURNS:	N/A
  */
 
-void phg_wsgl_find_best_visual(
+void phg_wsx_find_best_visual(
    Ws *ws,
    Wst *wst,
    XVisualInfo **visual_info,
@@ -150,27 +150,29 @@ void phg_wsgl_find_best_visual(
 }
 
 /*******************************************************************************
- * phg_wsgl_create_context
+ * phg_wsx_create_context
  *
  * DESCR:	Create rendering context from visual info
  * RETURNS:	N/A
  */
 
-void phg_wsgl_create_context(
+GLXContext phg_wsx_create_context(
    Ws *ws,
    XVisualInfo *visual_info,
-   GLXContext *context,
    Pint *err_ind
    )
 {
    Display *dpy = ws->display;
+   GLXContext context;
 
-   *context = glXCreateContext(dpy, visual_info, NULL, True);
-   if (*context == NULL) {
+   context = glXCreateContext(dpy, visual_info, NULL, True);
+   if (context == NULL) {
       *err_ind = ERRN206;
    }
    else {
       *err_ind = 0;
    }
+
+   return context;
 }
 

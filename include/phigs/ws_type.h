@@ -221,19 +221,6 @@ typedef struct {
    Pint          wsid;
    Pint          ws_type;
    Wst_dt        desc_tbl;
-   int           (*open_window)(
-                    struct _Ws *ws,
-                    struct _Phg_args_open_ws *args
-                 );
-   void          (*resize_window)(
-                    struct _Ws *ws,
-                    int w,
-                    int h
-                 );
-   void          (*release_window)(
-                    struct _Ws *ws
-                 );
-
 } Wst;
 
 /*******************************************************************************
