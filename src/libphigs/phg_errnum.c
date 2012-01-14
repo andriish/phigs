@@ -272,6 +272,8 @@ static Phg_map errmap[] = {
    {-202, " Ignoring function, an X allocation error has occurred"},
    {-203, " Ignoring function, can't create an X window"},
    {-204, " Ignoring function, can't create an Xt shell"},
+   {-205, " Ignoring function, can't find matching visual"},
+   {-206, " Ignoring function, can't create OpenGL rendering context"},
    {-250, " Colour type error"},
    {-251, " Rendering state error"},
    {-252, " Floating point format error"},

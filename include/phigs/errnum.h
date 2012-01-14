@@ -30,6 +30,8 @@
 #define	ERRN202	-202
 #define	ERRN203	-203
 #define	ERRN204	-204
+#define ERRN205 -205
+#define ERRN206 -206
 #define	ERRN250	-250
 #define	ERRN251	-251
 #define	ERRN252	-252

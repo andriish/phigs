@@ -21,6 +21,7 @@
 #ifndef _wsglP_h
 #define _wsglP_h
 
+#include <X11/Xlib.h>
 #include <GL/glx.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
@@ -200,6 +201,35 @@ void wsgl_end_rendering(
 void wsgl_render_element(
    Ws *ws,
    El_handle el
+   );
+
+/*******************************************************************************
+ * phg_wsgl_find_best_visual
+ *
+ * DESCR:       Find best matching visual
+ * RETURNS:     N/A
+ */
+
+void phg_wsgl_find_best_visual(
+   Ws *ws,
+   Wst *wst,
+   XVisualInfo **visual_info,
+   Colormap *cmap,
+   Pint *err_ind
+   );
+
+/*******************************************************************************
+ * phg_wsgl_create_context
+ *
+ * DESCR:       Create rendering context from visual info
+ * RETURNS:     N/A
+ */
+
+void phg_wsgl_create_context(
+   Ws *ws,
+   XVisualInfo *visual_info,
+   GLXContext *context,
+   Pint *err_ind
    );
 
 /*******************************************************************************
