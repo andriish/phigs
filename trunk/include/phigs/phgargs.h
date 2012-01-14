@@ -23,6 +23,7 @@
 
 #include <phigs/util.h>
 #include <phigs/ws_type.h>
+#include <X11/Xlib.h>
 
 typedef enum {
     PHG_ARGS_LNREP,
@@ -98,10 +99,18 @@ typedef struct {
    int  posted;
 } Phg_args_change_struct;
 
+typedef struct {
+   XID     drawable_id;
+   Display *display;
+   char    *display_name;
+   Pint    display_name_length;
+} Phg_args_conn_info;
+
 typedef struct _Phg_args_open_ws {
    Pint wsid;
    Wst  *type;
    Err_handle erh;
+   size_t memory;
    Input_q_handle input_q;
    char *window_name;
    char *icon_name;

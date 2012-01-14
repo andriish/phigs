@@ -44,17 +44,6 @@ typedef struct {
 } Wsgl;
 
 /*******************************************************************************
- * wsgl_create
- *
- * DESCR:       Create renderer for workstation
- * RETURNS:     Pointer to workstation or NULL
- */
-
-Ws* wsgl_create(
-   Phg_args_open_ws *args
-   );
-
-/*******************************************************************************
  * wsgl_init
  *
  * DESCR:       Initialize renderer
