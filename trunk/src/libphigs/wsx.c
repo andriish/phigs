@@ -65,7 +65,7 @@ Ws* phg_wsx_create(
 /*******************************************************************************
  * phg_wsx_setup_tool
  *
- * DESCR:       Create toolkit rendering window
+ * DESCR:       Create window
  * RETURNS:     TRUE or FALSE
  */
 
@@ -87,7 +87,7 @@ int phg_wsx_setup_tool(
    Display *display = ws->display;
 
    /* Find matching visual */
-   phg_wsgl_find_best_visual(ws, wst, &best_info, &cmap, &err_ind);
+   phg_wsx_find_best_visual(ws, wst, &best_info, &cmap, &err_ind);
    if (err_ind != 0) {
       ERR_BUF(ws->erh, err_ind);
       status = FALSE;
@@ -99,39 +99,76 @@ int phg_wsx_setup_tool(
       attrs.border_pixel = WhitePixel(display, best_info->screen);
       attrs.background_pixel = BlackPixel(display, best_info->screen);
 
-      drawable_id = XCreateWindow(display,
-                                  RootWindow(display, best_info->screen),
-                                  xdt->tool.x, xdt->tool.y,
-                                  xdt->tool.width, xdt->tool.height,
-                                  xdt->tool.border_width, best_info->depth,
-                                  InputOutput, best_info->visual,
-                                  CWColormap | CWBackPixel | CWBorderPixel,
-                                  &attrs);
-      if (!drawable_id) {
-         ERR_BUF(ws->erh, ERRN203);
-         status = FALSE;
+      /* Initialize rendering context */
+      ws->glx_context = phg_wsx_create_context(ws, best_info, &err_ind);
+      if (err_ind != 0) {
+          ERR_REPORT(ws->erh, err_ind);
+          status = FALSE;
       }
       else {
-         /* Create window */
-         size_hints.flags = USPosition | USSize;
-         size_hints.x = xdt->tool.x;
-         size_hints.y = xdt->tool.y;
-         size_hints.width = xdt->tool.width;
-         size_hints.height = xdt->tool.height;
-         XSetStandardProperties(display, drawable_id, xdt->tool.label,
-                                xdt->tool.icon_label, None, NULL, 0,
-                                &size_hints);
-         XSelectInput(display, drawable_id, (long) ExposureMask);
-         XMapWindow(display, drawable_id);
-         XSync(display, False);
+         drawable_id = XCreateWindow(display,
+                                     RootWindow(display, best_info->screen),
+                                     xdt->tool.x, xdt->tool.y,
+                                     xdt->tool.width, xdt->tool.height,
+                                     xdt->tool.border_width, best_info->depth,
+                                     InputOutput, best_info->visual,
+                                     CWColormap | CWBackPixel | CWBorderPixel,
+                                     &attrs);
+         if (!drawable_id) {
+            ERR_BUF(ws->erh, ERRN203);
+            status = FALSE;
+         }
+         else {
+            /* Create window */
+            size_hints.flags = USPosition | USSize;
+            size_hints.x = xdt->tool.x;
+            size_hints.y = xdt->tool.y;
+            size_hints.width = xdt->tool.width;
+            size_hints.height = xdt->tool.height;
+            XSetStandardProperties(display, drawable_id, xdt->tool.label,
+                                   xdt->tool.icon_label, None, NULL, 0,
+                                   &size_hints);
+            XSelectInput(display, drawable_id, (long) ExposureMask);
+            XMapWindow(display, drawable_id);
+            XSync(display, False);
 
-         XWindowEvent(display, drawable_id, ExposureMask, &event);
-         XSelectInput(display, drawable_id, (long) 0);
-         ws->drawable_id = drawable_id;
-         status = TRUE;
+            XWindowEvent(display, drawable_id, ExposureMask, &event);
+            XSelectInput(display, drawable_id, (long) 0);
+            ws->drawable_id = drawable_id;
+            status = TRUE;
+         }
       }
    }
 
    return status;
+}
+
+/*******************************************************************************
+ * phg_wsx_release_window
+ *
+ * DESCR:       Release window
+ * RETURNS:     N/A
+ */
+
+void phg_wsx_release_window(
+   Ws *ws
+   )
+{
+   XDestroyWindow(ws->display, ws->drawable_id);
+}
+
+/*******************************************************************************
+ * phg_wsx_destroy
+ *
+ * DESCR:       Destroy workstation
+ * RETURNS:     N/A
+ */
+
+void phg_wsx_destroy(
+   Ws *ws
+   )
+{
+   wsgl_close(ws);
+   free(ws);
 }
 

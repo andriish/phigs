@@ -24,6 +24,7 @@
 #include <phigs/ws_inp.h>
 #include <X11/Xlib.h>
 #include <X11/Intrinsic.h>
+#include <GL/glx.h>
 
 #define NUM_DEFERRAL            5
 #define NUM_MODIFICATION        3
@@ -161,6 +162,7 @@ typedef struct _Ws {
    /* Window system variables */
    Display      *display;
    Drawable     drawable_id;
+   GLXContext   glx_context;
    Window       input_overlay_window;
    void         *render_context;
    int          has_double_buffer;

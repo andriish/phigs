@@ -29,24 +29,8 @@
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
+#include <phigs/private/wsxP.h>
 #include <phigs/private/wsglP.h>
-
-static char *arglist[] = {""};
-
-static int wsx_gl_open_window(
-   Ws *ws,
-   Phg_args_open_ws *args
-   );
-
-static void wsx_gl_resize_window(
-   Ws *ws,
-   int w,
-   int h
-   );
-
-static void wsx_gl_release_window(
-   Ws *ws
-   );
 
 /*******************************************************************************
  * init_output_ws_dt
@@ -266,13 +250,13 @@ int init_devices(
 }
 
 /*******************************************************************************
- * wsx_gl_create
+ * phg_wstx_create
  *
  * DESCR:	Create workstation type
  * RETURNS:	Pointer to workstation type or NULL
  */
 
-Wst* wsx_gl_create(
+Wst* phg_wstx_create(
    Err_handle erh,
    Pws_cat category
    )
@@ -296,7 +280,7 @@ Wst* wsx_gl_create(
 
    wst = phg_wst_create(erh, ws_type);
    if (wst != NULL) {
-      if (!wsx_gl_init(wst, category)) {
+      if (!phg_wstx_init(wst, category)) {
          wst = NULL;
       }
    }
@@ -305,13 +289,13 @@ Wst* wsx_gl_create(
 }
 
 /*******************************************************************************
- * wsx_gl_init
+ * phg_wstx_init
  *
  * DESCR:	Initialize workstation type
  * RETURNS:	TRUE or FALSE
  */
 
-int wsx_gl_init(
+int phg_wstx_init(
    Wst *wst,
    Pws_cat category
    )
@@ -360,182 +344,12 @@ int wsx_gl_init(
    }
 
 #ifdef DEBUG
-   printf("Added wsx_gl with coords: %f %f %f\n",
+   printf("Added workstation type with coords: %f %f %f\n",
       wst->desc_tbl.phigs_dt.dev_coords[0],
       wst->desc_tbl.phigs_dt.dev_coords[1],
       wst->desc_tbl.phigs_dt.dev_coords[2]);
 #endif
 
-   wst->open_window = wsx_gl_open_window;
-   wst->resize_window = wsx_gl_resize_window;
-   wst->release_window = wsx_gl_release_window;
-
    return TRUE;
-}
-
-/*******************************************************************************
- * wsx_gl_open_window
- *
- * DESCR:	Open render window for workstation
- * RETURNS:	TRUE or FALSE
- */
-
-static int wsx_gl_open_window(
-   Ws *ws,
-   Phg_args_open_ws *args
-   )
-{
-   Pint err_ind;
-   XVisualInfo *vi;
-   Colormap cmap;
-   XSetWindowAttributes wattr;
-   Wst_phigs_dt *dt;
-   Wsgl *wsgl;
-
-   wsgl = ws->render_context;
-   dt = &args->type->desc_tbl.phigs_dt;
-
-#ifdef DEBUG
-   printf("Open workstation window:\n"
-          "wsid:                   %d\n"
-          "window name:            %s\n"
-          "icon name:              %s\n",
-          args->wsid,
-          args->window_name,
-          args->icon_name);
-#endif
-
-   ws->display = XOpenDisplay(NULL);
-   if (ws->display == NULL) {
-      fprintf(stderr, "Error - Unable to open display\n");
-      return 0;
-   }
-
-   ws->ws_rect.x      = 0;
-   ws->ws_rect.y      = 0;
-   ws->ws_rect.width  = (int) dt->dev_coords[0] / 2;
-   ws->ws_rect.height = ws->ws_rect.width;
-
-#ifdef DEBUG
-   printf("Window dimensions: %d %d\n"
-          "                   %d %d\n",
-          ws->ws_rect.x,
-          ws->ws_rect.y,
-          ws->ws_rect.width,
-          ws->ws_rect.height);
-#endif
-
-   phg_wsgl_find_best_visual(ws, args->type, &vi, &cmap, &err_ind);
-   if (err_ind != 0) {
-      ERR_REPORT(args->erh, err_ind);
-      return FALSE;
-   }
-
-   switch (args->type->ws_type) {
-      case PWST_OUTPUT_TRUE:
-      case PWST_OUTIN_TRUE:
-         ws->current_colour_model = PMODEL_RGB;
-         ws->has_double_buffer = FALSE;
-         break;
-
-      case PWST_OUTPUT_TRUE_DB:
-      case PWST_OUTIN_TRUE_DB:
-         ws->current_colour_model = PMODEL_RGB;
-         ws->has_double_buffer = TRUE;
-         break;
-
-      default:
-         ws->current_colour_model = PINDIRECT;
-         ws->has_double_buffer = FALSE;
-         break;
-   }
-
-   phg_wsgl_create_context(ws, vi, &wsgl->glx_context, &err_ind);
-   if (err_ind != 0) {
-      ERR_REPORT(args->erh, err_ind);
-      return FALSE;
-   }
- 
-   wattr.colormap = cmap;
-   wattr.border_pixel = 0;
-   wattr.event_mask = ExposureMask | StructureNotifyMask | KeyPressMask;
-
-   ws->drawable_id = XCreateWindow(ws->display,
-                                   RootWindow(ws->display, vi->screen),
-                                   ws->ws_rect.x, ws->ws_rect.y,
-                                   ws->ws_rect.width, ws->ws_rect.height,
-                                   0, vi->depth,
-                                   InputOutput, vi->visual,
-                                   CWBorderPixel | CWColormap | CWEventMask,
-                                   &wattr);
-
-   XSetStandardProperties(ws->display,
-                          ws->drawable_id,
-                          args->window_name,
-                          args->icon_name,
-                          None,
-                          arglist,
-                          0,
-                          NULL);
-
-   if (dt->ws_category == PCAT_OUTIN) {
-
-      ws->input_overlay_window = phg_wsx_create_overlay(ws);
-      if (ws->input_overlay_window == 0) {
-         XDestroyWindow(ws->display, ws->drawable_id);
-         return FALSE;
-      }
-
-      if (!phg_ws_input_init(ws, args->input_q)) {
-         XDestroyWindow(ws->display, ws->input_overlay_window);
-         XDestroyWindow(ws->display, ws->drawable_id);
-         return FALSE;
-      }
-   }
-
-   XMapWindow(ws->display, ws->drawable_id);
-
-#ifdef DEBUG
-   printf("Opened GLX workstation window: %x\n", (unsigned) ws->drawable_id);
-#endif
-
-   return TRUE;
-}
-
-/*******************************************************************************
- * wsx_gl_resize_window
- *
- * DESCR:	Resize render window for workstation
- * RETURNS:	N/A
- */
-
-static void wsx_gl_resize_window(
-   Ws *ws,
-   int w,
-   int h
-   )
-{
-#ifdef DEBUG
-   printf("wsgl_gl_resize_window: %d %d\n", w, h);
-#endif
-
-   XResizeWindow(ws->display,
-                 ws->drawable_id,
-                 w,
-                 h);
-}
-
-/*******************************************************************************
- * wsx_gl_release_window
- *
- * DESCR:	Close render window for workstation
- * RETURNS:	N/A
- */
-
-static void wsx_gl_release_window(
-   Ws *ws
-   )
-{
-   XDestroyWindow(ws->display, ws->drawable_id);
 }
 

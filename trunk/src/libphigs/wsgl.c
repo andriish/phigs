@@ -177,53 +177,13 @@ int wsgl_init(
 }
 
 /*******************************************************************************
- * wsgl_open_window
+ * wsgl_close
  *
- * DESCR:       Open render window for workstation
- * RETURNS:     Zero on succcess, non zero on error
- */
-
-int wsgl_open_window(
-   Ws *ws,
-   Phg_args_open_ws *args
-   )
-{
-   int ret;
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
-
-   wsgl->type = args->type;
-
-   ret = (*wsgl->type->open_window)(ws, args);
-
-   return ret;
-}
-
-/*******************************************************************************
- * wsgl_release_window
- *
- * DESCR:       Close render window for workstation
- * RETURNS:     N/A
- */
-
-int wsgl_release_window(
-   Ws *ws
-   )
-{
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
-
-   (*wsgl->type->release_window)(ws);
-
-   return 1;
-}
-
-/*******************************************************************************
- * wsgl_destroy
- *
- * DESCR:	Release workstation
+ * DESCR:	Close
  * RETURNS:	N/A
  */
 
-void wsgl_destroy(
+void wsgl_close(
    Ws *ws
    )
 {
@@ -296,9 +256,14 @@ void wsgl_set_hlhsr_mode(
  */
 
 void wsgl_clear(
-   void
+   Ws *ws
    )
 {
+#ifdef DEBUG
+   printf("wsgl_clear\n");
+#endif
+
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -314,9 +279,10 @@ void wsgl_flush(
    )
 {
    Ws_xform ws_xform;
+   int clear_flag = 0;
    Wsgl *wsgl = (Wsgl *) ws->render_context;
 
-   glXMakeCurrent(ws->display, ws->drawable_id, wsgl->glx_context);
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
 
    if (wsgl->vp_changed || wsgl->win_changed) {
       wsgl_compute_ws_transform(&wsgl->curr_win, &wsgl->curr_vp, &ws_xform);
@@ -351,17 +317,21 @@ void wsgl_flush(
          printf("Viewport changed: %d x %d\n",
                 ws->ws_rect.width,
                 ws->ws_rect.height);
+         printf("Type: %x\n", (unsigned) ws->type);
+         printf("Resize: %x\n", (unsigned) ws->type->resize_window);
 #endif
 
-         (*wsgl->type->resize_window)(ws,
-                                      wsgl->curr_vp.x_max,
-                                      wsgl->curr_vp.y_max);
+         XResizeWindow(ws->display,
+                       ws->drawable_id,
+                       wsgl->curr_vp.x_max,
+                       wsgl->curr_vp.y_max);
       }
 
       if (wsgl->win_changed) {
          wsgl->win_changed = 0;
       }
 
+      clear_flag = 1;
    }
 
    if (wsgl->hlhsr_changed) {
@@ -384,6 +354,10 @@ void wsgl_flush(
                 wsgl->background.val.general.y,
                 wsgl->background.val.general.z,
                 0.0);
+
+   if (clear_flag) {
+      wsgl_clear(ws);
+   }
 }
 
 /*******************************************************************************
@@ -774,10 +748,6 @@ static void phg_set_view_ind(
 {
    Phg_ret ret;
    Wsgl *wsgl = (Wsgl *) ws->render_context;
-
-#ifdef DEBUG
-   printf("Set view index: %d\n", view_index);
-#endif
 
    (*ws->inq_representation)(ws,
                              ind,

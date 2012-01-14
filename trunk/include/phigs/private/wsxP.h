@@ -21,6 +21,9 @@
 #ifndef _wsxP_h
 #define _wsxP_h
 
+#include <X11/Xlib.h>
+#include <GL/glx.h>
+
 /*******************************************************************************
  * phg_wsx_create
  *
@@ -35,7 +38,7 @@ Ws* phg_wsx_create(
 /*******************************************************************************
  * phg_wsx_setup_tool
  *
- * DESCR:       Create toolkit rendering window
+ * DESCR:       Create window
  * RETURNS:     TRUE or FALSE
  */
 
@@ -43,6 +46,80 @@ int phg_wsx_setup_tool(
    Ws *ws,
    Phg_args_conn_info *conn_info,
    Wst *wst
+   );
+
+/*******************************************************************************
+ * phg_wsx_release_window
+ *
+ * DESCR:       Release window
+ * RETURNS:     N/A
+ */
+
+void phg_wsx_release_window(
+   Ws *ws
+   );
+
+/*******************************************************************************
+ * phg_wsx_destroy
+ *
+ * DESCR:       Destroy workstation
+ * RETURNS:     N/A
+ */
+
+void phg_wsx_destroy(
+   Ws *ws
+   );
+
+/*******************************************************************************
+ * phg_wsx_find_best_visual
+ *
+ * DESCR:       Find best matching visual
+ * RETURNS:     N/A
+ */
+
+void phg_wsx_find_best_visual(
+   Ws *ws,
+   Wst *wst,
+   XVisualInfo **visual_info,
+   Colormap *cmap,
+   Pint *err_ind
+   );
+
+/*******************************************************************************
+ * phg_wsx_create_context
+ *
+ * DESCR:       Create rendering context from visual info
+ * RETURNS:     N/A
+ */
+
+GLXContext phg_wsx_create_context(
+   Ws *ws,
+   XVisualInfo *visual_info,
+   Pint *err_ind
+   );
+
+/*******************************************************************************
+ * phg_wstx_create
+ *
+ * DESCR:       Create workstation type
+ * RETURNS:     Pointer to workstation type or NULL
+ */
+
+Wst* phg_wstx_create(
+   Err_handle erh,
+   Pws_cat category
+   );
+
+/*******************************************************************************
+ * phg_wstx_init
+ *
+ * DESCR:       Initialize workstation type
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wstx_init(
+   Wst *wst,
+   Pws_cat category
    );
 
 #endif /* _wsxP_h */
