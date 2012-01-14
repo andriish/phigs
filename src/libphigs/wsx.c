@@ -50,8 +50,9 @@ Ws* phg_wsx_create(
       ws = NULL;
    }
    else {
-      ws->erh = args->erh;
-      ws->id = args->wsid;
+      ws->erh  = args->erh;
+      ws->id   = args->wsid;
+      ws->type = args->type;
       if (!wsgl_init(ws)) {
          ERR_BUF(args->erh, ERR900);
          free(ws);

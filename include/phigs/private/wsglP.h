@@ -25,7 +25,7 @@
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
 
-typedef struct {
+typedef struct _Wsgl {
    Pattr_group     *attr_group;
    Plimit3         curr_win;
    Pint            win_changed;

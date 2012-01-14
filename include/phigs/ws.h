@@ -21,10 +21,10 @@
 #ifndef _ws_h
 #define _ws_h
 
-#include <phigs/ws_inp.h>
 #include <X11/Xlib.h>
 #include <X11/Intrinsic.h>
 #include <GL/glx.h>
+#include <phigs/ws_inp.h>
 
 #define NUM_DEFERRAL            5
 #define NUM_MODIFICATION        3
@@ -147,6 +147,9 @@ typedef struct {
    } model;
 } Ws_output_ws;
 
+struct _Wsgl;
+typedef struct _Wsgl *Wsgl_handle;
+
 typedef struct _Ws {
    Pint         id;
    Wst          *type;
@@ -164,7 +167,7 @@ typedef struct _Ws {
    Drawable     drawable_id;
    GLXContext   glx_context;
    Window       input_overlay_window;
-   void         *render_context;
+   Wsgl_handle  render_context;
    int          has_double_buffer;
    XRectangle   ws_rect;
    Widget       shell;

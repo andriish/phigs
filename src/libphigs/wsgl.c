@@ -153,9 +153,9 @@ int wsgl_init(
    Ws *ws
    )
 {
-   Wsgl *wsgl;
+   Wsgl_handle wsgl;
 
-   wsgl = (Wsgl *) malloc(sizeof(Wsgl));
+   wsgl = (Wsgl_handle) malloc(sizeof(Wsgl));
    if (wsgl == NULL)
       return 0;
 
@@ -187,7 +187,7 @@ void wsgl_close(
    Ws *ws
    )
 {
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Wsgl_handle wsgl = ws->render_context;
 
    phg_attr_group_destroy(wsgl->attr_group);
    free(ws->render_context);
@@ -206,7 +206,7 @@ void wsgl_set_window(
    Plimit3 *win
    )
 {
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Wsgl_handle wsgl = ws->render_context;
 
    wsgl->win_changed = 1;
    memcpy(&wsgl->curr_win, win, sizeof(Plimit3));
@@ -224,7 +224,7 @@ void wsgl_set_viewport(
    Plimit3 *vp
    )
 {
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Wsgl_handle wsgl = ws->render_context;
 
    wsgl->vp_changed = 1;
    memcpy(&wsgl->curr_vp, vp, sizeof(Plimit3));
@@ -242,7 +242,7 @@ void wsgl_set_hlhsr_mode(
    Pint hlhsr_mode
    )
 {
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Wsgl_handle wsgl = ws->render_context;
 
    wsgl->hlhsr_mode = hlhsr_mode;
    wsgl->hlhsr_changed = 1;
@@ -280,7 +280,7 @@ void wsgl_flush(
 {
    Ws_xform ws_xform;
    int clear_flag = 0;
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Wsgl_handle wsgl = ws->render_context;
 
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
 
@@ -412,7 +412,7 @@ void wsgl_begin_rendering(
    Ws *ws
    )
 {
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Wsgl_handle wsgl = ws->render_context;
 
 #ifdef DEBUG
    printf("Begin rendering\n");
@@ -465,7 +465,7 @@ void wsgl_render_element(
    El_handle el
    )
 {
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Wsgl_handle wsgl = ws->render_context;
 
    switch (el->eltype) {
       case PELEM_LABEL:
@@ -702,7 +702,7 @@ static void phg_update_projection(
    Ws *ws
    )
 {
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Wsgl_handle wsgl = ws->render_context;
 
 #ifdef DEBUG
    printf("Update projection\n");
@@ -723,7 +723,7 @@ static void phg_update_modelview(
    Ws *ws
    )
 {
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Wsgl_handle wsgl = ws->render_context;
 
 #ifdef DEBUG
    printf("Update modelview\n");
@@ -747,7 +747,7 @@ static void phg_set_view_ind(
    )
 {
    Phg_ret ret;
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Wsgl_handle wsgl = ws->render_context;
 
    (*ws->inq_representation)(ws,
                              ind,
@@ -1251,32 +1251,38 @@ static void phg_draw_polymarker3(
 {
    int i;
    Ppoint_list plist;
-   Ppoint pts[10];
 
-   plist.num_points = point_list->num_points;
-   plist.points = pts;
-   for (i = 0; i < point_list->num_points; i++) {
-      pts[i].x = point_list->points[i].x;
-      pts[i].y = point_list->points[i].y;
+   if (PHG_SCRATCH_SPACE(&ws->scratch,
+                         point_list->num_points * sizeof(Pposted_struct))) {
+      plist.num_points = point_list->num_points;
+      plist.points = (Ppoint *) ws->scratch.buf;
+
+      for (i = 0; i < point_list->num_points; i++) {
+         plist.points[i].x = point_list->points[i].x;
+         plist.points[i].y = point_list->points[i].y;
+      }
+
+      phg_set_marker_attr(ws, &attr->marker_bundle);
+      switch (attr->marker_bundle.type) {
+         case PMARKER_DOT:
+            phg_draw_marker_dot(&plist, attr->marker_bundle.size);
+         break;
+
+         case PMARKER_PLUS:
+            phg_draw_marker_plus(&plist, attr->marker_bundle.size);
+         break;
+
+         case PMARKER_ASTERISK:
+            phg_draw_marker_asterisk(&plist, attr->marker_bundle.size);
+         break;
+
+         case PMARKER_CROSS:
+            phg_draw_marker_cross(&plist, attr->marker_bundle.size);
+         break;
+      }
    }
-
-   phg_set_marker_attr(ws, &attr->marker_bundle);
-   switch (attr->marker_bundle.type) {
-      case PMARKER_DOT:
-         phg_draw_marker_dot(&plist, attr->marker_bundle.size);
-      break;
-
-      case PMARKER_PLUS:
-         phg_draw_marker_plus(&plist, attr->marker_bundle.size);
-      break;
-
-      case PMARKER_ASTERISK:
-         phg_draw_marker_asterisk(&plist, attr->marker_bundle.size);
-      break;
-
-      case PMARKER_CROSS:
-         phg_draw_marker_cross(&plist, attr->marker_bundle.size);
-      break;
+   else {
+      ERR_REPORT(ws->erh, ERR900);
    }
 }
 
@@ -1391,7 +1397,7 @@ static void phg_draw_fill_area3(
 {
    int i;
 
-   Wsgl *wsgl = (Wsgl *) ws->render_context;
+   Wsgl_handle wsgl = ws->render_context;
 
    if (wsgl->hlhsr_mode == PHIGS_HLHSR_MODE_NONE) {
       if ((attr->int_bundle.style == PSTYLE_SOLID) ||

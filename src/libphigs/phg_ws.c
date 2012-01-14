@@ -70,6 +70,7 @@ void popen_ws(
          args.wsid = ws_id;
          args.type = wst;
          args.erh = PHG_ERH;
+         args.cssh = PHG_CSS;
          args.memory = 8192;
          args.input_q = PHG_INPUT_Q;
          args.window_name = default_window_name;
@@ -83,9 +84,6 @@ void popen_ws(
          else {
             /* Add workstation to info list */
             phg_psl_add_ws(PHG_PSL, ws_id, NULL, wst);
-
-            /* Set structure database handle for workstation */
-            PHG_WSID(ws_id)->out_ws.model.b.cssh = PHG_CSS;
          }
       }
    }

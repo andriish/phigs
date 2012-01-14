@@ -1,3 +1,8 @@
+2012-01-14:
+   Break out creation of rendering context from phg_wsx_setup tool or,
+   create another method for workstations using widgets
+
+--------------------------------------------------------------------------------
 wsb.c: 599
     phg_wsb_open_ws()
         ws->out_ws.model.b.cssh = css
