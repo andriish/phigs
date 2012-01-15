@@ -429,7 +429,6 @@ Ws* phg_wsb_open_ws(
         }
     }
     else if (args->conn_type == PHG_ARGS_CONN_DRAWABLE) {
-printf("Connect to drawable\n");
         ws->display     = args->conn_info.display;
         ws->drawable_id = args->conn_info.drawable_id;
         ws->glx_context = args->conn_info.glx_context;
