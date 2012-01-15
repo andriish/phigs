@@ -180,7 +180,7 @@ static void reset_device(
     dev->evt_state = SIN_EVT_NONE;
     dev->measure->count = 0;
 
-    switch ( dev->sin_dev->class ) {
+    switch (dev->sin_dev->inp_class) {
 	case SIN_LOCATOR:
 	    dev->measure->data.pt = dev->sin_dev->data.locator.init_pos;
 	    break;
@@ -577,7 +577,7 @@ void phg_sin_cvs_device_enable(
     Dev_data *dev;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE(device);
-    dev = DEVICE_DATA(cvs_tbl, device->class, device->num);
+    dev = DEVICE_DATA(cvs_tbl, device->inp_class, device->num);
     if ( dev->enabled) {
 	(*dev->deactivate)( dev, cvs_tbl );
     }
@@ -608,7 +608,7 @@ void phg_sin_cvs_device_disable(
     Dev_data *dev;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE( device);
-    dev = DEVICE_DATA(cvs_tbl, device->class, device->num);
+    dev = DEVICE_DATA(cvs_tbl, device->inp_class, device->num);
     if ( dev->enabled ) {
 	(*dev->deactivate)( dev, cvs_tbl);
     }
@@ -632,8 +632,8 @@ int phg_sin_cvs_device_initialize(
     int	size_needed, status = TRUE;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE(sin_dev);
-    dev = DEVICE_DATA( cvs_tbl, sin_dev->class, sin_dev->num);
-    switch ( sin_dev->class ) {
+    dev = DEVICE_DATA( cvs_tbl, sin_dev->inp_class, sin_dev->num);
+    switch (sin_dev->inp_class) {
 	case SIN_STROKE:
 	    dev->measure->max_count = nd->data.stroke.buf_size;
 	    size_needed = dev->measure->max_count * sizeof(Sin_window_pt);
@@ -670,7 +670,7 @@ void phg_sin_cvs_device_sample(
     Dev_data *dev;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE(sin_dev);
-    dev = DEVICE_DATA(cvs_tbl, sin_dev->class, sin_dev->num);
+    dev = DEVICE_DATA(cvs_tbl, sin_dev->inp_class, sin_dev->num);
     if ( dev->sample) {
 	(*dev->sample)(dev);
     }
@@ -693,8 +693,8 @@ void phg_sin_cvs_device_repaint(
     Dev_data *dev;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE(sin_dev);
-    dev = DEVICE_DATA(cvs_tbl, sin_dev->class, sin_dev->num);
-    switch ( sin_dev->class ) {
+    dev = DEVICE_DATA(cvs_tbl, sin_dev->inp_class, sin_dev->num);
+    switch (sin_dev->inp_class) {
 	case SIN_LOCATOR:
 	    if ( dev->evt_state == SIN_EVT_STARTED)
 		echo_locator( dev );
@@ -729,11 +729,11 @@ void phg_sin_cvs_device_resize(
     int	delta;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE( sin_dev);
-    dev = DEVICE_DATA( cvs_tbl, sin_dev->class, sin_dev->num);
-    if ( sin_dev->class == SIN_LOCATOR || sin_dev->class == SIN_STROKE )
+    dev = DEVICE_DATA(cvs_tbl, sin_dev->inp_class, sin_dev->num);
+    if ( sin_dev->inp_class == SIN_LOCATOR || sin_dev->inp_class == SIN_STROKE )
 	delta = new_rect->height - old_rect->height;
 
-    switch ( sin_dev->class ) {
+    switch (sin_dev->inp_class) {
 	case SIN_LOCATOR:
 	    dev->measure->data.pt.y += delta;
 	    break;
@@ -898,12 +898,12 @@ int phg_sin_cvs_create_device(
     Sin_window_table *cvs_tbl;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE(device);
-    dev = DEVICE_DATA(cvs_tbl, device->class, device->num);
+    dev = DEVICE_DATA(cvs_tbl, device->inp_class, device->num);
     dev->measure = (Sin_measure*) calloc( 1, sizeof(Sin_measure));
     if ( dev->measure != NULL) {
 	dev->evt_state = SIN_EVT_NONE;
 	dev->sin_dev = device;
-	switch ( device->class ) {
+	switch (device->inp_class) {
 	    case SIN_LOCATOR:
 		status = create_locator_dev( device, dev );
 		break;
@@ -936,7 +936,7 @@ void phg_sin_cvs_destroy_device(
     Dev_data *dev;
 
     cvs_tbl = SIN_DEVICE_CANVAS_TABLE(sin_dev);
-    dev = DEVICE_DATA(cvs_tbl, sin_dev->class, sin_dev->num);
+    dev = DEVICE_DATA(cvs_tbl, sin_dev->inp_class, sin_dev->num);
     if ( dev->enabled )
 	(*dev->deactivate)( dev, cvs_tbl );
     if ( dev->measure ) {

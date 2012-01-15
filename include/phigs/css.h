@@ -198,16 +198,16 @@ void phg_css_delete_all_structs(Css_handle cssh);
 Css_ws_list phg_css_change_struct_id(Css_handle cssh,
                                      Phg_args_change_struct *ids,
                                      Struct_handle orig,
-                                     Struct_handle new,
+                                     Struct_handle newst,
                                      int orig_posted_somewhere);
 Css_ws_list phg_css_change_struct_refs(Css_handle cssh,
                                        Phg_args_change_struct *ids,
                                        Struct_handle orig,
-                                       Struct_handle new);
+                                       Struct_handle newst);
 Css_ws_list phg_css_change_struct_idrefs(Css_handle cssh,
                                          Phg_args_change_struct *ids,
                                          Struct_handle orig,
-                                         Struct_handle new);
+                                         Struct_handle newst);
 Struct_handle phg_css_create_struct(Pint id);
 
 /* css_el */

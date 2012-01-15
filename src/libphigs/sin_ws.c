@@ -259,7 +259,7 @@ void phg_sin_ws_load_event(
 
     event->wsid = dev->wsid;
     event->dev_num = dev->num;
-    switch( dev->class) {
+    switch(dev->inp_class) {
         case SIN_LOCATOR:
 	    event->dev_class = PIN_LOC;
 	    event->data.locator.evt.position = dev->data.locator.wc_pt;
@@ -429,7 +429,7 @@ void phg_sin_ws_reset_device(
     Sin_input_device *device
     )
 {
-    switch( device->class) {
+    switch(device->inp_class) {
         case SIN_LOCATOR:
             device->data.locator.cur_pos = device->data.locator.init_pos;
             break;
@@ -506,7 +506,7 @@ int phg_sin_ws_break(
 	    phg_sin_ws_disable_device( dev);
         }
         SIN_DISABLE_BREAK( ws);
-	scratch_event.dev_class = SIN_TO_PHIGS_CLASS( dev->class);
+	scratch_event.dev_class = SIN_TO_PHIGS_CLASS(dev->inp_class);
 	scratch_event.wsid = dev->wsid;
 	scratch_event.dev_num = dev->num;
 	(*ws->ops.send_request)( ws->wsh, &scratch_event, 1);

@@ -464,14 +464,14 @@ void phg_css_delete_all_structs(Css_handle cssh)
     phg_css_change_struct_id - Change structure id.
 			       Return a list of affected workstations (the
 			       combined ws_appear_on lists of the structures
-			       orig and new).
+			       orig and newst).
 
 *******************/
 
 Css_ws_list phg_css_change_struct_id(Css_handle cssh,
                                      Phg_args_change_struct *ids,
                                      Struct_handle orig,
-                                     Struct_handle new,
+                                     Struct_handle newst,
                                      int orig_posted_somewhere)
 {
     Struct_handle	structp = NULL;
@@ -481,7 +481,7 @@ Css_ws_list phg_css_change_struct_id(Css_handle cssh,
     Css_ws_list		wsnext;
 
     cssh->ws_list->wsh = NULL;
-    if (!phg_css_join_ws_list(cssh, orig, new, &cssh->ws_list, CSS_WS_APPEAR))
+    if (!phg_css_join_ws_list(cssh, orig, newst, &cssh->ws_list, CSS_WS_APPEAR))
 	return(NULL);					/* out of memory */
     if (orig) {
 	/* remove from old location in structure table */
@@ -528,31 +528,31 @@ Css_ws_list phg_css_change_struct_id(Css_handle cssh,
 		return(NULL);				/* out of memory */
 	    }
 	}
-	if (new) {
-	    /* if new is referenced or posted, copy data before destroying new*/
-	    if ( !phg_css_copy_ws_lists(cssh, new, orig, CSS_WS_POST) )
+	if (newst) {
+	    /* if newst is referenced or posted, copy data before destroying */
+	    if ( !phg_css_copy_ws_lists(cssh, newst, orig, CSS_WS_POST) )
 		return(NULL);				/* out of memory */
-	    if (!phg_css_add_to_ws_appear(cssh, orig, new->ws_appear_on, 1)) {
+	    if (!phg_css_add_to_ws_appear(cssh, orig, newst->ws_appear_on, 1)) {
 		ERR_BUF(cssh->erh, ERR901);
 		return(NULL);				/* out of memory */
 	    }
-	    if ((wsnext = new->ws_posted_to) != NULL)
-		/* tell ws about changed structure pointer for new */
+	    if ((wsnext = newst->ws_posted_to) != NULL)
+		/* tell ws about changed structure pointer for newst */
 		while (wsnext->wsh) {
-		    (*wsnext->wsh->change_posting)(wsnext->wsh, new, orig);
+		    (*wsnext->wsh->change_posting)(wsnext->wsh, newst, orig);
 		    wsnext++;
 		}
-	    if ( !css_change_ref_structp(new, orig) ) {
+	    if ( !css_change_ref_structp(newst, orig) ) {
 		ERR_BUF(cssh->erh, ERR901);
 		return(NULL);				/* out of memory */
 	    }
-	    /* empty new and delete */
+	    /* empty newst and delete */
 	    CSS_EMPTY_STRUCT(cssh, ids->new_id)
 	    (void) phg_css_stab_delete(cssh->stab, ids->new_id);
-	    css_struct_free(cssh, new);
+	    css_struct_free(cssh, newst);
 	    if ( structp && !(structp->refer_to_me->num_elements || 
 			      structp->ws_posted_to) )
-		/* only refs to structp were by new, which no longer exists */
+		/* only refs to structp were by newst, which no longer exists */
 		phg_css_delete_struct(cssh, structp);
 	}
 	/* now move to new location in struct table */
@@ -565,14 +565,14 @@ Css_ws_list phg_css_change_struct_id(Css_handle cssh,
 	if ( CSS_STRUCT_IS_OPEN(cssh, orig) )
 	    (void) phg_css_open_struct(cssh, ids->orig_id);
 	/* if the "new" structure was open, re-open it with the correct ptr */
-	else if (new && CSS_STRUCT_IS_OPEN(cssh, new) )
+	else if (newst && CSS_STRUCT_IS_OPEN(cssh, newst) )
 	    (void) phg_css_open_struct(cssh, ids->new_id);
     } else {
 	/* original structure did not exist, so either empty out the new one
 	 * if it exists, or create an empty one
 	 */
-	if (new)
-	    CSS_EMPTY_STRUCT(cssh, new->struct_id)
+	if (newst)
+	    CSS_EMPTY_STRUCT(cssh, newst->struct_id)
 	else {
 	    CSS_ADD_NEW_STRUCT(cssh, ids->new_id, structp)
 	}
@@ -592,7 +592,7 @@ Css_ws_list phg_css_change_struct_id(Css_handle cssh,
 Css_ws_list phg_css_change_struct_refs(Css_handle cssh,
                                        Phg_args_change_struct *ids,
                                        Struct_handle orig,
-                                       Struct_handle new)
+                                       Struct_handle newst)
 {
     Struct_handle	structp;
     Css_ws_list		wsnext;
@@ -602,19 +602,19 @@ Css_ws_list phg_css_change_struct_refs(Css_handle cssh,
     cssh->ws_list->wsh = NULL;
     if (orig && orig->refer_to_me->num_elements) {
 	/* nothing to do if no references to orig */
-	if (!new)
-	    CSS_ADD_NEW_STRUCT(cssh, ids->new_id, new)
+	if (!newst)
+	    CSS_ADD_NEW_STRUCT(cssh, ids->new_id, newst)
 	if ( !phg_css_join_ws_list(cssh, orig, (Struct_handle)NULL,
 		&cssh->ws_list, CSS_WS_APPEAR) )
 	    return(NULL);				/* out of memory */
-	/* add orig's posted_to and appear_on lists to new, then delete */
+	/* add orig's posted_to and appear_on lists to newst, then delete */
 	if ((wsnext = orig->ws_posted_to) != NULL) {
 	    while (wsnext->wsh) {
-		if ( !phg_css_ws_posted(new, wsnext->wsh) ) {
-		    if ( !phg_css_post(cssh, new->struct_id, wsnext->wsh, 
+		if ( !phg_css_ws_posted(newst, wsnext->wsh) ) {
+		    if ( !phg_css_post(cssh, newst->struct_id, wsnext->wsh, 
 				&was_posted) )
 			return(NULL);			/* out of memory */
-		    structp = new;
+		    structp = newst;
 		} else
 		    structp = NULL;
 		(*wsnext->wsh->change_posting)(wsnext->wsh, orig, structp);
@@ -627,7 +627,7 @@ Css_ws_list phg_css_change_struct_refs(Css_handle cssh,
 	if ( !phg_css_join_ws_list(cssh, orig, (Struct_handle)NULL,
 		&wssave, CSS_WS_APPEAR) )
 	    return(NULL);				/* out of memory */
-	if (!phg_css_add_to_ws_appear(cssh, new, orig->ws_appear_on, 1)) {
+	if (!phg_css_add_to_ws_appear(cssh, newst, orig->ws_appear_on, 1)) {
 	    ERR_BUF(cssh->erh, ERR901);
 	    return(NULL);				/* out of memory */
 	}
@@ -635,7 +635,7 @@ Css_ws_list phg_css_change_struct_refs(Css_handle cssh,
 	    phg_css_rm_from_ws_appear(cssh, orig, wssave, 1);
 	    free((char *)wssave);
 	}
-	if ( !css_change_ref_structp(orig, new) ) {
+	if ( !css_change_ref_structp(orig, newst) ) {
 	    ERR_BUF(cssh->erh, ERR901);
 	    return(NULL);				/* out of memory */
 	}
@@ -647,49 +647,49 @@ Css_ws_list phg_css_change_struct_refs(Css_handle cssh,
 
     phg_css_change_struct_idrefs - Change structure id and references.
 			           Return a list of affected workstations (the
-			           ws_appear_on list of the structure new).
+			           ws_appear_on list of the structure newst).
 
 *******************/
 
 Css_ws_list phg_css_change_struct_idrefs(Css_handle cssh,
                                          Phg_args_change_struct *ids,
                                          Struct_handle orig,
-                                         Struct_handle new)
+                                         Struct_handle newst)
 {
     Struct_handle	structp;
     Css_ws_list		wsnext;
 
     cssh->ws_list->wsh = NULL;
-    if (!phg_css_join_ws_list(cssh, (Struct_handle)NULL, new,
+    if (!phg_css_join_ws_list(cssh, (Struct_handle)NULL, newst,
 	    &cssh->ws_list, CSS_WS_APPEAR))
 	return(NULL);					/* out of memory */
     if (orig) {
 	/* remove from old location in structure table */
 	(void) phg_css_stab_delete(cssh->stab, ids->orig_id);
-	if (new) {
+	if (newst) {
 	    /* merge the two posted_to and appear_on lists */
-	    if (!phg_css_join_ws_list(cssh, (Struct_handle)NULL, new,
+	    if (!phg_css_join_ws_list(cssh, (Struct_handle)NULL, newst,
 		    &orig->ws_posted_to, CSS_WS_POST))
 		return(NULL);				/* out of memory */
-            if (!phg_css_add_to_ws_appear(cssh, orig, new->ws_appear_on, 1)) {
+            if (!phg_css_add_to_ws_appear(cssh, orig, newst->ws_appear_on, 1)) {
                 ERR_BUF(cssh->erh, ERR901);
                 return(NULL);                           /* out of memory */
             }
-	    /* tell ws about changed structure pointer for new */
-	    if ((wsnext = new->ws_posted_to) != NULL)
+	    /* tell ws about changed structure pointer for newst */
+	    if ((wsnext = newst->ws_posted_to) != NULL)
 		while (wsnext->wsh) {
-		    (*wsnext->wsh->change_posting)(wsnext->wsh, new, orig);
+		    (*wsnext->wsh->change_posting)(wsnext->wsh, newst, orig);
 		    wsnext++;
 		}
-	    /* if there are references to new, copy them before destroying it */
-	    if ( !css_change_ref_structp(new, orig) ) {
+	    /* if there are references to newst, copy them before destroying */
+	    if ( !css_change_ref_structp(newst, orig) ) {
 		ERR_BUF(cssh->erh, ERR901);
 		return(NULL);                           /* out of memory */
 	    }
 	    /* empty the structure and delete it from the structure table */
 	    CSS_EMPTY_STRUCT(cssh, ids->new_id)
 	    (void) phg_css_stab_delete(cssh->stab, ids->new_id);
-	    css_struct_free(cssh, new);
+	    css_struct_free(cssh, newst);
 	}
 	/* now move to new location in struct table */
 	orig->struct_id = ids->new_id;
@@ -701,14 +701,14 @@ Css_ws_list phg_css_change_struct_idrefs(Css_handle cssh,
 	if ( CSS_STRUCT_IS_OPEN(cssh, orig) )
 	    (void) phg_css_open_struct(cssh, ids->orig_id);
 	/* if the "new" structure was open, re-open it with the correct ptr */
-	else if ( CSS_STRUCT_IS_OPEN(cssh, new) )
+	else if ( CSS_STRUCT_IS_OPEN(cssh, newst) )
 	    (void) phg_css_open_struct(cssh, ids->new_id);
     } else {
 	/* original structure did not exist, so either empty out the new one
 	 * if it exists, or create an empty one
 	 */
-	if (new)
-	    CSS_EMPTY_STRUCT(cssh, new->struct_id)
+	if (newst)
+	    CSS_EMPTY_STRUCT(cssh, newst->struct_id)
 	else {
 	    CSS_ADD_NEW_STRUCT(cssh, ids->new_id, structp)
 	}

@@ -357,7 +357,7 @@ void phg_sin_dev_init_devices(
     idt_loc = ws->idt->locators;
     dev = ws->devices[SIN_CLASS_INDEX(SIN_LOCATOR)];
     for ( i = 1; i <= ws->num_devs.loc; i++, dev++, idt_loc++ ) {
-	dev->class = SIN_LOCATOR;
+	dev->inp_class = SIN_LOCATOR;
 	dev->num = i;
 	dev->data.locator.type = idt_loc->type;
 	SET_DEFAULT_DEV_GENERIC_DATA(ws, dev);
@@ -382,7 +382,7 @@ void phg_sin_dev_init_devices(
     idt_stroke = ws->idt->strokes;
     dev = ws->devices[SIN_CLASS_INDEX(SIN_STROKE)];
     for ( i = 1; i <= ws->num_devs.stroke; i++, dev++, idt_stroke++ ) {
-	dev->class = SIN_STROKE;
+	dev->inp_class = SIN_STROKE;
 	dev->num = i;
 	dev->data.stroke.type = idt_stroke->type;
 	SET_DEFAULT_DEV_GENERIC_DATA(ws, dev);
@@ -407,7 +407,7 @@ void phg_sin_dev_init_devices(
     idt_pick = ws->idt->picks;
     dev = ws->devices[SIN_CLASS_INDEX(SIN_PICK)];
     for ( i = 1; i <= ws->num_devs.pick; i++, dev++, idt_pick++ ) {
-	dev->class = SIN_PICK;
+	dev->inp_class = SIN_PICK;
 	dev->num = i;
 	dev->data.pick.type = idt_pick->type;
 	SET_DEFAULT_DEV_GENERIC_DATA(ws, dev);
@@ -433,7 +433,7 @@ void phg_sin_dev_init_devices(
     idt_val = ws->idt->valuators;
     dev = ws->devices[SIN_CLASS_INDEX(SIN_VALUATOR)];
     for ( i = 1; i <= ws->num_devs.val; i++, dev++, idt_val++ ) {
-	dev->class = SIN_VALUATOR;
+	dev->inp_class = SIN_VALUATOR;
 	dev->num = i;
 	dev->data.valuator.type = idt_val->type;
 	SET_DEFAULT_DEV_GENERIC_DATA(ws, dev);
@@ -443,7 +443,7 @@ void phg_sin_dev_init_devices(
     idt_choice = ws->idt->choices;
     dev = ws->devices[SIN_CLASS_INDEX(SIN_CHOICE)];
     for ( i = 1; i <= ws->num_devs.choice; i++, dev++, idt_choice++ ) {
-	dev->class = SIN_CHOICE;
+	dev->inp_class = SIN_CHOICE;
 	dev->num = i;
 	dev->data.choice.type = idt_choice->type;
 	SET_DEFAULT_DEV_GENERIC_DATA(ws, dev);
@@ -453,7 +453,7 @@ void phg_sin_dev_init_devices(
     idt_string = ws->idt->strings;
     dev = ws->devices[SIN_CLASS_INDEX(SIN_STRING)];
     for ( i = 1; i <= ws->num_devs.string; i++, dev++, idt_string++ ) {
-	dev->class = SIN_STRING;
+	dev->inp_class = SIN_STRING;
 	dev->num = i;
 	dev->data.string.type = idt_string->type;
 	SET_DEFAULT_DEV_GENERIC_DATA(ws, dev);

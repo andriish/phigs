@@ -139,7 +139,7 @@ typedef struct {
 
 typedef struct {
    Pint      ws;
-   Pin_class class;
+   Pin_class in_class;
    Pint      dev;
 } Pevent;
 

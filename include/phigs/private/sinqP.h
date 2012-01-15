@@ -106,7 +106,7 @@ typedef struct _Sin_event_queue {
     ((_queue)->overflow = SIN_Q_OVERFLOW_NOT_INQUIRED); \
     (_queue)->overflow_dev.ws = (_dev)->wsid; \
     (_queue)->overflow_dev.dev = (_dev)->num; \
-    (_queue)->overflow_dev.class = SIN_TO_PHIGS_CLASS((_dev)->class)
+    (_queue)->overflow_dev.in_class = SIN_TO_PHIGS_CLASS((_dev)->inp_class)
 
 #define SIN_Q_CLEAR_OVERFLOW( queue) \
     ((queue)->overflow = SIN_Q_NO_OVERFLOW)
@@ -193,7 +193,7 @@ void phg_sin_q_flush_ws(
 void phg_sin_q_flush_device(
     Sin_event_queue *queue,
     Pint wsid,
-    Pin_class class,
+    Pin_class in_class,
     Pint num
     );
 

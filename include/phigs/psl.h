@@ -63,13 +63,13 @@ typedef Phg_state_list *Psl_handle;
    ((_psl)->cur_event.data = (_data))
 
 #define PSL_CUR_EVENT_CLASS(_psl) \
-   ((_psl)->cur_event.id.class)
+   ((_psl)->cur_event.id.in_class)
 
 #define PSL_CUR_EVENT_DATA(_psl, _class) \
    ((_psl)->cur_event.data._class)
 
 #define PSL_CLEAR_CUR_EVENT( _psl) \
-    {   switch ((_psl)->cur_event.id.class) { \
+    {   switch ((_psl)->cur_event.id.in_class) { \
           case PIN_STROKE: \
             if ( (_psl)->cur_event.data.stk.num_points > 0) \
                 free(((_psl)->cur_event.data.stk.points)); \
@@ -86,7 +86,7 @@ typedef Phg_state_list *Psl_handle;
           default: \
             break; \
         } \
-        (_psl)->cur_event.id.class = PIN_NONE; \
+        (_psl)->cur_event.id.in_class = PIN_NONE; \
     }
 
 #define PSL_OPEN_STRUCT(_psl) \
