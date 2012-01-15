@@ -40,7 +40,7 @@ static char default_icon_name[]   = "Open PHIGS";
 
 void popen_ws(
    Pint ws_id,
-   void *conn_id,
+   Phg_args_conn_info *conn_id,
    Pint ws_type
    )
 {
@@ -67,6 +67,15 @@ void popen_ws(
       }
       else {
          memset(&args, 0, sizeof(Phg_args_open_ws));
+
+         if (conn_id == NULL) {
+            args.conn_type = PHG_ARGS_CONN_OPEN;
+         }
+         else {
+            args.conn_type = PHG_ARGS_CONN_DRAWABLE;
+            memcpy(&args.conn_info, conn_id, sizeof(Phg_args_conn_info));
+         }
+
          args.wsid = ws_id;
          args.type = wst;
          args.erh = PHG_ERH;
