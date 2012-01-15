@@ -105,7 +105,7 @@ static void set_mode(
    Ws_handle wsh;
    Phg_args_set_mode_data args;
 
-   args.class = dev_class;
+   args.idev_class = dev_class;
    args.dev = dev_num;
    args.mode = op_mode;
    args.echo = echo_switch;
@@ -442,10 +442,10 @@ static void inp_await(
       }
       ev_id->ws = event->wsid;
       ev_id->dev = event->dev_num;
-      ev_id->class = event->dev_class;
+      ev_id->in_class = event->dev_class;
       SIN_Q_SET_CUR_SIMUL_ID(PHG_INPUT_Q, event);
 
-      switch (ev_id->class) {
+      switch (ev_id->in_class) {
          case PIN_LOC:
             ed->loc = event->data.locator.evt;
             break;
@@ -495,7 +495,7 @@ static void inp_await(
       phg_sin_q_deque_event(PHG_INPUT_Q);
    }
    else {
-     ev_id->class = PIN_NONE;
+     ev_id->in_class = PIN_NONE;
      if (SIN_Q_OVERFLOWED(PHG_INPUT_Q)) {
         SIN_Q_CLEAR_OVERFLOW(PHG_INPUT_Q);
      }
@@ -533,10 +533,10 @@ void pawait_event(
       inp_await(&ret);
       if (ret.err == 0) {
          *ws_id = revt->id.ws;
-         *dev_class = revt->id.class;
+         *dev_class = revt->id.in_class;
          *in_num = revt->id.dev;
 
-         switch (revt->id.class) {
+         switch (revt->id.in_class) {
             case PIN_STROKE:
                size = revt->data.stk.num_points * sizeof(Ppoint3);
                if (size > 0) {
@@ -580,7 +580,7 @@ void pawait_event(
 
          PSL_CLEAR_CUR_EVENT(PHG_PSL);
          PSL_SET_CUR_EVENT_ID(PHG_PSL, revt->id);
-         if (revt->id.class != PIN_NONE) {
+         if (revt->id.in_class != PIN_NONE) {
             PSL_SET_CUR_EVENT_DATA(PHG_PSL, revt->data);
          }
       }

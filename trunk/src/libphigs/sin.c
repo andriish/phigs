@@ -250,16 +250,16 @@ no_mem:
 
 void phg_sin_init_device(
     Sin_input_ws *iws,
-    Sin_input_class class,
+    Sin_input_class inp_class,
     Pint dev_num,
     Sin_dev_init_data *new_data
     )
 {
-    Sin_input_device *dev = SIN_DEV(iws, class, dev_num);
+    Sin_input_device *dev = SIN_DEV(iws, inp_class, dev_num);
 
 #ifdef DEBUG
     printf("sin: phg_sin_init_device\n");
-    printf("\tDevice class: %d\n", class);
+    printf("\tDevice class: %d\n", inp_class);
 #endif
 
     if ( !dev->flags.exists )
@@ -277,7 +277,7 @@ void phg_sin_init_device(
     dev->client_data = new_data->client_data;
     dev->pe_type = new_data->pe_type;
     dev->echo_area = new_data->echo_area;
-    switch ( dev->class) {
+    switch (dev->inp_class) {
         case SIN_LOCATOR:
 	    SIN_COPY_LOC_INIT_DATA( new_data, dev)
             break;
@@ -351,7 +351,7 @@ void phg_sin_set_mode(
     Sin_enable_data *ed
     )
 {
-    Sin_input_device *dev = SIN_DEV(iws, md->class, md->dev_num);
+    Sin_input_device *dev = SIN_DEV(iws, md->inp_class, md->dev_num);
 
     if ( !dev->flags.exists )
 	return;
@@ -386,12 +386,12 @@ void phg_sin_set_mode(
 
 void phg_sin_sample(
     Sin_input_ws *iws,
-    Sin_input_class class,
+    Sin_input_class inp_class,
     Pint dev_num,
     Sin_input_event *event
     )
 {
-    Sin_input_device *dev = SIN_DEV(iws, class, dev_num);
+    Sin_input_device *dev = SIN_DEV(iws, inp_class, dev_num);
 
 #ifdef DEBUG
     printf("sin: phg_sin_sample\n");
@@ -415,12 +415,12 @@ void phg_sin_sample(
 
 void phg_sin_request(
     Sin_input_ws *iws,
-    Sin_input_class class,
+    Sin_input_class inp_class,
     Pint dev_num,
     Sin_enable_data *ed
     )
 {
-    Sin_input_device *dev = SIN_DEV(iws, class, dev_num);
+    Sin_input_device *dev = SIN_DEV(iws, inp_class, dev_num);
 
     if ( !dev->flags.exists )
 	return;
@@ -491,14 +491,14 @@ void phg_sin_repaint(
 
 void phg_sin_resize_dev(
     Sin_input_ws *ws,
-    Sin_input_class class,
+    Sin_input_class inp_class,
     Pint dev_num,
     Sin_enable_data *ed,
     XRectangle *old_rect,
     XRectangle *new_rect
     )
 {
-    Sin_input_device *dev = SIN_DEV( ws, class, dev_num);
+    Sin_input_device *dev = SIN_DEV( ws, inp_class, dev_num);
 
     if ( dev->flags.on ) {
 	SIN_SET_ENABLE_DATA( dev, ed)

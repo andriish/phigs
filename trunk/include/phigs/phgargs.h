@@ -194,7 +194,7 @@ typedef union {
 
 typedef struct {
    Pint                wsid;
-   Phg_args_idev_class class;
+   Phg_args_idev_class idev_class;
    Pint                dev;
    Pint                pet;
    Plimit3             echo_volume;
@@ -202,7 +202,7 @@ typedef struct {
 } Phg_args_inp_init_dev;
 
 typedef struct {
-   Phg_args_idev_class class;
+   Phg_args_idev_class idev_class;
    Pint                dev;
    Pop_mode            mode;
    Pecho_switch        echo;

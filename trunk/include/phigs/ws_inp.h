@@ -203,7 +203,7 @@ void phg_ws_inp_set_mode(
 
 void phg_ws_inp_request(
     struct _Ws *ws,
-    Phg_args_idev_class class,
+    Phg_args_idev_class idev_class,
     Pint dev_num,
     Phg_ret *ret
     );
@@ -217,7 +217,7 @@ void phg_ws_inp_request(
 
 void phg_ws_inp_sample(
     struct _Ws *ws,
-    Phg_args_idev_class class,
+    Phg_args_idev_class idev_class,
     Pint dev_num,
     Phg_ret *ret
     );
@@ -244,7 +244,7 @@ void phg_ws_inp_repaint(
 
 void phg_ws_inp_inq_dev_state(
     struct _Ws *ws,
-    Phg_args_idev_class class,
+    Phg_args_idev_class idev_class,
     Pint num,
     Phg_ret *ret
     );

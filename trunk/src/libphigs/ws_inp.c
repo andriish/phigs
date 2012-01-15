@@ -913,13 +913,13 @@ void phg_ws_inp_init_device(
 #ifdef TODO
     phg_wsx_update_ws_rect( ws );
 #endif
-    switch ( args->class ) {
+    switch (args->idev_class) {
         case PHG_ARGS_INP_LOC3:
         case PHG_ARGS_INP_LOC:
             dev.loc = &iws->devs.locator[args->dev-1];
             mode = dev.loc->mode;
             if (mode == POP_REQ) {
-                two_d = args->class == PHG_ARGS_INP_LOC ? 1 : 0;
+                two_d = args->idev_class == PHG_ARGS_INP_LOC ? 1 : 0;
                 init_locator( ws, iws, dev.loc, args, two_d );
             }
             else {
@@ -931,7 +931,7 @@ void phg_ws_inp_init_device(
             dev.stk = &iws->devs.stroke[args->dev-1];
             mode = dev.stk->mode;
             if (mode == POP_REQ) {
-                two_d = args->class == PHG_ARGS_INP_STK ? 1 : 0;
+                two_d = args->idev_class == PHG_ARGS_INP_STK ? 1 : 0;
                 init_stroke( ws, iws, dev.stk, args, two_d );
             }
             else {
@@ -943,7 +943,7 @@ void phg_ws_inp_init_device(
             dev.cho = &iws->devs.choice[args->dev-1];
             mode = dev.cho->mode;
             if (mode == POP_REQ) {
-                two_d = args->class == PHG_ARGS_INP_CHC ? 1 : 0;
+                two_d = args->idev_class == PHG_ARGS_INP_CHC ? 1 : 0;
                 init_choice( ws, iws, dev.cho, args, two_d );
             }
             else {
@@ -955,7 +955,7 @@ void phg_ws_inp_init_device(
             dev.val = &iws->devs.valuator[args->dev-1];
             mode = dev.val->mode;
             if (mode == POP_REQ) {
-                two_d = args->class == PHG_ARGS_INP_VAL ? 1 : 0;
+                two_d = args->idev_class == PHG_ARGS_INP_VAL ? 1 : 0;
                 init_valuator( ws, iws, dev.val, args, two_d );
             }
             else {
@@ -967,7 +967,7 @@ void phg_ws_inp_init_device(
             dev.pik = &iws->devs.pick[args->dev-1];
             mode = dev.pik->mode;
             if (mode == POP_REQ) {
-                two_d = args->class == PHG_ARGS_INP_PIK ? 1 : 0;
+                two_d = args->idev_class == PHG_ARGS_INP_PIK ? 1 : 0;
                 init_pick( ws, iws, dev.pik, args, two_d );
             }
             else {
@@ -979,7 +979,7 @@ void phg_ws_inp_init_device(
             dev.str = &iws->devs.string[args->dev-1];
             mode = dev.str->mode;
             if (mode == POP_REQ) {
-                two_d = args->class == PHG_ARGS_INP_STR ? 1 : 0;
+                two_d = args->idev_class == PHG_ARGS_INP_STR ? 1 : 0;
                 init_string( ws, iws, dev.str, args, two_d );
             }
             else {
@@ -1244,10 +1244,10 @@ static void send_request(
 
     ret.err = 0;
     --ws->num_active_input_devs;
-    revt->id.class = event->dev_class;
+    revt->id.in_class = event->dev_class;
     if ( brk ) {
 	req->brk = TRUE;
-	switch ( revt->id.class ) {
+	switch ( revt->id.in_class ) {
 	    case PIN_LOC:
 	    case PIN_STROKE:
 	    case PIN_VAL:
@@ -1266,7 +1266,7 @@ static void send_request(
 
     } else {
 	req->brk = FALSE;
-	switch ( revt->id.class ) {
+	switch ( revt->id.in_class ) {
 	    case PIN_LOC:
 		req->status.istat = PIN_STATUS_OK;
 		revt->data.loc = event->data.locator.evt;
@@ -1306,7 +1306,7 @@ static void send_request(
     phg_cp_send_request( ws->cph, &ret );
 #endif
 
-    if ( revt->id.class == PIN_PICK && ws->pick_disable )
+    if ( revt->id.in_class == PIN_PICK && ws->pick_disable )
 	(*ws->pick_disable)( ws, &ws->in_ws.devs.pick[event->dev_num-1] );
 }
 
@@ -1578,9 +1578,9 @@ void phg_ws_inp_set_mode(
     phg_wsx_update_ws_rect( ws );
 #endif
 
-    switch (args->class) {
+    switch (args->idev_class) {
         case PHG_ARGS_INP_LOC:
-	    md.class = SIN_LOCATOR;
+	    md.inp_class = SIN_LOCATOR;
 	    dev.loc = &iws->devs.locator[args->dev-1];
 	    old_mode = dev.loc->mode;
 	    dev.loc->mode = args->mode;
@@ -1588,7 +1588,7 @@ void phg_ws_inp_set_mode(
 	    loc_enable_data( ws, dev.loc, &ed);
 	    break;
         case PHG_ARGS_INP_STK:
-	    md.class = SIN_STROKE;
+	    md.inp_class = SIN_STROKE;
 	    dev.stk = &iws->devs.stroke[args->dev-1];
 	    old_mode = dev.stk->mode;
 	    okay = stk_enable_data( ws, dev.stk, &ed);
@@ -1598,7 +1598,7 @@ void phg_ws_inp_set_mode(
 	    }
 	    break;
         case PHG_ARGS_INP_VAL:
-	    md.class = SIN_VALUATOR;
+	    md.inp_class = SIN_VALUATOR;
 	    dev.val = &iws->devs.valuator[args->dev-1];
 	    old_mode = dev.val->mode;
 	    dev.val->mode = args->mode;
@@ -1606,7 +1606,7 @@ void phg_ws_inp_set_mode(
 	    WSINP_SET_GENERIC_ENABLE_DATA( ws, dev.val, &ed)
 	    break;
         case PHG_ARGS_INP_CHC:
-	    md.class = SIN_CHOICE;
+	    md.inp_class = SIN_CHOICE;
 	    dev.cho = &iws->devs.choice[args->dev-1];
 	    old_mode = dev.cho->mode;
 	    dev.cho->mode = args->mode;
@@ -1614,7 +1614,7 @@ void phg_ws_inp_set_mode(
 	    WSINP_SET_GENERIC_ENABLE_DATA( ws, dev.cho, &ed)
 	    break;
         case PHG_ARGS_INP_PIK:
-	    md.class = SIN_PICK;
+	    md.inp_class = SIN_PICK;
 	    dev.pik = &iws->devs.pick[args->dev-1];
 	    old_mode = dev.pik->mode;
 	    dev.pik->mode = args->mode;
@@ -1629,7 +1629,7 @@ void phg_ws_inp_set_mode(
 		okay = (*ws->pick_enable)( ws, dev.pik );
 	    break;
         case PHG_ARGS_INP_STR:
-	    md.class = SIN_STRING;
+	    md.inp_class = SIN_STRING;
 	    dev.str = &iws->devs.string[args->dev-1];
 	    old_mode = dev.str->mode;
 	    dev.str->mode = args->mode;
@@ -1669,7 +1669,7 @@ void phg_ws_inp_set_mode(
 
 void phg_ws_inp_request(
     Ws *ws,
-    Phg_args_idev_class class,
+    Phg_args_idev_class idev_class,
     Pint dev_num,
     Phg_ret *ret
     )
@@ -1685,7 +1685,7 @@ void phg_ws_inp_request(
 #ifdef TODO
     phg_wsx_update_ws_rect( ws );
 #endif
-    switch ( class) {
+    switch (idev_class) {
         case PHG_ARGS_INP_LOC3:
         case PHG_ARGS_INP_LOC:
 	    sin_class = SIN_LOCATOR;
@@ -1765,7 +1765,7 @@ static void sample_locator(
 #endif
 
     phg_sin_sample( iws->sin_handle, SIN_LOCATOR, loc->num, &event);
-    revt->id.class = PIN_LOC;
+    revt->id.in_class = PIN_LOC;
     revt->data.loc = event.data.locator.evt;
 }
 
@@ -1785,7 +1785,7 @@ static void sample_stroke(
     Sin_input_event event;
 
     phg_sin_sample( iws->sin_handle, SIN_STROKE, stk->num, &event);
-    revt->id.class = PIN_STROKE;
+    revt->id.in_class = PIN_STROKE;
     revt->data.stk = event.data.stroke.evt;
 }
 
@@ -1805,7 +1805,7 @@ static void sample_choice(
     Sin_input_event event;
 
     phg_sin_sample( iws->sin_handle, SIN_CHOICE, choice->num, &event);
-    revt->id.class = PIN_CHOICE;
+    revt->id.in_class = PIN_CHOICE;
     revt->data.chc = event.data.choice.evt;
 }
 
@@ -1825,7 +1825,7 @@ static void sample_valuator(
     Sin_input_event event;
 
     phg_sin_sample( iws->sin_handle, SIN_VALUATOR, val->num, &event);
-    revt->id.class = PIN_VAL;
+    revt->id.in_class = PIN_VAL;
     revt->data.val = event.data.valuator.value;
 }
 
@@ -1845,7 +1845,7 @@ static void sample_pick(
     Sin_input_event event;
 
     phg_sin_sample( iws->sin_handle, SIN_PICK, pick->num, &event);
-    revt->id.class = PIN_PICK;
+    revt->id.in_class = PIN_PICK;
     revt->data.pik = event.data.pick.evt;
 }
 
@@ -1865,7 +1865,7 @@ static void sample_string(
     Sin_input_event event;
 
     phg_sin_sample( iws->sin_handle, SIN_STRING, str->num, &event);
-    revt->id.class = PIN_STRING;
+    revt->id.in_class = PIN_STRING;
     revt->data.str = event.data.string.evt;
 }
 
@@ -1878,7 +1878,7 @@ static void sample_string(
 
 void phg_ws_inp_sample(
     Ws *ws,
-    Phg_args_idev_class class,
+    Phg_args_idev_class idev_class,
     Pint dev_num,
     Phg_ret *ret
     )
@@ -1891,7 +1891,7 @@ void phg_ws_inp_sample(
     printf("ws_inp: phg_ws_inp_sample\n");
 #endif
 
-    switch (class) {
+    switch (idev_class) {
         case PHG_ARGS_INP_LOC3:
         case PHG_ARGS_INP_LOC:
 	    dev.loc = &iws->devs.locator[dev_num-1];
@@ -1998,13 +1998,13 @@ void phg_ws_inp_repaint(
 
 void phg_ws_inp_inq_dev_state(
     Ws *ws,
-    Phg_args_idev_class class,
+    Phg_args_idev_class idev_class,
     Pint num,
     Phg_ret *ret
     )
 {
     ret->err = 0;
-    switch ( class ) {
+    switch (idev_class) {
 	case PHG_ARGS_INP_LOC3:
 	case PHG_ARGS_INP_LOC: {
 	    Ws_inp_loc	*dev = WS_INP_DEV( ws, locator, num);

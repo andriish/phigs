@@ -162,7 +162,7 @@ typedef struct {
 } Sin_enable_data;
 
 typedef struct {
-   Sin_input_class class;
+   Sin_input_class inp_class;
    Pint            dev_num;
    Sin_enable_data *enable_data;
    Sin_input_mode  mode;
@@ -242,7 +242,7 @@ typedef struct _Sin_input_device {
    Pint            wsid;
    Sin_handle      ws;
    Pint            num;
-   Sin_input_class class;
+   Sin_input_class inp_class;
    Sin_input_mode  mode;
    Pint            pe_type;
    Pint            echo_sw;
@@ -334,11 +334,11 @@ typedef struct {
                       );
 } Sin_desc;
 
-#define SIN_CLASS_INDEX( class) \
-    ((int)(class))
+#define SIN_CLASS_INDEX(_class) \
+    ((int)(_class))
 
-#define SIN_DEV( ws, class, num) \
-    (&(ws)->devices[SIN_CLASS_INDEX(class)][(num)-1])
+#define SIN_DEV(_ws, _class, _num) \
+    (&(_ws)->devices[SIN_CLASS_INDEX(_class)][(_num)-1])
 
 #define SIN_TO_PHIGS_CLASS( _c ) \
     ((_c) == SIN_LOCATOR ? PIN_LOC \
@@ -400,7 +400,7 @@ Sin_handle phg_sin_create(
 
 void phg_sin_init_device(
     Sin_input_ws *iws,
-    Sin_input_class class,
+    Sin_input_class inp_class,
     Pint dev_num,
     Sin_dev_init_data *new_data
     );
@@ -427,7 +427,7 @@ void phg_sin_set_mode(
 
 void phg_sin_sample(
     Sin_input_ws *iws,
-    Sin_input_class class,
+    Sin_input_class inp_class,
     Pint dev_num,
     Sin_input_event *event
     );
@@ -441,7 +441,7 @@ void phg_sin_sample(
 
 void phg_sin_request(
     Sin_input_ws *iws,
-    Sin_input_class class,
+    Sin_input_class inp_class,
     Pint dev_num,
     Sin_enable_data *ed
     );
@@ -468,7 +468,7 @@ void phg_sin_repaint(
 
 void phg_sin_resize_dev(
     Sin_input_ws *ws,
-    Sin_input_class class,
+    Sin_input_class inp_class,
     Pint dev_num,
     Sin_enable_data *ed,
     XRectangle *old_rect,

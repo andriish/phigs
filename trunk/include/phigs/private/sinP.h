@@ -96,7 +96,7 @@
 
 #define SIN_SET_ENABLE_DATA( _dev, _ed) \
     (_dev)->echo_area = (_ed)->echo_area;    \
-    switch ((_dev)->class) { \
+    switch ((_dev)->inp_class) { \
         case SIN_LOCATOR: \
             (_dev)->data.locator.init_pos = (_ed)->data.locator.init_pos;\
             break; \

@@ -348,13 +348,13 @@ typedef struct _Ws {
                    );
    void         (*request_device)(
                    struct _Ws *ws,
-                   Phg_args_idev_class class,
+                   Phg_args_idev_class idev_class,
                    Pint dev_num,
                    Phg_ret *ret
                    );
    void         (*sample_device)(
                    struct _Ws *ws,
-                   Phg_args_idev_class class,
+                   Phg_args_idev_class idev_class,
                    Pint dev_num,
                    Phg_ret *ret
                    );
@@ -365,7 +365,7 @@ typedef struct _Ws {
                    );
    void         (*inq_inp_dev_state)(
                    struct _Ws *ws,
-                   Phg_args_idev_class class,
+                   Phg_args_idev_class idev_class,
                    Pint num,
                    Phg_ret *ret
                    );
