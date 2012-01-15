@@ -1395,7 +1395,7 @@ void psample_pick(
 void pawait_event(
    Pfloat timeout,
    Pint *ws_id,
-   Pin_class *class,
+   Pin_class *dev_class,
    Pint *in_num
    );
 
