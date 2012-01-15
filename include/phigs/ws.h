@@ -408,6 +408,11 @@ typedef struct _Ws {
     ((_dcp)->x = (_dwp)->x, \
      (_dcp)->y = (_wsh)->ws_rect.height - (_dwp)->y)
 
+#define WS_NPC_TO_DC(_wsxf, _npc, _dc) \
+    (_dc)->x = (_npc)->x * (_wsxf)->scale.x + (_wsxf)->offset.x; \
+    (_dc)->y = (_npc)->y * (_wsxf)->scale.y + (_wsxf)->offset.y; \
+    (_dc)->z = (_npc)->z * (_wsxf)->scale.z + (_wsxf)->offset.z;
+
 #define WS_DC_TO_DRWBL2( _wsh, _dcp, _dwp ) \
     ((_dwp)->x = (_dcp)->x, \
      (_dwp)->y = (_wsh)->ws_rect.height - (_dcp)->y)
@@ -419,6 +424,11 @@ typedef struct _Ws {
 #define WS_PT_IN_LIMIT2( lim, pt) \
     (  (pt)->x >= (lim)->x_min && (pt)->x <= (lim)->x_max \
     && (pt)->y >= (lim)->y_min && (pt)->y <= (lim)->y_max)
+
+#define WS_PT_IN_LIMIT( lim, pt) \
+    (  (pt)->x >= (lim)->x_min && (pt)->x <= (lim)->x_max \
+    && (pt)->y >= (lim)->y_min && (pt)->y <= (lim)->y_max \
+    && (pt)->z >= (lim)->z_min && (pt)->z <= (lim)->z_max)
 
 Ws* phg_wsb_open_ws(
     Phg_args_open_ws *args,

@@ -1715,8 +1715,72 @@ int phg_wsb_map_initial_points(
     XPoint *dwbl_pts
     )
 {
-    /* Temporary dummy method */
-    return TRUE;
+    int i;
+    Ppoint3 scratch[20];    /* enough for most cases */
+    Pmatrix3 wc_to_npc;
+    Ppoint3 dc_pt;
+    Ws_view_ref *view_ref;
+    Pview_rep3 *viewrep;
+    Ppoint3 *npc_pts = NULL;
+    Ws_xform *wsxf = &ws->out_ws.model.b.ws_xform;
+    Wsb_output_ws *owsb = &ws->out_ws.model.b;
+
+    /* Transform the initial points to NPC and check that they all fit
+     * in the clip limits of the specified view.  Then transform and map
+     * them to drawable coordinates.
+     */
+    if (*num_pts <= 0) {
+        return FALSE;
+    }
+    if (*num_pts <= sizeof(scratch) / sizeof(scratch[0])) {
+        npc_pts = scratch;
+    }
+    else if (*num_pts > sizeof(scratch) / sizeof(scratch[0])) {
+        npc_pts = (Ppoint3 *) malloc((unsigned) (*num_pts * sizeof(Ppoint3 *)));
+        if (npc_pts == NULL) {
+            *num_pts = 0;
+            ERR_BUF(ws->erh, ERR900);
+            return FALSE;
+        }
+    }
+
+    /* Find current view */
+    for (view_ref = (Ws_view_ref *) LIST_HEAD(&owsb->views);
+         view_ref != NULL;
+         view_ref = (Ws_view_ref *) NODE_NEXT(&view_ref->node)) {
+        if (view_index == view_ref->id) {
+            break;
+        }
+    }
+
+    /* No matching view */
+    if (view_ref == NULL) {
+       *num_pts = 0;
+       return FALSE;
+    }
+    viewrep = view_ref->viewrep;
+    phg_mat_mul(wc_to_npc, viewrep->map_matrix, viewrep->ori_matrix);
+    if (!phg_tranpts3(wc_to_npc, *num_pts, wc_pts, npc_pts)) {
+        *num_pts = 0;
+        return FALSE;
+    }
+
+    for (i = 0; i < *num_pts; i++) {
+        if (!WS_PT_IN_LIMIT(&viewrep->clip_limit, &npc_pts[i])) {
+            *num_pts = 0;
+            break;
+        } else {
+            WS_NPC_TO_DC(wsxf, &npc_pts[i], &dc_pt)
+            WS_DC_TO_DRWBL2(ws, &dc_pt, &dwbl_pts[i]);
+        }
+    }
+
+    if ((npc_pts != NULL) &&
+        (npc_pts != scratch)) {
+        free(npc_pts);
+    }
+
+    return (*num_pts > 0 ? TRUE : FALSE);
 }
 
 /*******************************************************************************
