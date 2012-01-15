@@ -405,25 +405,33 @@ Ws* phg_wsb_open_ws(
 
     wsb_load_funcs( ws );
 
-    /* Store workstation type parameters */
-    dt = &args->type->desc_tbl.phigs_dt;
-    xdt = &args->type->desc_tbl.xwin_dt;
-    xdt->tool.x            = 0;
-    xdt->tool.y            = 0;
-    xdt->tool.width        = (unsigned) dt->dev_coords[0] / 2;
-    xdt->tool.height       = xdt->tool.width;
-    xdt->tool.border_width = 1;
-    strncpy(xdt->tool.label, args->window_name, PHIGS_MAX_NAME_LEN);
-    strncpy(xdt->tool.icon_label, args->icon_name, PHIGS_MAX_NAME_LEN);
+    if (args->conn_type == PHG_ARGS_CONN_OPEN) {
 
-    ws->display = phg_wsx_open_gl_display(NULL, &ret->err);
-    if (ws->display == NULL) {
-       ERR_BUF(ws->erh, ret->err);
-       goto abort;
+        /* Store workstation type parameters */
+        dt = &args->type->desc_tbl.phigs_dt;
+        xdt = &args->type->desc_tbl.xwin_dt;
+        xdt->tool.x            = 0;
+        xdt->tool.y            = 0;
+        xdt->tool.width        = (unsigned) dt->dev_coords[0] / 2;
+        xdt->tool.height       = xdt->tool.width;
+        xdt->tool.border_width = 1;
+        strncpy(xdt->tool.label, args->window_name, PHIGS_MAX_NAME_LEN);
+        strncpy(xdt->tool.icon_label, args->icon_name, PHIGS_MAX_NAME_LEN);
+
+        ws->display = phg_wsx_open_gl_display(NULL, &ret->err);
+        if (ws->display == NULL) {
+            ERR_BUF(ws->erh, ret->err);
+            goto abort;
+        }
+
+        if (!phg_wsx_setup_tool(ws, NULL, args->type)) {
+            goto abort;
+        }
     }
-
-    if (!phg_wsx_setup_tool(ws, NULL, args->type)) {
-       goto abort;
+    else if (args->conn_type == PHG_ARGS_CONN_DRAWABLE) {
+        ws->display     = args->conn_info.display;
+        ws->drawable_id = args->conn_info.drawable_id;
+        ws->glx_context = args->conn_info.glx_context;
     }
 
     if (dt->ws_category == PCAT_OUTIN) {

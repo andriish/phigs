@@ -105,6 +105,36 @@
 #define PHG_DATA_COLR(ELMT) \
    ((Pgcolr *) (((Css_eldata *) (ELMT))->ptr))
 
+#define PHG_IN_RANGE( low, high, val) \
+   ((val) >= (low) && (val) <= (high))
+
+#define PHG_ECHO_AREA_VALID( _ev ) \
+   (   (_ev)->x_min < (_ev)->x_max \
+    && (_ev)->y_min < (_ev)->y_max \
+   )
+
+#define PHG_ECHO_VOLUME_VALID( _ev ) \
+   (   (_ev)->x_min < (_ev)->x_max \
+    && (_ev)->y_min < (_ev)->y_max \
+    && (_ev)->z_min <= (_ev)->z_max \
+   )
+
+#define PHG_ECHO_AREA_IN_RANGE( _ea, _dc ) \
+   (   PHG_IN_RANGE( 0.0, (_dc)[0], (_ea)->x_min) \
+    && PHG_IN_RANGE( 0.0, (_dc)[0], (_ea)->x_max) \
+    && PHG_IN_RANGE( 0.0, (_dc)[1], (_ea)->y_min) \
+    && PHG_IN_RANGE( 0.0, (_dc)[1], (_ea)->y_max) \
+   )
+
+#define PHG_ECHO_VOLUME_IN_RANGE( _ea, _dc ) \
+   (   PHG_IN_RANGE( 0.0, (_dc)[0], (_ea)->x_min) \
+    && PHG_IN_RANGE( 0.0, (_dc)[0], (_ea)->x_max) \
+    && PHG_IN_RANGE( 0.0, (_dc)[1], (_ea)->y_min) \
+    && PHG_IN_RANGE( 0.0, (_dc)[1], (_ea)->y_max) \
+    && PHG_IN_RANGE( 0.0, (_dc)[2], (_ea)->z_min) \
+    && PHG_IN_RANGE( 0.0, (_dc)[2], (_ea)->z_max) \
+   )
+
 /*******************************************************************************
  * phg_get_colr_ind
  *
@@ -118,7 +148,19 @@ void phg_get_colr_ind(
    Pint ind
    );
 
-void phg_traverse(Css_handle css, Struct_handle structp);
+/*******************************************************************************
+ * phg_echo_limits_valid
+ *
+ * DESCR:       Helper function to check if echo volume limits are valid
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_echo_limits_valid(
+   Pint ws_id,
+   Pint fn_id,
+   Plimit3 *e_volume,
+   Wst_phigs_dt *dt
+   );
 
 #endif
 

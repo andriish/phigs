@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <phigs/phg.h>
+#include <phigs/private/phgP.h>
 #include <phigs/private/sinqP.h>
 
 /*******************************************************************************

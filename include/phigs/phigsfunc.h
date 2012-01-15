@@ -232,7 +232,7 @@ void popen_phigs(
 
 void popen_ws(
    Pint ws_id,
-   void *conn_id,
+   Phg_args_conn_info *conn_id,
    Pint ws_type
    );
 

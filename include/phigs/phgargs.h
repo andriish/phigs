@@ -24,6 +24,7 @@
 #include <phigs/util.h>
 #include <phigs/ws_type.h>
 #include <X11/Xlib.h>
+#include <GL/glx.h>
 
 typedef enum {
     PHG_ARGS_LNREP,
@@ -87,6 +88,11 @@ typedef enum {
    PHG_ARGS_FLT_PICK
 } Phg_args_flt_type;
 
+typedef enum {
+   PHG_ARGS_CONN_OPEN,
+   PHG_ARGS_CONN_DRAWABLE
+} Phg_args_conn_type;
+
 typedef struct {
    Pint       el_size;
    Pelem_type el_type;
@@ -100,21 +106,24 @@ typedef struct {
 } Phg_args_change_struct;
 
 typedef struct {
-   XID     drawable_id;
-   Display *display;
-   char    *display_name;
-   Pint    display_name_length;
+   GLXContext glx_context;
+   Drawable   drawable_id;
+   Display    *display;
+   char       *display_name;
+   Pint       display_name_length;
 } Phg_args_conn_info;
 
 typedef struct _Phg_args_open_ws {
-   Pint wsid;
-   Wst  *type;
-   Err_handle erh;
-   Css_handle cssh;
-   size_t memory;
-   Input_q_handle input_q;
-   char *window_name;
-   char *icon_name;
+   Pint               wsid;
+   Phg_args_conn_type conn_type;
+   Phg_args_conn_info conn_info;
+   Wst                *type;
+   Err_handle         erh;
+   Css_handle         cssh;
+   size_t             memory;
+   Input_q_handle     input_q;
+   char               *window_name;
+   char               *icon_name;
 } Phg_args_open_ws;
 
 typedef struct {
