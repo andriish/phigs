@@ -375,6 +375,18 @@ void ppost_struct(
    );
 
 /*******************************************************************************
+ * predraw_all_structs
+ *
+ * DESCR:       Redraw all structures on workstation
+ * RETURNS:     N/A
+ */
+
+void predraw_all_structs(
+   Pint ws_id,
+   Pctrl_flag ctrl_flag
+   );
+
+/*******************************************************************************
  * pset_colr_rep
  *
  * DESCR:       Set workstation colour representation

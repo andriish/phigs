@@ -180,8 +180,8 @@ int main(int argc, char *argv[])
       switch(event.type) {
          case Expose:
             while (XCheckTypedEvent(PHG_WSID(0)->display, Expose, &event));
-            (*PHG_WSID(0)->redraw_all)(PHG_WSID(0), PFLAG_ALWAYS);
-            (*PHG_WSID(1)->redraw_all)(PHG_WSID(1), PFLAG_ALWAYS);
+            predraw_all_structs(0, PFLAG_ALWAYS);
+            predraw_all_structs(1, PFLAG_ALWAYS);
          break;
 
          case KeyPress:

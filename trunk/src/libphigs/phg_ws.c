@@ -526,3 +526,64 @@ void ppost_struct(
    }
 }
 
+/*******************************************************************************
+ * phg_ws_open
+ *
+ * DESCR:	Helper function to get workstation information
+ * RETURNS:	N/A
+ */
+
+Psl_ws_info* phg_ws_open(
+   Pint ws_id,
+   Pint fn_id
+   )
+{
+   Psl_ws_info *wsinfo = NULL;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, fn_id);
+
+   if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      ERR_REPORT(PHG_ERH, ERR3);
+   }
+   else {
+      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (wsinfo == NULL) {
+         ERR_REPORT(PHG_ERH, ERR54);
+      }
+   }
+
+   return wsinfo;
+}
+
+/*******************************************************************************
+ * predraw_all_structs
+ *
+ * DESCR:	Redraw all structures on workstation
+ * RETURNS:	N/A
+ */
+
+void predraw_all_structs(
+   Pint ws_id,
+   Pctrl_flag ctrl_flag
+   )
+{
+   Psl_ws_info *wsinfo;
+   Ws_handle wsh;
+
+   wsinfo = phg_ws_open(ws_id, Pfn_redraw_all_structs);
+   if (wsinfo != NULL) {
+      switch (wsinfo->wstype->desc_tbl.phigs_dt.ws_category) {
+         case PCAT_OUTIN:
+         case PCAT_OUT:
+         case PCAT_MO:
+            wsh = PHG_WSID(ws_id);
+            (*wsh->redraw_all)(wsh, ctrl_flag );
+            break;
+
+         default:
+            ERR_REPORT(PHG_ERH, ERR59);
+            break;
+      }
+   }
+}
+

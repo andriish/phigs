@@ -219,7 +219,7 @@ int main(void)
          phg_sin_evt_dispatch(PHG_EVT_TABLE, wsh->display, &event);
          if (event.type == Expose) {
             while (XCheckTypedEvent(wsh->display, Expose, &event));
-            (*wsh->redraw_all)(wsh, PFLAG_ALWAYS);
+            predraw_all_structs(WS_0, PFLAG_ALWAYS);
          }
          //sample_locator(WS_0);
          locator_event();

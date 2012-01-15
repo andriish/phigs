@@ -21,6 +21,10 @@
 #ifndef _phg_h
 #define _phg_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <phigs/phigs.h>
 #include <phigs/phgtype.h>
 #include <phigs/err.h>
@@ -65,6 +69,10 @@ extern Phg_handle phg;
 #define PHG_WS_LIST (phg->ws_list)
 #define PHG_WSID(n) (phg->ws_list[(n)])
 #define PHG_SCRATCH (phg->scratch)
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif
 
