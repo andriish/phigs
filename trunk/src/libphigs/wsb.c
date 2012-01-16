@@ -1408,7 +1408,7 @@ static int phg_wsb_add_view(
     )
 {
     int status;
-    Ws_view_ref *vref;
+    Ws_view_ref *vref, *dupref;
     Ws_output_ws  *ows = &ws->out_ws;
     Wsb_output_ws *owsb = &ows->model.b;
 
@@ -1418,6 +1418,13 @@ static int phg_wsb_add_view(
         status = FALSE;
     }
     else {
+        /* Remove duplicated views */
+        dupref = phg_wsb_find_view(&owsb->pending_views, id);
+        if (dupref != NULL) {
+            list_remove(&owsb->pending_views, &dupref->node);
+            free(dupref);
+        }
+
         vref->id = id;
         vref->priority = priority;
         vref->viewrep = (Pview_rep3 *) &vref[1];
