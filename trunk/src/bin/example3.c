@@ -322,28 +322,38 @@ int main(void)
    printf("Output window %x\n", (unsigned) wsh->drawable_id);
    printf("Input  window %x\n", (unsigned) wsh->input_overlay_window);
 
-   //pset_loc_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
+#if 0
+   pset_loc_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
+#endif
    pset_loc_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
-   //pset_stroke_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   //pset_stroke_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
-   //pset_pick_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   //pset_pick_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
+#if 0
+   pset_stroke_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
+   pset_stroke_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
+   pset_pick_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
+   pset_pick_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
+#endif
 
    if (wsh != NULL) {
       while (1) {
          XNextEvent(wsh->display, &event);
-         //print_event(&event);
+#if 0
+         print_event(&event);
+#endif
          phg_sin_evt_dispatch(PHG_EVT_TABLE, wsh->display, &event);
          if (event.type == Expose) {
             while (XCheckTypedEvent(wsh->display, Expose, &event));
             predraw_all_structs(WS_MAIN, PFLAG_ALWAYS);
          }
-         //sample_locator(WS_0);
+#if 0
+         sample_locator(WS_0);
+#endif
          locator_event();
-         //sample_stroke(WS_0);
-         //stroke_event();
-         //sample_pick(WS_0);
-         //pick_event();
+#if 0
+         sample_stroke(WS_0);
+         stroke_event();
+         sample_pick(WS_0);
+         pick_event();
+#endif
       }
    }
 
