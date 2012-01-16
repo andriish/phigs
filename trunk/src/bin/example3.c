@@ -20,25 +20,150 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 #include <phigs/phg.h>
 
-#define WS_0                   0
-#define STRUCT_0               0
-#define WIN_X0                 0.0
-#define WIN_X1                 1.0
-#define WIN_Y0                 0.0
-#define WIN_Y1                 1.0
+#define STRUCT_OBJECT  0
+#define STRUCT_SCENE   1
+#define STRUCT_MAIN    2
 
-Ppoint quad_pts[4] = {
-   {0.0, 0.0},
-   {1.0, 0.0},
-   {1.0, 1.0},
-   {0.0, 1.0}
+#define WS_MAIN        0
+
+#define WIDTH          0.5
+#define HEIGHT         0.5
+#define SPACE          0.6
+#define DEPTH         -0.2
+#define LOW            0.2
+
+#define FILL_STYLE     PSTYLE_SOLID
+#define FILL_STYLE_IND 4
+#define EDGE_WIDTH     2.0
+
+#define WIN_X0         0.0
+#define WIN_X1         1.0
+#define WIN_Y0         0.0
+#define WIN_Y1         1.0
+
+Ppoint3 pts_quad[] = {
+   {0.0, 0.0, 0.0},
+   {WIDTH, 0.0, 0.0},
+   {WIDTH, HEIGHT, 0.0},
+   {0.0, HEIGHT, 0.0}
 };
-Ppoint_list quad = {4, quad_pts};
+
+Ppoint_list3 plist_quad = {
+   4, pts_quad
+};
+
+Ppoint pts_vline[] = {
+   {0.0, 0.4},
+   {1.0, 0.4}
+};
+
+Ppoint_list plist_vline ={
+   2, pts_vline
+};
+
+Ppoint pts_hline[] = {
+   {0.4, 0.0},
+   {0.4, 1.0}
+};
+
+Ppoint_list plist_hline ={
+   2, pts_hline
+};
+
+Pint errnum;
+Pvec3 tvec3;
+Pmatrix3 tran3;
+Pmatrix3 rot3;
+Pcolr_rep col_rep;
+Pgcolr dark, medium, light, white, red;
 Plimit win = {WIN_X0, WIN_X1, WIN_Y0, WIN_Y1};
-Pgcolr blue;
+
+void init_scene(void)
+{
+   dark.type = PMODEL_RGB;
+   dark.val.general.x = 0.0;
+   dark.val.general.y = 0.25;
+   dark.val.general.z = 0.25;
+
+   medium.type = PMODEL_RGB;
+   medium.val.general.x = 0.0;
+   medium.val.general.y = 0.5;
+   medium.val.general.z = 0.5;
+
+   light.type = PMODEL_RGB;
+   light.val.general.x = 0.0;
+   light.val.general.y = 0.5;
+   light.val.general.z = 0.5;
+
+   white.type = PMODEL_RGB;
+   white.val.general.x = 1.0;
+   white.val.general.y = 1.0;
+   white.val.general.z = 1.0;
+
+   red.type = PMODEL_RGB;
+   red.val.general.x = 1.0;
+   red.val.general.y = 0.0;
+   red.val.general.z = 0.0;
+
+   popen_struct(STRUCT_OBJECT);
+   pfill_area3(&plist_quad);
+   ppolymarker3(&plist_quad);
+   pclose_struct();
+
+   tvec3.delta_x = 0.0;
+   tvec3.delta_y = 0.0;
+   tvec3.delta_z = DEPTH;
+   ptranslate3(&tvec3, &errnum, tran3);
+   protate_x(-3.14 / 4.0, &errnum, rot3);
+
+   popen_struct(STRUCT_SCENE);
+   pset_edge_flag(PEDGE_ON);
+   pset_edge_colr(&white);
+   pset_edgewidth(EDGE_WIDTH);
+   pset_edgetype(PLINE_SOLID);
+   pset_int_colr(&dark);
+   pset_int_style(FILL_STYLE);
+   pset_int_style_ind(FILL_STYLE_IND);
+   pset_marker_type(PMARKER_CROSS);
+   pset_marker_size(0.1);
+   pset_marker_colr(&red);
+   pset_local_tran3(tran3, PTYPE_REPLACE);
+   pexec_struct(0);
+   tvec3.delta_z += SPACE;
+   ptranslate3(&tvec3, &errnum, tran3);
+   pset_local_tran3(rot3, PTYPE_REPLACE);
+   pset_local_tran3(tran3, PTYPE_POSTCONCAT);
+   pset_int_colr(&medium);
+   pexec_struct(0);
+   tvec3.delta_z += SPACE;
+   ptranslate3(&tvec3, &errnum, tran3);
+   pset_local_tran3(rot3, PTYPE_REPLACE);
+   pset_local_tran3(rot3, PTYPE_POSTCONCAT);
+   plabel(10);
+   pset_local_tran3(tran3, PTYPE_POSTCONCAT);
+   pset_int_colr(&light);
+   plabel(20);
+   pexec_struct(0);
+   plabel(30);
+   pclose_struct();
+
+   popen_struct(STRUCT_MAIN);
+   ppolyline(&plist_vline);
+   ppolyline(&plist_hline);
+   pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
+   pset_view_ind(1);
+   pexec_struct(STRUCT_SCENE);
+   pset_view_ind(2);
+   pexec_struct(STRUCT_SCENE);
+   pset_view_ind(3);
+   pexec_struct(STRUCT_SCENE);
+   pset_view_ind(4);
+   pexec_struct(STRUCT_SCENE);
+   pclose_struct();
+}
 
 void print_event(XEvent *event)
 {
@@ -186,31 +311,23 @@ int main(void)
    XEvent event;
 
    popen_phigs(NULL, 0);
-   popen_ws(WS_0, NULL, PWST_OUTIN_TRUE_DB);
-   pset_ws_win(WS_0, &win);
+   init_scene();
+   popen_ws(WS_MAIN, NULL, PWST_OUTIN_TRUE_DB);
+   pset_ws_win(WS_MAIN, &win);
+   pset_hlhsr_mode(WS_MAIN, PHIGS_HLHSR_MODE_ZBUFF);
+   pset_view_tran_in_pri(WS_MAIN, 0, 4, PPRI_LOWER);
+   ppost_struct(WS_MAIN, STRUCT_MAIN, 0);
 
-   wsh = PHG_WSID(WS_0);
+   wsh = PHG_WSID(WS_MAIN);
    printf("Output window %x\n", (unsigned) wsh->drawable_id);
    printf("Input  window %x\n", (unsigned) wsh->input_overlay_window);
 
-   blue.type = PMODEL_RGB;
-   blue.val.general.x = 0.0;
-   blue.val.general.y = 0.0;
-   blue.val.general.z = 1.0;
-
-   popen_struct(STRUCT_0);
-   pset_int_colr(&blue);
-   pfill_area(&quad);
-   pclose_struct();
-
-   ppost_struct(WS_0, STRUCT_0, 0);
-
-   //pset_loc_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   pset_loc_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
-   //pset_stroke_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   //pset_stroke_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
-   //pset_pick_mode(WS_0, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   //pset_pick_mode(WS_0, 1, POP_EVENT, PSWITCH_NO_ECHO);
+   //pset_loc_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
+   pset_loc_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
+   //pset_stroke_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
+   //pset_stroke_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
+   //pset_pick_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
+   //pset_pick_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
 
    if (wsh != NULL) {
       while (1) {
@@ -219,7 +336,7 @@ int main(void)
          phg_sin_evt_dispatch(PHG_EVT_TABLE, wsh->display, &event);
          if (event.type == Expose) {
             while (XCheckTypedEvent(wsh->display, Expose, &event));
-            predraw_all_structs(WS_0, PFLAG_ALWAYS);
+            predraw_all_structs(WS_MAIN, PFLAG_ALWAYS);
          }
          //sample_locator(WS_0);
          locator_event();

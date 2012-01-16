@@ -109,6 +109,7 @@ static void wsb_load_funcs(
     ws->inq_representation = phg_wsb_inq_rep;
     ws->inq_disp_update_state = phg_wsb_inq_disp_update_state;
     ws->inq_hlhsr_mode = phg_wsb_inq_hlhsr_mode;
+    ws->set_view_input_priority = phg_wsb_set_view_input_priority;
     ws->map_initial_points = phg_wsb_map_initial_points;
     ws->resolve_locator = phg_wsb_resolve_locator;
     ws->point_in_viewport = phg_wsb_point_in_viewport;
@@ -554,7 +555,7 @@ void phg_wsb_redraw_all(
     ws->out_ws.model.b.vis_rep = PVISUAL_ST_CORRECT;
 }
 
-static Ws_view_ref* phg_wsb_remdup_view(
+static Ws_view_ref* phg_wsb_find_view(
     List *list,
     Pint id
     )
@@ -569,13 +570,6 @@ static Ws_view_ref* phg_wsb_remdup_view(
             dup = vref;
             break;
         }
-    }
-
-    if (dup != NULL) {
-#ifdef DEBUG
-       printf("wsb: Found duplicate view: %d\n", vref->id);
-#endif
-       list_remove(list, &dup->node);
     }
 
     return dup;
@@ -630,8 +624,9 @@ void phg_wsb_make_requested_current(
                   vref->id, vref->priority);
 #endif
            /* Remove duplicated views */
-           dupref = phg_wsb_remdup_view(&owsb->views, vref->id);
+           dupref = phg_wsb_find_view(&owsb->views, vref->id);
            if (dupref != NULL) {
+              list_remove(&owsb->views, &dupref->node);
               free(dupref);
            }
 
@@ -1677,6 +1672,31 @@ void phg_wsb_inq_rep(
 }
 
 /*******************************************************************************
+ * phg_wsb_set_view_input_priority
+ *
+ * DESCR:       Set priority of view relative another view
+ * RETURNS:     N/A
+ */
+
+void phg_wsb_set_view_input_priority(
+   Ws *ws,
+   Pint index,
+   Pint ref_index,
+   Prel_pri priority
+   )
+{
+    NodePrio prio;
+    Wsb_output_ws *owsb = &ws->out_ws.model.b;
+    Ws_view_ref *view = phg_wsb_find_view(&owsb->views, index);
+    Ws_view_ref *ref = phg_wsb_find_view(&owsb->views, ref_index);
+    prio = (priority == PPRI_LOWER) ? NODE_PRIO_LOWER : NODE_PRIO_HIGHER;
+
+    if ((ref != NULL) && (view != NULL)) {
+       list_requeue(&owsb->views, &view->node, &ref->node, prio);
+    }
+}
+
+/*******************************************************************************
  * update_inv_view_xform
  *
  * DESCR:       Update inverse transform helper function
@@ -1833,7 +1853,6 @@ int phg_wsb_resolve_locator(
 
              viewrep = view_ref->viewrep;
 #ifdef DEBUG
-             printf("%x\n", (unsigned) viewrep);
              printf("Check against #%-2d: (%f, %f, %f) (%f %f %f)\n",
                     view_ref->id,
                     viewrep->clip_limit.x_min,
