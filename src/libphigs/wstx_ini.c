@@ -122,10 +122,12 @@ static void init_views(
 
     phg_mat_identity( view[0].ori_matrix );
     phg_mat_identity( view[0].map_matrix );
-    view[0].clip_limit.x_min = view[0].clip_limit.y_min =
-	view[0].clip_limit.z_min = 0.0;
-    view[0].clip_limit.x_max = view[0].clip_limit.y_max =
-	view[0].clip_limit.z_max = 1.0;
+    view[0].clip_limit.x_min = 0.0;
+    view[0].clip_limit.x_max = 1.0;
+    view[0].clip_limit.y_min = 0.0;
+    view[0].clip_limit.y_max = 1.0;
+    view[0].clip_limit.z_min = 0.0;
+    view[0].clip_limit.z_max = 1.0;
     view[0].xy_clip = view[0].back_clip = view[0].front_clip = PIND_CLIP;
     for ( i = 1; i < WST_MIN_PREDEF_VIEW_REPS; i++ ) {
         memcpy(&view[i], &view[0], sizeof(Pview_rep3));
@@ -142,6 +144,12 @@ static void init_views(
     view[1].map_matrix[0][3] = 0.1;
     view[1].map_matrix[1][1] = 0.3;
     view[1].map_matrix[1][3] = 0.1;
+    view[1].clip_limit.x_min = 0.1;
+    view[1].clip_limit.x_max = 0.4;
+    view[1].clip_limit.y_min = 0.1;
+    view[1].clip_limit.y_max = 0.4;
+    view[1].clip_limit.z_min = 0.0;
+    view[1].clip_limit.z_max = 1.0;
 
     /* View 2: top view in upper left corner of ws window.
      * vrp = (0,0,0), vup = <0,0,-1>, vpn = <0,1,0>, prp = (0.5,-0.5,5.0)
@@ -157,6 +165,12 @@ static void init_views(
     view[2].ori_matrix[1][2] = -1.0;
     view[2].ori_matrix[2][1] =  1.0;
     view[2].ori_matrix[2][2] =  0.0;
+    view[2].clip_limit.x_min = 0.1;
+    view[2].clip_limit.x_max = 0.4;
+    view[2].clip_limit.y_min = 0.6;
+    view[2].clip_limit.y_max = 0.9;
+    view[2].clip_limit.z_min = 0.0;
+    view[2].clip_limit.z_max = 1.0;
 
     /* View 3: right side view in lower right corner of ws window.
      * vrp = (0,0,0), vup = <0,1,0>, vpn = <1,0,0>, prp = (-0.5,0.5,5.0)
@@ -172,6 +186,12 @@ static void init_views(
     view[3].ori_matrix[0][2] = -1.0;
     view[3].ori_matrix[2][0] =  1.0;
     view[3].ori_matrix[2][2] =  0.0;
+    view[3].clip_limit.x_min = 0.6;
+    view[3].clip_limit.x_max = 0.9;
+    view[3].clip_limit.y_min = 0.1;
+    view[3].clip_limit.y_max = 0.4;
+    view[3].clip_limit.z_min = 0.0;
+    view[3].clip_limit.z_max = 1.0;
 
     /* View 4: off-axis view in upper right corner of ws window.
      * vrp = (0,0,0), vup = <0,1,0>, vpn = <1,1,1>, prp = (0,0,5)
@@ -192,6 +212,12 @@ static void init_views(
     view[4].ori_matrix[1][0] =
         view[4].ori_matrix[1][2] = -1.0/(sqrt(3.0) * sqrt(2.0));
     view[4].ori_matrix[1][1] = -2.0 * view[4].ori_matrix[1][0];
+    view[4].clip_limit.x_min = 0.6;
+    view[4].clip_limit.x_max = 0.9;
+    view[4].clip_limit.y_min = 0.6;
+    view[4].clip_limit.y_max = 0.9;
+    view[4].clip_limit.z_min = 0.0;
+    view[4].clip_limit.z_max = 1.0;
 
     /* View 5: off-axis perspective view in whole of ws window.
      * vrp = (0,0,0), vup = <0,1,0>, vpn = <1,1,1>, prp = (0,0,20)
@@ -210,6 +236,12 @@ static void init_views(
     view[5].map_matrix[0][3] = 0.5;
     view[5].map_matrix[1][3] = 0.5;
     view[5].map_matrix[3][2] = -1.0/20.0;
+    view[5].clip_limit.x_min = 0.0;
+    view[5].clip_limit.x_max = 1.0;
+    view[5].clip_limit.y_min = 0.0;
+    view[5].clip_limit.y_max = 1.0;
+    view[5].clip_limit.z_min = 0.0;
+    view[5].clip_limit.z_max = 1.0;
 }
 
 /*******************************************************************************

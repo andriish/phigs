@@ -387,6 +387,20 @@ void predraw_all_structs(
    );
 
 /*******************************************************************************
+ * pset_view_tran_in_pri
+ *
+ * DESCR:       Set view input priority
+ * RETURNS:     N/A
+ */
+
+void pset_view_tran_in_pri(
+   Pint ws_id,
+   Pint view_ind,
+   Pint ref_view_ind,
+   Prel_pri rel_pri
+   );
+
+/*******************************************************************************
  * pset_colr_rep
  *
  * DESCR:       Set workstation colour representation

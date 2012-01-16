@@ -289,6 +289,12 @@ typedef struct _Ws {
                    Phg_args_rep_type rep_type,
                    Phg_ret *ret
                    );
+   void         (*set_view_input_priority)(
+                   struct _Ws *ws,
+                   Pint index,
+                   Pint ref_index,
+                   Prel_pri priority
+                   );
    int          (*map_initial_points)(
                    struct _Ws *ws,
                    Pint view_index,
@@ -606,6 +612,20 @@ void phg_wsb_inq_rep(
     Phg_args_rep_type rep_type,
     Phg_ret *ret
     );
+
+/*******************************************************************************
+ * phg_wsb_set_view_input_priority
+ *
+ * DESCR:       Set priority of view relative another view
+ * RETURNS:     N/A
+ */
+
+void phg_wsb_set_view_input_priority(
+   Ws *ws,
+   Pint index,
+   Pint ref_index,
+   Prel_pri priority
+   );
 
 /*******************************************************************************
  * phg_wsb_map_initial_points

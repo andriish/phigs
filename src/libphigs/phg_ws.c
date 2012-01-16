@@ -587,3 +587,38 @@ void predraw_all_structs(
    }
 }
 
+/*******************************************************************************
+ * pset_view_tran_in_pri
+ *
+ * DESCR:	Set view input priority
+ * RETURNS:	N/A
+ */
+
+void pset_view_tran_in_pri(
+   Pint ws_id,
+   Pint view_ind,
+   Pint ref_view_ind,
+   Prel_pri rel_pri
+   )
+{
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+   Ws_handle wsh;
+
+   wsinfo = phg_ws_open(ws_id, Pfn_set_view_tran_in_pri);
+   if (wsinfo != NULL) {
+      dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+      if (dt->ws_category == PCAT_MI) {
+         ERR_REPORT(PHG_ERH, ERR57);
+      }
+      else if ((view_ind < 0) || (ref_view_ind < 0)) {
+         ERR_REPORT(PHG_ERH, ERR114);
+      }
+      /* TODO: Check maximum view index */
+      else if (ref_view_ind != view_ind) {
+         wsh = PHG_WSID(ws_id);
+         (*wsh->set_view_input_priority)(wsh, view_ind, ref_view_ind, rel_pri);
+      }
+   }
+}
+
