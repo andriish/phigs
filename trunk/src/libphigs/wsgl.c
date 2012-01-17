@@ -265,6 +265,14 @@ void wsgl_clear(
 
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   if (ws->has_double_buffer)
+   {
+      glXSwapBuffers(ws->display, ws->drawable_id);
+   }
+   else
+   {
+      glFlush();
+   }
 }
 
 /*******************************************************************************
@@ -318,7 +326,6 @@ void wsgl_flush(
                 ws->ws_rect.width,
                 ws->ws_rect.height);
          printf("Type: %x\n", (unsigned) ws->type);
-         printf("Resize: %x\n", (unsigned) ws->type->resize_window);
 #endif
 
          XResizeWindow(ws->display,

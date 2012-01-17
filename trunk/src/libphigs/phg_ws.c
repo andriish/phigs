@@ -32,6 +32,35 @@ static char default_window_name[] = "Open PHIGS Workstation";
 static char default_icon_name[]   = "Open PHIGS";
 
 /*******************************************************************************
+ * phg_ws_open
+ *
+ * DESCR:	Helper function to get workstation information
+ * RETURNS:	N/A
+ */
+
+Psl_ws_info* phg_ws_open(
+   Pint ws_id,
+   Pint fn_id
+   )
+{
+   Psl_ws_info *wsinfo = NULL;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, fn_id);
+
+   if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      ERR_REPORT(PHG_ERH, ERR3);
+   }
+   else {
+      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (wsinfo == NULL) {
+         ERR_REPORT(PHG_ERH, ERR54);
+      }
+   }
+
+   return wsinfo;
+}
+
+/*******************************************************************************
  * popen_ws
  *
  * DESCR:	Open workstation
@@ -502,10 +531,40 @@ void ppost_struct(
    )
 {
    int status;
-   Struct_handle structp;
+   Ws_handle wsh;
    Css_handle cssh;
+   Struct_handle structp;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_post_struct);
+   if (phg_ws_open(ws_id, Pfn_redraw_all_structs) != NULL) {
+      wsh = PHG_WSID(ws_id);
+      cssh = wsh->out_ws.model.b.cssh;
+      structp = CSS_STRUCT_EXISTS(cssh, struct_id);
+      if (structp == NULL) {
+         ERR_REPORT(PHG_ERH, ERR201);
+      }
+      else {
+         (*wsh->post)(wsh, structp, priority, 1);
+         phg_css_post(cssh, struct_id, wsh, &status);
+      }
+   }
+}
+
+/*******************************************************************************
+ * punpost_struct
+ *
+ * DESCR:       Remove posted structure from workstation
+ * RETURNS:     N/A
+ */
+
+void punpost_struct(
+   Pint ws_id,
+   Pint struct_id
+   )
+{
+   Ws_handle wsh;
+   Struct_handle structp;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_unpost_struct);
 
    if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
       ERR_REPORT(PHG_ERH, ERR3);
@@ -514,45 +573,39 @@ void ppost_struct(
       ERR_REPORT(PHG_ERH, ERR54);
    }
    else {
-      cssh = PHG_WSID(ws_id)->out_ws.model.b.cssh;
-      structp = CSS_STRUCT_EXISTS(cssh, struct_id);
-      if (structp == NULL) {
-         ERR_REPORT(PHG_ERH, ERR201);
-      }
-      else {
-         (*PHG_WSID(ws_id)->post) (PHG_WSID(ws_id), structp, priority, 1);
-         phg_css_post(cssh, struct_id, PHG_WSID(ws_id), &status);
+      wsh = PHG_WSID(ws_id);
+      structp = phg_css_unpost(wsh->out_ws.model.b.cssh, struct_id, wsh);
+      if (structp != NULL) {
+         (*wsh->unpost)(wsh, structp);
       }
    }
 }
 
 /*******************************************************************************
- * phg_ws_open
+ * punpost_all_structs
  *
- * DESCR:	Helper function to get workstation information
- * RETURNS:	N/A
+ * DESCR:       Remove all posted structures from workstation
+ * RETURNS:     N/A
  */
 
-Psl_ws_info* phg_ws_open(
-   Pint ws_id,
-   Pint fn_id
+void punpost_all_structs(
+   Pint ws_id
    )
 {
-   Psl_ws_info *wsinfo = NULL;
+   Ws_handle wsh;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, fn_id);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_unpost_all_structs);
 
    if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
       ERR_REPORT(PHG_ERH, ERR3);
    }
-   else {
-      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
-      if (wsinfo == NULL) {
-         ERR_REPORT(PHG_ERH, ERR54);
-      }
+   else if (!phg_psl_inq_ws_open(PHG_PSL, ws_id)) {
+      ERR_REPORT(PHG_ERH, ERR54);
    }
-
-   return wsinfo;
+   else {
+      wsh = PHG_WSID(ws_id);
+      (*wsh->unpost_all)(wsh);
+   }
 }
 
 /*******************************************************************************
@@ -577,9 +630,43 @@ void predraw_all_structs(
          case PCAT_OUT:
          case PCAT_MO:
             wsh = PHG_WSID(ws_id);
-            (*wsh->redraw_all)(wsh, ctrl_flag );
+            (*wsh->redraw_all)(wsh, ctrl_flag);
             break;
 
+         default:
+            ERR_REPORT(PHG_ERH, ERR59);
+            break;
+      }
+   }
+}
+
+/*******************************************************************************
+ * pset_disp_upd_st
+ *
+ * DESCR:	Set workstation update state
+ * RETURNS:	N/A
+ */
+
+void pset_disp_upd_st(
+   Pint ws_id,
+   Pdefer_mode def_mode,
+   Pmod_mode mod_mode
+   )
+{
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+   Ws_handle wsh;
+
+   wsinfo = phg_ws_open(ws_id, Pfn_set_disp_upd_st);
+   if (wsinfo != NULL) {
+      dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+      switch(dt->ws_category) {
+         case PCAT_OUTIN:
+         case PCAT_OUT:
+         case PCAT_MO:
+            wsh = PHG_WSID(ws_id);
+            (*wsh->set_disp_update_state)(wsh, def_mode, mod_mode);
+            break;
          default:
             ERR_REPORT(PHG_ERH, ERR59);
             break;
