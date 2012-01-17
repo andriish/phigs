@@ -189,8 +189,10 @@ int main(int argc, char *argv[])
    col_rep.rgb.green = 0.0;
    col_rep.rgb.blue = 0.0;
    pset_colr_rep(0, 4, &col_rep);
+   pset_disp_upd_st(0, PDEFER_BNIL, PMODE_UQUM);
 
    ppost_struct(0, 1, 0);
+   pupd_ws(0, PFLAG_PERFORM);
 
    XSelectInput(PHG_WSID(0)->display,
                 PHG_WSID(0)->drawable_id,
@@ -208,12 +210,15 @@ int main(int argc, char *argv[])
             ks = XLookupKeysym((XKeyEvent *) &event, 0);
             if (ks == XK_Down) {
                punpost_struct(0, 1);
+               pupd_ws(0, PFLAG_PERFORM);
             }
             else if (ks == XK_Up) {
                ppost_struct(0, 1, 0);
+               pupd_ws(0, PFLAG_PERFORM);
             }
             else if (ks == XK_Left) {
                punpost_all_structs(0);
+               pupd_ws(0, PFLAG_PERFORM);
             }
             else {
                popen_struct(1);

@@ -535,16 +535,12 @@ void ppost_struct(
    Css_handle cssh;
    Struct_handle structp;
 
-   if (phg_ws_open(ws_id, Pfn_redraw_all_structs) != NULL) {
+   if (phg_ws_open(ws_id, Pfn_post_struct) != NULL) {
       wsh = PHG_WSID(ws_id);
       cssh = wsh->out_ws.model.b.cssh;
-      structp = CSS_STRUCT_EXISTS(cssh, struct_id);
-      if (structp == NULL) {
-         ERR_REPORT(PHG_ERH, ERR201);
-      }
-      else {
-         (*wsh->post)(wsh, structp, priority, 1);
-         phg_css_post(cssh, struct_id, wsh, &status);
+      structp = phg_css_post(cssh, struct_id, wsh, &status);
+      if (structp != NULL) {
+         (*wsh->post)(wsh, structp, priority, !status);
       }
    }
 }
@@ -631,6 +627,38 @@ void predraw_all_structs(
          case PCAT_MO:
             wsh = PHG_WSID(ws_id);
             (*wsh->redraw_all)(wsh, ctrl_flag);
+            break;
+
+         default:
+            ERR_REPORT(PHG_ERH, ERR59);
+            break;
+      }
+   }
+}
+
+/*******************************************************************************
+ * pupd_ws
+ *
+ * DESCR:	Set workstation update state
+ * RETURNS:	N/A
+ */
+
+void pupd_ws(
+   Pint ws_id,
+   Pregen_flag regen_flag
+   )
+{
+   Psl_ws_info *wsinfo;
+   Ws_handle wsh;
+
+   wsinfo = phg_ws_open(ws_id, Pfn_upd_ws);
+   if (wsinfo != NULL) {
+      switch (wsinfo->wstype->desc_tbl.phigs_dt.ws_category) {
+         case PCAT_OUTIN:
+         case PCAT_OUT:
+         case PCAT_MO:
+            wsh = PHG_WSID(ws_id);
+            (*wsh->update)(wsh, regen_flag);
             break;
 
          default:

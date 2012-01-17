@@ -410,6 +410,18 @@ void predraw_all_structs(
    );
 
 /*******************************************************************************
+ * pupd_ws
+ *
+ * DESCR:       Set workstation update state
+ * RETURNS:     N/A
+ */
+
+void pupd_ws(
+   Pint ws_id,
+   Pregen_flag regen_flag
+   );
+
+/*******************************************************************************
  * pset_disp_upd_st
  *
  * DESCR:       Set workstation update state

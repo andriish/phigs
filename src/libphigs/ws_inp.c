@@ -68,6 +68,7 @@ SOFTWARE.
 #include <string.h>
 #include <phigs/phg.h>
 #include <phigs/ws.h>
+#include <phigs/private/wsxP.h>
 #include <phigs/ws_inp.h>
 #include <phigs/phg_dt.h>
 #include <phigs/private/evtP.h>
@@ -910,9 +911,7 @@ void phg_ws_inp_init_device(
     printf("ws_inp: phg_ws_inp_init_device\n");
 #endif
 
-#ifdef TODO
     phg_wsx_update_ws_rect( ws );
-#endif
     switch (args->idev_class) {
         case PHG_ARGS_INP_LOC3:
         case PHG_ARGS_INP_LOC:
@@ -1574,10 +1573,7 @@ void phg_ws_inp_set_mode(
     printf("\tClass: %d\n", args->class);
 #endif
 
-#ifdef TODO
     phg_wsx_update_ws_rect( ws );
-#endif
-
     switch (args->idev_class) {
         case PHG_ARGS_INP_LOC:
 	    md.inp_class = SIN_LOCATOR;
@@ -1682,9 +1678,7 @@ void phg_ws_inp_request(
     int okay = TRUE;
 
     ret->err = -1;
-#ifdef TODO
     phg_wsx_update_ws_rect( ws );
-#endif
     switch (idev_class) {
         case PHG_ARGS_INP_LOC3:
         case PHG_ARGS_INP_LOC:
