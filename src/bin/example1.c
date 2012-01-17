@@ -84,6 +84,7 @@ void struct_stat(void)
 int main(int argc, char *argv[])
 {
    XEvent event;
+   KeySym ks;
    Plimit3 vp, win;
 
    if (argc > 1) {
@@ -201,46 +202,57 @@ int main(int argc, char *argv[])
          case Expose:
             while (XCheckTypedEvent(PHG_WSID(0)->display, Expose, &event));
             predraw_all_structs(0, PFLAG_ALWAYS);
-         break;
+            break;
 
          case KeyPress:
-            popen_struct(1);
-            tvec3.delta_y = -LOW;
-            ptranslate3(&tvec3, &errnum, tran3);
-            pset_elem_ptr(0);
-            pset_elem_ptr_label(10);
-            struct_stat();
-            pset_edit_mode(PEDIT_REPLACE);
-            poffset_elem_ptr(1);
-            pset_local_tran3(tran3, PTYPE_POSTCONCAT);
-            poffset_elem_ptr(1);
-            pset_int_colr_ind(4);
+            ks = XLookupKeysym((XKeyEvent *) &event, 0);
+            if (ks == XK_Down) {
+               punpost_struct(0, 1);
+            }
+            else if (ks == XK_Up) {
+               ppost_struct(0, 1, 0);
+            }
+            else if (ks == XK_Left) {
+               punpost_all_structs(0);
+            }
+            else {
+               popen_struct(1);
+               tvec3.delta_y = -LOW;
+               ptranslate3(&tvec3, &errnum, tran3);
+               pset_elem_ptr(0);
+               pset_elem_ptr_label(10);
+               struct_stat();
+               pset_edit_mode(PEDIT_REPLACE);
+               poffset_elem_ptr(1);
+               pset_local_tran3(tran3, PTYPE_POSTCONCAT);
+               poffset_elem_ptr(1);
+               pset_int_colr_ind(4);
 
 #if 0
-            pset_elem_ptr(0);
-            //pdel_elem_range(19, 20);
-            pdel_elems_labels(10, 20);
-            pset_edit_mode(PEDIT_INSERT);
-            //phg_css_print_struct(PHG_CSS->open_struct, 0);
+               pset_elem_ptr(0);
+               //pdel_elem_range(19, 20);
+               pdel_elems_labels(10, 20);
+               pset_edit_mode(PEDIT_INSERT);
 #endif
-            pset_elem_ptr(0);
-            pset_elem_ptr_label(30);
-            pset_edit_mode(PEDIT_INSERT);
-            tvec3.delta_x = -SPACE;
-            tvec3.delta_y = 0.0;
-            tvec3.delta_z = DEPTH;
-            ptranslate3(&tvec3, &errnum, tran3);
-            pset_local_tran3(tran3, PTYPE_REPLACE);
-            //pset_hlhsr_id(PHIGS_HLHSR_ID_OFF);
-            pset_int_style(PSTYLE_SOLID);
-            pset_int_colr(&green);
-            pset_edge_colr(&yellow);
-            pcopy_all_elems_struct(0);
-            pclose_struct();
-         break;
+               pset_elem_ptr(0);
+               pset_elem_ptr_label(30);
+               pset_edit_mode(PEDIT_INSERT);
+               tvec3.delta_x = -SPACE;
+               tvec3.delta_y = 0.0;
+               tvec3.delta_z = DEPTH;
+               ptranslate3(&tvec3, &errnum, tran3);
+               pset_local_tran3(tran3, PTYPE_REPLACE);
+               //pset_hlhsr_id(PHIGS_HLHSR_ID_OFF);
+               pset_int_style(PSTYLE_SOLID);
+               pset_int_colr(&green);
+               pset_edge_colr(&yellow);
+               pcopy_all_elems_struct(0);
+               pclose_struct();
+            }
+            break;
 
          default:
-         break;
+            break;
       }
    }
 

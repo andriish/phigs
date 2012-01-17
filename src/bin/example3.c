@@ -333,6 +333,8 @@ int main(void)
    pset_pick_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
 #endif
 
+   
+   XSelectInput(wsh->display, wsh->drawable_id, ExposureMask);
    if (wsh != NULL) {
       while (1) {
          XNextEvent(wsh->display, &event);
@@ -345,13 +347,13 @@ int main(void)
             predraw_all_structs(WS_MAIN, PFLAG_ALWAYS);
          }
 #if 0
-         sample_locator(WS_0);
+         sample_locator(WS_MAIN);
 #endif
          locator_event();
 #if 0
-         sample_stroke(WS_0);
+         sample_stroke(WS_MAIN);
          stroke_event();
-         sample_pick(WS_0);
+         sample_pick(WS_MAIN);
          pick_event();
 #endif
       }

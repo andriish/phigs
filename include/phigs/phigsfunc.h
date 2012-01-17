@@ -375,6 +375,29 @@ void ppost_struct(
    );
 
 /*******************************************************************************
+ * punpost_struct
+ *
+ * DESCR:       Remove posted structure from workstation
+ * RETURNS:     N/A
+ */
+
+void punpost_struct(
+   Pint ws_id,
+   Pint struct_id
+   );
+
+/*******************************************************************************
+ * punpost_all_structs
+ *
+ * DESCR:       Remove all posted structures from workstation
+ * RETURNS:     N/A
+ */
+
+void punpost_all_structs(
+   Pint ws_id
+   );
+
+/*******************************************************************************
  * predraw_all_structs
  *
  * DESCR:       Redraw all structures on workstation
@@ -384,6 +407,19 @@ void ppost_struct(
 void predraw_all_structs(
    Pint ws_id,
    Pctrl_flag ctrl_flag
+   );
+
+/*******************************************************************************
+ * pset_disp_upd_st
+ *
+ * DESCR:       Set workstation update state
+ * RETURNS:     N/A
+ */
+
+void pset_disp_upd_st(
+   Pint ws_id,
+   Pdefer_mode def_mode,
+   Pmod_mode mod_mode
    );
 
 /*******************************************************************************
