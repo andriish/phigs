@@ -114,21 +114,9 @@ void wsgl_clear(
  * DESCR:       Flush settings to render window
  * RETURNS:     N/A
  */
+
 void wsgl_flush(
    Ws *ws
-   );
-
-/*******************************************************************************
- * wsgl_compute_ws_transform
- *
- * DESCR:       Compute workstation transform
- * RETURNS:     N/A
- */
-
-void wsgl_compute_ws_transform(
-   Plimit3 *ws_win,
-   Plimit3 *ws_vp,
-   Ws_xform *ws_xform
    );
 
 /*******************************************************************************

@@ -280,7 +280,7 @@ static int init_output_state(
     owsb->ws_viewport_pending = PUPD_NOT_PEND;
     wsgl_set_viewport(ws, &owsb->ws_viewport);
 
-    wsgl_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
+    phg_wsx_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
         &owsb->ws_xform );
 
     /* Initialize the list of posted structs. */
@@ -607,7 +607,7 @@ void phg_wsb_make_requested_current(
 #ifdef DEBUG
             printf("wsb: Compute transform\n");
 #endif
-        wsgl_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
+        phg_wsx_compute_ws_transform( &owsb->ws_window, &owsb->ws_viewport,
             &owsb->ws_xform );
 
     }

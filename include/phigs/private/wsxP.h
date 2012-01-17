@@ -122,6 +122,19 @@ void phg_wsx_update_ws_rect(
    );
 
 /*******************************************************************************
+ * phg_wsx_compute_ws_transform
+ *
+ * DESCR:       Compute workstation transform
+ * RETURNS:     N/A
+ */
+
+void phg_wsx_compute_ws_transform(
+   Plimit3 *ws_win,
+   Plimit3 *ws_vp,
+   Ws_xform *ws_xform
+   );
+
+/*******************************************************************************
  * phg_wstx_create
  *
  * DESCR:       Create workstation type

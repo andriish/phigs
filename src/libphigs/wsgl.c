@@ -31,6 +31,7 @@
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
+#include <phigs/private/wsxP.h>
 #include <phigs/private/wsglP.h>
 
 static void phg_update_projection(
@@ -293,7 +294,7 @@ void wsgl_flush(
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
 
    if (wsgl->vp_changed || wsgl->win_changed) {
-      wsgl_compute_ws_transform(&wsgl->curr_win, &wsgl->curr_vp, &ws_xform);
+      phg_wsx_compute_ws_transform(&wsgl->curr_win, &wsgl->curr_vp, &ws_xform);
 
 #ifdef DEBUG
       printf("View: %f %f %f\n"
@@ -365,47 +366,6 @@ void wsgl_flush(
    if (clear_flag) {
       wsgl_clear(ws);
    }
-}
-
-/*******************************************************************************
- * wsgl_compute_ws_transform
- *
- * DESCR:	Compute workstation transform
- * RETURNS:	N/A
- */
-
-void wsgl_compute_ws_transform(
-   Plimit3 *ws_win,
-   Plimit3 *ws_vp,
-   Ws_xform *ws_xform
-   )
-{
-   Pfloat sx, sy, sz, sxy;
-
-   sx = (ws_vp->x_max - ws_vp->x_min) / (ws_win->x_max - ws_win->x_min);
-   sy = (ws_vp->y_max - ws_vp->y_min) / (ws_win->y_max - ws_win->y_min);
-   sz = (ws_vp->z_max - ws_vp->z_min) / (ws_win->z_max - ws_win->z_min);
-
-   sxy = (sx < sy) ? sx : sy;
-
-   ws_xform->scale.x = ws_xform->scale.y = sxy;
-   ws_xform->scale.z = sz;
-
-   ws_xform->offset.x = ws_vp->x_min - (ws_win->x_min * sxy);
-   ws_xform->offset.y = ws_vp->y_min - (ws_win->y_min * sxy);
-   ws_xform->offset.z = ws_vp->z_min - (ws_win->z_min * sz);
-
-#ifdef DEBUG
-   printf("Ws transform:\n"
-          "%f %f %f\n"
-          "%f %f %f\n",
-          ws_xform->scale.x,
-          ws_xform->scale.y,
-          ws_xform->scale.z,
-          ws_xform->offset.x,
-          ws_xform->offset.y,
-          ws_xform->offset.z);
-#endif
 }
 
 /*******************************************************************************

@@ -218,3 +218,32 @@ void phg_wsx_update_ws_rect(
    WS_SET_WS_RECT(ws, &wattr)
 }
 
+/*******************************************************************************
+ * phg_wsx_compute_ws_transform
+ *
+ * DESCR:       Compute workstation transform
+ * RETURNS:     N/A
+ */
+
+void phg_wsx_compute_ws_transform(
+   Plimit3 *ws_win,
+   Plimit3 *ws_vp,
+   Ws_xform *ws_xform
+   )
+{
+   Pfloat sx, sy, sz, sxy;
+
+   sx = (ws_vp->x_max - ws_vp->x_min) / (ws_win->x_max - ws_win->x_min);
+   sy = (ws_vp->y_max - ws_vp->y_min) / (ws_win->y_max - ws_win->y_min);
+   sz = (ws_vp->z_max - ws_vp->z_min) / (ws_win->z_max - ws_win->z_min);
+
+   sxy = (sx < sy) ? sx : sy;
+
+   ws_xform->scale.x = ws_xform->scale.y = sxy;
+   ws_xform->scale.z = sz;
+
+   ws_xform->offset.x = ws_vp->x_min - (ws_win->x_min * sxy);
+   ws_xform->offset.y = ws_vp->y_min - (ws_win->y_min * sxy);
+   ws_xform->offset.z = ws_vp->z_min - (ws_win->z_min * sz);
+}
+
