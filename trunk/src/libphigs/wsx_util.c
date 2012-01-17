@@ -201,3 +201,20 @@ GLXContext phg_wsx_create_context(
    return context;
 }
 
+/*******************************************************************************
+ * phg_wsx_update_ws_rect
+ *
+ * DESCR:	Update workstation rectangle
+ * RETURNS:	N/A
+ */
+
+void phg_wsx_update_ws_rect(
+   Ws *ws
+   )
+{
+   XWindowAttributes wattr;
+
+   XGetWindowAttributes(ws->display, ws->drawable_id, &wattr);
+   WS_SET_WS_RECT(ws, &wattr)
+}
+

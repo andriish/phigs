@@ -111,6 +111,17 @@ GLXContext phg_wsx_create_context(
    );
 
 /*******************************************************************************
+ * phg_wsx_update_ws_rect
+ *
+ * DESCR:       Update workstation rectangle
+ * RETURNS:     N/A
+ */
+
+void phg_wsx_update_ws_rect(
+   Ws *ws
+   );
+
+/*******************************************************************************
  * phg_wstx_create
  *
  * DESCR:       Create workstation type
