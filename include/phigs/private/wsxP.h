@@ -143,7 +143,8 @@ void phg_wsx_compute_ws_transform(
 
 Wst* phg_wstx_create(
    Err_handle erh,
-   Pws_cat category
+   Pws_cat category,
+   int double_buffer
    );
 
 /*******************************************************************************

@@ -34,6 +34,53 @@
 Phg_handle phg;
 
 /*******************************************************************************
+ * add_ws_type
+ *
+ * DESCR:       Helper function to initialize workstation type
+ * RETURNS:     TRUE or FALSE
+ */
+
+static int add_ws_type(
+   Pws_cat category,
+   int double_buffer
+   )
+{
+   int status;
+   Wst *wst;
+
+   wst = phg_wstx_create(PHG_ERH, category, double_buffer);
+   if (wst == NULL) {
+      status = FALSE;
+   }
+   else {
+      list_add(&PHG_WST_LIST, &wst->node);
+      status = TRUE;
+   }
+
+   return status;
+}
+
+/*******************************************************************************
+ * remove_ws_types
+ *
+ * DESCR:       Helper function to remove workstation types
+ * RETURNS:     N/A
+ */
+
+static void remove_ws_types(
+   void
+   )
+{
+   Wst *wst;
+
+   wst = (Wst *) list_get(&PHG_WST_LIST);
+   while (wst != NULL) {
+      phg_wst_destroy(wst);
+      wst = (Wst *) list_get(&PHG_WST_LIST);
+   }
+}
+
+/*******************************************************************************
  * popen_phigs
  *
  * DESCR:       Open phigs
@@ -73,9 +120,18 @@ void popen_phigs(
       goto abort;
    }
 
+   PHG_INPUT_SEM = sem_create();
+   if (PHG_INPUT_SEM == NULL) {
+      ERR_REPORT(PHG_ERH, ERR900);
+      phg_css_destroy(PHG_CSS);
+      phg_psl_destroy(PHG_PSL);
+      goto abort;
+   }
+
    PHG_EVT_TABLE = phg_sin_evt_tbl_create(PHG_NUM_EVENTS);
    if (PHG_EVT_TABLE == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
+      free(PHG_INPUT_SEM);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
       goto abort;
@@ -84,43 +140,36 @@ void popen_phigs(
    PHG_INPUT_Q = phg_sin_q_create(PHG_ERH);
    if (PHG_INPUT_Q == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
+      free(PHG_INPUT_SEM);
       phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
       goto abort;
    }
 
+   /* At least one output workstation */
    list_init(&PHG_WST_LIST);
-   wst = phg_wstx_create(PHG_ERH, PCAT_OUT);
-   if (wst == NULL) {
+   if (!add_ws_type(PCAT_OUT, 0)) {
       ERR_REPORT(PHG_ERH, ERR900);
+      free(PHG_INPUT_SEM);
       free(PHG_INPUT_Q);
       phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
       goto abort;
    }
-   list_add(&PHG_WST_LIST, &wst->node);
 
-   wst = phg_wstx_create(PHG_ERH, PCAT_OUTIN);
-   if (wst == NULL) {
-      ERR_REPORT(PHG_ERH, ERR900);
-      phg_wst_destroy((Wst *) list_get(&PHG_WST_LIST));
-      free(PHG_INPUT_Q);
-      phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
-      phg_css_destroy(PHG_CSS);
-      phg_psl_destroy(PHG_PSL);
-      goto abort;
-   }
-   list_add(&PHG_WST_LIST, &wst->node);
+   /* Optional workstation types */
+   add_ws_type(PCAT_OUT, 1);
+   add_ws_type(PCAT_OUTIN, 0);
+   add_ws_type(PCAT_OUTIN, 1);
 
    PHG_WS_LIST = (Ws_handle *) malloc(sizeof(Ws_handle) * MAX_NO_OPEN_WS);
    if (PHG_WS_LIST == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
-      phg_wst_destroy((Wst *) list_get(&PHG_WST_LIST));
-      phg_wst_destroy((Wst *) list_get(&PHG_WST_LIST));
+      free(PHG_INPUT_SEM);
       free(PHG_INPUT_Q);
-      phg_wst_destroy(wst);
+      remove_ws_types();
       phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);

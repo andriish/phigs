@@ -1427,6 +1427,7 @@ static int phg_wsb_add_view(
 
         vref->id = id;
         vref->priority = priority;
+        vref->npc_to_wc_state = WS_INV_NOT_CURRENT;
         vref->viewrep = (Pview_rep3 *) &vref[1];
         memcpy(vref->viewrep, vrep, sizeof(Pview_rep3));
         list_add(&owsb->pending_views, &vref->node);
@@ -1701,6 +1702,16 @@ void phg_wsb_set_view_input_priority(
     if ((ref != NULL) && (view != NULL)) {
        list_requeue(&owsb->views, &view->node, &ref->node, prio);
     }
+#ifdef DEBUG
+    {
+        Ws_view_ref *v;
+        for (v = (Ws_view_ref *) LIST_HEAD(&owsb->views);
+             v != NULL;
+             v = (Ws_view_ref *) NODE_NEXT(&v->node)) {
+            printf("wsb: View %d with priority: %d\n", v->id, v->priority);
+        }
+    }
+#endif
 }
 
 /*******************************************************************************
@@ -1889,6 +1900,10 @@ int phg_wsb_resolve_locator(
 
                 /* Map point to WC if xform invertible. */
                 if (view_ref->npc_to_wc_state == WS_INV_CURRENT) {
+#ifdef DEBUG
+                    printf("Inverse transform available for view: %d\n",
+                           view_ref->id);
+#endif
                     if (phg_tranpt3(&npc_pt, view_ref->npc_to_wc, wc_pt)) {
                         *view_index = view_ref->id;
                         status = TRUE;
