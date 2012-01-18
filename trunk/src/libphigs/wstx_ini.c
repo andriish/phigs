@@ -309,7 +309,8 @@ int init_devices(
 
 Wst* phg_wstx_create(
    Err_handle erh,
-   Pws_cat category
+   Pws_cat category,
+   int double_buffer
    )
 {
    Wst *wst;
@@ -317,11 +318,21 @@ Wst* phg_wstx_create(
 
    switch (category) {
       case PCAT_OUT:
-         ws_type = PWST_OUTPUT_TRUE_DB;
+         if (double_buffer) {
+            ws_type = PWST_OUTPUT_TRUE_DB;
+         }
+         else {
+            ws_type = PWST_OUTPUT_TRUE;
+         }
          break;
 
       case PCAT_OUTIN:
-         ws_type = PWST_OUTIN_TRUE_DB;
+         if (double_buffer) {
+            ws_type = PWST_OUTIN_TRUE_DB;
+         }
+         else {
+            ws_type = PWST_OUTIN_TRUE;
+         }
          break;
 
       default:

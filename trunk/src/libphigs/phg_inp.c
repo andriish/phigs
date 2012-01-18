@@ -434,72 +434,78 @@ static void inp_await(
    Pevent *ev_id = &ret->data.inp_event.id;
    Phg_inp_event_data *ed = &ret->data.inp_event.data;
 
-   ret->err = 0;
-   event = phg_sin_q_next_event(PHG_INPUT_Q);
-   if (event != NULL) {
-      if (SIN_Q_OVERFLOWED(PHG_INPUT_Q)) {
-         ERR_BUF(PHG_ERH, ERR256);
-      }
-      ev_id->ws = event->wsid;
-      ev_id->dev = event->dev_num;
-      ev_id->in_class = event->dev_class;
-      SIN_Q_SET_CUR_SIMUL_ID(PHG_INPUT_Q, event);
+   if (!sem_lock(PHG_INPUT_SEM)) {
+      ret->err = ERRN58;
+   }
+   else {
+      ret->err = 0;
+      event = phg_sin_q_next_event(PHG_INPUT_Q);
+      if (event != NULL) {
+         if (SIN_Q_OVERFLOWED(PHG_INPUT_Q)) {
+            ERR_BUF(PHG_ERH, ERR256);
+         }
+         ev_id->ws = event->wsid;
+         ev_id->dev = event->dev_num;
+         ev_id->in_class = event->dev_class;
+         SIN_Q_SET_CUR_SIMUL_ID(PHG_INPUT_Q, event);
 
-      switch (ev_id->in_class) {
-         case PIN_LOC:
-            ed->loc = event->data.locator.evt;
-            break;
+         switch (ev_id->in_class) {
+            case PIN_LOC:
+               ed->loc = event->data.locator.evt;
+               break;
 
-         case PIN_STROKE:
-            size = event->data.stroke.evt.num_points * sizeof(Ppoint3);
-            if ((size > 0) && (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size))) {
-               ERR_BUF(PHG_ERH, ERR900);
-               ret->err = ERR900;
-               free(ed->stk.points);
-            }
-            else {
-               ed->stk = event->data.stroke.evt;
-               if (size > 0) {
-                  memcpy(PHG_SCRATCH.buf, ed->stk.points, size);
-                  free(ed->stk.points);
-                  ed->stk.points = (Ppoint3 *) PHG_SCRATCH.buf;
-               }
-            }
-            break;
-
-         case PIN_PICK:
-            pick = &event->data.pick.evt;
-            ed->pik = *pick;
-            if (pick->status == PIN_STATUS_OK) {
-               size = pick->pick_path.depth * sizeof(Ppick_path_elem);
+            case PIN_STROKE:
+               size = event->data.stroke.evt.num_points * sizeof(Ppoint3);
                if ((size > 0) && (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size))) {
                   ERR_BUF(PHG_ERH, ERR900);
                   ret->err = ERR900;
-                  free(pick->pick_path.path_list);
+                  free(ed->stk.points);
                }
-               else if (size > 0) {
-                  memcpy(PHG_SCRATCH.buf, pick->pick_path.path_list, size);
-                  free(pick->pick_path.path_list);
-                  ed->pik.pick_path.path_list = (Ppick_path_elem *)
-                     PHG_SCRATCH.buf;
+               else {
+                  ed->stk = event->data.stroke.evt;
+                  if (size > 0) {
+                     memcpy(PHG_SCRATCH.buf, ed->stk.points, size);
+                     free(ed->stk.points);
+                     ed->stk.points = (Ppoint3 *) PHG_SCRATCH.buf;
+                  }
                }
-            }
-            break;
+               break;
 
-         /* TODO: Check if anything is needed to copy for other device types */
+            case PIN_PICK:
+               pick = &event->data.pick.evt;
+               ed->pik = *pick;
+               if (pick->status == PIN_STATUS_OK) {
+                  size = pick->pick_path.depth * sizeof(Ppick_path_elem);
+                  if ((size > 0) && (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size))) {
+                     ERR_BUF(PHG_ERH, ERR900);
+                     ret->err = ERR900;
+                     free(pick->pick_path.path_list);
+                  }
+                  else if (size > 0) {
+                     memcpy(PHG_SCRATCH.buf, pick->pick_path.path_list, size);
+                     free(pick->pick_path.path_list);
+                     ed->pik.pick_path.path_list = (Ppick_path_elem *)
+                        PHG_SCRATCH.buf;
+                  }
+               }
+               break;
 
-         default:
-            break;
+            /* TODO: Check what is needed to copy for other device types */
+
+            default:
+               break;
+         }
+
+         phg_sin_q_deque_event(PHG_INPUT_Q);
       }
-
-      phg_sin_q_deque_event(PHG_INPUT_Q);
+      else {
+         ev_id->in_class = PIN_NONE;
+         if (SIN_Q_OVERFLOWED(PHG_INPUT_Q)) {
+            SIN_Q_CLEAR_OVERFLOW(PHG_INPUT_Q);
+         }
+      }
    }
-   else {
-     ev_id->in_class = PIN_NONE;
-     if (SIN_Q_OVERFLOWED(PHG_INPUT_Q)) {
-        SIN_Q_CLEAR_OVERFLOW(PHG_INPUT_Q);
-     }
-   }
+   sem_unlock(PHG_INPUT_SEM);
 }
 
 /*******************************************************************************
