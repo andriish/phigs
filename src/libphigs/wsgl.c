@@ -263,7 +263,14 @@ void wsgl_clear(
    printf("wsgl_clear\n");
 #endif
 
-   XClearWindow(ws->display, ws->drawable_id);
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   if (ws->has_double_buffer) {
+      glXSwapBuffers(ws->display, ws->drawable_id);
+   }
+   else {
+      glFlush();
+   }
 }
 
 /*******************************************************************************
@@ -375,6 +382,9 @@ void wsgl_begin_rendering(
    printf("Begin rendering\n");
 #endif
 
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
    phg_set_hlhsr_id(PHIGS_HLHSR_ID_OFF);
    phg_mat_identity(wsgl->local_tran);
    phg_set_line_ind(ws, wsgl->attr_group, 0);
@@ -383,7 +393,6 @@ void wsgl_begin_rendering(
    phg_set_edge_ind(ws, wsgl->attr_group, 0);
    phg_set_int_ind(ws, wsgl->attr_group, 0);
    phg_set_view_ind(ws, 0);
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 /*******************************************************************************
@@ -401,12 +410,10 @@ void wsgl_end_rendering(
    printf("End rendering\n");
 #endif
 
-   if (ws->has_double_buffer)
-   {
+   if (ws->has_double_buffer) {
       glXSwapBuffers(ws->display, ws->drawable_id);
    }
-   else
-   {
+   else {
       glFlush();
    }
 }
