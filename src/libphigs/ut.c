@@ -64,9 +64,20 @@ SOFTWARE.
 ******************************************************************/
 
 #include <stdlib.h>
+#include <sys/select.h>
 #include <phigs/phg.h>
 
-char* phg_grow_scratch(Phg_scratch *sc, unsigned size)
+/*******************************************************************************
+ * phg_grow_scratch
+ *
+ * DESCR:	Increase scratch buffer memory size
+ * RETURNS:	Pointer to memory or NULL
+ */
+
+caddr_t phg_grow_scratch(
+   Phg_scratch *sc,
+   unsigned size
+   )
 {
     if ( sc->buf ) {
         if ( !( sc->buf = realloc( sc->buf, sc->size = size )) )
@@ -77,5 +88,36 @@ char* phg_grow_scratch(Phg_scratch *sc, unsigned size)
     }
 
     return sc->buf;
+}
+
+/*******************************************************************************
+ * phg_sleep
+ *
+ * DESCR:	Sleep in msecs granularity
+ * RETURNS:	TRUE or FALSE
+ */
+
+int phg_sleep(
+   unsigned msecs
+   )
+{
+   struct timeval timeout;
+   int status;
+
+   if (msecs == 0) {
+      status = TRUE;
+   }
+   else {
+      timeout.tv_sec = msecs / 1000;           /* in secs */
+      timeout.tv_usec = (msecs % 1000) * 1000; /* in micro secs */
+      if ((select(0, NULL, NULL, NULL, &timeout)) == -1) {
+         status = FALSE;
+      }
+      else {
+         status = TRUE;
+      }
+   }
+
+   return status;
 }
 

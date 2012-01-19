@@ -28,7 +28,28 @@
 #include <phigs/util/sem.h>
 #include <phigs/util/mat.h>
 
-char* phg_grow_scratch(Phg_scratch *sc, unsigned size);
+/*******************************************************************************
+ * phg_grow_scratch
+ *
+ * DESCR:       Increase scratch buffer memory size
+ * RETURNS:     Pointer to memory or NULL
+ */
+
+caddr_t phg_grow_scratch(
+   Phg_scratch *sc,
+   unsigned size
+   );
+
+/*******************************************************************************
+ * phg_sleep
+ *
+ * DESCR:       Sleep in msecs granularity
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_sleep(
+   unsigned msecs
+   );
 
 #endif
 
