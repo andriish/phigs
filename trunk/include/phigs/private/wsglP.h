@@ -47,7 +47,8 @@ typedef struct _Wsgl {
  */
 
 int wsgl_init(
-   Ws *ws
+   Ws *ws,
+   Pgcolr *background
    );
 
 /*******************************************************************************
