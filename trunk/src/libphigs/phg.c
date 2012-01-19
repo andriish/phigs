@@ -92,8 +92,6 @@ void popen_phigs(
    size_t memory
    )
 {
-   Wst *wst;
-
    phg = (Phg_handle) malloc(sizeof(Phg_struct));
    if (phg == NULL) {
       goto abort;
