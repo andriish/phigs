@@ -110,7 +110,7 @@ int phg_sleep(
    else {
       timeout.tv_sec = msecs / 1000;           /* in secs */
       timeout.tv_usec = (msecs % 1000) * 1000; /* in micro secs */
-      if ((select(0, NULL, NULL, NULL, &timeout)) == -1) {
+      if (select(0, NULL, NULL, NULL, &timeout) == -1) {
          status = FALSE;
       }
       else {
