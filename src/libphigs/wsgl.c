@@ -151,7 +151,8 @@ static void phg_draw_text(
  */
 
 int wsgl_init(
-   Ws *ws
+   Ws *ws,
+   Pgcolr *background
    )
 {
    Wsgl_handle wsgl;
@@ -168,9 +169,7 @@ int wsgl_init(
       return 0;
    }
 
-   wsgl->background.val.general.x = 0.0;
-   wsgl->background.val.general.y = 0.0;
-   wsgl->background.val.general.z = 0.0;
+   memcpy(&wsgl->background, background, sizeof(Pgcolr));
 
    ws->render_context = wsgl;
 
@@ -264,17 +263,7 @@ void wsgl_clear(
    printf("wsgl_clear\n");
 #endif
 
-   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   if (ws->has_double_buffer)
-   {
-      glXSwapBuffers(ws->display, ws->drawable_id);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   }
-   else
-   {
-      glFlush();
-   }
+   XClearWindow(ws->display, ws->drawable_id);
 }
 
 /*******************************************************************************
@@ -394,6 +383,7 @@ void wsgl_begin_rendering(
    phg_set_edge_ind(ws, wsgl->attr_group, 0);
    phg_set_int_ind(ws, wsgl->attr_group, 0);
    phg_set_view_ind(ws, 0);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 /*******************************************************************************

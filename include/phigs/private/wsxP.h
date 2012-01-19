@@ -111,6 +111,20 @@ GLXContext phg_wsx_create_context(
    );
 
 /*******************************************************************************
+ * phg_wsx_pixel_colour
+ *
+ * DESCR:       Get colour from pixel value
+ * RETURNS:     N/A
+ */
+
+void phg_wsx_pixel_colour(
+   Ws *ws,
+   Colormap cmap,
+   unsigned long pixel,
+   Pgcolr *gcolr
+   );
+
+/*******************************************************************************
  * phg_wsx_update_ws_rect
  *
  * DESCR:       Update workstation rectangle

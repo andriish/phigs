@@ -106,11 +106,13 @@ typedef struct {
 } Phg_args_change_struct;
 
 typedef struct {
-   GLXContext glx_context;
-   Drawable   drawable_id;
-   Display    *display;
-   char       *display_name;
-   Pint       display_name_length;
+   unsigned long background;
+   Colormap      colormap;
+   GLXContext    glx_context;
+   Drawable      drawable_id;
+   Display       *display;
+   char          *display_name;
+   Pint          display_name_length;
 } Phg_args_conn_info;
 
 typedef struct _Phg_args_open_ws {

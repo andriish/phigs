@@ -53,11 +53,6 @@ Ws* phg_wsx_create(
       ws->erh  = args->erh;
       ws->id   = args->wsid;
       ws->type = args->type;
-      if (!wsgl_init(ws)) {
-         ERR_BUF(args->erh, ERR900);
-         free(ws);
-         ws = NULL;
-      }
    }
 
    return ws;
@@ -79,6 +74,7 @@ int phg_wsx_setup_tool(
    Pint err_ind;
    XVisualInfo *best_info;
    Colormap cmap;
+   Pgcolr background;
    XSetWindowAttributes attrs;
    XID drawable_id;
    XSizeHints size_hints;
@@ -99,6 +95,12 @@ int phg_wsx_setup_tool(
       attrs.colormap = cmap;
       attrs.border_pixel = WhitePixel(display, best_info->screen);
       attrs.background_pixel = BlackPixel(display, best_info->screen);
+      phg_wsx_pixel_colour(ws, cmap, attrs.background_pixel, &background);
+      if (!wsgl_init(ws, &background)) {
+         ERR_BUF(ws->erh, ERR900);
+         free(ws);
+         ws = NULL;
+      }
 
       /* Initialize rendering context */
       ws->glx_context = phg_wsx_create_context(ws, best_info, &err_ind);
@@ -155,6 +157,7 @@ void phg_wsx_release_window(
    Ws *ws
    )
 {
+   wsgl_close(ws);
    XDestroyWindow(ws->display, ws->drawable_id);
 }
 
@@ -169,7 +172,6 @@ void phg_wsx_destroy(
    Ws *ws
    )
 {
-   wsgl_close(ws);
    free(ws);
 }
 

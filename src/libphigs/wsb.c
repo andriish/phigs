@@ -397,6 +397,7 @@ Ws* phg_wsb_open_ws(
     Ws *ws;
     Wst_phigs_dt *dt;
     Wst_xwin_dt *xdt;
+    Pgcolr background;
 
     ret->err = -1;
     ws = phg_wsx_create(args);
@@ -433,6 +434,14 @@ Ws* phg_wsb_open_ws(
         ws->display     = args->conn_info.display;
         ws->drawable_id = args->conn_info.drawable_id;
         ws->glx_context = args->conn_info.glx_context;
+        phg_wsx_pixel_colour(ws,
+                             args->conn_info.colormap,
+                             args->conn_info.background,
+                             &background);
+        if (!wsgl_init(ws, &background)) {
+           ERR_BUF(ws->erh, ERR900);
+           goto abort;
+        }
     }
 
     if (dt->ws_category == PCAT_OUTIN) {

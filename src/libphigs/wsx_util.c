@@ -202,6 +202,31 @@ GLXContext phg_wsx_create_context(
 }
 
 /*******************************************************************************
+ * phg_wsx_pixel_colour
+ *
+ * DESCR:	Get colour from pixel value
+ * RETURNS:	N/A
+ */
+
+void phg_wsx_pixel_colour(
+   Ws *ws,
+   Colormap cmap,
+   unsigned long pixel,
+   Pgcolr *gcolr
+   )
+{
+   XColor color;
+
+   color.pixel = pixel;
+   XQueryColor(ws->display, cmap, &color);
+
+   gcolr->type = PMODEL_RGB;
+   gcolr->val.general.x = (float) color.red / 65535.0;
+   gcolr->val.general.y = (float) color.green / 65535.0;
+   gcolr->val.general.z = (float) color.blue / 65535.0;
+}
+
+/*******************************************************************************
  * phg_wsx_update_ws_rect
  *
  * DESCR:	Update workstation rectangle
