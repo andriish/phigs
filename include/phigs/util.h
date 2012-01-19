@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <phigs/util/list.h>
 #include <phigs/util/htab.h>
+#include <phigs/util/task.h>
 #include <phigs/util/sem.h>
 #include <phigs/util/mat.h>
 
