@@ -23,6 +23,7 @@
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/private/sinqP.h>
+#include <phigs/private/wsxP.h>
 
 /*******************************************************************************
  * input_ws_open
@@ -418,13 +419,44 @@ void psample_pick(
 }
 
 /*******************************************************************************
- * inp_wait
+ * inp_dispatch_next
  *
- * DESCR:       Wait for input helper function
+ * DESCR:       Dispatch next event for all open input workstations
+ * RETURNS:     TRUE or FALSE
+ */
+
+int inp_dispatch_next(
+   Pint fn_id
+   )
+{
+   Pint i, err_ind;
+   Wst_input_wsdt *idt;
+   Wst_phigs_dt *dt;
+   Ws_handle wsh;
+   int status = FALSE;
+
+   for (i = 0; i < MAX_NO_OPEN_WS; i++) {
+      idt = input_ws_open(i, fn_id, &dt, &err_ind);
+      if (idt != NULL) {
+         if ((dt->ws_category == PCAT_IN) ||
+             (dt->ws_category == PCAT_OUTIN)) {
+            wsh = PHG_WSID(i);
+            status = phg_wsx_input_dispatch_next(wsh, PHG_EVT_TABLE);
+         }
+      }
+   }
+
+   return status;
+}
+
+/*******************************************************************************
+ * inp_poll
+ *
+ * DESCR:       Poll input events helper function
  * RETURNS:     N/A
  */
 
-static void inp_await(
+static void inp_poll(
    Phg_ret *ret
    )
 {
@@ -434,82 +466,76 @@ static void inp_await(
    Pevent *ev_id = &ret->data.inp_event.id;
    Phg_inp_event_data *ed = &ret->data.inp_event.data;
 
-   if (!sem_lock(PHG_INPUT_SEM)) {
-      ret->err = ERRN58;
-   }
-   else {
-      ret->err = 0;
-      event = phg_sin_q_next_event(PHG_INPUT_Q);
-      if (event != NULL) {
-         if (SIN_Q_OVERFLOWED(PHG_INPUT_Q)) {
-            ERR_BUF(PHG_ERH, ERR256);
-         }
-         ev_id->ws = event->wsid;
-         ev_id->dev = event->dev_num;
-         ev_id->in_class = event->dev_class;
-         SIN_Q_SET_CUR_SIMUL_ID(PHG_INPUT_Q, event);
+   ret->err = 0;
+   event = phg_sin_q_next_event(PHG_INPUT_Q);
+   if (event != NULL) {
+      if (SIN_Q_OVERFLOWED(PHG_INPUT_Q)) {
+         ERR_BUF(PHG_ERH, ERR256);
+      }
+      ev_id->ws = event->wsid;
+      ev_id->dev = event->dev_num;
+      ev_id->in_class = event->dev_class;
+      SIN_Q_SET_CUR_SIMUL_ID(PHG_INPUT_Q, event);
 
-         switch (ev_id->in_class) {
-            case PIN_LOC:
-               ed->loc = event->data.locator.evt;
-               break;
+      switch (ev_id->in_class) {
+         case PIN_LOC:
+            ed->loc = event->data.locator.evt;
+            break;
 
-            case PIN_STROKE:
-               size = event->data.stroke.evt.num_points * sizeof(Ppoint3);
+         case PIN_STROKE:
+            size = event->data.stroke.evt.num_points * sizeof(Ppoint3);
+            if ((size > 0) && (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size))) {
+               ERR_BUF(PHG_ERH, ERR900);
+               ret->err = ERR900;
+               free(ed->stk.points);
+            }
+            else {
+               ed->stk = event->data.stroke.evt;
+               if (size > 0) {
+                  memcpy(PHG_SCRATCH.buf, ed->stk.points, size);
+                  free(ed->stk.points);
+                  ed->stk.points = (Ppoint3 *) PHG_SCRATCH.buf;
+               }
+            }
+            break;
+
+         case PIN_PICK:
+            pick = &event->data.pick.evt;
+            ed->pik = *pick;
+            if (pick->status == PIN_STATUS_OK) {
+               size = pick->pick_path.depth * sizeof(Ppick_path_elem);
                if ((size > 0) && (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size))) {
                   ERR_BUF(PHG_ERH, ERR900);
                   ret->err = ERR900;
-                  free(ed->stk.points);
+                  free(pick->pick_path.path_list);
                }
-               else {
-                  ed->stk = event->data.stroke.evt;
-                  if (size > 0) {
-                     memcpy(PHG_SCRATCH.buf, ed->stk.points, size);
-                     free(ed->stk.points);
-                     ed->stk.points = (Ppoint3 *) PHG_SCRATCH.buf;
-                  }
+               else if (size > 0) {
+                  memcpy(PHG_SCRATCH.buf, pick->pick_path.path_list, size);
+                  free(pick->pick_path.path_list);
+                  ed->pik.pick_path.path_list = (Ppick_path_elem *)
+                     PHG_SCRATCH.buf;
                }
-               break;
+            }
+            break;
 
-            case PIN_PICK:
-               pick = &event->data.pick.evt;
-               ed->pik = *pick;
-               if (pick->status == PIN_STATUS_OK) {
-                  size = pick->pick_path.depth * sizeof(Ppick_path_elem);
-                  if ((size > 0) && (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size))) {
-                     ERR_BUF(PHG_ERH, ERR900);
-                     ret->err = ERR900;
-                     free(pick->pick_path.path_list);
-                  }
-                  else if (size > 0) {
-                     memcpy(PHG_SCRATCH.buf, pick->pick_path.path_list, size);
-                     free(pick->pick_path.path_list);
-                     ed->pik.pick_path.path_list = (Ppick_path_elem *)
-                        PHG_SCRATCH.buf;
-                  }
-               }
-               break;
+         /* TODO: Check what is needed to copy for other device types */
 
-            /* TODO: Check what is needed to copy for other device types */
-
-            default:
-               break;
-         }
-
-         phg_sin_q_deque_event(PHG_INPUT_Q);
+         default:
+            break;
       }
-      else {
-         ev_id->in_class = PIN_NONE;
-         if (SIN_Q_OVERFLOWED(PHG_INPUT_Q)) {
-            SIN_Q_CLEAR_OVERFLOW(PHG_INPUT_Q);
-         }
+
+      phg_sin_q_deque_event(PHG_INPUT_Q);
+   }
+   else {
+      ev_id->in_class = PIN_NONE;
+      if (SIN_Q_OVERFLOWED(PHG_INPUT_Q)) {
+         SIN_Q_CLEAR_OVERFLOW(PHG_INPUT_Q);
       }
    }
-   sem_unlock(PHG_INPUT_SEM);
 }
 
 /*******************************************************************************
- * pwait_event
+ * pawait_event
  *
  * DESCR:       Wait for event to occur
  * RETURNS:     N/A
@@ -526,6 +552,8 @@ void pawait_event(
    unsigned size;
    Ppoint3 *pts;
    Ppick_path_elem *path;
+   time_t time, time1, time2;
+   time_t limit = (time_t) (timeout * 1000.0);
    Phg_ret_inp_event *revt = &ret.data.inp_event;
 
    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_await_event);
@@ -534,9 +562,24 @@ void pawait_event(
       ERR_REPORT(PHG_ERH, ERR3);
    }
    else {
-      /* TODO: Find out what to do with the timeout parameter  */
+      /* Process events one at time for each workstation
+       * Until one i available, or if the timeout expires
+       */
+      time = 0;
+      do {
+         phg_mtime(&time1);
+         if (inp_dispatch_next(Pfn_await_event) == FALSE) {
+            /* If there where no events sleep a while */
+            phg_msleep(1);
+         }
+         inp_poll(&ret);
+         phg_mtime(&time2);
+         time += (time2 - time1);
+         if (time >= limit) {
+            break;
+         }
+      } while (revt->id.in_class == PIN_NONE);
 
-      inp_await(&ret);
       if (ret.err == 0) {
          *ws_id = revt->id.ws;
          *dev_class = revt->id.in_class;

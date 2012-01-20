@@ -18,65 +18,39 @@
 *   along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#ifndef _task_h
-#define _task_h
-
-struct _Task;
-typedef struct _Task *Task_handle;
-
-/*******************************************************************************
- * task_create
- *
- * RETURNS: Task handle or NULL
- */
-
-Task_handle task_create(
-   void* (*func)(void *),
-   void *arg
-   );
+#include <stdio.h>
+#include <stdlib.h>
+#include <X11/Xlib.h>
+#include <phigs/phg.h>
+#include <phigs/private/evtP.h>
+#include <phigs/private/wsxP.h>
 
 /*******************************************************************************
- * task_init
+ * phg_wsx_input_dispatch_next
  *
- * RETURNS: TRUE or FALSE
+ * DESCR:       Process any event on the event queue
+ * RETURNS:     TRUE or FALSE
  */
 
-int task_init(
-   Task_handle taskh,
-   void* (*func)(void *),
-   void *arg
-   );
+int phg_wsx_input_dispatch_next(
+   Ws *ws,
+   Phg_sin_evt_tbl *evt_tbl
+   )
+{
+   int status;
+   XEvent event;
 
-/*******************************************************************************
- * task_start
- *
- * RETURNS: TRUE or FALSE
- */
+   if (XCheckWindowEvent(ws->display,
+                         ws->input_overlay_window,
+                         (unsigned long) 0xffffffffUL,
+                         &event) == True) {
+      phg_sin_evt_dispatch(evt_tbl, ws->display, &event);
+      status = TRUE;
+   }
+   else {
+      status = FALSE;
+   }
 
-int task_start(
-   Task_handle taskh
-   );
-
-/*******************************************************************************
- * task_spawn
- *
- * RETURNS: Task handle or NULL
- */
-
-Task_handle task_spawn(
-   void* (*func)(void *),
-   void *arg
-   );
-
-/*******************************************************************************
- * task_destroy
- *
- * RETURNS: TRUE or FALSE
- */
-
-int task_destroy(
-   Task_handle taskh
-   );
-
-#endif /* _task_h */
+   return status;
+}
 

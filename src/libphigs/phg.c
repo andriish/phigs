@@ -118,18 +118,9 @@ void popen_phigs(
       goto abort;
    }
 
-   PHG_INPUT_SEM = sem_create();
-   if (PHG_INPUT_SEM == NULL) {
-      ERR_REPORT(PHG_ERH, ERR900);
-      phg_css_destroy(PHG_CSS);
-      phg_psl_destroy(PHG_PSL);
-      goto abort;
-   }
-
    PHG_EVT_TABLE = phg_sin_evt_tbl_create(PHG_NUM_EVENTS);
    if (PHG_EVT_TABLE == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
-      free(PHG_INPUT_SEM);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
       goto abort;
@@ -138,7 +129,6 @@ void popen_phigs(
    PHG_INPUT_Q = phg_sin_q_create(PHG_ERH);
    if (PHG_INPUT_Q == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
-      free(PHG_INPUT_SEM);
       phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
       phg_css_destroy(PHG_CSS);
       phg_psl_destroy(PHG_PSL);
@@ -149,7 +139,6 @@ void popen_phigs(
    list_init(&PHG_WST_LIST);
    if (!add_ws_type(PCAT_OUT, 0)) {
       ERR_REPORT(PHG_ERH, ERR900);
-      free(PHG_INPUT_SEM);
       free(PHG_INPUT_Q);
       phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
       phg_css_destroy(PHG_CSS);
@@ -165,7 +154,6 @@ void popen_phigs(
    PHG_WS_LIST = (Ws_handle *) malloc(sizeof(Ws_handle) * MAX_NO_OPEN_WS);
    if (PHG_WS_LIST == NULL) {
       ERR_REPORT(PHG_ERH, ERR900);
-      free(PHG_INPUT_SEM);
       free(PHG_INPUT_Q);
       remove_ws_types();
       phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);

@@ -61,10 +61,11 @@ WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
 ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
-******************************************************************/
+******************************************************************************/
 
 #include <stdlib.h>
 #include <sys/select.h>
+#include <sys/time.h>
 #include <phigs/phg.h>
 
 /*******************************************************************************
@@ -91,13 +92,13 @@ caddr_t phg_grow_scratch(
 }
 
 /*******************************************************************************
- * phg_sleep
+ * phg_msleep
  *
  * DESCR:	Sleep in msecs granularity
  * RETURNS:	TRUE or FALSE
  */
 
-int phg_sleep(
+int phg_msleep(
    unsigned msecs
    )
 {
@@ -116,6 +117,31 @@ int phg_sleep(
       else {
          status = TRUE;
       }
+   }
+
+   return status;
+}
+
+/*******************************************************************************
+ * phg_mtime
+ *
+ * DESCR:	Get current time in milleseconds
+ * RETURNS:	TRUE or FALSE
+ */
+
+int phg_mtime(
+   time_t *tm_val
+   )
+{
+   int status;
+   struct timeval tv;
+
+   if (gettimeofday(&tv, NULL) == 0) {
+      *tm_val = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+      status = TRUE;
+   }
+   else {
+      status = FALSE;
    }
 
    return status;

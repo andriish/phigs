@@ -323,7 +323,6 @@ static Phg_map errmap[] = {
    {-151, "Ignoring function, nameset or filter contains name outside supported range"},
    {-150, "Ignoring function, the specified number of points or sets of points is less than zero"},
    {-100, "Ignoring function, workstation type is a default type or bound to a workstation and cannot be modified"},
-   {-58, "Ignoring function, cannot obtain lock on input queue" },
    {-57, "Kernel not configured with shared-memory IPC facility needed for PHIGS communication"},
    {-55, "Ignoring function, cannot open PHIGS, cannot open font files"},
    {-54, "Ignoring function, cannot locate SI support file"},

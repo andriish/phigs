@@ -24,8 +24,6 @@
 #include <sys/types.h>
 #include <phigs/util/list.h>
 #include <phigs/util/htab.h>
-#include <phigs/util/task.h>
-#include <phigs/util/sem.h>
 #include <phigs/util/mat.h>
 
 /*******************************************************************************
@@ -41,14 +39,25 @@ caddr_t phg_grow_scratch(
    );
 
 /*******************************************************************************
- * phg_sleep
+ * phg_msleep
  *
  * DESCR:       Sleep in msecs granularity
  * RETURNS:     TRUE or FALSE
  */
 
-int phg_sleep(
+int phg_msleep(
    unsigned msecs
+   );
+
+/*******************************************************************************
+ * phg_mtime
+ *
+ * DESCR:       Get current time in milleseconds
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_mtime(
+   time_t *tm_val
    );
 
 #endif

@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <phigs/phg.h>
+#include <phigs/private/wsxP.h>
 
 #define STRUCT_OBJECT  0
 #define STRUCT_SCENE   1
@@ -228,11 +229,8 @@ int locator_event(void)
    Pint ws_id, in_num, view_ind;
    Ppoint3 loc_pos;
 
-   if (SIN_Q_EMPTY(PHG_INPUT_Q)) {
-      ret = FALSE;
-   }
-   else {
-      pawait_event(1.0, &ws_id, &class, &in_num);
+   pawait_event(0.1, &ws_id, &class, &in_num);
+   if (class != PIN_NONE) {
       pget_loc3(&view_ind, &loc_pos);
       printf("Locator event #%-2d:\t[%f, %f, %f]\n",
              view_ind,
@@ -240,6 +238,9 @@ int locator_event(void)
              loc_pos.y,
              loc_pos.z);
       ret = TRUE;
+   }
+   else {
+      ret = FALSE;
    }
 
    return ret;
@@ -309,6 +310,7 @@ int main(void)
 {
    Ws *wsh;
    XEvent event;
+   int redraw = 0;
 
    popen_phigs(NULL, 0);
    init_scene();
@@ -324,38 +326,40 @@ int main(void)
 
 #if 0
    pset_loc_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-#endif
-   pset_loc_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
-#if 0
    pset_stroke_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
    pset_stroke_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
    pset_pick_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
    pset_pick_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
 #endif
-
+   pset_loc_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
    
    XSelectInput(wsh->display, wsh->drawable_id, ExposureMask);
    if (wsh != NULL) {
       while (1) {
-         XNextEvent(wsh->display, &event);
+         if (XCheckWindowEvent(wsh->display,
+                               wsh->drawable_id,
+                               (unsigned long) 0xffffffffUL,
+                               &event) == True) {
 #if 0
-         print_event(&event);
+            print_event(&event);
 #endif
-         phg_sin_evt_dispatch(PHG_EVT_TABLE, wsh->display, &event);
-         if (event.type == Expose) {
-            while (XCheckTypedEvent(wsh->display, Expose, &event));
-            predraw_all_structs(WS_MAIN, PFLAG_ALWAYS);
+            if (event.type == Expose) {
+               while (XCheckTypedEvent(wsh->display, Expose, &event));
+               redraw = 1;
+            }
          }
 #if 0
          sample_locator(WS_MAIN);
-#endif
-         locator_event();
-#if 0
          sample_stroke(WS_MAIN);
          stroke_event();
          sample_pick(WS_MAIN);
          pick_event();
 #endif
+         locator_event();
+         if (redraw) {
+            predraw_all_structs(WS_MAIN, PFLAG_ALWAYS);
+            redraw = 0;
+         }
       }
    }
 
