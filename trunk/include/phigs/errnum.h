@@ -81,7 +81,6 @@
 #define	ERRN151	-151
 #define	ERRN150	-150
 #define	ERRN100	-100
-#define	ERRN58	 -58
 #define	ERRN57	 -57
 #define	ERRN55	 -55
 #define	ERRN54	 -54

@@ -1460,7 +1460,7 @@ void psample_pick(
    );
 
 /*******************************************************************************
- * pwait_event
+ * pawait_event
  *
  * DESCR:       Wait for event to occur
  * RETURNS:     N/A

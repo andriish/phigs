@@ -49,7 +49,6 @@ typedef struct {
    Psl_handle      psl;
    Err_handle      erh;
    Css_handle      css;
-   Sem_handle      input_sem;
    Phg_sin_evt_tbl *evt_table;
    Input_q_handle  input_q;
    List            wst_list;
@@ -64,7 +63,6 @@ extern Phg_handle phg;
 #define PHG_ERH (phg->erh)
 #define PHG_PSL (phg->psl)
 #define PHG_CSS (phg->css)
-#define PHG_INPUT_SEM (phg->input_sem)
 #define PHG_EVT_TABLE (phg->evt_table)
 #define PHG_INPUT_Q (phg->input_q)
 #define PHG_WST_LIST (phg->wst_list)

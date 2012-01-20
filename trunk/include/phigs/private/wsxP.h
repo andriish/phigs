@@ -149,6 +149,18 @@ void phg_wsx_compute_ws_transform(
    );
 
 /*******************************************************************************
+ * phg_wsx_input_dispatch_next
+ *
+ * DESCR:       Process any event on the event queue
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wsx_input_dispatch_next(
+   Ws *ws,
+   Phg_sin_evt_tbl *evt_tbl
+   );
+
+/*******************************************************************************
  * phg_wstx_create
  *
  * DESCR:       Create workstation type
