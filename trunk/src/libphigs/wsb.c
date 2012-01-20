@@ -1938,8 +1938,163 @@ int phg_wsb_point_in_viewport(
     XPoint *pt
     )
 {
-    /* Temporary dummy method */
-   return TRUE;
+    int status;
+    Ppoint dc_pt;
+
+    phg_wsx_update_ws_rect(ws);
+    WS_DRWBL_TO_DC2(ws, pt, &dc_pt);
+    status = WS_PT_IN_LIMIT2(&ws->out_ws.model.b.ws_viewport, pt);
+
+    return status;
+}
+
+/*******************************************************************************
+ * wsb_stroke_view
+ *
+ * DESCR:       Resolve stroke device helper function
+ * RETURNS:     TRUE or FALSE
+ */
+
+static int wsb_stroke_view(
+    Ws *ws,
+    int two_d,
+    Ws_point *dc_ll,
+    Ws_point *dc_ur,
+    Pint *view_index
+    )
+{
+    Ppoint3 npc_ll, npc_ur;
+    Ws_view_ref *view_ref;
+    Pview_rep3 *viewrep;
+    Wsb_output_ws *owsb = &ws->out_ws.model.b;
+    Ws_xform *wsxf = &owsb->ws_xform;
+    Plimit3 *ws_win = &owsb->ws_window;
+    int status = FALSE;
+    int in_win = FALSE;
+    int in_clip = FALSE;
+
+    if (two_d) {
+        WS_DC_TO_NPC2(wsxf, dc_ll, &npc_ll);
+        WS_DC_TO_NPC2(wsxf, dc_ur, &npc_ur);
+        if ((WS_PT_IN_LIMIT2(ws_win, &npc_ll)) &&
+            (WS_PT_IN_LIMIT2(ws_win, &npc_ur))) {
+            in_win = TRUE;
+        }
+    }
+    else {
+        WS_DC_TO_NPC(wsxf, dc_ll, &npc_ll);
+        WS_DC_TO_NPC(wsxf, dc_ur, &npc_ur);
+        if ((WS_PT_IN_LIMIT(ws_win, &npc_ll)) &&
+            (WS_PT_IN_LIMIT(ws_win, &npc_ur))) {
+            in_win = TRUE;
+        }
+    }
+
+    if (in_win) {
+        /* Find the highest priority view that contains the point. */
+        for (view_ref = (Ws_view_ref *) LIST_HEAD(&owsb->views);
+             view_ref != NULL;
+             view_ref = (Ws_view_ref *) NODE_NEXT(&view_ref->node)) {
+
+#ifdef DEBUG
+             printf("Processing view: %d\n", view_ref->id);
+#endif
+             viewrep = view_ref->viewrep;
+
+             if (two_d) {
+                 if ((WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_ll)) &&
+                     (WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_ur))) {
+                     in_clip = TRUE;
+                 }
+             }
+             else {
+                 if ((WS_PT_IN_LIMIT(&viewrep->clip_limit, &npc_ll)) &&
+                     (WS_PT_IN_LIMIT(&viewrep->clip_limit, &npc_ur))) {
+                     in_clip = TRUE;
+                 }
+             }
+
+             /* Found a matching view */
+             if (in_clip) {
+#ifdef DEBUG
+                 printf("In clip box\n");
+#endif
+                 if (view_ref->npc_to_wc_state == WS_INV_NOT_CURRENT) {
+#ifdef DEBUG
+                     printf("Update transform\n");
+#endif
+                     update_inv_view_xform(view_ref);
+                 }
+
+                 if (view_ref->npc_to_wc_state == WS_INV_CURRENT) {
+#ifdef DEBUG
+                     printf("Inverted view\n");
+#endif
+                     *view_index = view_ref->id;
+                     status = TRUE;
+                     break;
+                 }
+             }
+        }
+    }
+
+    return status;
+}
+
+/*******************************************************************************
+ * wsb_transform_stroke
+ *
+ * DESCR:       Transform stroke device helper function
+ * RETURNS:     N/A
+ */
+
+static void wsb_transform_stroke(
+    Ws *ws,
+    Pint view_index,
+    int two_d,
+    Pint num_pts,
+    Ws_point *dc_pts,
+    Ppoint_list3 *wc_pts
+    )
+{
+    Pint i;
+    Ppoint3 *npc_pts;
+    Wsb_output_ws *owsb = &ws->out_ws.model.b;
+    Ws_xform *wsxf = &owsb->ws_xform;
+    Ws_view_ref *view_ref;
+    Pview_rep3 *viewrep;
+
+#ifdef DEBUG
+    printf("Transform view: %d\n", view_index);
+#endif
+
+    view_ref = phg_wsb_find_view(&owsb->views, view_index);
+    viewrep = view_ref->viewrep;
+
+    if (!PHG_SCRATCH_SPACE(&ws->scratch, num_pts * sizeof(Ppoint3)) ) {
+       wc_pts->num_points = 0;
+       ERR_BUF(ws->erh, ERR900);
+    }
+    else {
+        npc_pts = (Ppoint3 *) ws->scratch.buf;
+        for (i = 0; i < num_pts; i++) {
+            if (two_d) {
+                WS_DC_TO_NPC2(wsxf, &dc_pts[i], &npc_pts[i]);
+                npc_pts[i].z = viewrep->clip_limit.z_min;
+            }
+            else {
+                WS_DC_TO_NPC(wsxf, &dc_pts[i], &npc_pts[i]);
+            }
+        }
+
+        /* Transform to world coordinates */
+        if (!phg_tranpts3(view_ref->npc_to_wc,
+                         num_pts,
+                         npc_pts,
+                         wc_pts->points)) {
+            wc_pts->num_points = 0;
+        }
+    }
 }
 
 /*******************************************************************************
@@ -1958,18 +2113,74 @@ int phg_wsb_resolve_stroke(
     Ppoint_list3 *wc_pts
     )
 {
-    int i;
+    Ws_point ll, ur;
+    Ws_point *dp;
+    int status = FALSE;
+    int two_d = determine_z;
+    Pint i, xmin, xmax, ymin, ymax, zmin, zmax;
 
-    /* Temporary dummy method */
-    *view_index = 0;
-    wc_pts->num_points = num_pts;
-    for (i = 0; i < num_pts; i++) {
-       wc_pts->points[i].x = dc_pts[i].x;
-       wc_pts->points[i].y = dc_pts[i].y;
-       wc_pts->points[i].z = 0.0;
+    xmin = dc_pts->x;
+    xmax = dc_pts->x;
+    ymin = dc_pts->y;
+    ymax = dc_pts->y;
+    if (!two_d) {
+        zmin = dc_pts->z;
+        zmax = dc_pts->z;
     }
 
-    return TRUE;
+    /* Get bounding box for all points */
+    for (i = 1, dp = &dc_pts[1]; i < num_pts; i++, dp++) {
+        if (dp->x < xmin) {
+            xmin = dp->x;
+        }
+        else if (dp->x > xmax) {
+            xmax = dp->x;
+        }
+
+        if (dp->y < ymin) {
+            ymin = dp->y;
+        }
+        else if (dp->y > ymax) {
+            ymax = dp->y;
+        }
+
+        if (!two_d) {
+            if (dp->z < zmin) {
+                zmin = dp->z;
+            }
+            else if (dp->z > zmax) {
+                zmax = dp->z;
+            }
+        }
+    }
+
+    ll.x = xmin;
+    ll.y = ymax;
+    if (two_d) {
+        ur.x = xmax;
+        ur.y = ymin;
+    }
+    else {
+        ur.x = xmax;
+        ur.y = ymin;
+    }
+
+#ifdef DEBUG
+    printf("Bounding box: %d %d - %d %d \n",
+           ll.x,
+           ll.y,
+           ur.x,
+           ur.y);
+#endif
+
+    /* Resolve view and transform points */
+    if (wsb_stroke_view(ws, two_d, &ll, &ur, view_index)) {
+        wc_pts->num_points = num_pts;
+        wsb_transform_stroke(ws, *view_index, two_d, num_pts, dc_pts, wc_pts);
+        status = TRUE;
+    }
+
+    return status;
 }
 
 /*******************************************************************************

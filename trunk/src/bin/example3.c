@@ -254,11 +254,8 @@ int stroke_event(void)
    Ppoint3 stroke_points[100];
    Ppoint_list3 stroke = {0, stroke_points};
 
-   if (SIN_Q_EMPTY(PHG_INPUT_Q)) {
-      ret = FALSE;
-   }
-   else {
-      pawait_event(1.0, &ws_id, &class, &in_num);
+   pawait_event(0.1, &ws_id, &class, &in_num);
+   if (class != PIN_NONE) {
       pget_stroke3(&view_ind, &stroke);
       printf("Stroke event #%-2d:\n", view_ind);
       for (i = 0; i < stroke.num_points; i++) {
@@ -268,6 +265,9 @@ int stroke_event(void)
                 stroke.points[i].z);
       }
       ret = TRUE;
+   }
+   else {
+      ret = FALSE;
    }
 
    return ret;
@@ -282,11 +282,8 @@ int pick_event(void)
    Ppick_path_elem path_list[10];
    Ppick_path pick = {0, path_list};
 
-   if (SIN_Q_EMPTY(PHG_INPUT_Q)) {
-      ret = FALSE;
-   }
-   else {
-      pawait_event(1.0, &ws_id, &class, &in_num);
+   pawait_event(0.1, &ws_id, &class, &in_num);
+   if (class != PIN_NONE) {
       pget_pick(10, &status, &pick);
       if (status == PIN_STATUS_OK) {
          printf("Pick event #%-d:\n", pick.depth);
@@ -301,6 +298,9 @@ int pick_event(void)
       else {
          ret = FALSE;
       }
+   }
+   else {
+      ret = FALSE;
    }
 
    return ret;
@@ -324,13 +324,6 @@ int main(void)
    printf("Output window %x\n", (unsigned) wsh->drawable_id);
    printf("Input  window %x\n", (unsigned) wsh->input_overlay_window);
 
-#if 0
-   pset_loc_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   pset_stroke_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   pset_stroke_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
-   pset_pick_mode(WS_MAIN, 1, POP_SAMPLE, PSWITCH_NO_ECHO);
-   pset_pick_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
-#endif
    pset_loc_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
    
    XSelectInput(wsh->display, wsh->drawable_id, ExposureMask);
@@ -348,13 +341,6 @@ int main(void)
                redraw = 1;
             }
          }
-#if 0
-         sample_locator(WS_MAIN);
-         sample_stroke(WS_MAIN);
-         stroke_event();
-         sample_pick(WS_MAIN);
-         pick_event();
-#endif
          locator_event();
          if (redraw) {
             predraw_all_structs(WS_MAIN, PFLAG_ALWAYS);

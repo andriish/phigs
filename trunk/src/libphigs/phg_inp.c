@@ -215,6 +215,10 @@ static void sample_device(
 
    /* The calling function shall always check the requested workstation first */
    wsh = PHG_WSID(ws_id);
+
+   /* Process all events for workstation */
+   while (phg_wsx_input_dispatch_next(wsh, PHG_EVT_TABLE));
+
    (*wsh->sample_device)(wsh, dev_class, dev_num, ret);
 }
 
@@ -450,13 +454,13 @@ int inp_dispatch_next(
 }
 
 /*******************************************************************************
- * inp_poll
+ * inp_event_poll
  *
  * DESCR:       Poll input events helper function
  * RETURNS:     N/A
  */
 
-static void inp_poll(
+static void inp_event_poll(
    Phg_ret *ret
    )
 {
@@ -563,7 +567,7 @@ void pawait_event(
    }
    else {
       /* Process events one at time for each workstation
-       * Until one i available, or if the timeout expires
+       * until one is available, or if the timeout expires
        */
       time = 0;
       do {
@@ -572,7 +576,7 @@ void pawait_event(
             /* If there where no events sleep a while */
             phg_msleep(1);
          }
-         inp_poll(&ret);
+         inp_event_poll(&ret);
          phg_mtime(&time2);
          time += (time2 - time1);
          if (time >= limit) {

@@ -427,6 +427,11 @@ typedef struct _Ws {
     (_npc)->x = ( (_dc)->x - (_wsxf)->offset.x) / (_wsxf)->scale.x; \
     (_npc)->y = ( (_dc)->y - (_wsxf)->offset.y) / (_wsxf)->scale.y;
 
+#define WS_DC_TO_NPC(_wsxf, _dc, _npc) \
+    (_npc)->x = ( (_dc)->x - (_wsxf)->offset.x) / (_wsxf)->scale.x; \
+    (_npc)->y = ( (_dc)->y - (_wsxf)->offset.y) / (_wsxf)->scale.y; \
+    (_npc)->z = ( (_dc)->z - (_wsxf)->offset.z) / (_wsxf)->scale.z;
+
 #define WS_PT_IN_LIMIT2( lim, pt) \
     (  (pt)->x >= (lim)->x_min && (pt)->x <= (lim)->x_max \
     && (pt)->y >= (lim)->y_min && (pt)->y <= (lim)->y_max)
