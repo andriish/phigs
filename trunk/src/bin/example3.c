@@ -81,6 +81,10 @@ Pmatrix3 rot3;
 Pcolr_rep col_rep;
 Pgcolr dark, medium, light, white, red;
 Plimit win = {WIN_X0, WIN_X1, WIN_Y0, WIN_Y1};
+Ppoint3 stroke_points[100];
+Ppoint_list3 stroke = {0, stroke_points};
+Ppick_path_elem path_list[10];
+Ppick_path pick = {0, path_list};
 
 void init_scene(void)
 {
@@ -190,8 +194,6 @@ void sample_stroke(Pint ws_id)
 {
    int i;
    Pint view_ind;
-   Ppoint3 stroke_points[100];
-   Ppoint_list3 stroke = {0, stroke_points};
 
    psample_stroke3(ws_id, 1, &view_ind, &stroke);
    printf("Sample stroke #%-2d:\n", view_ind);
@@ -207,8 +209,6 @@ void sample_pick(Pint ws_id)
 {
    int i;
    Pin_status status;
-   Ppick_path_elem path_list[10];
-   Ppick_path pick = {0, path_list};
 
    psample_pick(ws_id, 1, 10, &status, &pick);
    if (status == PIN_STATUS_OK) {
@@ -251,8 +251,6 @@ int stroke_event(void)
    int i, ret;
    Pin_class class;
    Pint ws_id, in_num, view_ind;
-   Ppoint3 stroke_points[100];
-   Ppoint_list3 stroke = {0, stroke_points};
 
    pawait_event(0.1, &ws_id, &class, &in_num);
    if (class != PIN_NONE) {
@@ -321,13 +319,15 @@ int main(void)
    ppost_struct(WS_MAIN, STRUCT_MAIN, 0);
 
    wsh = PHG_WSID(WS_MAIN);
-   printf("Output window %x\n", (unsigned) wsh->drawable_id);
-   printf("Input  window %x\n", (unsigned) wsh->input_overlay_window);
-
-   pset_loc_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
    
-   XSelectInput(wsh->display, wsh->drawable_id, ExposureMask);
    if (wsh != NULL) {
+      printf("Output window %x\n", (unsigned) wsh->drawable_id);
+      printf("Input  window %x\n", (unsigned) wsh->input_overlay_window);
+
+      XSelectInput(wsh->display, wsh->drawable_id, ExposureMask);
+
+      pset_loc_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
+
       while (1) {
          if (XCheckWindowEvent(wsh->display,
                                wsh->drawable_id,
