@@ -1347,6 +1347,58 @@ void peval_view_map_matrix(
     );
 
 /*******************************************************************************
+ * pinit_loc3
+ *
+ * DESCR:       Initialize locator device 3D
+ * RETURNS:     N/A
+ */
+
+void pinit_loc3(
+   Pint ws_id,
+   Pint loc_num,
+   Pint init_view_ind,
+   Ppoint3 *init_loc_pos,
+   Pint pet,
+   Plimit3 *echo_vol,
+   Ploc_data3 *loc_data
+   );
+
+/*******************************************************************************
+ * pinit_stroke3
+ *
+ * DESCR:       Initialize stroke device 3D
+ * RETURNS:     N/A
+ */
+
+void pinit_stroke3(
+   Pint ws_id,
+   Pint stroke_num,
+   Pint init_view_ind,
+   Ppoint_list3 *init_stroke,
+   Pint pet,
+   Plimit3 *echo_vol,
+   Pstroke_data3 *stroke_data
+   );
+
+/*******************************************************************************
+ * pinit_pick3
+ *
+ * DESCR:       Initialize pick device 3D
+ * RETURNS:     N/A
+ */
+
+void pinit_pick3(
+   Pint ws_id,
+   Pint pick_num,
+   Pin_status init_status,
+   Ppick_path *init_pick,
+   Pint pet,
+   Plimit3 *echo_vol,
+   Ppick_data3 *pick_data,
+   Ppath_order order
+   );
+
+/*******************************************************************************
  * pset_loc_mode
  *
  * DESCR:       Set locator input device mode

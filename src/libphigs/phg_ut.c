@@ -24,6 +24,32 @@
 #include <phigs/private/phgP.h>
 
 /*******************************************************************************
+ * phg_int_in_list
+ *
+ * DESCR:       Find out if integer values is stored in list
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_int_in_list(
+   Pint v,
+   Pint num,
+   Pint *list
+   )
+{
+   Pint i;
+   int status = FALSE;
+
+   for (i = 0; i < num; i++) {
+      if (list[i] == v) {
+         status = TRUE;
+         break;
+      }
+   }
+
+   return status;
+}
+
+/*******************************************************************************
  * phg_echo_limits_valid
  *
  * DESCR:       Helper function to check if echo volume limits are valid

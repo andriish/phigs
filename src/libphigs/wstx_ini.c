@@ -268,12 +268,17 @@ int init_devices(
    /* Default locator */
    idt->num_devs.loc = 1;
    memcpy(&idt->locators[0].position, &position, sizeof(Ppoint3));
+   idt->locators[0].num_pets = 1;
+   idt->locators[0].pets[0] = 1;
    memcpy(&idt->locators[0].e_volume, &e_volume, sizeof(Plimit3));
    idt->locators[0].record.pets.pet_r1.unused = 0;
 
    /* Default stroke */
    idt->num_devs.stroke = 1;
    memcpy(&idt->strokes[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->strokes[0].max_bufsize = 200;
+   idt->strokes[0].num_pets = 1;
+   idt->strokes[0].pets[0] = 1;
    idt->strokes[0].record.pets.pet_r1.unused = 0;
    idt->strokes[0].record.buffer_size = 100;
    idt->strokes[0].record.init_pos = 1;

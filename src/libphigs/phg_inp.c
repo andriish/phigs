@@ -89,6 +89,317 @@ static Wst_input_wsdt* input_ws_open(
 }
 
 /*******************************************************************************
+ * check_loc_data_record
+ *
+ * DESCR:       Check locator data record helper function
+ * RETURNS:     TRUE or FALSE
+ */
+
+static int check_loc_data_record(
+   Pint pet,
+   Ploc_data3 *loc_data,
+   Wst_phigs_dt *dt,
+   Wst_defloc *ddt
+   )
+{
+   int status;
+
+   switch (pet) {
+      case 1:
+      case 2:
+      case 3:
+         /* No data */
+         status = TRUE;
+         break;
+
+      default:
+         status = FALSE;
+         break;
+   }
+
+   return status;
+}
+
+/*******************************************************************************
+ * pinit_loc3
+ *
+ * DESCR:       Initialize locator device 3D
+ * RETURNS:     N/A
+ */
+
+void pinit_loc3(
+   Pint ws_id,
+   Pint loc_num,
+   Pint init_view_ind,
+   Ppoint3 *init_loc_pos,
+   Pint pet,
+   Plimit3 *echo_vol,
+   Ploc_data3 *loc_data
+   )
+{
+   Wst_input_wsdt *idt;
+   Wst_phigs_dt *dt;
+   Wst_defloc *ddt;
+   Phg_args_inp_init_dev args;
+   Ws_handle wsh;
+
+   idt = input_ws_open(ws_id, Pfn_init_loc3, &dt, NULL);
+   if (idt != NULL) {
+      if ((loc_num > 0) &&  (loc_num <= idt->num_devs.loc)) {
+         if (phg_echo_limits_valid(ws_id, Pfn_init_loc3, echo_vol, dt)) {
+            /* TODO: Also check against maximum view index */
+            if (init_view_ind >= 0) {
+               ddt = &idt->locators[loc_num - 1];
+               if (!phg_int_in_list(pet, ddt->num_pets, ddt->pets)) {
+                  /* Report error and use default data */
+                  ERR_REPORT(PHG_ERH, ERR253);
+                  loc_data = &ddt->record;
+                  pet = 1;
+               }
+               if (check_loc_data_record(pet, loc_data, dt, ddt)) {
+                  args.wsid                   = ws_id;
+                  args.idev_class             = PHG_ARGS_INP_LOC3;
+                  args.dev                    = loc_num;
+                  args.pet                    = pet;
+                  args.data.loc.init.view_ind = init_view_ind;
+                  memcpy(&args.data.loc.init.position,
+                         init_loc_pos,
+                         sizeof(Ppoint3));
+                  memcpy(&args.echo_volume,
+                         echo_vol,
+                         sizeof(Plimit3));
+                  memcpy(&args.data.loc.rec,
+                         loc_data,
+                         sizeof(Ploc_data3));
+                  wsh = PHG_WSID(ws_id);
+                  (*wsh->init_device)(wsh, &args);
+               }
+               else {
+                  ERR_REPORT(PHG_ERH, ERR260);
+               }
+            }
+            else {
+               ERR_REPORT(PHG_ERH, ERR114);
+            }
+         }
+         /* Error reported by phg_echo_limits_valid */
+      }
+      else {
+         ERR_REPORT(PHG_ERH, ERR250);
+      }
+   }
+}
+
+/*******************************************************************************
+ * check_stroke_data_record
+ *
+ * DESCR:       Check stroke data record helper function
+ * RETURNS:     TRUE or FALSE
+ */
+
+static int check_stroke_data_record(
+   Pint pet,
+   Pstroke_data3 *stroke_data,
+   Wst_phigs_dt *dt,
+   Wst_defstroke *ddt
+   )
+{
+   int status;
+
+   if ((stroke_data->buffer_size < 1) ||
+       (stroke_data->buffer_size > ddt->max_bufsize)) {
+      status = FALSE;
+   }
+   else if ((stroke_data->init_pos < 1) ||
+            (stroke_data->init_pos > ddt->max_bufsize)) {
+      status = FALSE;
+   }
+   else {
+      status = TRUE;
+   }
+
+   return status;
+}
+
+/*******************************************************************************
+ * pinit_stroke3
+ *
+ * DESCR:       Initialize stroke device 3D
+ * RETURNS:     N/A
+ */
+
+void pinit_stroke3(
+   Pint ws_id,
+   Pint stroke_num,
+   Pint init_view_ind,
+   Ppoint_list3 *init_stroke,
+   Pint pet,
+   Plimit3 *echo_vol,
+   Pstroke_data3 *stroke_data
+   )
+{
+   Wst_input_wsdt *idt;
+   Wst_phigs_dt *dt;
+   Wst_defstroke *ddt;
+   Phg_args_inp_init_dev args;
+   Ws_handle wsh;
+
+   idt = input_ws_open(ws_id, Pfn_init_stroke3, &dt, NULL);
+   if (idt != NULL) {
+      if ((stroke_num > 0) &&  (stroke_num <= idt->num_devs.stroke)) {
+         if (phg_echo_limits_valid(ws_id, Pfn_init_stroke3, echo_vol, dt)) {
+            /* TODO: Also check against maximum view index */
+            if (init_view_ind >= 0) {
+               ddt = &idt->strokes[stroke_num - 1];
+               if (!phg_int_in_list(pet, ddt->num_pets, ddt->pets)) {
+                  /* Report error and use default data */
+                  ERR_REPORT(PHG_ERH, ERR253);
+                  stroke_data = &ddt->record;
+                  pet = 1;
+               }
+               if (check_stroke_data_record(pet, stroke_data, dt, ddt)) {
+                  if (init_stroke->num_points < stroke_data->buffer_size) {
+                     args.wsid                     = ws_id;
+                     args.idev_class               = PHG_ARGS_INP_STK3;
+                     args.dev                      = stroke_num;
+                     args.pet                      = pet;
+                     args.data.stk.init.view_ind   = init_view_ind;
+                     args.data.stk.init.num_points = init_stroke->num_points;
+                     args.data.stk.init.points     = init_stroke->points;
+                     memcpy(&args.echo_volume,
+                            echo_vol,
+                            sizeof(Plimit3));
+                     memcpy(&args.data.stk.rec,
+                            stroke_data,
+                            sizeof(Pstroke_data3));
+                     wsh = PHG_WSID(ws_id);
+                     (*wsh->init_device)(wsh, &args);
+                  }
+                  else {
+                     ERR_REPORT(PHG_ERH, ERR262);
+                  }
+               }
+               else {
+                  ERR_REPORT(PHG_ERH, ERR260);
+               }
+            }
+            else {
+               ERR_REPORT(PHG_ERH, ERR114);
+            }
+         }
+         /* Error reported by phg_echo_limits_valid */
+      }
+      else {
+         ERR_REPORT(PHG_ERH, ERR250);
+      }
+   }
+}
+
+/*******************************************************************************
+ * check_pick_data_record
+ *
+ * DESCR:       Check pick data record helper function
+ * RETURNS:     TRUE or FALSE
+ */
+
+static int check_pick_data_record(
+   Pint pet,
+   Ppick_data3 *stroke_data,
+   Wst_phigs_dt *dt,
+   Wst_defpick *ddt
+   )
+{
+   int status;
+
+   switch (pet) {
+      case 1:
+      case 2:
+      case 3:
+         /* No data */
+         status = TRUE;
+         break;
+
+      default:
+         status = FALSE;
+         break;
+   }
+
+   return status;
+}
+
+/*******************************************************************************
+ * pinit_pick3
+ *
+ * DESCR:       Initialize pick device 3D
+ * RETURNS:     N/A
+ */
+
+void pinit_pick3(
+   Pint ws_id,
+   Pint pick_num,
+   Pin_status init_status,
+   Ppick_path *init_pick,
+   Pint pet,
+   Plimit3 *echo_vol,
+   Ppick_data3 *pick_data,
+   Ppath_order order
+   )
+{
+   Wst_input_wsdt *idt;
+   Wst_phigs_dt *dt;
+   Wst_defpick *ddt;
+   Phg_args_inp_init_dev args;
+   Ws_handle wsh;
+
+   /* TODO: Change to only accept outin workstations */
+   idt = input_ws_open(ws_id, Pfn_init_pick3, &dt, NULL);
+   if (idt != NULL) {
+      if ((pick_num > 0) &&  (pick_num <= idt->num_devs.pick)) {
+         if (phg_echo_limits_valid(ws_id, Pfn_init_pick3, echo_vol, dt)) {
+            ddt = &idt->picks[pick_num - 1];
+            if (!phg_int_in_list(pet, ddt->num_pets, ddt->pets)) {
+               /* Report error and use default data */
+               ERR_REPORT(PHG_ERH, ERR253);
+               pick_data = &ddt->record;
+               pet = 1;
+            }
+            if (check_pick_data_record(pet, pick_data, dt, ddt)) {
+               args.wsid                   = ws_id;
+               args.idev_class             = PHG_ARGS_INP_PIK3;
+               args.dev                    = pick_num;
+               args.pet                    = pet;
+               args.data.pik.init.status   = init_status;
+               if (init_status == PIN_STATUS_OK) {
+                  memcpy(&args.data.pik.init.pick_path,
+                         init_pick,
+                         sizeof(Ppick_path));
+               }
+               else {
+                  args.data.pik.init.pick_path.depth = 0;
+               }
+               memcpy(&args.echo_volume,
+                      echo_vol,
+                      sizeof(Plimit3));
+               memcpy(&args.data.pik.rec,
+                      pick_data,
+                      sizeof(Ppick_data3));
+               args.data.pik.porder = order;
+               wsh = PHG_WSID(ws_id);
+               (*wsh->init_device)(wsh, &args);
+               }
+            else {
+               ERR_REPORT(PHG_ERH, ERR260);
+            }
+         }
+         /* Error reported by phg_echo_limits_valid */
+      }
+      else {
+         ERR_REPORT(PHG_ERH, ERR250);
+      }
+   }
+}
+
+/*******************************************************************************
  * set_mode
  *
  * DESCR:       Set mode helper function
