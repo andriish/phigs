@@ -79,6 +79,12 @@ typedef enum {
    WST_STRING_TYPE_WINDOW
 } Wst_string_type;
 
+typedef enum {
+   WST_BOUND,
+   WST_UNBOUND,
+   WST_GLOBAL
+} Wst_bound_status;
+
 typedef struct {
    Ppoint3      position;
    Pint         num_pets;
@@ -179,7 +185,9 @@ typedef struct {
 
 typedef struct {
    Pws_cat    ws_category;
+   Pdc_units  dev_coord_units;
    Pfloat     dev_coords[3];
+   Pint       dev_addrs_units[3];
    Pint       num_hlhsr_modes;
    Pint       *hlhsr_modes;
 
@@ -217,11 +225,12 @@ struct _Ws;
 struct _Phg_args_open_ws;
 
 typedef struct {
-   Node          node;
-   Err_handle    erh;
-   Pint          wsid;
-   Pint          ws_type;
-   Wst_dt        desc_tbl;
+   Node             node;
+   Wst_bound_status bound_status;
+   Err_handle       erh;
+   Pint             wsid;
+   Pint             ws_type;
+   Wst_dt           desc_tbl;
 } Wst;
 
 /*******************************************************************************

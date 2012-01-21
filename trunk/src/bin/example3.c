@@ -304,6 +304,27 @@ int pick_event(void)
    return ret;
 }
 
+void print_size(Pint ws_type)
+{
+   Pint err_ind;
+   Pdisp_space_size3 size;
+
+   pinq_disp_space_size3(ws_type, &err_ind, &size);
+   if (err_ind == 0) {
+      printf("Display device size:\t%f x %f x %f\n",
+             size.size_dc.size_x,
+             size.size_dc.size_y,
+             size.size_dc.size_z);
+      printf("Display raster size:\t%d x %d x %d\n",
+             size.size_raster.size_x,
+             size.size_raster.size_y,
+             size.size_raster.size_z);
+   }
+   else {
+      ERR_REPORT(PHG_ERH, err_ind);
+   }
+}
+
 int main(void)
 {
    Ws *wsh;
@@ -312,6 +333,7 @@ int main(void)
 
    popen_phigs(NULL, 0);
    init_scene();
+   print_size(PWST_OUTIN_TRUE_DB);
    popen_ws(WS_MAIN, NULL, PWST_OUTIN_TRUE_DB);
    pset_ws_win(WS_MAIN, &win);
    pset_hlhsr_mode(WS_MAIN, PHIGS_HLHSR_MODE_ZBUFF);
