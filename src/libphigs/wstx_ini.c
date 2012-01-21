@@ -378,9 +378,15 @@ int phg_wstx_init(
    dt = &wst->desc_tbl.phigs_dt;
 
    dt->ws_category = category;
+   dt->dev_coord_units = PDC_OTHER;
+
    dt->dev_coords[0] = (float) DisplayWidth(display, screen_num);
    dt->dev_coords[1] = (float) DisplayHeight(display, screen_num);
    dt->dev_coords[2] = 1.0;
+
+   dt->dev_addrs_units[0] = DisplayWidth(display, screen_num);
+   dt->dev_addrs_units[1] = DisplayHeight(display, screen_num);
+   dt->dev_addrs_units[2] = 1;
 
    XCloseDisplay(display);
 

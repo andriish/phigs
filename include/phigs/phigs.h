@@ -262,6 +262,11 @@ typedef enum {
 } Ppr_switch;
 
 typedef enum {
+   PDC_METRES,
+   PDC_OTHER
+} Pdc_units;
+
+typedef enum {
    PIN_STATUS_NONE,
    PIN_STATUS_OK,
    PIN_STATUS_NO_IN
@@ -482,6 +487,40 @@ typedef union {
    Prgb rgb;
    Phsv hsv;
 } Pcolr_rep;
+
+typedef struct {
+   Pint size_x;
+   Pint size_y;
+} Pint_size;
+
+typedef struct {
+   Pint size_x;
+   Pint size_y;
+   Pint size_z;
+} Pint_size3;
+
+typedef struct {
+   Pfloat size_x;
+   Pfloat size_y;
+} Pfloat_size;
+
+typedef struct {
+   Pfloat size_x;
+   Pfloat size_y;
+   Pfloat size_z;
+} Pfloat_size3;
+
+typedef struct {
+   Pdc_units   dc_units;
+   Pfloat_size size_dc;
+   Pint_size   size_raster;
+} Pdisp_space_size;
+
+typedef struct {
+   Pdc_units    dc_units;
+   Pfloat_size3 size_dc;
+   Pint_size3   size_raster;
+} Pdisp_space_size3;
 
 typedef struct {
    Pint   id;

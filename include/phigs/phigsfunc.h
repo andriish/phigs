@@ -1534,5 +1534,18 @@ void pget_pick(
    Ppick_path *pick
    );
 
+/*******************************************************************************
+ * pinq_disp_space_size3
+ *
+ * DESCR:       Get display size 3D
+ * RETURNS:     N/A
+ */
+
+void pinq_disp_space_size3(
+   Pint ws_type,
+   Pint *err_ind,
+   Pdisp_space_size3 *size
+   );
+
 #endif /* _phigsfunc_h */
 
