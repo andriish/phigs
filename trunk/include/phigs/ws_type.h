@@ -106,6 +106,7 @@ typedef struct {
 typedef struct {
    Pint            max_bufsize;
    Pint            num_pets;
+   Pint            pets[WST_MAX_NUM_PETS];
    Plimit3         e_volume;
    Pstroke_data3   record;
    Wst_stroke_type type;

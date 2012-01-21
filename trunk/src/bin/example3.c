@@ -177,12 +177,50 @@ void print_event(XEvent *event)
     printf("\tWindow = %x\n", (unsigned) event->xany.window);
 }
 
-void sample_locator(Pint ws_id)
+void init_locator(Pint ws_id, Pint dev_id, Pop_mode mode, Pecho_switch echo)
+{
+   Plimit3 echo_volume = {0.0, 500.0, 0.0, 500.0, 0.0, 1.0};
+   Ppoint3 init_pos = {0.0, 0.0, 0.0};
+   Ploc_data3 rec;
+   rec.pets.pet_r1.unused = 0;
+
+   pinit_loc3(ws_id, dev_id, 0, &init_pos, 1, &echo_volume, &rec);
+   pset_loc_mode(WS_MAIN, 1, mode, echo);
+}
+
+void init_stroke(Pint ws_id, Pint dev_id, Pop_mode mode, Pecho_switch echo)
+{
+   Plimit3 echo_volume = {0.0, 500.0, 0.0, 500.0, 0.0, 1.0};
+   Ppoint3 pt[1] = {{0.0, 0.0, 0.0}};
+   Ppoint_list3 init_stk = {1, pt};
+   Pstroke_data3 rec;
+   rec.buffer_size = 100;
+   rec.init_pos = 1;
+   rec.pets.pet_r1.unused = 0;
+
+   pinit_stroke3(ws_id, dev_id, 0, &init_stk, 1, &echo_volume, &rec);
+   pset_stroke_mode(WS_MAIN, 1, mode, echo);
+}
+
+void init_pick(Pint ws_id, Pint dev_id, Pop_mode mode, Pecho_switch echo)
+{
+   Plimit3 echo_volume = {0.0, 500.0, 0.0, 500.0, 0.0, 1.0};
+   Ppick_path_elem plist[1] = {{0, 0, 0}};
+   Ppick_path pik = {1, plist};
+   Ppick_data3 rec;
+   rec.pets.pet_r1.unused = 0;
+
+   pinit_pick3(ws_id, dev_id, PIN_STATUS_OK, &pik, 1, &echo_volume,
+               &rec, PORDER_TOP_FIRST);
+   pset_pick_mode(WS_MAIN, 1, mode, echo);
+}
+
+void sample_locator(Pint ws_id, Pint dev_num)
 {
    Pint view_ind;
    Ppoint3 loc_pos;
 
-   psample_loc3(ws_id, 1, &view_ind, &loc_pos);
+   psample_loc3(ws_id, dev_num, &view_ind, &loc_pos);
    printf("Sample locator #%-2d:\t[%f, %f, %f]\n",
           view_ind,
           loc_pos.x,
@@ -190,12 +228,12 @@ void sample_locator(Pint ws_id)
           loc_pos.z);
 }
 
-void sample_stroke(Pint ws_id)
+void sample_stroke(Pint ws_id, Pint dev_num)
 {
    int i;
    Pint view_ind;
 
-   psample_stroke3(ws_id, 1, &view_ind, &stroke);
+   psample_stroke3(ws_id, dev_num, &view_ind, &stroke);
    printf("Sample stroke #%-2d:\n", view_ind);
    for (i = 0; i < stroke.num_points; i++) {
       printf("\t[%f, %f, %f]\n",
@@ -205,12 +243,12 @@ void sample_stroke(Pint ws_id)
    }
 }
 
-void sample_pick(Pint ws_id)
+void sample_pick(Pint ws_id, Pint dev_num)
 {
    int i;
    Pin_status status;
 
-   psample_pick(ws_id, 1, 10, &status, &pick);
+   psample_pick(ws_id, dev_num, 10, &status, &pick);
    if (status == PIN_STATUS_OK) {
       printf("Sample pick #%-d:\n", pick.depth);
       for (i = 0; i < pick.depth; i++) {
@@ -348,7 +386,7 @@ int main(void)
 
       XSelectInput(wsh->display, wsh->drawable_id, ExposureMask);
 
-      pset_loc_mode(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
+      init_locator(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
 
       while (1) {
          if (XCheckWindowEvent(wsh->display,

@@ -149,6 +149,19 @@ void phg_get_colr_ind(
    );
 
 /*******************************************************************************
+ * phg_int_in_list
+ *
+ * DESCR:       Find out if integer values is stored in list
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_int_in_list(
+   Pint v,
+   Pint num,
+   Pint *list
+   );
+
+/*******************************************************************************
  * phg_echo_limits_valid
  *
  * DESCR:       Helper function to check if echo volume limits are valid
