@@ -276,6 +276,7 @@ int init_devices(
    memcpy(&idt->strokes[0].e_volume, &e_volume, sizeof(Plimit3));
    idt->strokes[0].record.pets.pet_r1.unused = 0;
    idt->strokes[0].record.buffer_size = 100;
+   idt->strokes[0].record.init_pos = 1;
 
    /* Default pick */
    idt->num_devs.pick = 1;
