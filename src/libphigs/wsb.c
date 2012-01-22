@@ -912,10 +912,6 @@ void phg_wsb_post(
     Ws_post_str 	*cur, *end;
     Ws_post_str 	*new;
 
-#ifdef DEBUG
-    printf("wsb: Post on workspace: %x\n", (unsigned int) ws);
-#endif
-
     if ( !first_posting ) {
 	/* Check to see if structure is already posted. */
 	cur = owsb->posted.lowest.higher;
@@ -1851,68 +1847,57 @@ int phg_wsb_resolve_locator(
     Wsb_output_ws *owsb = &ws->out_ws.model.b;
     Ws_xform *wsxf = &owsb->ws_xform;
     Plimit3 *ws_win = &owsb->ws_window;
+    int in_win = FALSE;
+    int in_clip = FALSE;
     int status = FALSE;
-
-#ifdef DEBUG
-    printf("Ws transform: (%f, %f, %f) (%f, %f, %f)\n",
-           wsxf->offset.x, wsxf->offset.y, wsxf->offset.z,
-           wsxf->scale.x, wsxf->scale.y, wsxf->scale.z);
-#endif
 
     /* Apply the inverse WS transform and see if it's in the ws window.
      * Can't just check against the viewport boundaries because the
      * window may be smaller if the aspect ratios are different.
      */
-    WS_DC_TO_NPC2(wsxf, dc_pt, &npc_pt)
-#ifdef DEBUG
-    printf("Device coordinate (%d, %d) to world coordinate (%f, %f %f)\n",
-           dc_pt->x, dc_pt->y, npc_pt.x, npc_pt.y, npc_pt.z);
-    printf("Check against workstation window: (%f, %f) (%f, %f)\n",
-           ws_win->x_min, ws_win->y_min, ws_win->x_max, ws_win->y_max);
-#endif
-    if ((npc_pt.x >= ws_win->x_min) && (npc_pt.x <= ws_win->x_max) &&
-        (npc_pt.y >= ws_win->y_min) && (npc_pt.y <= ws_win->y_max)) {
+    if (!determine_z) {
+        WS_DC_TO_NPC2(wsxf, dc_pt, &npc_pt)
+        if (WS_PT_IN_LIMIT2(ws_win, &npc_pt)) {
+            in_win = TRUE;
+        }
+    }
+    else {
+        WS_DC_TO_NPC(wsxf, dc_pt, &npc_pt)
+        if (WS_PT_IN_LIMIT(ws_win, &npc_pt)) {
+            in_win = TRUE;
+        }
+    }
 
+    if (in_win) {
         /* Find the highest priority view that contains the point. */
         for (view_ref = (Ws_view_ref *) LIST_HEAD(&owsb->views);
              view_ref != NULL;
              view_ref = (Ws_view_ref *) NODE_NEXT(&view_ref->node)) {
 
              viewrep = view_ref->viewrep;
-#ifdef DEBUG
-             printf("Check against #%-2d: (%f, %f, %f) (%f %f %f)\n",
-                    view_ref->id,
-                    viewrep->clip_limit.x_min,
-                    viewrep->clip_limit.y_min,
-                    viewrep->clip_limit.z_min,
-                    viewrep->clip_limit.x_max,
-                    viewrep->clip_limit.y_max,
-                    viewrep->clip_limit.z_max);
-#endif
-             /* Check if point is within limit */
-             if (WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_pt)) {
-#ifdef DEBUG
-                printf("Point is within clip limits for view: %d\n",
-                       view_ref->id);
-#endif
 
+            if (!determine_z) {
+                if (WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_pt)) {
+                    in_clip = TRUE;
+                }
+            }
+            else {
+                if (WS_PT_IN_LIMIT(&viewrep->clip_limit, &npc_pt)) {
+                    in_clip = TRUE;
+                }
+            }
+
+            if (in_clip) {
                 /* Calculate the inverse xform if necessary. */
                 if (view_ref->npc_to_wc_state == WS_INV_NOT_CURRENT) {
                     update_inv_view_xform(view_ref);
-#ifdef DEBUG
-                    printf("Update inverse tranformation for view: %d\n",
-                           view_ref->id);
-                    phg_mat_print(view_ref->npc_to_wc);
-                    printf("\n");
-#endif
                 }
 
                 /* Map point to WC if xform invertible. */
                 if (view_ref->npc_to_wc_state == WS_INV_CURRENT) {
-#ifdef DEBUG
-                    printf("Inverse transform available for view: %d\n",
-                           view_ref->id);
-#endif
+                    if (!determine_z) {
+                        npc_pt.z = viewrep->clip_limit.z_min;
+                    }
                     if (phg_tranpt3(&npc_pt, view_ref->npc_to_wc, wc_pt)) {
                         *view_index = view_ref->id;
                         status = TRUE;
@@ -1957,10 +1942,10 @@ int phg_wsb_point_in_viewport(
 
 static int wsb_stroke_view(
     Ws *ws,
-    int two_d,
+    int determine_z,
     Ws_point *dc_ll,
     Ws_point *dc_ur,
-    Pint *view_index
+    Ws_view_ref **vref
     )
 {
     Ppoint3 npc_ll, npc_ur;
@@ -1973,7 +1958,7 @@ static int wsb_stroke_view(
     int in_win = FALSE;
     int in_clip = FALSE;
 
-    if (two_d) {
+    if (!determine_z) {
         WS_DC_TO_NPC2(wsxf, dc_ll, &npc_ll);
         WS_DC_TO_NPC2(wsxf, dc_ur, &npc_ur);
         if ((WS_PT_IN_LIMIT2(ws_win, &npc_ll)) &&
@@ -1996,12 +1981,9 @@ static int wsb_stroke_view(
              view_ref != NULL;
              view_ref = (Ws_view_ref *) NODE_NEXT(&view_ref->node)) {
 
-#ifdef DEBUG
-             printf("Processing view: %d\n", view_ref->id);
-#endif
              viewrep = view_ref->viewrep;
 
-             if (two_d) {
+             if (!determine_z) {
                  if ((WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_ll)) &&
                      (WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_ur))) {
                      in_clip = TRUE;
@@ -2016,21 +1998,12 @@ static int wsb_stroke_view(
 
              /* Found a matching view */
              if (in_clip) {
-#ifdef DEBUG
-                 printf("In clip box\n");
-#endif
                  if (view_ref->npc_to_wc_state == WS_INV_NOT_CURRENT) {
-#ifdef DEBUG
-                     printf("Update transform\n");
-#endif
                      update_inv_view_xform(view_ref);
                  }
 
                  if (view_ref->npc_to_wc_state == WS_INV_CURRENT) {
-#ifdef DEBUG
-                     printf("Inverted view\n");
-#endif
-                     *view_index = view_ref->id;
+                     *vref = view_ref;
                      status = TRUE;
                      break;
                  }
@@ -2050,8 +2023,8 @@ static int wsb_stroke_view(
 
 static void wsb_transform_stroke(
     Ws *ws,
-    Pint view_index,
-    int two_d,
+    Ws_view_ref *vref,
+    int determine_z,
     Pint num_pts,
     Ws_point *dc_pts,
     Ppoint_list3 *wc_pts
@@ -2061,15 +2034,9 @@ static void wsb_transform_stroke(
     Ppoint3 *npc_pts;
     Wsb_output_ws *owsb = &ws->out_ws.model.b;
     Ws_xform *wsxf = &owsb->ws_xform;
-    Ws_view_ref *view_ref;
     Pview_rep3 *viewrep;
 
-#ifdef DEBUG
-    printf("Transform view: %d\n", view_index);
-#endif
-
-    view_ref = phg_wsb_find_view(&owsb->views, view_index);
-    viewrep = view_ref->viewrep;
+    viewrep = vref->viewrep;
 
     if (!PHG_SCRATCH_SPACE(&ws->scratch, num_pts * sizeof(Ppoint3)) ) {
        wc_pts->num_points = 0;
@@ -2078,7 +2045,7 @@ static void wsb_transform_stroke(
     else {
         npc_pts = (Ppoint3 *) ws->scratch.buf;
         for (i = 0; i < num_pts; i++) {
-            if (two_d) {
+            if (!determine_z) {
                 WS_DC_TO_NPC2(wsxf, &dc_pts[i], &npc_pts[i]);
                 npc_pts[i].z = viewrep->clip_limit.z_min;
             }
@@ -2088,7 +2055,7 @@ static void wsb_transform_stroke(
         }
 
         /* Transform to world coordinates */
-        if (!phg_tranpts3(view_ref->npc_to_wc,
+        if (!phg_tranpts3(vref->npc_to_wc,
                          num_pts,
                          npc_pts,
                          wc_pts->points)) {
@@ -2113,17 +2080,17 @@ int phg_wsb_resolve_stroke(
     Ppoint_list3 *wc_pts
     )
 {
+    Pint i, xmin, xmax, ymin, ymax, zmin, zmax;
     Ws_point ll, ur;
     Ws_point *dp;
+    Ws_view_ref *view_ref;
     int status = FALSE;
-    int two_d = determine_z;
-    Pint i, xmin, xmax, ymin, ymax, zmin, zmax;
 
     xmin = dc_pts->x;
     xmax = dc_pts->x;
     ymin = dc_pts->y;
     ymax = dc_pts->y;
-    if (!two_d) {
+    if (determine_z) {
         zmin = dc_pts->z;
         zmax = dc_pts->z;
     }
@@ -2144,7 +2111,7 @@ int phg_wsb_resolve_stroke(
             ymax = dp->y;
         }
 
-        if (!two_d) {
+        if (determine_z) {
             if (dp->z < zmin) {
                 zmin = dp->z;
             }
@@ -2156,27 +2123,23 @@ int phg_wsb_resolve_stroke(
 
     ll.x = xmin;
     ll.y = ymax;
-    if (two_d) {
-        ur.x = xmax;
-        ur.y = ymin;
+    ur.x = xmax;
+    ur.y = ymin;
+    if (determine_z) {
+       ll.z = zmin;
+       ur.z = zmax;
     }
-    else {
-        ur.x = xmax;
-        ur.y = ymin;
-    }
-
-#ifdef DEBUG
-    printf("Bounding box: %d %d - %d %d \n",
-           ll.x,
-           ll.y,
-           ur.x,
-           ur.y);
-#endif
 
     /* Resolve view and transform points */
-    if (wsb_stroke_view(ws, two_d, &ll, &ur, view_index)) {
+    if (wsb_stroke_view(ws, FALSE, &ll, &ur, &view_ref)) {
         wc_pts->num_points = num_pts;
-        wsb_transform_stroke(ws, *view_index, two_d, num_pts, dc_pts, wc_pts);
+        wsb_transform_stroke(ws,
+                             view_ref,
+                             FALSE,
+                             num_pts,
+                             dc_pts,
+                             wc_pts);
+        *view_index = view_ref->id;
         status = TRUE;
     }
 
