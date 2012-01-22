@@ -272,6 +272,7 @@ int init_devices(
    idt->locators[0].pets[0] = 1;
    memcpy(&idt->locators[0].e_volume, &e_volume, sizeof(Plimit3));
    idt->locators[0].record.pets.pet_r1.unused = 0;
+   idt->locators[0].type = WST_LOC_TYPE_POINTER_BUTTON_1;
 
    /* Default stroke */
    idt->num_devs.stroke = 1;
@@ -282,11 +283,13 @@ int init_devices(
    idt->strokes[0].record.pets.pet_r1.unused = 0;
    idt->strokes[0].record.buffer_size = 100;
    idt->strokes[0].record.init_pos = 1;
+   idt->strokes[0].type = WST_LOC_TYPE_POINTER_BUTTON_1;
 
    /* Default pick */
    idt->num_devs.pick = 1;
    memcpy(&idt->picks[0].e_volume, &e_volume, sizeof(Plimit3));
    idt->picks[0].record.pets.pet_r1.unused = 0;
+   idt->picks[0].type = WST_LOC_TYPE_POINTER_BUTTON_1;
 
    /* Default valuator */
    idt->num_devs.val = 1;
