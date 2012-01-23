@@ -24,7 +24,7 @@
 #include <phigs/sin.h>
 
 typedef struct {
-   Pint x, y, z;
+   Pint x, y;
 } Ws_point;
 
 typedef struct {
