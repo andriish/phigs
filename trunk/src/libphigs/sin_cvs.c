@@ -487,7 +487,7 @@ static void activate_loc(
     )
 {
 #ifdef DEBUG
-    printf("sin_cvs: activate_loc");
+    printf("sin_cvs: activate_loc\n");
 #endif
 
     reset_device( dev );

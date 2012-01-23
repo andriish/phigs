@@ -108,6 +108,12 @@ typedef union {
    Ws_inp_string *str;
 } Ws_inp_device_handle;
 
+typedef struct {
+   Pint                 dev_num;
+   Phg_ret_inp_req_stat status;
+   Phg_inp_event_data   data;
+} Ws_inp_req;
+
 typedef struct _Ws_input_ws {
    Pnum_in          num_devs;
    struct {
@@ -120,6 +126,7 @@ typedef struct _Ws_input_ws {
    } devs;
    Sin_handle       sin_handle;
    Input_q_handle   input_queue;
+   Ws_inp_req       input_request;
    Phg_scratch      scratch;
 } Ws_input_ws;
 
