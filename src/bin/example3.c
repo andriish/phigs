@@ -342,6 +342,35 @@ int pick_event(void)
    return ret;
 }
 
+int locator_request(Pint ws_id, Pint dev_num)
+{
+   Phg_ret ret;
+   int status;
+   Ws_handle wsh = PHG_WSID(ws_id);
+   Ws_input_ws *in_ws = &wsh->in_ws;
+   Phg_inp_event_data *data;
+
+   (*wsh->request_device)(wsh, PIN_LOC, dev_num, &ret);
+
+   while (phg_wsx_input_dispatch_next(wsh, PHG_EVT_TABLE));
+   if ((in_ws->input_request.status.istat == PIN_STATUS_OK) &&
+       (in_ws->input_request.dev_num == dev_num)) {
+      data = &in_ws->input_request.data;
+      printf("Locator request #%-2d:\t[%f, %f, %f]\n",
+             data->loc.view_ind,
+             data->loc.position.x,
+             data->loc.position.y,
+             data->loc.position.z);
+      memset(&in_ws->input_request, 0, sizeof(Ws_inp_req));
+      status = TRUE;
+   }
+   else {
+      status = FALSE;
+   }
+
+   return status;
+}
+
 void print_size(Pint ws_type)
 {
    Pint err_ind;

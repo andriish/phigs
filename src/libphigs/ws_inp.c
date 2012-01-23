@@ -1303,6 +1303,14 @@ static void send_request(
 
 #ifdef TODO
     phg_cp_send_request( ws->cph, &ret );
+#else
+    ws->in_ws.input_request.dev_num = event->dev_num;
+    memcpy(&ws->in_ws.input_request.status,
+           &req->status,
+           sizeof(Phg_ret_inp_req_stat));
+    memcpy(&ws->in_ws.input_request.data,
+           &revt->data,
+           sizeof(Phg_inp_event_data));
 #endif
 
     if ( revt->id.in_class == PIN_PICK && ws->pick_disable )
