@@ -1855,17 +1855,9 @@ int phg_wsb_resolve_locator(
      * Can't just check against the viewport boundaries because the
      * window may be smaller if the aspect ratios are different.
      */
-    if (!determine_z) {
-        WS_DC_TO_NPC2(wsxf, dc_pt, &npc_pt)
-        if (WS_PT_IN_LIMIT2(ws_win, &npc_pt)) {
-            in_win = TRUE;
-        }
-    }
-    else {
-        WS_DC_TO_NPC(wsxf, dc_pt, &npc_pt)
-        if (WS_PT_IN_LIMIT(ws_win, &npc_pt)) {
-            in_win = TRUE;
-        }
+    WS_DC_TO_NPC2(wsxf, dc_pt, &npc_pt)
+    if (WS_PT_IN_LIMIT2(ws_win, &npc_pt)) {
+        in_win = TRUE;
     }
 
     if (in_win) {
@@ -1874,17 +1866,9 @@ int phg_wsb_resolve_locator(
              view_ref != NULL;
              view_ref = (Ws_view_ref *) NODE_NEXT(&view_ref->node)) {
 
-             viewrep = view_ref->viewrep;
-
-            if (!determine_z) {
-                if (WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_pt)) {
-                    in_clip = TRUE;
-                }
-            }
-            else {
-                if (WS_PT_IN_LIMIT(&viewrep->clip_limit, &npc_pt)) {
-                    in_clip = TRUE;
-                }
+            viewrep = view_ref->viewrep;
+            if (WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_pt)) {
+                in_clip = TRUE;
             }
 
             if (in_clip) {
@@ -1895,9 +1879,7 @@ int phg_wsb_resolve_locator(
 
                 /* Map point to WC if xform invertible. */
                 if (view_ref->npc_to_wc_state == WS_INV_CURRENT) {
-                    if (!determine_z) {
-                        npc_pt.z = viewrep->clip_limit.z_min;
-                    }
+                    npc_pt.z = viewrep->clip_limit.z_min;
                     if (phg_tranpt3(&npc_pt, view_ref->npc_to_wc, wc_pt)) {
                         *view_index = view_ref->id;
                         status = TRUE;
@@ -1942,7 +1924,6 @@ int phg_wsb_point_in_viewport(
 
 static int wsb_stroke_view(
     Ws *ws,
-    int determine_z,
     Ws_point *dc_ll,
     Ws_point *dc_ur,
     Ws_view_ref **vref
@@ -1958,21 +1939,11 @@ static int wsb_stroke_view(
     int in_win = FALSE;
     int in_clip = FALSE;
 
-    if (!determine_z) {
-        WS_DC_TO_NPC2(wsxf, dc_ll, &npc_ll);
-        WS_DC_TO_NPC2(wsxf, dc_ur, &npc_ur);
-        if ((WS_PT_IN_LIMIT2(ws_win, &npc_ll)) &&
-            (WS_PT_IN_LIMIT2(ws_win, &npc_ur))) {
-            in_win = TRUE;
-        }
-    }
-    else {
-        WS_DC_TO_NPC(wsxf, dc_ll, &npc_ll);
-        WS_DC_TO_NPC(wsxf, dc_ur, &npc_ur);
-        if ((WS_PT_IN_LIMIT(ws_win, &npc_ll)) &&
-            (WS_PT_IN_LIMIT(ws_win, &npc_ur))) {
-            in_win = TRUE;
-        }
+    WS_DC_TO_NPC2(wsxf, dc_ll, &npc_ll);
+    WS_DC_TO_NPC2(wsxf, dc_ur, &npc_ur);
+    if ((WS_PT_IN_LIMIT2(ws_win, &npc_ll)) &&
+        (WS_PT_IN_LIMIT2(ws_win, &npc_ur))) {
+        in_win = TRUE;
     }
 
     if (in_win) {
@@ -1981,33 +1952,25 @@ static int wsb_stroke_view(
              view_ref != NULL;
              view_ref = (Ws_view_ref *) NODE_NEXT(&view_ref->node)) {
 
-             viewrep = view_ref->viewrep;
+            viewrep = view_ref->viewrep;
 
-             if (!determine_z) {
-                 if ((WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_ll)) &&
-                     (WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_ur))) {
-                     in_clip = TRUE;
-                 }
-             }
-             else {
-                 if ((WS_PT_IN_LIMIT(&viewrep->clip_limit, &npc_ll)) &&
-                     (WS_PT_IN_LIMIT(&viewrep->clip_limit, &npc_ur))) {
-                     in_clip = TRUE;
-                 }
-             }
+            if ((WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_ll)) &&
+                (WS_PT_IN_LIMIT2(&viewrep->clip_limit, &npc_ur))) {
+                in_clip = TRUE;
+            }
 
-             /* Found a matching view */
-             if (in_clip) {
-                 if (view_ref->npc_to_wc_state == WS_INV_NOT_CURRENT) {
-                     update_inv_view_xform(view_ref);
-                 }
+            /* Found a matching view */
+            if (in_clip) {
+                if (view_ref->npc_to_wc_state == WS_INV_NOT_CURRENT) {
+                    update_inv_view_xform(view_ref);
+                }
 
-                 if (view_ref->npc_to_wc_state == WS_INV_CURRENT) {
-                     *vref = view_ref;
-                     status = TRUE;
-                     break;
-                 }
-             }
+                if (view_ref->npc_to_wc_state == WS_INV_CURRENT) {
+                    *vref = view_ref;
+                    status = TRUE;
+                    break;
+                }
+            }
         }
     }
 
@@ -2045,13 +2008,8 @@ static void wsb_transform_stroke(
     else {
         npc_pts = (Ppoint3 *) ws->scratch.buf;
         for (i = 0; i < num_pts; i++) {
-            if (!determine_z) {
-                WS_DC_TO_NPC2(wsxf, &dc_pts[i], &npc_pts[i]);
-                npc_pts[i].z = viewrep->clip_limit.z_min;
-            }
-            else {
-                WS_DC_TO_NPC(wsxf, &dc_pts[i], &npc_pts[i]);
-            }
+            WS_DC_TO_NPC2(wsxf, &dc_pts[i], &npc_pts[i]);
+            npc_pts[i].z = viewrep->clip_limit.z_min;
         }
 
         /* Transform to world coordinates */
@@ -2080,7 +2038,7 @@ int phg_wsb_resolve_stroke(
     Ppoint_list3 *wc_pts
     )
 {
-    Pint i, xmin, xmax, ymin, ymax, zmin, zmax;
+    Pint i, xmin, xmax, ymin, ymax;
     Ws_point ll, ur;
     Ws_point *dp;
     Ws_view_ref *view_ref;
@@ -2090,10 +2048,6 @@ int phg_wsb_resolve_stroke(
     xmax = dc_pts->x;
     ymin = dc_pts->y;
     ymax = dc_pts->y;
-    if (determine_z) {
-        zmin = dc_pts->z;
-        zmax = dc_pts->z;
-    }
 
     /* Get bounding box for all points */
     for (i = 1, dp = &dc_pts[1]; i < num_pts; i++, dp++) {
@@ -2110,32 +2064,19 @@ int phg_wsb_resolve_stroke(
         else if (dp->y > ymax) {
             ymax = dp->y;
         }
-
-        if (determine_z) {
-            if (dp->z < zmin) {
-                zmin = dp->z;
-            }
-            else if (dp->z > zmax) {
-                zmax = dp->z;
-            }
-        }
     }
 
     ll.x = xmin;
     ll.y = ymax;
     ur.x = xmax;
     ur.y = ymin;
-    if (determine_z) {
-       ll.z = zmin;
-       ur.z = zmax;
-    }
 
     /* Resolve view and transform points */
-    if (wsb_stroke_view(ws, FALSE, &ll, &ur, &view_ref)) {
+    if (wsb_stroke_view(ws, &ll, &ur, &view_ref)) {
         wc_pts->num_points = num_pts;
         wsb_transform_stroke(ws,
                              view_ref,
-                             FALSE,
+                             determine_z,
                              num_pts,
                              dc_pts,
                              wc_pts);
