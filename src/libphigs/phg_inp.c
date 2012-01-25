@@ -414,16 +414,16 @@ static void set_mode(
    Pecho_switch echo_switch
    )
 {
-   Ws_handle wsh;
    Phg_args_set_mode_data args;
+
+   /* The calling function shall always check the requested workstation first */
+   Ws_handle wsh = PHG_WSID(ws_id);
 
    args.idev_class = dev_class;
    args.dev = dev_num;
    args.mode = op_mode;
    args.echo = echo_switch;
 
-   /* The calling function shall always check the requested workstation first */
-   wsh = PHG_WSID(ws_id);
    (*wsh->set_device_mode)(wsh, &args);
 }
 
@@ -1102,3 +1102,175 @@ void pget_pick(
    }
 }
 
+/*******************************************************************************
+ * request_device
+ *
+ * DESCR:       Request device helper function
+ * RETURNS:     N/A
+ */
+
+static void request_device(
+   Pint ws_id,
+   Pint dev_num,
+   Phg_args_idev_class dev_class,
+   Phg_ret *ret
+   )
+{
+   Pin_status in_status;
+   unsigned size;
+
+   /* The calling function shall always check the requested workstation first */
+   Ws_handle wsh = PHG_WSID(ws_id);
+   Ws_inp_req *inp = &wsh->in_ws.input_request;
+   Phg_ret_inp_request *req = &ret->data.inp_request;
+
+   (*wsh->request_device)(wsh, dev_class, dev_num, ret);
+
+   do {
+      while (phg_wsx_input_dispatch_next(wsh, PHG_EVT_TABLE));
+      phg_msleep(1);
+   } while ((inp->status.istat == PIN_STATUS_NONE) &&
+            (inp->dev_class != dev_class) &&
+            (inp->dev_num != dev_num));
+
+   switch (dev_class) {
+      case PHG_ARGS_INP_LOC:
+      case PHG_ARGS_INP_LOC3:
+      case PHG_ARGS_INP_STK:
+      case PHG_ARGS_INP_STK3:
+      case PHG_ARGS_INP_VAL:
+      case PHG_ARGS_INP_VAL3:
+      case PHG_ARGS_INP_STR:
+      case PHG_ARGS_INP_STR3:
+         in_status = inp->status.istat;
+         break;
+      case PHG_ARGS_INP_PIK:
+      case PHG_ARGS_INP_PIK3:
+         in_status = inp->status.pkstat;
+         break;
+      case PHG_ARGS_INP_CHC:
+      case PHG_ARGS_INP_CHC3:
+         in_status = inp->status.chstat;
+         break;
+   }
+
+   req->status.istat = in_status;
+   if (in_status != PIN_STATUS_NO_IN) {
+      switch (dev_class) {
+         case PHG_ARGS_INP_LOC:
+         case PHG_ARGS_INP_LOC3:
+            req->event.data.loc.view_ind = inp->data.loc.view_ind;
+            memcpy(&req->event.data.loc.position,
+                   &inp->data.loc.position,
+                   sizeof(Ppoint3));
+            break;
+
+         case PHG_ARGS_INP_STK:
+         case PHG_ARGS_INP_STK3:
+            req->event.data.stk.view_ind = inp->data.loc.view_ind;
+            req->event.data.stk.num_points = inp->data.stk.num_points;
+            size = inp->data.stk.num_points * sizeof(Ppoint3);
+            if ((size > 0) && (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size))) {
+               ERR_BUF(PHG_ERH, ERR900);
+               ret->err = ERR900;
+            }
+            else {
+               memcpy(PHG_SCRATCH.buf, inp->data.stk.points, size);
+               req->event.data.stk.points = (Ppoint3 *) PHG_SCRATCH.buf;
+            }
+            break;
+
+         /* TODO: Check what to copy for other device types */
+         default:
+            break;
+      }
+   }
+
+   memset(inp, 0, sizeof(Ws_inp_req));
+   ret->err = 0;
+}
+
+/*******************************************************************************
+ * preq_loc3
+ *
+ * DESCR:       Request input from locator device 3D
+ * RETURNS:     N/A
+ */
+
+void preq_loc3(
+   Pint ws_id,
+   Pint loc_num,
+   Pin_status *in_status,
+   Pint *view_ind,
+   Ppoint3 *loc_pos
+   )
+{
+   Wst_input_wsdt *idt;
+   Phg_ret ret;
+   Phg_ret_inp_request *req = &ret.data.inp_request;
+
+   idt = input_ws_open(ws_id, Pfn_req_loc3, NULL, NULL);
+   if (idt != NULL) {
+      if ((loc_num > 0) && (loc_num <= idt->num_devs.loc)) {
+         request_device(ws_id, loc_num, PHG_ARGS_INP_LOC3, &ret);
+         if (ret.err == 0) {
+            *in_status = req->status.istat;
+            if (req->status.istat != PIN_STATUS_NO_IN) {
+               *view_ind = req->event.data.loc.view_ind;
+               memcpy(loc_pos,
+                      &req->event.data.loc.position,
+                      sizeof(Ppoint3));
+            }
+         }
+         else {
+            *in_status = PIN_STATUS_NO_IN;
+         }
+      }
+      else {
+         ERR_REPORT(PHG_ERH, ERR250);
+      }
+   }
+}
+
+/*******************************************************************************
+ * preq_stroke3
+ *
+ * DESCR:       Request input from stroke device 3D
+ * RETURNS:     N/A
+ */
+
+void preq_stroke3(
+   Pint ws_id,
+   Pint stroke_num,
+   Pin_status *in_status,
+   Pint *view_ind,
+   Ppoint_list3 *stroke
+   )
+{
+   Wst_input_wsdt *idt;
+   Phg_ret ret;
+   Phg_ret_inp_request *req = &ret.data.inp_request;
+
+   idt = input_ws_open(ws_id, Pfn_req_stroke3, NULL, NULL);
+   if (idt != NULL) {
+      if ((stroke_num > 0) && (stroke_num <= idt->num_devs.stroke)) {
+         request_device(ws_id, stroke_num, PHG_ARGS_INP_STK3, &ret);
+         if (ret.err == 0) {
+            *in_status = req->status.istat;
+            if (req->status.istat != PIN_STATUS_NO_IN) {
+               *view_ind = req->event.data.stk.view_ind;
+               stroke->num_points = req->event.data.stk.num_points;
+               memcpy(stroke->points,
+                      req->event.data.stk.points,
+                      stroke->num_points * sizeof(Ppoint3));
+            }
+         }
+         else {
+            *in_status = PIN_STATUS_NO_IN;
+         }
+      }
+      else {
+         ERR_REPORT(PHG_ERH, ERR250);
+      }
+   }
+}
