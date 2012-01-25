@@ -2001,12 +2001,12 @@ static void wsb_transform_stroke(
 
     viewrep = vref->viewrep;
 
-    if (!PHG_SCRATCH_SPACE(&ws->scratch, num_pts * sizeof(Ppoint3)) ) {
+    npc_pts = (Ppoint3 *) malloc(num_pts * sizeof(Ppoint3));
+    if (npc_pts == NULL) {
        wc_pts->num_points = 0;
        ERR_BUF(ws->erh, ERR900);
     }
     else {
-        npc_pts = (Ppoint3 *) ws->scratch.buf;
         for (i = 0; i < num_pts; i++) {
             WS_DC_TO_NPC2(wsxf, &dc_pts[i], &npc_pts[i]);
             npc_pts[i].z = viewrep->clip_limit.z_min;
@@ -2019,6 +2019,7 @@ static void wsb_transform_stroke(
                          wc_pts->points)) {
             wc_pts->num_points = 0;
         }
+        free(npc_pts);
     }
 }
 
