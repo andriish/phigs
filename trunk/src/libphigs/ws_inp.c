@@ -1304,6 +1304,7 @@ static void send_request(
 #ifdef TODO
     phg_cp_send_request( ws->cph, &ret );
 #else
+    ws->in_ws.input_request.dev_class = revt->id.in_class;
     ws->in_ws.input_request.dev_num = event->dev_num;
     memcpy(&ws->in_ws.input_request.status,
            &req->status,

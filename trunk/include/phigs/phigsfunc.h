@@ -1587,6 +1587,36 @@ void pget_pick(
    );
 
 /*******************************************************************************
+ * preq_loc3
+ *
+ * DESCR:       Request input from locator device 3D
+ * RETURNS:     N/A
+ */
+
+void preq_loc3(
+   Pint ws_id,
+   Pint loc_num,
+   Pin_status *in_status,
+   Pint *view_ind,
+   Ppoint3 *loc_pos
+   );
+
+/*******************************************************************************
+ * preq_stroke3
+ *
+ * DESCR:       Request input from stroke device 3D
+ * RETURNS:     N/A
+ */
+
+void preq_stroke3(
+   Pint ws_id,
+   Pint stroke_num,
+   Pin_status *in_status,
+   Pint *view_ind,
+   Ppoint_list3 *stroke
+   );
+
+/*******************************************************************************
  * pinq_disp_space_size3
  *
  * DESCR:       Get display size 3D

@@ -344,24 +344,18 @@ int pick_event(void)
 
 int locator_request(Pint ws_id, Pint dev_num)
 {
-   Phg_ret ret;
+   Ppoint3 pos;
+   Pint view_ind;
+   Pin_status in_status;
    int status;
-   Ws_handle wsh = PHG_WSID(ws_id);
-   Ws_input_ws *in_ws = &wsh->in_ws;
-   Phg_inp_event_data *data;
 
-   (*wsh->request_device)(wsh, PIN_LOC, dev_num, &ret);
-
-   while (phg_wsx_input_dispatch_next(wsh, PHG_EVT_TABLE));
-   if ((in_ws->input_request.status.istat == PIN_STATUS_OK) &&
-       (in_ws->input_request.dev_num == dev_num)) {
-      data = &in_ws->input_request.data;
+   preq_loc3(ws_id, dev_num, &in_status, &view_ind, &pos);
+   if (in_status == PIN_STATUS_OK) {
       printf("Locator request #%-2d:\t[%f, %f, %f]\n",
-             data->loc.view_ind,
-             data->loc.position.x,
-             data->loc.position.y,
-             data->loc.position.z);
-      memset(&in_ws->input_request, 0, sizeof(Ws_inp_req));
+             view_ind,
+             pos.x,
+             pos.y,
+             pos.z);
       status = TRUE;
    }
    else {
@@ -371,6 +365,30 @@ int locator_request(Pint ws_id, Pint dev_num)
    return status;
 }
 
+int stroke_request(Pint ws_id, Pint dev_num)
+{
+   Pint i;
+   Pint view_ind;
+   Pin_status in_status;
+   int status;
+
+   preq_stroke3(ws_id, dev_num, &in_status, &view_ind, &stroke);
+   if (in_status == PIN_STATUS_OK) {
+      printf("Stroke request #%-2d:\n", view_ind);
+      for (i = 0; i < stroke.num_points; i++) {
+         printf("\t[%f, %f, %f]\n",
+                stroke.points[i].x,
+                stroke.points[i].y,
+                stroke.points[i].z);
+      }
+      status = TRUE;
+   }
+   else {
+      status = FALSE;
+   }
+
+   return status;
+}
 void print_size(Pint ws_type)
 {
    Pint err_ind;
