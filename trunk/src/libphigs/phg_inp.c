@@ -1128,31 +1128,33 @@ static void request_device(
 
    do {
       while (phg_wsx_input_dispatch_next(wsh, PHG_EVT_TABLE));
+
+      switch (dev_class) {
+         case PHG_ARGS_INP_LOC:
+         case PHG_ARGS_INP_LOC3:
+         case PHG_ARGS_INP_STK:
+         case PHG_ARGS_INP_STK3:
+         case PHG_ARGS_INP_VAL:
+         case PHG_ARGS_INP_VAL3:
+         case PHG_ARGS_INP_STR:
+         case PHG_ARGS_INP_STR3:
+            in_status = inp->status.istat;
+            break;
+         case PHG_ARGS_INP_PIK:
+         case PHG_ARGS_INP_PIK3:
+            in_status = inp->status.pkstat;
+            break;
+         case PHG_ARGS_INP_CHC:
+         case PHG_ARGS_INP_CHC3:
+            in_status = inp->status.chstat;
+            break;
+      }
+
       phg_msleep(1);
-   } while ((inp->status.istat == PIN_STATUS_NONE) &&
+
+   } while ((in_status == PIN_STATUS_NONE) &&
             (inp->dev_class != dev_class) &&
             (inp->dev_num != dev_num));
-
-   switch (dev_class) {
-      case PHG_ARGS_INP_LOC:
-      case PHG_ARGS_INP_LOC3:
-      case PHG_ARGS_INP_STK:
-      case PHG_ARGS_INP_STK3:
-      case PHG_ARGS_INP_VAL:
-      case PHG_ARGS_INP_VAL3:
-      case PHG_ARGS_INP_STR:
-      case PHG_ARGS_INP_STR3:
-         in_status = inp->status.istat;
-         break;
-      case PHG_ARGS_INP_PIK:
-      case PHG_ARGS_INP_PIK3:
-         in_status = inp->status.pkstat;
-         break;
-      case PHG_ARGS_INP_CHC:
-      case PHG_ARGS_INP_CHC3:
-         in_status = inp->status.chstat;
-         break;
-   }
 
    req->status.istat = in_status;
    if (in_status != PIN_STATUS_NO_IN) {
