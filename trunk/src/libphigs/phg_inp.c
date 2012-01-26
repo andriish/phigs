@@ -1117,7 +1117,6 @@ static void request_device(
    )
 {
    Pin_status in_status;
-   unsigned size;
 
    /* The calling function shall always check the requested workstation first */
    Ws_handle wsh = PHG_WSID(ws_id);
@@ -1140,10 +1139,12 @@ static void request_device(
          case PHG_ARGS_INP_STR3:
             in_status = inp->status.istat;
             break;
+
          case PHG_ARGS_INP_PIK:
          case PHG_ARGS_INP_PIK3:
             in_status = inp->status.pkstat;
             break;
+
          case PHG_ARGS_INP_CHC:
          case PHG_ARGS_INP_CHC3:
             in_status = inp->status.chstat;
@@ -1156,34 +1157,50 @@ static void request_device(
             (inp->dev_class != dev_class) &&
             (inp->dev_num != dev_num));
 
+   /* Copy to return argument */
    req->status.istat = in_status;
    if (in_status != PIN_STATUS_NO_IN) {
       switch (dev_class) {
          case PHG_ARGS_INP_LOC:
          case PHG_ARGS_INP_LOC3:
-            req->event.data.loc.view_ind = inp->data.loc.view_ind;
-            memcpy(&req->event.data.loc.position,
-                   &inp->data.loc.position,
-                   sizeof(Ppoint3));
+            memcpy(&req->event.data.loc,
+                   &wsh->in_ws.devs.locator[dev_num - 1].loc,
+                   sizeof(Ploc3));
             break;
 
          case PHG_ARGS_INP_STK:
          case PHG_ARGS_INP_STK3:
-            req->event.data.stk.view_ind = inp->data.loc.view_ind;
-            req->event.data.stk.num_points = inp->data.stk.num_points;
-            size = inp->data.stk.num_points * sizeof(Ppoint3);
-            if ((size > 0) && (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size))) {
-               ERR_BUF(PHG_ERH, ERR900);
-               ret->err = ERR900;
-            }
-            else {
-               memcpy(PHG_SCRATCH.buf, inp->data.stk.points, size);
-               req->event.data.stk.points = (Ppoint3 *) PHG_SCRATCH.buf;
-            }
+            memcpy(&req->event.data.stk,
+                   &wsh->in_ws.devs.stroke[dev_num - 1].stroke,
+                   sizeof(Pstroke3));
             break;
 
-         /* TODO: Check what to copy for other device types */
-         default:
+         case PHG_ARGS_INP_PIK:
+         case PHG_ARGS_INP_PIK3:
+            memcpy(&req->event.data.pik,
+                   &wsh->in_ws.devs.pick[dev_num - 1].pick,
+                   sizeof(Ppick));
+            break;
+
+         case PHG_ARGS_INP_VAL:
+         case PHG_ARGS_INP_VAL3:
+            memcpy(&req->event.data.val,
+                   &wsh->in_ws.devs.valuator[dev_num - 1].val,
+                   sizeof(Pfloat));
+            break;
+
+         case PHG_ARGS_INP_CHC:
+         case PHG_ARGS_INP_CHC3:
+            memcpy(&req->event.data.chc,
+                   &wsh->in_ws.devs.choice[dev_num - 1].choice,
+                   sizeof(Pchoice));
+            break;
+
+         case PHG_ARGS_INP_STR:
+         case PHG_ARGS_INP_STR3:
+            memcpy(&req->event.data.str,
+                   &wsh->in_ws.devs.string[dev_num - 1].string,
+                   sizeof(Phg_string));
             break;
       }
    }

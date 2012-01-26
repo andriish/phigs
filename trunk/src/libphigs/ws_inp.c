@@ -1227,7 +1227,7 @@ no_mem:	/* ran out of memory somewhere! */
 /*******************************************************************************
  * send_request
  *
- * DESCR:       Send reuqest helper function
+ * DESCR:       Send reuqest callback function
  * RETURNS:     N/A
  */
 
@@ -1237,85 +1237,87 @@ static void send_request(
     int brk
     )
 {
-    Phg_ret ret;
-    Phg_ret_inp_request	*req = &ret.data.inp_request;
-    Phg_ret_inp_event *revt = &req->event;
+    Ws_input_ws *iws = &ws->in_ws;
 
-    ret.err = 0;
     --ws->num_active_input_devs;
-    revt->id.in_class = event->dev_class;
-    if ( brk ) {
-	req->brk = TRUE;
-	switch ( revt->id.in_class ) {
+    iws->input_request.dev_class = event->dev_class;
+    iws->input_request.dev_num = event->dev_num;
+    if (brk) {
+	switch (event->dev_class) {
 	    case PIN_LOC:
 	    case PIN_STROKE:
 	    case PIN_VAL:
 	    case PIN_STRING:
-		req->status.istat = PIN_STATUS_NO_IN;
+		iws->input_request.status.istat = PIN_STATUS_NO_IN;
 		break;
 	    case PIN_PICK:
-		req->status.pkstat = PIN_STATUS_NO_IN;
+		iws->input_request.status.pkstat = PIN_STATUS_NO_IN;
 		break;
 	    case PIN_CHOICE:
-		req->status.chstat = PIN_STATUS_NO_IN;
+		iws->input_request.status.chstat = PIN_STATUS_NO_IN;
 		break;
             default:
                 break;
 	}
 
-    } else {
-	req->brk = FALSE;
-	switch ( revt->id.in_class ) {
+    }
+    else {
+	switch (event->dev_class) {
 	    case PIN_LOC:
-		req->status.istat = PIN_STATUS_OK;
-		revt->data.loc = event->data.locator.evt;
+		iws->input_request.status.istat = PIN_STATUS_OK;
+                memcpy(&iws->devs.locator[event->dev_num - 1].loc,
+		       &event->data.locator.evt,
+                       sizeof(Ploc3));
 		break;
 	    case PIN_STROKE:
-		req->status.istat = PIN_STATUS_OK;
-		revt->data.stk = event->data.stroke.evt;
+		iws->input_request.status.istat = PIN_STATUS_OK;
+                memcpy(&iws->devs.stroke[event->dev_num - 1].stroke,
+		       &event->data.stroke.evt,
+                       sizeof(Pstroke3));
 		break;
 	    case PIN_PICK:
-		revt->data.pik = event->data.pick.evt;
-		req->status.pkstat =
-		    revt->data.pik.status == PIN_STATUS_OK ?
-                                                 PIN_STATUS_OK :
-                                                 PIN_STATUS_NONE;
+                if (event->data.pick.evt.status == PIN_STATUS_OK) {
+                    iws->input_request.status.pkstat = PIN_STATUS_OK;
+                }
+                else {
+                    iws->input_request.status.pkstat = PIN_STATUS_NONE;
+                }
+                memcpy(&iws->devs.pick[event->dev_num - 1].pick,
+		       &event->data.pick.evt,
+                       sizeof(Ppick));
 		break;
 	    case PIN_VAL:
-		req->status.istat = PIN_STATUS_OK;
-		revt->data.val = event->data.valuator.value;
+		iws->input_request.status.istat = PIN_STATUS_OK;
+                memcpy(&iws->devs.valuator[event->dev_num - 1].val,
+		       &event->data.valuator.value,
+                       sizeof(Pfloat));
 		break;
 	    case PIN_CHOICE:
-		revt->data.chc = event->data.choice.evt;
-		req->status.chstat =
-		    revt->data.chc.status == PIN_STATUS_OK ?
-                                                 PIN_STATUS_OK :
-                                                 PIN_STATUS_NONE;
+                if (event->data.choice.evt.status == PIN_STATUS_OK) {
+                    iws->input_request.status.chstat = PIN_STATUS_OK;
+                }
+                else {
+                    iws->input_request.status.chstat = PIN_STATUS_NONE;
+                }
+                memcpy(&iws->devs.choice[event->dev_num - 1].choice,
+		       &event->data.choice.evt,
+                       sizeof(Pchoice));
 		break;
 	    case PIN_STRING:
-		req->status.istat = PIN_STATUS_OK;
-		revt->data.str = event->data.string.evt;
+		iws->input_request.status.istat = PIN_STATUS_OK;
+                memcpy(&iws->devs.string[event->dev_num - 1].string,
+		       &event->data.string.evt,
+                       sizeof(Phg_string));
 		break;
             default:
                 break;
 	}
     }
 
-#ifdef TODO
-    phg_cp_send_request( ws->cph, &ret );
-#else
-    ws->in_ws.input_request.dev_class = revt->id.in_class;
-    ws->in_ws.input_request.dev_num = event->dev_num;
-    memcpy(&ws->in_ws.input_request.status,
-           &req->status,
-           sizeof(Phg_ret_inp_req_stat));
-    memcpy(&ws->in_ws.input_request.data,
-           &revt->data,
-           sizeof(Phg_inp_event_data));
-#endif
-
-    if ( revt->id.in_class == PIN_PICK && ws->pick_disable )
-	(*ws->pick_disable)( ws, &ws->in_ws.devs.pick[event->dev_num-1] );
+    if ((event->dev_class == PIN_PICK) &&
+        (ws->pick_disable != NULL)) {
+	(*ws->pick_disable)(ws, &ws->in_ws.devs.pick[event->dev_num - 1]);
+    }
 }
 
 /*******************************************************************************
