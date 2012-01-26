@@ -570,18 +570,16 @@ static Ws_view_ref* phg_wsb_find_view(
     )
 {
     Ws_view_ref *vref;
-    Ws_view_ref *dup = NULL;
 
     for (vref = (Ws_view_ref *) LIST_HEAD(list);
          vref != NULL;
          vref = (Ws_view_ref *) NODE_NEXT(&vref->node)) {
         if (id == vref->id) {
-            dup = vref;
             break;
         }
     }
 
-    return dup;
+    return vref;
 }
 
 /* Make all "requested" and pending data current. */
@@ -1788,20 +1786,14 @@ int phg_wsb_map_initial_points(
     }
 
     /* Find current view */
-    for (view_ref = (Ws_view_ref *) LIST_HEAD(&owsb->views);
-         view_ref != NULL;
-         view_ref = (Ws_view_ref *) NODE_NEXT(&view_ref->node)) {
-        if (view_index == view_ref->id) {
-            break;
-        }
-    }
-
-    /* No matching view */
+    view_ref = phg_wsb_find_view(&owsb->views, view_index);
     if (view_ref == NULL) {
        *num_pts = 0;
        return FALSE;
     }
     viewrep = view_ref->viewrep;
+
+    /* Map initial point in view */
     phg_mat_mul(wc_to_npc, viewrep->map_matrix, viewrep->ori_matrix);
     if (!phg_tranpts3(wc_to_npc, *num_pts, wc_pts, npc_pts)) {
         *num_pts = 0;

@@ -28,7 +28,7 @@
 #define STRUCT_SCENE   1
 #define STRUCT_MAIN    2
 
-#define WS_MAIN        0
+#define WS_1           0
 
 #define WIDTH          0.5
 #define HEIGHT         0.5
@@ -185,7 +185,7 @@ void init_locator(Pint ws_id, Pint dev_id, Pop_mode mode, Pecho_switch echo)
    rec.pets.pet_r1.unused = 0;
 
    pinit_loc3(ws_id, dev_id, 0, &init_pos, 1, &echo_volume, &rec);
-   pset_loc_mode(WS_MAIN, 1, mode, echo);
+   pset_loc_mode(ws_id, dev_id, mode, echo);
 }
 
 void init_stroke(Pint ws_id, Pint dev_id, Pop_mode mode, Pecho_switch echo)
@@ -199,7 +199,7 @@ void init_stroke(Pint ws_id, Pint dev_id, Pop_mode mode, Pecho_switch echo)
    rec.pets.pet_r1.unused = 0;
 
    pinit_stroke3(ws_id, dev_id, 0, &init_stk, 1, &echo_volume, &rec);
-   pset_stroke_mode(WS_MAIN, 1, mode, echo);
+   pset_stroke_mode(ws_id, dev_id, mode, echo);
 }
 
 void init_pick(Pint ws_id, Pint dev_id, Pop_mode mode, Pecho_switch echo)
@@ -212,7 +212,7 @@ void init_pick(Pint ws_id, Pint dev_id, Pop_mode mode, Pecho_switch echo)
 
    pinit_pick3(ws_id, dev_id, PIN_STATUS_OK, &pik, 1, &echo_volume,
                &rec, PORDER_TOP_FIRST);
-   pset_pick_mode(WS_MAIN, 1, mode, echo);
+   pset_pick_mode(ws_id, dev_id, mode, echo);
 }
 
 void sample_locator(Pint ws_id, Pint dev_num)
@@ -270,7 +270,8 @@ int locator_event(void)
    pawait_event(0.1, &ws_id, &class, &in_num);
    if (class != PIN_NONE) {
       pget_loc3(&view_ind, &loc_pos);
-      printf("Locator event #%-2d:\t[%f, %f, %f]\n",
+      printf("#%-2d Locator event #%-2d:\t[%f, %f, %f]\n",
+             ws_id,
              view_ind,
              loc_pos.x,
              loc_pos.y,
@@ -293,7 +294,7 @@ int stroke_event(void)
    pawait_event(0.1, &ws_id, &class, &in_num);
    if (class != PIN_NONE) {
       pget_stroke3(&view_ind, &stroke);
-      printf("Stroke event #%-2d:\n", view_ind);
+      printf("#%-2d Stroke event #%-2d:\n", ws_id, view_ind);
       for (i = 0; i < stroke.num_points; i++) {
          printf("\t[%f, %f, %f]\n",
                 stroke.points[i].x,
@@ -412,46 +413,46 @@ void print_size(Pint ws_type)
 
 int main(void)
 {
-   Ws *wsh;
+   Ws *wsh1;
    XEvent event;
-   int redraw = 0;
+   int redraw1 = 0;
 
    popen_phigs(NULL, 0);
    init_scene();
    print_size(PWST_OUTIN_TRUE_DB);
-   popen_ws(WS_MAIN, NULL, PWST_OUTIN_TRUE_DB);
-   pset_ws_win(WS_MAIN, &win);
-   pset_hlhsr_mode(WS_MAIN, PHIGS_HLHSR_MODE_ZBUFF);
-   pset_view_tran_in_pri(WS_MAIN, 0, 4, PPRI_LOWER);
-   ppost_struct(WS_MAIN, STRUCT_MAIN, 0);
 
-   wsh = PHG_WSID(WS_MAIN);
-   
-   if (wsh != NULL) {
-      printf("Output window %x\n", (unsigned) wsh->drawable_id);
-      printf("Input  window %x\n", (unsigned) wsh->input_overlay_window);
+   popen_ws(WS_1, NULL, PWST_OUTIN_TRUE_DB);
 
-      XSelectInput(wsh->display, wsh->drawable_id, ExposureMask);
+   pset_ws_win(WS_1, &win);
+   pset_hlhsr_mode(WS_1, PHIGS_HLHSR_MODE_ZBUFF);
+   pset_view_tran_in_pri(WS_1, 0, 4, PPRI_LOWER);
+   ppost_struct(WS_1, STRUCT_MAIN, 0);
+   wsh1 = PHG_WSID(WS_1);
 
-      init_locator(WS_MAIN, 1, POP_EVENT, PSWITCH_NO_ECHO);
+   if (wsh1 != NULL) {
+
+      XSelectInput(wsh1->display, wsh1->drawable_id, ExposureMask);
+
+      init_locator(WS_1, 1, POP_EVENT, PSWITCH_NO_ECHO);
 
       while (1) {
-         if (XCheckWindowEvent(wsh->display,
-                               wsh->drawable_id,
+         if (XCheckWindowEvent(wsh1->display,
+                               wsh1->drawable_id,
                                (unsigned long) 0xffffffffUL,
                                &event) == True) {
 #if 0
             print_event(&event);
 #endif
             if (event.type == Expose) {
-               while (XCheckTypedEvent(wsh->display, Expose, &event));
-               redraw = 1;
+               while (XCheckTypedEvent(wsh1->display, Expose, &event));
+               redraw1 = 1;
             }
          }
          locator_event();
-         if (redraw) {
-            predraw_all_structs(WS_MAIN, PFLAG_ALWAYS);
-            redraw = 0;
+
+         if (redraw1) {
+            predraw_all_structs(WS_1, PFLAG_ALWAYS);
+            redraw1 = 0;
          }
       }
    }

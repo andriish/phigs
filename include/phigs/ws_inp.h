@@ -112,7 +112,6 @@ typedef struct {
    Pin_class            dev_class;
    Pint                 dev_num;
    Phg_ret_inp_req_stat status;
-   Phg_inp_event_data   data;
 } Ws_inp_req;
 
 typedef struct _Ws_input_ws {
