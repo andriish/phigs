@@ -1164,42 +1164,42 @@ static void request_device(
          case PHG_ARGS_INP_LOC:
          case PHG_ARGS_INP_LOC3:
             memcpy(&req->event.data.loc,
-                   &wsh->in_ws.devs.locator[dev_num - 1].loc,
+                   &wsh->in_ws.input_request.evt.loc,
                    sizeof(Ploc3));
             break;
 
          case PHG_ARGS_INP_STK:
          case PHG_ARGS_INP_STK3:
             memcpy(&req->event.data.stk,
-                   &wsh->in_ws.devs.stroke[dev_num - 1].stroke,
+                   &wsh->in_ws.input_request.evt.stroke,
                    sizeof(Pstroke3));
             break;
 
          case PHG_ARGS_INP_PIK:
          case PHG_ARGS_INP_PIK3:
             memcpy(&req->event.data.pik,
-                   &wsh->in_ws.devs.pick[dev_num - 1].pick,
+                   &wsh->in_ws.input_request.evt.pick,
                    sizeof(Ppick));
             break;
 
          case PHG_ARGS_INP_VAL:
          case PHG_ARGS_INP_VAL3:
             memcpy(&req->event.data.val,
-                   &wsh->in_ws.devs.valuator[dev_num - 1].val,
+                   &wsh->in_ws.input_request.evt.val,
                    sizeof(Pfloat));
             break;
 
          case PHG_ARGS_INP_CHC:
          case PHG_ARGS_INP_CHC3:
             memcpy(&req->event.data.chc,
-                   &wsh->in_ws.devs.choice[dev_num - 1].choice,
+                   &wsh->in_ws.input_request.evt.choice,
                    sizeof(Pchoice));
             break;
 
          case PHG_ARGS_INP_STR:
          case PHG_ARGS_INP_STR3:
             memcpy(&req->event.data.str,
-                   &wsh->in_ws.devs.string[dev_num - 1].string,
+                   &wsh->in_ws.input_request.evt.string,
                    sizeof(Phg_string));
             break;
       }

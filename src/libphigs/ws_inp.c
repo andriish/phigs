@@ -1265,13 +1265,13 @@ static void send_request(
 	switch (event->dev_class) {
 	    case PIN_LOC:
 		iws->input_request.status.istat = PIN_STATUS_OK;
-                memcpy(&iws->devs.locator[event->dev_num - 1].loc,
+                memcpy(&iws->input_request.evt.loc,
 		       &event->data.locator.evt,
                        sizeof(Ploc3));
 		break;
 	    case PIN_STROKE:
 		iws->input_request.status.istat = PIN_STATUS_OK;
-                memcpy(&iws->devs.stroke[event->dev_num - 1].stroke,
+                memcpy(&iws->input_request.evt.stroke,
 		       &event->data.stroke.evt,
                        sizeof(Pstroke3));
 		break;
@@ -1282,13 +1282,13 @@ static void send_request(
                 else {
                     iws->input_request.status.pkstat = PIN_STATUS_NONE;
                 }
-                memcpy(&iws->devs.pick[event->dev_num - 1].pick,
+                memcpy(&iws->input_request.evt.pick,
 		       &event->data.pick.evt,
                        sizeof(Ppick));
 		break;
 	    case PIN_VAL:
 		iws->input_request.status.istat = PIN_STATUS_OK;
-                memcpy(&iws->devs.valuator[event->dev_num - 1].val,
+                memcpy(&iws->input_request.evt.val,
 		       &event->data.valuator.value,
                        sizeof(Pfloat));
 		break;
@@ -1299,13 +1299,13 @@ static void send_request(
                 else {
                     iws->input_request.status.chstat = PIN_STATUS_NONE;
                 }
-                memcpy(&iws->devs.choice[event->dev_num - 1].choice,
+                memcpy(&iws->input_request.evt.choice,
 		       &event->data.choice.evt,
                        sizeof(Pchoice));
 		break;
 	    case PIN_STRING:
 		iws->input_request.status.istat = PIN_STATUS_OK;
-                memcpy(&iws->devs.string[event->dev_num - 1].string,
+                memcpy(&iws->input_request.evt.string,
 		       &event->data.string.evt,
                        sizeof(Phg_string));
 		break;

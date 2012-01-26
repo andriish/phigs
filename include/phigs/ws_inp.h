@@ -112,6 +112,14 @@ typedef struct {
    Pin_class            dev_class;
    Pint                 dev_num;
    Phg_ret_inp_req_stat status;
+   union {
+      Ploc3             loc;
+      Ppick             pick;
+      Pstroke3          stroke;
+      Pfloat            val;
+      Pchoice           choice;
+      Phg_string        string;
+   } evt;
 } Ws_inp_req;
 
 typedef struct _Ws_input_ws {
