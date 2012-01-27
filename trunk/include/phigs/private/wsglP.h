@@ -25,6 +25,11 @@
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
 
+typedef enum {
+   WRENDER_MODE_DRAW,
+   WRENDER_MODE_SELECT
+} WsRenderMode;
+
 typedef struct _Wsgl {
    Pattr_group     *attr_group;
    Plimit3         curr_win;
@@ -37,6 +42,9 @@ typedef struct _Wsgl {
    Pmatrix3        local_tran, total_tran;
    Pint            curr_view_index;
    Pview_rep3      view_rep;
+   WsRenderMode    render_mode;
+   Pint            select_size;
+   unsigned        *select_buf;
 } Wsgl;
 
 /*******************************************************************************
@@ -48,7 +56,8 @@ typedef struct _Wsgl {
 
 int wsgl_init(
    Ws *ws,
-   Pgcolr *background
+   Pgcolr *background,
+   Pint select_size
    );
 
 /*******************************************************************************
@@ -143,6 +152,18 @@ void wsgl_end_rendering(
    );
 
 /*******************************************************************************
+ * wsgl_begin_structure
+ *
+ * DESCR:       Mark the beginning of a new structure element
+ * RETURNS:     N/A
+ */
+
+void wsgl_begin_structure(
+   Ws *ws,
+   Pint struct_id
+   );
+
+/*******************************************************************************
  * wsgl_render_element
  *
  * DESCR:       Render element to current workstation rendering window
@@ -152,6 +173,28 @@ void wsgl_end_rendering(
 void wsgl_render_element(
    Ws *ws,
    El_handle el
+   );
+
+/*******************************************************************************
+ * wsgl_begin_pick
+ *
+ * DESCR:       Begin pick process
+ * RETURNS:     N/A
+ */
+
+void wsgl_begin_pick(
+   Ws *ws
+   );
+
+/*******************************************************************************
+ * wsgl_end_pick
+ *
+ * DESCR:       End pick process
+ * RETURNS:     Number of hits
+ */
+
+int wsgl_end_pick(
+   Ws *ws
    );
 
 extern unsigned char *wsgl_hatch_tbl[];

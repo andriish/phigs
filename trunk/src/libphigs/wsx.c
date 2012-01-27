@@ -96,7 +96,7 @@ int phg_wsx_setup_tool(
       attrs.border_pixel = WhitePixel(display, best_info->screen);
       attrs.background_pixel = BlackPixel(display, best_info->screen);
       phg_wsx_pixel_colour(ws, cmap, attrs.background_pixel, &background);
-      if (!wsgl_init(ws, &background)) {
+      if (!wsgl_init(ws, &background, NUM_SELECTABLE_STRUCTS)) {
          ERR_BUF(ws->erh, ERR900);
          free(ws);
          ws = NULL;

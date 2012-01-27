@@ -438,7 +438,7 @@ Ws* phg_wsb_open_ws(
                              args->conn_info.colormap,
                              args->conn_info.background,
                              &background);
-        if (!wsgl_init(ws, &background)) {
+        if (!wsgl_init(ws, &background, NUM_SELECTABLE_STRUCTS)) {
            ERR_BUF(ws->erh, ERR900);
            goto abort;
         }
@@ -733,6 +733,7 @@ void phg_wsb_traverse_net(
 {
     El_handle	el;
 
+    wsgl_begin_structure(ws, structp->struct_id);
     el = structp->first_el;
     while ( 1 ) {	/* termination test is at the bottom */
 	switch ( el->eltype ) {
@@ -2096,22 +2097,41 @@ int phg_wsb_resolve_pick(
     )
 {
     Pint i;
+    Ws_post_str *post_str, *end;
+    Wsb_output_ws *owsb = &ws->out_ws.model.b;
+
+    WSB_CHECK_POSTED(&owsb->posted);
+    if (WSB_SOME_POSTED(&owsb->posted)) {
+        wsgl_begin_pick(ws);
+
+        post_str = owsb->posted.highest.lower;
+        end = &(owsb->posted.lowest);
+
+        while (post_str != end) {
+            phg_wsb_traverse_net(ws, post_str->structh);
+            post_str = post_str->lower;
+        }
+
+        wsgl_end_pick(ws);
+    }
 
     /* Temporary dummy method */
+    /* REMOVE */
     pick->pick_path.depth = 5;
     pick->pick_path.path_list = (Ppick_path_elem *)
         malloc(sizeof(Ppick_path_elem) * pick->pick_path.depth);
     if (pick->pick_path.path_list == NULL) {
-       pick->status = PIN_STATUS_NONE;
+        pick->status = PIN_STATUS_NONE;
     }
     else {
-       pick->status = PIN_STATUS_OK;
-       for (i = 0; i < pick->pick_path.depth; i++) {
-          pick->pick_path.path_list[i].struct_id = dc_pt->x;
-          pick->pick_path.path_list[i].pick_id = dc_pt->y;
-          pick->pick_path.path_list[i].elem_pos = i;
-       }
-   }
+        pick->status = PIN_STATUS_OK;
+        for (i = 0; i < pick->pick_path.depth; i++) {
+            pick->pick_path.path_list[i].struct_id = dc_pt->x;
+            pick->pick_path.path_list[i].pick_id = dc_pt->y;
+            pick->pick_path.path_list[i].elem_pos = i;
+        }
+    }
+    /* END REMOVE */
 
     return TRUE;
 }
