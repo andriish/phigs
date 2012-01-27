@@ -152,12 +152,13 @@ static void phg_draw_text(
 
 int wsgl_init(
    Ws *ws,
-   Pgcolr *background
+   Pgcolr *background,
+   Pint select_size
    )
 {
    Wsgl_handle wsgl;
 
-   wsgl = (Wsgl_handle) malloc(sizeof(Wsgl));
+   wsgl = (Wsgl_handle) malloc(sizeof(Wsgl) + sizeof(GLuint) * select_size);
    if (wsgl == NULL)
       return 0;
 
@@ -170,6 +171,9 @@ int wsgl_init(
    }
 
    memcpy(&wsgl->background, background, sizeof(Pgcolr));
+   wsgl->render_mode = WRENDER_MODE_DRAW;
+   wsgl->select_size = select_size;
+   wsgl->select_buf  = (unsigned *) &wsgl[1];
 
    ws->render_context = wsgl;
 
@@ -419,6 +423,34 @@ void wsgl_end_rendering(
 }
 
 /*******************************************************************************
+ * wsgl_begin_structure
+ *
+ * DESCR:	Mark the beginning of a new structure element
+ * RETURNS:	N/A
+ */
+
+void wsgl_begin_structure(
+   Ws *ws,
+   Pint struct_id
+   )
+{
+   Wsgl_handle wsgl = ws->render_context;
+
+#ifdef DEBUG
+   printf("Begin new structure element: %d\n", struct_id);
+#endif
+
+   if (wsgl->render_mode == WRENDER_MODE_SELECT) {
+      if (struct_id < wsgl->select_size) {
+#ifdef DEBUG
+         printf("Load name: %d\n", struct_id);
+#endif
+         glLoadName(struct_id);
+      }
+   }
+}
+
+/*******************************************************************************
  * wsgl_render_element
  *
  * DESCR:	Render element to current workstation rendering window
@@ -632,6 +664,73 @@ void wsgl_render_element(
 }
 
 /*******************************************************************************
+ * wsgl_begin_pick
+ * 
+ * DESCR:       Begin pick process
+ * RETURNS:     N/A
+ */
+ 
+void wsgl_begin_pick(
+   Ws *ws
+   )
+{
+   Wsgl_handle wsgl = ws->render_context;
+   wsgl->render_mode = WRENDER_MODE_SELECT;
+
+#ifdef DEBUG
+   printf("Begin pick\n");
+#endif
+   glSelectBuffer(wsgl->select_size, wsgl->select_buf);
+   glRenderMode(GL_SELECT);
+   glInitNames();
+   glPushName(0);
+}
+
+/*******************************************************************************
+ * wsgl_end_pick
+ * 
+ * DESCR:       End pick process
+ * RETURNS:     Number of hits
+ */
+ 
+int wsgl_end_pick(
+   Ws *ws
+   )
+{
+   Pint hits;
+
+   Wsgl_handle wsgl = ws->render_context;
+   wsgl->render_mode = WRENDER_MODE_DRAW;
+
+#ifdef DEBUG
+   printf("End pick\n");
+#endif
+
+   glPopName();
+   hits = glRenderMode(GL_RENDER);
+
+#ifdef DEBUG
+   printf("Change render mode to draw: %d hit(s)\n", hits);
+   Pint i, j;
+   GLuint names;
+   GLuint *ptr = wsgl->select_buf;
+   for (i = 0; i < hits; i++) {
+      names = *ptr;
+      printf("Number of names for hit #%d is %d\n", i, names); ptr++;
+      printf("\tz1 is %f;", (float) *ptr / 0x7fffffff); ptr++;
+      printf("\tz2 is %f;", (float) *ptr / 0x7fffffff); ptr++;
+      printf("\t the name is ");
+      for (j = 0; j < names; j++) {
+         printf("%d ", *ptr); ptr++;
+      }
+      printf("\n");
+   }
+#endif
+
+   return hits;
+}
+
+/*******************************************************************************
  * phg_set_matrix
  *
  * DESCR:	Setup matrix
@@ -639,7 +738,8 @@ void wsgl_render_element(
  */
 
 static void phg_set_matrix(
-    Pmatrix3 mat
+    Pmatrix3 mat,
+    int mult
     )
 {
    int i, j;
@@ -653,7 +753,12 @@ static void phg_set_matrix(
       }
    }
 
-   glLoadMatrixf(m);
+   if (mult) {
+      glMultMatrixf(m);
+   }
+   else {
+      glLoadMatrixf(m);
+   }
 }
 
 /*******************************************************************************
@@ -674,7 +779,7 @@ static void phg_update_projection(
 #endif
 
    glMatrixMode(GL_PROJECTION);
-   phg_set_matrix(wsgl->view_rep.map_matrix);
+   phg_set_matrix(wsgl->view_rep.map_matrix, FALSE);
 }
 
 /*******************************************************************************
@@ -696,7 +801,7 @@ static void phg_update_modelview(
 
    glMatrixMode(GL_MODELVIEW);
    phg_mat_mul(wsgl->total_tran, wsgl->view_rep.ori_matrix, wsgl->local_tran);
-   phg_set_matrix(wsgl->total_tran);
+   phg_set_matrix(wsgl->total_tran, FALSE);
 }
 
 /*******************************************************************************
