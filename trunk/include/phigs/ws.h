@@ -61,6 +61,11 @@ typedef enum {
    WS_INT_NOT_INVERTIBLE
 } Ws_inverse_state;
 
+
+typedef struct {
+   Pint x, y;
+} Ws_point;
+
 typedef struct {
    Node             node;
    Pint             id;

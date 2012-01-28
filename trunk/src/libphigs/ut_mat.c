@@ -189,6 +189,15 @@ void phg_mat_mul_3x3(Pmatrix m, Pmatrix a, Pmatrix b)
     }
 }
 
+void phg_mat_zero(Pmatrix3 mat)
+{
+    int	i,j;
+
+    for( i = 0 ; i < 4; i++) 
+	for( j = 0; j < 4; j++)
+	   mat[i][j] = 0.0;
+}
+
 void phg_mat_identity(Pmatrix3 mat)
 {
     int	i,j;
@@ -198,13 +207,20 @@ void phg_mat_identity(Pmatrix3 mat)
 	   mat[i][j] = ( (i == j) ? 1.0 : 0.0);
 }
 
-void phg_mat_zero(Pmatrix3 mat)
+void phg_mat_translate(Pmatrix3 mat, Pvec3 *v)
 {
-    int	i,j;
+    phg_mat_identity(mat);
+    mat[0][3] = v->delta_x;
+    mat[1][3] = v->delta_y;
+    mat[2][3] = v->delta_z;
+}
 
-    for( i = 0 ; i < 4; i++) 
-	for( j = 0; j < 4; j++)
-	   mat[i][j] = 0.0;
+void phg_mat_scale(Pmatrix3 mat, Pvec3 *v)
+{
+    phg_mat_identity(mat);
+    mat[0][0] = v->delta_x;
+    mat[1][1] = v->delta_y;
+    mat[2][2] = v->delta_z;
 }
 
 void phg_mat_copy(Pmatrix3 m1, Pmatrix3 m2)

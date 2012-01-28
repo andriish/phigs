@@ -26,9 +26,20 @@
 #include <phigs/ws.h>
 
 typedef enum {
-   WRENDER_MODE_DRAW,
-   WRENDER_MODE_SELECT
-} WsRenderMode;
+   WS_RENDER_MODE_DRAW,
+   WS_RENDER_MODE_SELECT
+} Ws_render_mode;
+
+typedef struct {
+   Pint x, y;
+   Pfloat distance;
+} Ws_hit_box;
+
+typedef struct {
+   Pint sid;
+   Pint pickid;
+   Pint offset;
+} Ws_pick_elemt;
 
 typedef struct _Wsgl {
    Pattr_group     *attr_group;
@@ -42,9 +53,10 @@ typedef struct _Wsgl {
    Pmatrix3        local_tran, total_tran;
    Pint            curr_view_index;
    Pview_rep3      view_rep;
-   WsRenderMode    render_mode;
+   Ws_render_mode  render_mode;
    Pint            select_size;
    unsigned        *select_buf;
+   Pmatrix3        pick_tran;
 } Wsgl;
 
 /*******************************************************************************
@@ -194,17 +206,18 @@ void wsgl_render_element(
  */
 
 void wsgl_begin_pick(
-   Ws *ws
+   Ws *ws,
+   Ws_hit_box *box
    );
 
 /*******************************************************************************
  * wsgl_end_pick
  *
  * DESCR:       End pick process
- * RETURNS:     Number of hits
+ * RETURNS:     N/A
  */
 
-int wsgl_end_pick(
+void wsgl_end_pick(
    Ws *ws
    );
 
