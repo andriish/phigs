@@ -164,6 +164,17 @@ void wsgl_begin_structure(
    );
 
 /*******************************************************************************
+ * wsgl_end_structure
+ *
+ * DESCR:       Mark the ending of a structure element
+ * RETURNS:     N/A
+ */
+
+void wsgl_end_structure(
+   Ws *ws
+   );
+
+/*******************************************************************************
  * wsgl_render_element
  *
  * DESCR:       Render element to current workstation rendering window

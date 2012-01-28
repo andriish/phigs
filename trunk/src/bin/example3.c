@@ -323,7 +323,7 @@ int pick_event(void)
    if (class != PIN_NONE) {
       pget_pick(10, &status, &pick);
       if (status == PIN_STATUS_OK) {
-         printf("Pick event #%-d:\n", pick.depth);
+         printf("#%-2d Pick event #%-2d:\n", ws_id, pick.depth);
          for (i = 0; i < pick.depth; i++) {
             printf("\tStruct = %d\tPick id = %d\t Element position = %d\n",
                    pick.path_list[i].struct_id,

@@ -28,7 +28,7 @@
 
 #define NUM_DEFERRAL            5
 #define NUM_MODIFICATION        3
-#define NUM_SELECTABLE_STRUCTS  1024
+#define NUM_SELECTABLE_STRUCTS  256
 
 typedef enum {
    PHG_TIME_NOW,
