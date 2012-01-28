@@ -731,7 +731,7 @@ void phg_wsb_traverse_net(
     Struct_handle structp
     )
 {
-    El_handle	el;
+    El_handle el;
 
     wsgl_begin_structure(ws, structp->struct_id);
     el = structp->first_el;
@@ -751,6 +751,7 @@ void phg_wsb_traverse_net(
 	    break;  /* out of the while over all elements in struct */
 	el = el->next;
     }
+    wsgl_end_structure(ws);
 }
 
 static int wsb_visible_element_type(

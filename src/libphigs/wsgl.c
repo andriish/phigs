@@ -158,7 +158,7 @@ int wsgl_init(
 {
    Wsgl_handle wsgl;
 
-   wsgl = (Wsgl_handle) malloc(sizeof(Wsgl) + sizeof(GLuint) * select_size);
+   wsgl = (Wsgl_handle) malloc(sizeof(Wsgl) + 4 * sizeof(GLuint) * select_size);
    if (wsgl == NULL)
       return 0;
 
@@ -441,12 +441,35 @@ void wsgl_begin_structure(
 #endif
 
    if (wsgl->render_mode == WRENDER_MODE_SELECT) {
-      if (struct_id < wsgl->select_size) {
 #ifdef DEBUG
-         printf("Load name: %d\n", struct_id);
+      printf("\tPush name: %d\n", struct_id);
 #endif
-         glLoadName(struct_id);
-      }
+      glPushName(struct_id);
+   }
+}
+
+/*******************************************************************************
+ * wsgl_end_structure
+ *
+ * DESCR:	Mark the ending of a structure element
+ * RETURNS:	N/A
+ */
+
+void wsgl_end_structure(
+   Ws *ws
+   )
+{
+   Wsgl_handle wsgl = ws->render_context;
+
+#ifdef DEBUG
+   printf("End structure element\n");
+#endif
+
+   if (wsgl->render_mode == WRENDER_MODE_SELECT) {
+#ifdef DEBUG
+      printf("\tPop name\n");
+#endif
+      glPopName();
    }
 }
 
@@ -681,9 +704,9 @@ void wsgl_begin_pick(
    printf("Begin pick\n");
 #endif
    glSelectBuffer(wsgl->select_size, wsgl->select_buf);
+   phg_update_projection(ws);
    glRenderMode(GL_SELECT);
    glInitNames();
-   glPushName(0);
 }
 
 /*******************************************************************************
@@ -706,20 +729,19 @@ int wsgl_end_pick(
    printf("End pick\n");
 #endif
 
-   glPopName();
    hits = glRenderMode(GL_RENDER);
 
 #ifdef DEBUG
-   printf("Change render mode to draw: %d hit(s)\n", hits);
    Pint i, j;
    GLuint names;
    GLuint *ptr = wsgl->select_buf;
    for (i = 0; i < hits; i++) {
       names = *ptr;
-      printf("Number of names for hit #%d is %d\n", i, names); ptr++;
-      printf("\tz1 is %f;", (float) *ptr / 0x7fffffff); ptr++;
-      printf("\tz2 is %f;", (float) *ptr / 0x7fffffff); ptr++;
-      printf("\t the name is ");
+      printf("Number of name(s) for hit #%d is %d\n", i, names); ptr++;
+      ptr += 2;
+      //printf("\tz1 is %f;", (float) *ptr / 0x7fffffff); ptr++;
+      //printf("\tz2 is %f;", (float) *ptr / 0x7fffffff); ptr++;
+      printf("\t the name(s) are: ");
       for (j = 0; j < names; j++) {
          printf("%d ", *ptr); ptr++;
       }
@@ -772,6 +794,7 @@ static void phg_update_projection(
    Ws *ws
    )
 {
+   GLint viewport[4];
    Wsgl_handle wsgl = ws->render_context;
 
 #ifdef DEBUG
@@ -779,7 +802,15 @@ static void phg_update_projection(
 #endif
 
    glMatrixMode(GL_PROJECTION);
-   phg_set_matrix(wsgl->view_rep.map_matrix, FALSE);
+   if (wsgl->render_mode == WRENDER_MODE_SELECT) {
+      glGetIntegerv(GL_VIEWPORT, viewport);
+      glLoadIdentity();
+      gluPickMatrix(60.0, 400.0, 5.0, 5.0, viewport);
+      phg_set_matrix(wsgl->view_rep.map_matrix, TRUE);
+   }
+   else {
+      phg_set_matrix(wsgl->view_rep.map_matrix, FALSE);
+   }
 }
 
 /*******************************************************************************
