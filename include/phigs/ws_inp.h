@@ -24,10 +24,6 @@
 #include <phigs/sin.h>
 
 typedef struct {
-   Pint x, y;
-} Ws_point;
-
-typedef struct {
    Pint         num;
    Pop_mode     mode;
    Pecho_switch esw;

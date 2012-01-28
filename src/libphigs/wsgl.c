@@ -171,7 +171,7 @@ int wsgl_init(
    }
 
    memcpy(&wsgl->background, background, sizeof(Pgcolr));
-   wsgl->render_mode = WRENDER_MODE_DRAW;
+   wsgl->render_mode = WS_RENDER_MODE_DRAW;
    wsgl->select_size = select_size;
    wsgl->select_buf  = (unsigned *) &wsgl[1];
 
@@ -440,7 +440,7 @@ void wsgl_begin_structure(
    printf("Begin new structure element: %d\n", struct_id);
 #endif
 
-   if (wsgl->render_mode == WRENDER_MODE_SELECT) {
+   if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {
 #ifdef DEBUG
       printf("\tPush name: %d\n", struct_id);
 #endif
@@ -465,7 +465,7 @@ void wsgl_end_structure(
    printf("End structure element\n");
 #endif
 
-   if (wsgl->render_mode == WRENDER_MODE_SELECT) {
+   if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {
 #ifdef DEBUG
       printf("\tPop name\n");
 #endif
@@ -694,17 +694,44 @@ void wsgl_render_element(
  */
  
 void wsgl_begin_pick(
-   Ws *ws
+   Ws *ws,
+   Ws_hit_box *box
    )
 {
+   GLint vp[4];
+   Pvec3 v;
+   Pmatrix3 trans, scale;
    Wsgl_handle wsgl = ws->render_context;
-   wsgl->render_mode = WRENDER_MODE_SELECT;
+   wsgl->render_mode = WS_RENDER_MODE_SELECT;
 
 #ifdef DEBUG
    printf("Begin pick\n");
 #endif
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
+
+   glGetIntegerv(GL_VIEWPORT, vp);
+   v.delta_x = ((float) vp[2] - 2.0 * ((float) box->x - (float) vp[0])) /
+               box->distance;
+   v.delta_y = ((float) vp[3] - 2.0 * ((float) box->y - (float) vp[1])) /
+               box->distance;
+   v.delta_z = 0.0;
+   phg_mat_translate(trans, &v);
+
+   v.delta_x = (float) vp[2] / box->distance;
+   v.delta_y = (float) vp[3] / box->distance;
+   v.delta_z = 1.0;
+   phg_mat_scale(scale, &v);
+
+   phg_mat_mul(wsgl->pick_tran, trans, scale);
+#ifdef DEBUG
+   phg_mat_print(wsgl->pick_tran);
+   printf("\n");
+#endif
+
+   phg_mat_identity(wsgl->local_tran);
+   phg_set_view_ind(ws, 0);
+
    glSelectBuffer(wsgl->select_size, wsgl->select_buf);
-   phg_update_projection(ws);
    glRenderMode(GL_SELECT);
    glInitNames();
 }
@@ -713,17 +740,20 @@ void wsgl_begin_pick(
  * wsgl_end_pick
  * 
  * DESCR:       End pick process
- * RETURNS:     Number of hits
+ * RETURNS:     N/A
  */
  
-int wsgl_end_pick(
+void wsgl_end_pick(
    Ws *ws
    )
 {
    Pint hits;
-
+   Pint i, j;
+   GLuint names;
    Wsgl_handle wsgl = ws->render_context;
-   wsgl->render_mode = WRENDER_MODE_DRAW;
+   GLuint *ptr = wsgl->select_buf;
+
+   wsgl->render_mode = WS_RENDER_MODE_DRAW;
 
 #ifdef DEBUG
    printf("End pick\n");
@@ -731,25 +761,23 @@ int wsgl_end_pick(
 
    hits = glRenderMode(GL_RENDER);
 
-#ifdef DEBUG
-   Pint i, j;
-   GLuint names;
-   GLuint *ptr = wsgl->select_buf;
    for (i = 0; i < hits; i++) {
       names = *ptr;
-      printf("Number of name(s) for hit #%d is %d\n", i, names); ptr++;
-      ptr += 2;
-      //printf("\tz1 is %f;", (float) *ptr / 0x7fffffff); ptr++;
-      //printf("\tz2 is %f;", (float) *ptr / 0x7fffffff); ptr++;
+#ifdef DEBUG
+      printf("Number of name(s) for hit #%d is %d\n", i, names);
       printf("\t the name(s) are: ");
-      for (j = 0; j < names; j++) {
-         printf("%d ", *ptr); ptr++;
-      }
-      printf("\n");
-   }
 #endif
-
-   return hits;
+      ptr += 3;
+      for (j = 0; j < names; j++) {
+#ifdef DEBUG
+         printf("%d ", *ptr);
+#endif
+         ptr++;
+      }
+#ifdef DEBUG
+      printf("\n");
+#endif
+   }
 }
 
 /*******************************************************************************
@@ -794,7 +822,7 @@ static void phg_update_projection(
    Ws *ws
    )
 {
-   GLint viewport[4];
+   Pmatrix3 mat;
    Wsgl_handle wsgl = ws->render_context;
 
 #ifdef DEBUG
@@ -802,11 +830,9 @@ static void phg_update_projection(
 #endif
 
    glMatrixMode(GL_PROJECTION);
-   if (wsgl->render_mode == WRENDER_MODE_SELECT) {
-      glGetIntegerv(GL_VIEWPORT, viewport);
-      glLoadIdentity();
-      gluPickMatrix(60.0, 400.0, 5.0, 5.0, viewport);
-      phg_set_matrix(wsgl->view_rep.map_matrix, TRUE);
+   if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {
+      phg_mat_mul(mat, wsgl->pick_tran, wsgl->view_rep.map_matrix);
+      phg_set_matrix(mat, FALSE);
    }
    else {
       phg_set_matrix(wsgl->view_rep.map_matrix, FALSE);

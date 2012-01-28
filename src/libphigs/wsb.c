@@ -2099,11 +2099,16 @@ int phg_wsb_resolve_pick(
 {
     Pint i;
     Ws_post_str *post_str, *end;
+    Ws_hit_box box;
     Wsb_output_ws *owsb = &ws->out_ws.model.b;
 
     WSB_CHECK_POSTED(&owsb->posted);
     if (WSB_SOME_POSTED(&owsb->posted)) {
-        wsgl_begin_pick(ws);
+        box.x = dc_pt->x;
+        box.y = dc_pt->y;
+        box.distance = 3.0;
+
+        wsgl_begin_pick(ws, &box);
 
         post_str = owsb->posted.highest.lower;
         end = &(owsb->posted.lowest);
