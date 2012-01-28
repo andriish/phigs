@@ -136,12 +136,14 @@ void init_scene(void)
    pset_marker_size(0.1);
    pset_marker_colr(&red);
    pset_local_tran3(tran3, PTYPE_REPLACE);
+   pset_pick_id(1);
    pexec_struct(0);
    tvec3.delta_z += SPACE;
    ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    pset_local_tran3(tran3, PTYPE_POSTCONCAT);
    pset_int_colr(&medium);
+   pset_pick_id(2);
    pexec_struct(0);
    tvec3.delta_z += SPACE;
    ptranslate3(&tvec3, &errnum, tran3);
@@ -151,6 +153,7 @@ void init_scene(void)
    pset_local_tran3(tran3, PTYPE_POSTCONCAT);
    pset_int_colr(&light);
    plabel(20);
+   pset_pick_id(3);
    pexec_struct(0);
    plabel(30);
    pclose_struct();
