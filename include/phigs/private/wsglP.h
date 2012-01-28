@@ -24,6 +24,7 @@
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
+#include <GL/gl.h>
 
 typedef enum {
    WS_RENDER_MODE_DRAW,
@@ -54,8 +55,10 @@ typedef struct _Wsgl {
    Pint            curr_view_index;
    Pview_rep3      view_rep;
    Ws_render_mode  render_mode;
+   Pint            pick_id;
+   Pint            offset;
    Pint            select_size;
-   unsigned        *select_buf;
+   GLuint          *select_buf;
    Pmatrix3        pick_tran;
 } Wsgl;
 

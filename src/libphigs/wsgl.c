@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <sys/types.h>
 #include <GL/gl.h>
-#include <GL/glu.h>
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -423,6 +423,29 @@ void wsgl_end_rendering(
 }
 
 /*******************************************************************************
+ * store_pick_data
+ *
+ * DESCR:	Store picking information helper function
+ * RETURNS:	N/A
+ */
+
+static void store_pick_data(
+   Ws *ws
+   )
+{
+   uint32_t encode;
+   Wsgl_handle wsgl = ws->render_context;
+
+   if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {
+#ifdef DEBUG
+      printf("\tOffset: %d, Pick ID: %d\n", wsgl->offset, wsgl->pick_id);
+#endif
+      encode = (wsgl->offset << 16) | wsgl->pick_id;
+      glLoadName(encode);
+   }
+}
+
+/*******************************************************************************
  * wsgl_begin_structure
  *
  * DESCR:	Mark the beginning of a new structure element
@@ -440,11 +463,14 @@ void wsgl_begin_structure(
    printf("Begin new structure element: %d\n", struct_id);
 #endif
 
+   wsgl->offset = 0;
    if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {
 #ifdef DEBUG
       printf("\tPush name: %d\n", struct_id);
 #endif
       glPushName(struct_id);
+      glPushName(-1);
+      store_pick_data(ws);
    }
 }
 
@@ -470,6 +496,7 @@ void wsgl_end_structure(
       printf("\tPop name\n");
 #endif
       glPopName();
+      glPopName();
    }
 }
 
@@ -487,11 +514,14 @@ void wsgl_render_element(
 {
    Wsgl_handle wsgl = ws->render_context;
 
+   store_pick_data(ws);
+   wsgl->offset++;
    switch (el->eltype) {
       case PELEM_LABEL:
          break;
 
       case PELEM_PICK_ID:
+         wsgl->pick_id = PHG_INT(el);
          break;
 
       case PELEM_HLHSR_ID:
@@ -728,6 +758,7 @@ void wsgl_begin_pick(
    printf("\n");
 #endif
 
+   wsgl->pick_id = 0;
    phg_mat_identity(wsgl->local_tran);
    phg_set_view_ind(ws, 0);
 
@@ -750,6 +781,7 @@ void wsgl_end_pick(
    Pint hits;
    Pint i, j;
    GLuint names;
+   float z1, z2;
    Wsgl_handle wsgl = ws->render_context;
    GLuint *ptr = wsgl->select_buf;
 
@@ -762,21 +794,27 @@ void wsgl_end_pick(
    hits = glRenderMode(GL_RENDER);
 
    for (i = 0; i < hits; i++) {
-      names = *ptr;
+      names = *ptr / 2;
+      ptr++;
+      z1 = (float) *ptr / 0x7fffffff;
+      ptr++;
+      z2 = (float) *ptr / 0x7fffffff;
+      ptr++;
 #ifdef DEBUG
-      printf("Number of name(s) for hit #%d is %d\n", i, names);
-      printf("\t the name(s) are: ");
+      printf("Number of name(s) for hit #%d is %d", i, names);
+      printf("\tz1 = %f\tz2 = %f\n", z1, z2);
 #endif
-      ptr += 3;
       for (j = 0; j < names; j++) {
 #ifdef DEBUG
-         printf("%d ", *ptr);
+         printf("\tStruct: %d", *ptr);
+#endif
+         ptr++;
+#ifdef DEBUG
+         printf("\tOffset: %d\tPick ID: %d\n",
+                (*ptr & 0xffff0000) >> 16, *ptr & 0xffff);
 #endif
          ptr++;
       }
-#ifdef DEBUG
-      printf("\n");
-#endif
    }
 }
 
