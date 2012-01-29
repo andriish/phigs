@@ -288,6 +288,8 @@ int init_devices(
    /* Default pick */
    idt->num_devs.pick = 1;
    memcpy(&idt->picks[0].e_volume, &e_volume, sizeof(Plimit3));
+   idt->picks[0].num_pets = 1;
+   idt->picks[0].pets[0] = 1;
    idt->picks[0].record.pets.pet_r1.unused = 0;
    idt->picks[0].type = WST_LOC_TYPE_POINTER_BUTTON_1;
 
