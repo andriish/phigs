@@ -2167,6 +2167,6 @@ int phg_wsb_resolve_pick(
         status = TRUE;
     }
 
-    return TRUE;
+    return status;
 }
 
