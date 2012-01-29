@@ -86,7 +86,7 @@ int phg_nset_name_set(
    }
    else {
       bit = 0x1 << (name & 31);
-      nameset[name >> 6] |= bit;
+      nameset[name >> 5] |= bit;
       status = TRUE;
    }
 
@@ -114,7 +114,7 @@ int phg_nset_name_clear(
    }
    else {
       bit = 0x1 << (name & 31);
-      nameset[name >> 6] &= ~bit;
+      nameset[name >> 5] &= ~bit;
       status = TRUE;
    }
 
@@ -142,7 +142,7 @@ int phg_nset_name_is_set(
    }
    else {
       bit = 0x1 << (name & 31);
-      if (nameset[name >> 6] & bit) {
+      if (nameset[name >> 5] & bit) {
          status = TRUE;
       }
       else {
