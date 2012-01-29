@@ -40,7 +40,7 @@ typedef struct {
    Pint sid;
    Pint pickid;
    Pint offset;
-} Ws_pick_elemt;
+} Ws_pick_elmt;
 
 typedef struct _Wsgl {
    Pattr_group     *attr_group;
@@ -221,7 +221,10 @@ void wsgl_begin_pick(
  */
 
 void wsgl_end_pick(
-   Ws *ws
+   Ws *ws,
+   Pint *err_ind,
+   Pint *depth,
+   Ws_pick_elmt **elmts
    );
 
 extern unsigned char *wsgl_hatch_tbl[];

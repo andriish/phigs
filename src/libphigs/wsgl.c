@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <math.h>
 #include <sys/types.h>
 #include <GL/gl.h>
@@ -775,46 +776,84 @@ void wsgl_begin_pick(
  */
  
 void wsgl_end_pick(
-   Ws *ws
+   Ws *ws,
+   Pint *err_ind,
+   Pint *depth,
+   Ws_pick_elmt **elmts
    )
 {
    Pint hits;
-   Pint i, j;
-   GLuint names;
-   float z1, z2;
-   Wsgl_handle wsgl = ws->render_context;
-   GLuint *ptr = wsgl->select_buf;
-
-   wsgl->render_mode = WS_RENDER_MODE_DRAW;
-
+   Pint i;
+   GLuint z, names;
 #ifdef DEBUG
+   Pint j;
    printf("End pick\n");
 #endif
+
+   Wsgl_handle wsgl = ws->render_context;
+   GLuint *ptr = wsgl->select_buf;
+   GLuint *match = NULL;
+   Ws_pick_elmt *data = NULL;
+   GLuint zmin = UINT_MAX;
+   wsgl->render_mode = WS_RENDER_MODE_DRAW;
 
    hits = glRenderMode(GL_RENDER);
 
    for (i = 0; i < hits; i++) {
       names = *ptr / 2;
       ptr++;
-      z1 = (float) *ptr / 0x7fffffff;
-      ptr++;
-      z2 = (float) *ptr / 0x7fffffff;
-      ptr++;
+      z = *ptr;
+      if (z < zmin) {
+         zmin = z;
+         match = ptr - 1;
+      }
 #ifdef DEBUG
-      printf("Number of name(s) for hit #%d is %d", i, names);
-      printf("\tz1 = %f\tz2 = %f\n", z1, z2);
-#endif
+      ptr += 2;
+      printf("Number of name(s) for hit #%d is %d\tAt: %x\n", i, names, z);
       for (j = 0; j < names; j++) {
-#ifdef DEBUG
          printf("\tStruct: %d", *ptr);
-#endif
          ptr++;
-#ifdef DEBUG
          printf("\tOffset: %d\tPick ID: %d\n",
                 (*ptr & 0xffff0000) >> 16, *ptr & 0xffff);
-#endif
          ptr++;
       }
+#else
+      ptr += 2 * names + 2;
+#endif
+   }
+
+   if (match != NULL) {
+      names = *match / 2;
+#ifdef DEBUG
+      printf("\nThe matching hit with %d name(s)\n", names);
+#endif
+      data = (Ws_pick_elmt *) malloc(sizeof(Ws_pick_elmt) * names);
+      if (data == NULL) {
+         *depth   = 0;
+         *elmts   = NULL;
+         *err_ind = ERR900;
+      }
+      else {
+         match += 3;
+         for (i = 0; i < names; i++) {
+            data[i].sid = *match;
+            match++;
+            data[i].pickid = *match & 0xffff;
+            data[i].offset = (*match & 0xffff0000) >> 16;
+#ifdef DEBUG
+            printf("\tStruct: %d\tOffset: %d\tPick ID: %d\n",
+                   data[i].sid, data[i].offset, data[i].pickid);
+#endif
+            match++;
+         }
+         *depth   = names;
+         *elmts   = data;
+         *err_ind = 0;
+      }
+   }
+   else {
+      *depth   = 0;
+      *err_ind = 0;
    }
 }
 

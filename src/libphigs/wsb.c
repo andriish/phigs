@@ -2097,9 +2097,12 @@ int phg_wsb_resolve_pick(
     Ppick *pick
     )
 {
+    int status;
     Pint i;
     Ws_post_str *post_str, *end;
     Ws_hit_box box;
+    Ws_pick_elmt *elmts;
+    Pint err_ind, depth;
     Wsb_output_ws *owsb = &ws->out_ws.model.b;
 
     WSB_CHECK_POSTED(&owsb->posted);
@@ -2118,26 +2121,51 @@ int phg_wsb_resolve_pick(
             post_str = post_str->lower;
         }
 
-        wsgl_end_pick(ws);
+        wsgl_end_pick(ws, &err_ind, &depth, &elmts);
     }
 
-    /* Temporary dummy method */
-    /* REMOVE */
-    pick->pick_path.depth = 5;
-    pick->pick_path.path_list = (Ppick_path_elem *)
-        malloc(sizeof(Ppick_path_elem) * pick->pick_path.depth);
-    if (pick->pick_path.path_list == NULL) {
-        pick->status = PIN_STATUS_NONE;
+    if (err_ind != 0) {
+        ERR_REPORT(ws->erh, err_ind);
+        status = FALSE;
     }
-    else {
-        pick->status = PIN_STATUS_OK;
-        for (i = 0; i < pick->pick_path.depth; i++) {
-            pick->pick_path.path_list[i].struct_id = dc_pt->x;
-            pick->pick_path.path_list[i].pick_id = dc_pt->y;
-            pick->pick_path.path_list[i].elem_pos = i;
+    else if (depth > 0) {
+        pick->pick_path.depth = depth;
+        pick->pick_path.path_list = (Ppick_path_elem *)
+            malloc(sizeof(Ppick_path_elem) * depth);
+        if (pick->pick_path.path_list == NULL) {
+            pick->status = PIN_STATUS_NONE;
+            ERR_REPORT(ws->erh, ERR900);
+            free(elmts);
+            status = FALSE;
+        }
+        else {
+            pick->status = PIN_STATUS_OK;
+            if (dev->order == PORDER_BOTTOM_FIRST) {
+                for (i = 0; i < depth; i++) {
+                    pick->pick_path.path_list[i].struct_id =
+                        elmts[depth - i - 1].sid;
+                    pick->pick_path.path_list[i].pick_id =
+                        elmts[depth - i - 1].pickid;
+                    pick->pick_path.path_list[i].elem_pos =
+                        elmts[depth - i - 1].offset;
+                }
+            }
+            else {
+                for (i = 0; i < depth; i++) {
+                    pick->pick_path.path_list[i].struct_id = elmts[i].sid;
+                    pick->pick_path.path_list[i].pick_id = elmts[i].pickid;
+                    pick->pick_path.path_list[i].elem_pos = elmts[i].offset;
+                }
+            }
+            free(elmts);
+            status = TRUE;
         }
     }
-    /* END REMOVE */
+    else {
+        pick->status = PIN_STATUS_NONE;
+        pick->pick_path.depth = 0;
+        status = TRUE;
+    }
 
     return TRUE;
 }

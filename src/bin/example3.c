@@ -255,10 +255,10 @@ void sample_pick(Pint ws_id, Pint dev_num)
    if (status == PIN_STATUS_OK) {
       printf("Sample pick #%-d:\n", pick.depth);
       for (i = 0; i < pick.depth; i++) {
-         printf("\tStruct = %d\tPick id = %d\t Element position = %d\n",
+         printf("\tStruct: %d\tOffset: %d\tPick ID: %d\n",
                 pick.path_list[i].struct_id,
-                pick.path_list[i].pick_id,
-                pick.path_list[i].elem_pos);
+                pick.path_list[i].elem_pos,
+                pick.path_list[i].pick_id);
       }
    }
 }
@@ -328,10 +328,10 @@ int pick_event(void)
       if (status == PIN_STATUS_OK) {
          printf("#%-2d Pick event #%-2d:\n", ws_id, pick.depth);
          for (i = 0; i < pick.depth; i++) {
-            printf("\tStruct = %d\tPick id = %d\t Element position = %d\n",
+            printf("\tStruct: %d\tOffset: %d\tPick ID: %d\n",
                    pick.path_list[i].struct_id,
-                   pick.path_list[i].pick_id,
-                   pick.path_list[i].elem_pos);
+                   pick.path_list[i].elem_pos,
+                   pick.path_list[i].pick_id);
          }
          ret = TRUE;
       }
@@ -436,7 +436,7 @@ int main(void)
 
       XSelectInput(wsh1->display, wsh1->drawable_id, ExposureMask);
 
-      init_locator(WS_1, 1, POP_EVENT, PSWITCH_NO_ECHO);
+      init_pick(WS_1, 1, POP_EVENT, PSWITCH_NO_ECHO);
 
       while (1) {
          if (XCheckWindowEvent(wsh1->display,
@@ -451,7 +451,7 @@ int main(void)
                redraw1 = 1;
             }
          }
-         locator_event();
+         pick_event();
 
          if (redraw1) {
             predraw_all_structs(WS_1, PFLAG_ALWAYS);
