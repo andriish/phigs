@@ -18,48 +18,69 @@
 *   along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#ifndef _util_h
-#define _util_h
+#ifndef _nset_h
+#define _nset_h
 
-#include <sys/types.h>
-#include <phigs/util/list.h>
-#include <phigs/util/htab.h>
-#include <phigs/util/mat.h>
-#include <phigs/util/nset.h>
+struct _Nset;
+typedef struct _Nset *Nameset;
 
 /*******************************************************************************
- * phg_grow_scratch
+ * phg_nset_create
  *
- * DESCR:       Increase scratch buffer memory size
- * RETURNS:     Pointer to memory or NULL
+ * DESCR:       Create nameset
+ * RETURNS:     N/A
  */
 
-caddr_t phg_grow_scratch(
-   Phg_scratch *sc,
+Nameset phg_nset_create(
    unsigned size
    );
 
 /*******************************************************************************
- * phg_msleep
+ * phg_nset_destroy
  *
- * DESCR:       Sleep in msecs granularity
- * RETURNS:     TRUE or FALSE
+ * DESCR:       Destroy nameset
+ * RETURNS:     N/A
  */
 
-int phg_msleep(
-   unsigned msecs
+void phg_nset_destroy(
+   Nameset nset
    );
 
 /*******************************************************************************
- * phg_mtime
+ * phg_nset_name_set
  *
- * DESCR:       Get current time in milleseconds
+ * DESCR:       Set name in nameset
+ * RETURNS:     TRUE of FALSE
+ */
+
+int phg_nset_name_set(
+   Nameset nset,
+   Pint name
+   );
+
+/*******************************************************************************
+ * phg_nset_name_clear
+ *
+ * DESCR:       Clear name in nameset
  * RETURNS:     TRUE or FALSE
  */
 
-int phg_mtime(
-   time_t *tm_val
+int phg_nset_name_clear(
+   Nameset nset,
+   Pint name
    );
 
-#endif
+/*******************************************************************************
+ * phg_nset_name_is_set
+ *
+ * DESCR:       Find out if name set is set
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_nset_name_is_set(
+   Nameset nset,
+   Pint name
+   );
+
+#endif /* _nset_h */
 
