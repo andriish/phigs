@@ -42,7 +42,7 @@ Nameset phg_nset_create(
 {
    Nameset nset;
 
-   nset = (Nameset) calloc(1, sizeof(Nset) + size / 8);
+   nset = (Nameset) calloc(1, sizeof(Nset) + (size / 32) * sizeof(uint32_t));
    if (nset != NULL) {
       nset->max_names = size;
       nset->nameset   = (caddr_t) &nset[1];
@@ -78,8 +78,8 @@ int phg_nset_name_set(
    )
 {
    int status;
-   u_int32_t bit;
-   u_int32_t *nameset = (u_int32_t *) nset->nameset;
+   uint32_t bit;
+   uint32_t *nameset = (uint32_t *) nset->nameset;
 
    if (name > nset->max_names) {
       status = FALSE;
@@ -106,8 +106,8 @@ int phg_nset_name_clear(
    )
 {
    int status;
-   u_int32_t bit;
-   u_int32_t *nameset = (u_int32_t *) nset->nameset;
+   uint32_t bit;
+   uint32_t *nameset = (uint32_t *) nset->nameset;
 
    if (name > nset->max_names) {
       status = FALSE;
@@ -134,8 +134,8 @@ int phg_nset_name_is_set(
    )
 {
    int status;
-   u_int32_t bit;
-   u_int32_t *nameset = (u_int32_t *) nset->nameset;
+   uint32_t bit;
+   uint32_t *nameset = (uint32_t *) nset->nameset;
 
    if (name > nset->max_names) {
       status = FALSE;
