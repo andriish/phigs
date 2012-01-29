@@ -160,15 +160,15 @@ int wsgl_init(
    Wsgl_handle wsgl;
 
    wsgl = (Wsgl_handle) malloc(sizeof(Wsgl) + 4 * sizeof(GLuint) * select_size);
-   if (wsgl == NULL)
-      return 0;
-
+   if (wsgl == NULL) {
+      return FALSE;
+   }
    memset(wsgl, 0, sizeof(Wsgl));
 
    wsgl->attr_group = phg_attr_group_create();
    if (wsgl->attr_group == NULL) {
       free(wsgl);
-      return 0;
+      return FALSE;
    }
 
    memcpy(&wsgl->background, background, sizeof(Pgcolr));
@@ -178,7 +178,7 @@ int wsgl_init(
 
    ws->render_context = wsgl;
 
-   return 1;
+   return TRUE;
 }
 
 /*******************************************************************************
@@ -492,6 +492,7 @@ void wsgl_end_structure(
    printf("End structure element\n");
 #endif
 
+   wsgl->pick_id = 0;
    if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {
 #ifdef DEBUG
       printf("\tPop name\n");
@@ -759,7 +760,6 @@ void wsgl_begin_pick(
    printf("\n");
 #endif
 
-   wsgl->pick_id = 0;
    phg_mat_identity(wsgl->local_tran);
    phg_set_view_ind(ws, 0);
 
