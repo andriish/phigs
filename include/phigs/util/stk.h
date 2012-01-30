@@ -18,49 +18,97 @@
 *   along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#ifndef _util_h
-#define _util_h
+#ifndef _stk_h
+#define _stk_h
 
 #include <sys/types.h>
-#include <phigs/util/list.h>
-#include <phigs/util/stk.h>
-#include <phigs/util/htab.h>
-#include <phigs/util/mat.h>
-#include <phigs/util/nset.h>
+
+struct _Stk;
+typedef struct _Stk *Stack;
 
 /*******************************************************************************
- * phg_grow_scratch
+ * stack_create
  *
- * DESCR:       Increase scratch buffer memory size
- * RETURNS:     Pointer to memory or NULL
+ * DESCR:       Create stack
+ * RETURNS:     Stack handle or NULL
  */
 
-caddr_t phg_grow_scratch(
-   Phg_scratch *sc,
-   unsigned size
+Stack stack_create(
+   unsigned el_size,
+   unsigned el_num
    );
 
 /*******************************************************************************
- * phg_msleep
+ * stack_init
  *
- * DESCR:       Sleep in msecs granularity
+ * DESCR:       Initialize stack
  * RETURNS:     TRUE or FALSE
  */
 
-int phg_msleep(
-   unsigned msecs
+int stack_init(
+   Stack stack,
+   unsigned el_size,
+   unsigned el_num
    );
 
 /*******************************************************************************
- * phg_mtime
+ * stack_destroy
  *
- * DESCR:       Get current time in milleseconds
+ * DESCR:       Destroy stack
+ * RETURNS:     N/A
+ */
+
+void stack_destroy(
+   Stack stack
+   );
+
+/*******************************************************************************
+ * stack_push
+ *
+ * DESCR:       Push element on stack
  * RETURNS:     TRUE or FALSE
  */
 
-int phg_mtime(
-   time_t *tm_val
+int stack_push(
+   Stack stack,
+   caddr_t data
    );
 
-#endif
+/*******************************************************************************
+ * stack_load
+ *
+ * DESCR:       Load data to element on top of stack
+ * RETURNS:     TRUE or FALSE
+ */
+
+int stack_load(
+   Stack stack,
+   caddr_t data
+   );
+
+/*******************************************************************************
+ * stack_pop
+ *
+ * DESCR:       Pop element from stack
+ * RETURNS:     TRUE or FALSE
+ */
+
+int stack_pop(
+   Stack stack,
+   caddr_t data
+   );
+
+/*******************************************************************************
+ * stack_peek
+ *
+ * DESCR:       Peek on element of top of stack
+ * RETURNS:     TRUE or FALSE
+ */
+
+int stack_peek(
+   Stack stack,
+   caddr_t data
+   );
+
+#endif /* _stk_h */
 
