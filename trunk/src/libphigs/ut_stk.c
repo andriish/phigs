@@ -52,7 +52,7 @@ static void stack_push_data(
    )
 {
    memcpy(snode->data, data, stack->el_size);
-   list_add(&stack->used_list, &snode->node);
+   list_insert(&stack->used_list, NULL, &snode->node);
 }
 
 /*******************************************************************************
@@ -110,7 +110,7 @@ int stack_init(
       }
       else {
          snode->data = (caddr_t) &snode[1];
-         list_add(&stack->free_list, &snode->node);
+         list_insert(&stack->free_list, NULL, &snode->node);
          status = TRUE;
       }
    }
@@ -230,7 +230,7 @@ int stack_pop(
    }
    else {
       memcpy(data, snode->data, stack->el_size);
-      list_add(&stack->free_list, &snode->node);
+      list_insert(&stack->free_list, NULL, &snode->node);
       status = TRUE;
    }
 

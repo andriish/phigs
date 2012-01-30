@@ -24,6 +24,7 @@
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
+#include <phigs/util.h>
 #include <GL/gl.h>
 
 typedef enum {
@@ -42,6 +43,11 @@ typedef struct {
    Pint offset;
 } Ws_pick_elmt;
 
+typedef struct {
+   Pint offset;
+   Pint pick_id;
+} Ws_struct;
+
 typedef struct _Wsgl {
    Pattr_group     *attr_group;
    Plimit3         curr_win;
@@ -55,8 +61,9 @@ typedef struct _Wsgl {
    Pint            curr_view_index;
    Pview_rep3      view_rep;
    Ws_render_mode  render_mode;
-   Pint            pick_id;
-   Pint            offset;
+   Stack           struct_stack;
+   Ws_struct       *cur_struct;
+   Ws_struct       str;
    Pint            select_size;
    GLuint          *select_buf;
    Pmatrix3        pick_tran;
