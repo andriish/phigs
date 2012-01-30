@@ -32,6 +32,7 @@
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
+#include <phigs/util.h>
 #include <phigs/private/wsxP.h>
 #include <phigs/private/wsglP.h>
 
@@ -164,9 +165,16 @@ int wsgl_init(
       return FALSE;
    }
    memset(wsgl, 0, sizeof(Wsgl));
+   wsgl->cur_struct = &wsgl->str;
+   wsgl->struct_stack = stack_create(sizeof(Ws_struct), 10);
+   if (wsgl->struct_stack == NULL) {
+      free(wsgl);
+      return FALSE;
+   }
 
    wsgl->attr_group = phg_attr_group_create();
    if (wsgl->attr_group == NULL) {
+      stack_destroy(wsgl->struct_stack);
       free(wsgl);
       return FALSE;
    }
@@ -195,6 +203,7 @@ void wsgl_close(
    Wsgl_handle wsgl = ws->render_context;
 
    phg_attr_group_destroy(wsgl->attr_group);
+   free(wsgl->struct_stack);
    free(ws->render_context);
    free(ws);
 }
@@ -439,9 +448,11 @@ static void store_pick_data(
 
    if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {
 #ifdef DEBUG
-      printf("\tOffset: %d, Pick ID: %d\n", wsgl->offset, wsgl->pick_id);
+      printf("\tOffset: %d, Pick ID: %d\n",
+             wsgl->cur_struct->offset,
+             wsgl->cur_struct->pick_id);
 #endif
-      encode = (wsgl->offset << 16) | wsgl->pick_id;
+      encode = (wsgl->cur_struct->offset << 16) | wsgl->cur_struct->pick_id;
       glLoadName(encode);
    }
 }
@@ -462,9 +473,14 @@ void wsgl_begin_structure(
 
 #ifdef DEBUG
    printf("Begin new structure element: %d\n", struct_id);
+   printf("Push: %d %d\n",
+          wsgl->cur_struct->offset,
+          wsgl->cur_struct->pick_id);
 #endif
 
-   wsgl->offset = 0;
+   stack_push(wsgl->struct_stack, (caddr_t) wsgl->cur_struct);
+   wsgl->cur_struct->offset  = 0;
+
    if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {
 #ifdef DEBUG
       printf("\tPush name: %d\n", struct_id);
@@ -488,11 +504,14 @@ void wsgl_end_structure(
 {
    Wsgl_handle wsgl = ws->render_context;
 
+   stack_pop(wsgl->struct_stack, (caddr_t) wsgl->cur_struct);
 #ifdef DEBUG
    printf("End structure element\n");
+   printf("Pop: %d %d\n",
+          wsgl->cur_struct->offset,
+          wsgl->cur_struct->pick_id);
 #endif
 
-   wsgl->pick_id = 0;
    if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {
 #ifdef DEBUG
       printf("\tPop name\n");
@@ -516,14 +535,12 @@ void wsgl_render_element(
 {
    Wsgl_handle wsgl = ws->render_context;
 
-   store_pick_data(ws);
-   wsgl->offset++;
    switch (el->eltype) {
       case PELEM_LABEL:
          break;
 
       case PELEM_PICK_ID:
-         wsgl->pick_id = PHG_INT(el);
+         wsgl->cur_struct->pick_id = PHG_INT(el);
          break;
 
       case PELEM_HLHSR_ID:
@@ -716,6 +733,8 @@ void wsgl_render_element(
          printf(" not processed\n");
          break;
    }
+   wsgl->cur_struct->offset++;
+   store_pick_data(ws);
 }
 
 /*******************************************************************************
