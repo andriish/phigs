@@ -21,64 +21,41 @@
 #ifndef _nset_h
 #define _nset_h
 
-struct _Nset;
-typedef struct _Nset *Nameset;
+#include <sys/types.h>
 
 /*******************************************************************************
- * phg_nset_create
- *
- * DESCR:       Create nameset
- * RETURNS:     N/A
- */
-
-Nameset phg_nset_create(
-   unsigned size
-   );
-
-/*******************************************************************************
- * phg_nset_destroy
- *
- * DESCR:       Destroy nameset
- * RETURNS:     N/A
- */
-
-void phg_nset_destroy(
-   Nameset nset
-   );
-
-/*******************************************************************************
- * phg_nset_name_set
+ * phg_name_set
  *
  * DESCR:       Set name in nameset
- * RETURNS:     TRUE of FALSE
+ * RETURNS:     N/A
  */
 
-int phg_nset_name_set(
-   Nameset nset,
+void phg_name_set(
+   caddr_t data,
    Pint name
    );
 
 /*******************************************************************************
- * phg_nset_name_clear
+ * phg_name_clear
  *
  * DESCR:       Clear name in nameset
- * RETURNS:     TRUE or FALSE
+ * RETURNS:     N/A
  */
 
-int phg_nset_name_clear(
-   Nameset nset,
+void phg_name_clear(
+   caddr_t data,
    Pint name
    );
 
 /*******************************************************************************
- * phg_nset_name_is_set
+ * phg_name_is_set
  *
- * DESCR:       Find out if name set is set
+ * DESCR:       Find out if name is set in the nameset
  * RETURNS:     TRUE or FALSE
  */
 
-int phg_nset_name_is_set(
-   Nameset nset,
+int phg_name_is_set(
+   caddr_t data,
    Pint name
    );
 

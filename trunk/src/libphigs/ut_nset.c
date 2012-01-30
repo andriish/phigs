@@ -24,130 +24,66 @@
 #include <phigs/phg.h>
 #include <phigs/util/nset.h>
 
-typedef struct _Nset {
-   unsigned max_names;
-   caddr_t  nameset;
-} Nset;
-
 /*******************************************************************************
- * phg_nset_create
- *
- * DESCR:       Create nameset
- * RETURNS:     N/A
- */
-
-Nameset phg_nset_create(
-   unsigned size
-   )
-{
-   Nameset nset;
-
-   nset = (Nameset) calloc(1, sizeof(Nset) + (size / 32) * sizeof(uint32_t));
-   if (nset != NULL) {
-      nset->max_names = size;
-      nset->nameset   = (caddr_t) &nset[1];
-   }
-
-   return nset;
-}
-
-/*******************************************************************************
- * phg_nset_destroy
- *
- * DESCR:       Destroy nameset
- * RETURNS:     N/A
- */
-
-void phg_nset_destroy(
-   Nameset nset
-   )
-{
-   free(nset);
-}
-
-/*******************************************************************************
- * phg_nset_name_set
+ * phg_name_set
  *
  * DESCR:       Set name in nameset
- * RETURNS:     TRUE of FALSE
+ * RETURNS:     N/A
  */
 
-int phg_nset_name_set(
-   Nameset nset,
+void phg_name_set(
+   caddr_t data,
    Pint name
    )
 {
-   int status;
    uint32_t bit;
-   uint32_t *nameset = (uint32_t *) nset->nameset;
+   uint32_t *nameset = (uint32_t *) data;
 
-   if (name > nset->max_names) {
-      status = FALSE;
-   }
-   else {
-      bit = 0x1 << (name & 31);
-      nameset[name >> 5] |= bit;
-      status = TRUE;
-   }
-
-   return status;
+   bit = 0x1 << (name & 31);
+   nameset[name >> 5] |= bit;
 }
 
 /*******************************************************************************
- * phg_nset_name_clear
+ * phg_name_clear
  *
  * DESCR:       Clear name in nameset
- * RETURNS:     TRUE or FALSE
+ * RETURNS:     N/A
  */
 
-int phg_nset_name_clear(
-   Nameset nset,
+void phg_name_clear(
+   caddr_t data,
    Pint name
    )
 {
-   int status;
    uint32_t bit;
-   uint32_t *nameset = (uint32_t *) nset->nameset;
+   uint32_t *nameset = (uint32_t *) data;
 
-   if (name > nset->max_names) {
-      status = FALSE;
-   }
-   else {
-      bit = 0x1 << (name & 31);
-      nameset[name >> 5] &= ~bit;
-      status = TRUE;
-   }
-
-   return status;
+   bit = 0x1 << (name & 31);
+   nameset[name >> 5] &= ~bit;
 }
 
 /*******************************************************************************
- * phg_nset_name_is_set
+ * phg_name_is_set
  *
- * DESCR:       Find out if name set is set
+ * DESCR:       Find out if name is set in the nameset
  * RETURNS:     TRUE or FALSE
  */
 
-int phg_nset_name_is_set(
-   Nameset nset,
+int phg_name_is_set(
+   caddr_t data,
    Pint name
    )
 {
    int status;
    uint32_t bit;
-   uint32_t *nameset = (uint32_t *) nset->nameset;
+   uint32_t *nameset = (uint32_t *) data;
 
-   if (name > nset->max_names) {
-      status = FALSE;
+   bit = 0x1 << (name & 31);
+   if (nameset[name >> 5] & bit) {
+      status = TRUE;
    }
    else {
-      bit = 0x1 << (name & 31);
-      if (nameset[name >> 5] & bit) {
-         status = TRUE;
-      }
-      else {
-         status = FALSE;
-      }
+      status = FALSE;
    }
 
    return status;
