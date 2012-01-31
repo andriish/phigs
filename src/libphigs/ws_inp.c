@@ -69,9 +69,10 @@ SOFTWARE.
 #include <phigs/phg.h>
 #include <phigs/ws.h>
 #include <phigs/private/wsxP.h>
-#include <phigs/ws_inp.h>
 #include <phigs/phg_dt.h>
 #include <phigs/private/evtP.h>
+#include <phigs/util.h>
+#include <phigs/ws_inp.h>
 
 /*******************************************************************************
  * resolve_locator
@@ -1148,12 +1149,14 @@ static int init_input_state(
 	    pick->pick.pick_path.path_list = NULL;
 	    pick->ap_size = 5.0;	/* DC units */
 	    pick->dev_type = i >= num_dev_types ? dev_types[0] : dev_types[i];
-#ifdef TODO
-	    (void)PEXCreateNameSet( ws->display,
-		pick->filter.incl = XAllocID(ws->display) );
-	    (void)PEXCreateNameSet( ws->display,
-		pick->filter.excl = XAllocID(ws->display) );
-#endif
+            pick->filter.incl = phg_nset_create(WS_MAX_NAMES_IN_NAMESET);
+            if (pick->filter.incl == NULL) {
+                goto no_mem;
+            }
+            pick->filter.excl = phg_nset_create(WS_MAX_NAMES_IN_NAMESET);
+            if (pick->filter.excl == NULL) {
+                goto no_mem;
+            }
 	}
     }
 
@@ -1207,6 +1210,17 @@ no_mem:	/* ran out of memory somewhere! */
     }
     if (iws->devs.stroke != NULL) {
         free(iws->devs.stroke);
+    }
+    Ws_inp_pick *pick = iws->devs.pick;
+    if (pick != NULL) {
+        for (i = 0; i < iws->num_devs.pick; i++, pick++) {
+            if (pick->filter.incl != NULL) {
+                phg_nset_destroy(pick->filter.incl);
+            }
+            if (pick->filter.excl != NULL) {
+                phg_nset_destroy(pick->filter.excl);
+            }
+        }
     }
     if (iws->devs.pick != NULL) {
         free(iws->devs.pick);
@@ -1428,12 +1442,8 @@ void phg_ws_input_close(
  
 	if (pick != NULL) {
 	    for ( i = 0; i < iws->num_devs.pick; i++, pick++ ) {
-#ifdef TODO
-		if ( pick->filter.incl )
-		    (void)PEXFreeNameSet( ws->display, pick->filter.incl );
-		if ( pick->filter.excl )
-		    (void)PEXFreeNameSet( ws->display, pick->filter.excl );
-#endif
+                phg_nset_destroy(pick->filter.incl);
+                phg_nset_destroy(pick->filter.excl);
 		if ( pick->pick.status == PIN_STATUS_OK
 			&& pick->pick.pick_path.depth > 0 )
 		    free(pick->pick.pick_path.path_list);

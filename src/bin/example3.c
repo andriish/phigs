@@ -28,6 +28,11 @@
 #define STRUCT_SCENE   1
 #define STRUCT_MAIN    2
 
+#define NAME_VIEW_1    1
+#define NAME_VIEW_2    2
+#define NAME_VIEW_3    3
+#define NAME_VIEW_4    4
+
 #define WS_1           0
 
 #define WIDTH          0.5
@@ -85,6 +90,17 @@ Ppoint3 stroke_points[100];
 Ppoint_list3 stroke = {0, stroke_points};
 Ppick_path_elem path_list[10];
 Ppick_path pick = {0, path_list};
+Pint view_list_1[] = {NAME_VIEW_1};
+Pint view_list_2[] = {NAME_VIEW_2};
+Pint view_list_3[] = {NAME_VIEW_3};
+Pint view_list_4[] = {NAME_VIEW_4};
+Pint_list names_view_1 = {1, view_list_1};
+Pint_list names_view_2 = {1, view_list_2};
+Pint_list names_view_3 = {1, view_list_3};
+Pint_list names_view_4 = {1, view_list_4};
+Pint view_list[] = {NAME_VIEW_1, NAME_VIEW_2, NAME_VIEW_3, NAME_VIEW_4};
+Pint_list pick_incl = {4, view_list};
+Pint_list pick_excl = {1, view_list_1};
 
 void init_scene(void)
 {
@@ -165,14 +181,22 @@ void init_scene(void)
    ppolyline(&plist_vline);
    ppolyline(&plist_hline);
    pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
+   padd_names_set(&names_view_1);
    pset_view_ind(1);
    pexec_struct(STRUCT_SCENE);
+   premove_names_set(&names_view_1);
+   padd_names_set(&names_view_2);
    pset_view_ind(2);
    pexec_struct(STRUCT_SCENE);
+   premove_names_set(&names_view_2);
+   padd_names_set(&names_view_3);
    pset_view_ind(3);
    pexec_struct(STRUCT_SCENE);
+   premove_names_set(&names_view_3);
+   padd_names_set(&names_view_3);
    pset_view_ind(4);
    pexec_struct(STRUCT_SCENE);
+   premove_names_set(&names_view_4);
    pclose_struct();
 }
 
@@ -210,14 +234,18 @@ void init_stroke(Pint ws_id, Pint dev_id, Pop_mode mode, Pecho_switch echo)
 
 void init_pick(Pint ws_id, Pint dev_id, Pop_mode mode, Pecho_switch echo)
 {
+   Pfilter pick_filter;
    Plimit3 echo_volume = {0.0, 500.0, 0.0, 500.0, 0.0, 1.0};
    Ppick_path_elem plist[1] = {{0, 0, 0}};
    Ppick_path pik = {1, plist};
    Ppick_data3 rec;
    rec.pets.pet_r1.unused = 0;
+   pick_filter.incl_set = pick_incl;
+   pick_filter.excl_set = pick_excl;
 
    pinit_pick3(ws_id, dev_id, PIN_STATUS_OK, &pik, 1, &echo_volume,
                &rec, PORDER_TOP_FIRST);
+   pset_pick_filter(ws_id, dev_id, &pick_filter);
    pset_pick_mode(ws_id, dev_id, mode, echo);
 }
 

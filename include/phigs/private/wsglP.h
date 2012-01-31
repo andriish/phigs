@@ -21,6 +21,7 @@
 #ifndef _wsglP_h
 #define _wsglP_h
 
+#include <sys/types.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
@@ -47,6 +48,12 @@ typedef struct {
    Pint offset;
 } Ws_struct;
 
+typedef struct {
+   int     used;
+   Nameset incl;
+   Nameset excl;
+} Ws_filter;
+
 typedef struct _Wsgl {
    Pattr_group     *attr_group;
    Plimit3         curr_win;
@@ -57,15 +64,17 @@ typedef struct _Wsgl {
    Pint            hlhsr_mode;
    Pgcolr          background;
    Pmatrix3        local_tran, total_tran;
+   Pmatrix3        pick_tran;
    Pint            curr_view_index;
    Pview_rep3      view_rep;
    Ws_render_mode  render_mode;
    Stack           struct_stack;
    Ws_struct       cur_struct;
    Pint            pick_id;
+   Nameset         cur_nameset;
+   Ws_filter       pick_filter;
    Pint            select_size;
    GLuint          *select_buf;
-   Pmatrix3        pick_tran;
 } Wsgl;
 
 /*******************************************************************************
@@ -205,6 +214,20 @@ void wsgl_end_structure(
 void wsgl_render_element(
    Ws *ws,
    El_handle el
+   );
+
+/*******************************************************************************
+ * wsgl_set_filter
+ *
+ * DESCR:       Set filter
+ * RETURNS:     N/A
+ */
+
+void wsgl_set_filter(
+   Ws *ws,
+   Phg_args_flt_type type,
+   Nameset incl,
+   Nameset excl
    );
 
 /*******************************************************************************
@@ -400,6 +423,30 @@ void phg_set_text_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
+   );
+
+/*******************************************************************************
+ * phg_add_names_set
+ *
+ * DESCR:       Add names to nameset
+ * RETURNS:     N/A
+ */
+
+void phg_add_names_set(
+   Ws *ws,
+   Pint_list *names
+   );
+
+/*******************************************************************************
+ * phg_remove_names_set
+ *
+ * DESCR:       Remove names from nameset
+ * RETURNS:     N/A
+ */
+
+void phg_remove_names_set(
+   Ws *ws,
+   Pint_list *names
    );
 
 /*******************************************************************************

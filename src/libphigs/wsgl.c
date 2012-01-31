@@ -69,6 +69,14 @@ int wsgl_init(
       return FALSE;
    }
 
+   wsgl->cur_nameset = phg_nset_create(WS_MAX_NAMES_IN_NAMESET);
+   if (wsgl->cur_nameset == NULL) {
+      phg_attr_group_destroy(wsgl->attr_group);
+      stack_destroy(wsgl->struct_stack);
+      free(wsgl);
+      return FALSE;
+   }
+
    memcpy(&wsgl->background, background, sizeof(Pgcolr));
    wsgl->render_mode = WS_RENDER_MODE_DRAW;
    wsgl->select_size = select_size;
@@ -92,6 +100,7 @@ void wsgl_close(
 {
    Wsgl_handle wsgl = ws->render_context;
 
+   phg_nset_destroy(wsgl->cur_nameset);
    phg_attr_group_destroy(wsgl->attr_group);
    free(wsgl->struct_stack);
    free(ws->render_context);
@@ -297,6 +306,7 @@ void wsgl_begin_rendering(
    phg_set_edge_ind(ws, wsgl->attr_group, 0);
    phg_set_int_ind(ws, wsgl->attr_group, 0);
    phg_set_view_ind(ws, 0);
+   phg_nset_names_clear_all(wsgl->cur_nameset);
 }
 
 /*******************************************************************************
@@ -362,6 +372,39 @@ static void update_cur_struct(
 
    store_cur_struct(ws);
    wsgl->cur_struct.offset++;
+}
+
+static int check_draw_primitive(
+   Ws *ws
+   )
+{
+   int status;
+   Wsgl_handle wsgl = ws->render_context;
+
+   switch (wsgl->render_mode) {
+      case WS_RENDER_MODE_SELECT:
+         if (wsgl->pick_filter.used) {
+            if (phg_nset_names_intersect(wsgl->cur_nameset,
+                                         wsgl->pick_filter.incl) &&
+                !phg_nset_names_intersect(wsgl->cur_nameset,
+                                          wsgl->pick_filter.excl)) {
+               status = TRUE;
+            }
+            else {
+               status = FALSE;
+            }
+         }
+         else {
+            status = TRUE;
+         }
+         break;
+
+      default:
+         status = TRUE;
+         break;
+   }
+
+   return status;
 }
 
 /*******************************************************************************
@@ -447,6 +490,14 @@ void wsgl_render_element(
 
       case PELEM_PICK_ID:
          wsgl->pick_id = PHG_INT(el);
+         break;
+
+      case PELEM_ADD_NAMES_SET:
+         phg_add_names_set(ws, PHG_INT_LIST(el));
+         break;
+
+      case PELEM_REMOVE_NAMES_SET:
+         phg_remove_names_set(ws, PHG_INT_LIST(el));
          break;
 
       case PELEM_HLHSR_ID:
@@ -574,40 +625,52 @@ void wsgl_render_element(
          break;
 
       case PELEM_FILL_AREA:
-         phg_draw_fill_area(ws,
-                            PHG_POINT_LIST(el),
-                            wsgl->attr_group);
+         if (check_draw_primitive(ws)) {
+            phg_draw_fill_area(ws,
+                               PHG_POINT_LIST(el),
+                               wsgl->attr_group);
+         }
          break;
 
       case PELEM_POLYLINE:
-         phg_draw_polyline(ws,
-                           PHG_POINT_LIST(el),
-                           wsgl->attr_group
-                           );
+         if (check_draw_primitive(ws)) {
+            phg_draw_polyline(ws,
+                              PHG_POINT_LIST(el),
+                              wsgl->attr_group
+                              );
+         }
          break;
 
       case PELEM_POLYMARKER:
-         phg_draw_polymarker(ws,
-                             PHG_POINT_LIST(el),
-                             wsgl->attr_group);
+         if (check_draw_primitive(ws)) {
+            phg_draw_polymarker(ws,
+                                PHG_POINT_LIST(el),
+                                wsgl->attr_group);
+         }
          break;
 
       case PELEM_FILL_AREA3:
-         phg_draw_fill_area3(ws,
-                             PHG_POINT_LIST3(el),
-                             wsgl->attr_group);
+         if (check_draw_primitive(ws)) {
+            phg_draw_fill_area3(ws,
+                                PHG_POINT_LIST3(el),
+                                wsgl->attr_group);
+         }
          break;
 
       case PELEM_POLYLINE3:
-         phg_draw_polyline3(ws,
-                            PHG_POINT_LIST3(el),
-                            wsgl->attr_group);
+         if (check_draw_primitive(ws)) {
+            phg_draw_polyline3(ws,
+                               PHG_POINT_LIST3(el),
+                               wsgl->attr_group);
+         }
          break;
 
       case PELEM_POLYMARKER3:
-         phg_draw_polymarker3(ws,
-                              PHG_POINT_LIST3(el),
-                              wsgl->attr_group);
+         if (check_draw_primitive(ws)) {
+            phg_draw_polymarker3(ws,
+                                 PHG_POINT_LIST3(el),
+                                 wsgl->attr_group);
+         }
          break;
 
       case PELEM_LOCAL_MODEL_TRAN3:
@@ -637,6 +700,41 @@ void wsgl_render_element(
       default:
          css_print_eltype(el->eltype);
          printf(" not processed\n");
+         break;
+   }
+}
+
+/*******************************************************************************
+ * wsgl_set_filter
+ * 
+ * DESCR:       Set filter
+ * RETURNS:     N/A
+ */
+
+void wsgl_set_filter(
+   Ws *ws,
+   Phg_args_flt_type type,
+   Nameset incl,
+   Nameset excl
+   )
+{
+   Wsgl_handle wsgl = ws->render_context;
+
+   switch (type) {
+      case PHG_ARGS_FLT_PICK:
+         wsgl->pick_filter.used = TRUE;
+         wsgl->pick_filter.incl = incl;
+         wsgl->pick_filter.excl = excl;
+#ifdef DEBUG
+         printf("Include filter:\n");
+         phg_nset_print(wsgl->pick_filter.incl);
+         printf("Exclude filter:\n");
+         phg_nset_print(wsgl->pick_filter.excl);
+#endif
+         break;
+
+      default:
+         /* TODO: Other filter types */
          break;
    }
 }
@@ -686,6 +784,7 @@ void wsgl_begin_pick(
    phg_mat_identity(wsgl->local_tran);
    phg_set_view_ind(ws, 0);
    wsgl->pick_id = 0;
+   phg_nset_names_clear_all(wsgl->cur_nameset);
 
    glSelectBuffer(wsgl->select_size, wsgl->select_buf);
    glRenderMode(GL_SELECT);

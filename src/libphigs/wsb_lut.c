@@ -18,11 +18,14 @@
 *   along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <assert.h>
+#include <sys/types.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
+#include <phigs/ws_inp.h>
 #include <phigs/private/wsglP.h>
 #include <phigs/css.h>
 #include <phigs/alloc.h>
@@ -524,5 +527,39 @@ void phg_wsb_inq_LUT_entry(
         default:
             break;
     }
+}
+
+/*******************************************************************************
+ * phg_wsb_set_name_set
+ *
+ * DESCR:	Set filter name set
+ * RETURNS:	N/A
+ */
+
+void phg_wsb_set_name_set(
+   Ws *ws,
+   Phg_args_flt_type type,
+   Pint dev_id,
+   Pint_list *incl_set,
+   Pint_list *excl_set
+   )
+{
+   Ws_inp_pick *pick;
+
+   switch (type) {
+      case PHG_ARGS_FLT_PICK:
+         pick = &ws->in_ws.devs.pick[dev_id - 1];
+         phg_nset_names_set(pick->filter.incl,
+                            incl_set->num_ints,
+                            incl_set->ints);
+         phg_nset_names_set(pick->filter.excl,
+                            excl_set->num_ints,
+                            excl_set->ints);
+         break;
+
+      default:
+         /* TODO: Other filter types */
+         break;
+   }
 }
 

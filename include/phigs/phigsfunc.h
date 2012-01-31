@@ -1399,6 +1399,19 @@ void pinit_pick3(
    );
 
 /*******************************************************************************
+ * pset_pick_filter
+ *
+ * DESCR:       Set pick device filter
+ * RETURNS:     N/A
+ */
+
+void pset_pick_filter(
+   Pint ws_id,
+   Pint pick_num,
+   Pfilter *filter
+   );
+
+/*******************************************************************************
  * pset_loc_mode
  *
  * DESCR:       Set locator input device mode

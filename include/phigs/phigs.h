@@ -595,6 +595,11 @@ typedef struct {
 } Pedge_attrs;
 
 typedef struct {
+   Pint_list incl_set;
+   Pint_list excl_set;
+} Pfilter;
+
+typedef struct {
    Pint struct_id;
    Pint pick_id;
    Pint elem_pos;

@@ -20,86 +20,173 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <phigs/phg.h>
 #include <phigs/util/nset.h>
+
+typedef struct _Nset {
+   unsigned max_names;
+   unsigned num_chunks;
+   uint32_t *nameset;
+} _Nameset;
+
+/*******************************************************************************
+ * phg_nset_create
+ *
+ * DESCR:       Create nameset
+ * RETURNS:     Nameset handle or NULL
+ */
+
+Nameset phg_nset_create(
+   unsigned num_names
+   )
+{
+   unsigned num_chunks;
+   Nameset nset;
+
+   if (num_names % 32) {
+      num_chunks = (num_names >> 5) + 1;
+   }
+   else {
+      num_chunks = num_names >> 5;
+   }
+
+   nset = (Nameset) malloc(sizeof(_Nameset) + num_chunks * sizeof(uint32_t));
+   if (nset != NULL) {
+      nset->max_names  = num_chunks << 5;
+      nset->num_chunks = num_chunks;
+      nset->nameset    = (uint32_t *) &nset[1];
+      memset(nset->nameset, 0, num_chunks * sizeof(uint32_t));
+   }
+
+   return nset;
+}
+
+/*******************************************************************************
+ * phg_nset_destroy
+ *
+ * DESCR:       Destroy nameset
+ * RETURNS:     N/A
+ */
+
+void phg_nset_destroy(
+   Nameset nset
+   )
+{
+   free(nset);
+}
 
 /*******************************************************************************
  * phg_nset_name_set
  *
  * DESCR:       Set name in nameset
- * RETURNS:     N/A
+ * RETURNS:     TRUE or FALSE
  */
 
-void phg_nset_name_set(
-   caddr_t data,
+int phg_nset_name_set(
+   Nameset nset,
    Pint name
    )
 {
+   int status;
    uint32_t bit;
-   uint32_t *nset = (uint32_t *) data;
 
-   bit = 0x1 << (name & 31);
-   nset[name >> 5] |= bit;
+   if (name > nset->max_names) {
+      status = FALSE;
+   }
+   else {
+      bit = 0x1 << (name & 31);
+      nset->nameset[name >> 5] |= bit;
+      status = TRUE;
+   }
+
+   return status;
 }
 
 /*******************************************************************************
  * phg_nset_name_clear
  *
  * DESCR:       Clear name in nameset
- * RETURNS:     N/A
+ * RETURNS:     TRUE or FALSE
  */
 
-void phg_nset_name_clear(
-   caddr_t data,
+int phg_nset_name_clear(
+   Nameset nset,
    Pint name
    )
 {
+   int status;
    uint32_t bit;
-   uint32_t *nset = (uint32_t *) data;
 
-   bit = 0x1 << (name & 31);
-   nset[name >> 5] &= ~bit;
+   if (name > nset->max_names) {
+      status = FALSE;
+   }
+   else {
+      bit = 0x1 << (name & 31);
+      nset->nameset[name >> 5] &= ~bit;
+      status = TRUE;
+   }
+
+   return status;
 }
 
 /*******************************************************************************
  * phg_nset_names_set
  *
  * DESCR:       Set names in nameset from integer list
- * RETURNS:     N/A
+ * RETURNS:     TRUE of FALSE
  */
 
-void phg_nset_names_set(
-   caddr_t data,
+int phg_nset_names_set(
+   Nameset nset,
    Pint num_names,
    Pint *name_list
    )
 {
-   Pint i;
+   int status;
+   unsigned i;
 
-   for (i = 0; i < num_names; i++) {
-      phg_nset_name_set(data, name_list[i]);
+   if (num_names > nset->max_names) {
+      status = FALSE;
    }
+   else {
+      for (i = 0; i < num_names; i++) {
+         phg_nset_name_set(nset, name_list[i]);
+      }
+      status = TRUE;
+   }
+
+   return status;
 }
 
 /*******************************************************************************
  * phg_nset_names_clear
  *
  * DESCR:       Clear names in nameset from integer list
- * RETURNS:     N/A
+ * RETURNS:     TRUE of FALSE
  */
 
-void phg_nset_names_clear(
-   caddr_t data,
+int phg_nset_names_clear(
+   Nameset nset,
    Pint num_names,
    Pint *name_list
    )
 {
-   Pint i;
+   int status;
+   unsigned i;
 
-   for (i = 0; i < num_names; i++) {
-      phg_nset_name_clear(data, name_list[i]);
+   if (num_names > nset->max_names) {
+      status = FALSE;
    }
+   else {
+      for (i = 0; i < num_names; i++) {
+         phg_nset_name_clear(nset, name_list[i]);
+      }
+      status = TRUE;
+   }
+
+   return status;
 }
 
 /*******************************************************************************
@@ -110,16 +197,10 @@ void phg_nset_names_clear(
  */
 
 void phg_nset_names_set_all(
-   caddr_t data,
-   Pint num_chunks
+   Nameset nset
    )
 {
-   Pint i;
-   uint32_t *nset = (uint32_t *) data;
-
-   for (i = 0; i < num_chunks; i++) {
-      nset[i] = 0xffffffff;
-   }
+   memset(nset->nameset, 0xffffffff, nset->num_chunks * sizeof(uint32_t));
 }
 
 /*******************************************************************************
@@ -130,16 +211,37 @@ void phg_nset_names_set_all(
  */
 
 void phg_nset_names_clear_all(
-   caddr_t data,
-   Pint num_chunks
+   Nameset nset
    )
 {
-   Pint i;
-   uint32_t *nset = (uint32_t *) data;
+   memset(nset->nameset, 0x00000000, nset->num_chunks * sizeof(uint32_t));
+}
 
-   for (i = 0; i < num_chunks; i++) {
-      nset[i] = 0x00000000;
+/*******************************************************************************
+ * phg_nset_names_copy_all
+ *
+ * DESCR:       Copy all names in nameset
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_nset_names_copy_all(
+   Nameset dest,
+   Nameset src
+   )
+{
+   int status;
+
+   if (dest->num_chunks != src->num_chunks) {
+      status = FALSE;
    }
+   else {
+      memcpy(dest->nameset,
+             src->nameset,
+             src->num_chunks * sizeof(uint32_t));
+      status = TRUE;
+   }
+
+   return status;
 }
 
 /*******************************************************************************
@@ -150,19 +252,19 @@ void phg_nset_names_clear_all(
  */
 
 int phg_nset_names_intersect(
-   caddr_t data1,
-   caddr_t data2,
-   Pint num_chunks
+   Nameset nset1,
+   Nameset nset2
    )
 {
    int status;
-   Pint i;
-   uint32_t *nset1 = (uint32_t *) data1;
-   uint32_t *nset2 = (uint32_t *) data2;
+   unsigned i;
+   uint32_t *nameset1 = nset1->nameset;
+   uint32_t *nameset2 = nset2->nameset;
+   unsigned num_chunks = PHG_MIN(nset1->num_chunks, nset2->num_chunks);
 
    status = FALSE;
    for (i = 0; i < num_chunks; i++) {
-      if (nset1[i] & nset2[i]) {
+      if (nameset1[i] & nameset2[i]) {
          status = TRUE;
          break;
       }
@@ -172,29 +274,21 @@ int phg_nset_names_intersect(
 }
 
 /*******************************************************************************
- * phg_nset_name_is_set
+ * phg_nset_print
  *
- * DESCR:       Find out if name is set in the nameset
- * RETURNS:     TRUE or FALSE
+ * DESCR:       Print nameset
+ * RETURNS:     N/A
  */
 
-int phg_nset_name_is_set(
-   caddr_t data,
-   Pint name
+void phg_nset_print(
+   Nameset nset
    )
 {
-   int status;
-   uint32_t bit;
-   uint32_t *nset = (uint32_t *) data;
+   unsigned i;
 
-   bit = 0x1 << (name & 31);
-   if (nset[name >> 5] & bit) {
-      status = TRUE;
+   for (i = 0; i < nset->num_chunks; i++) {
+      printf("%x ", nset->nameset[i]);
    }
-   else {
-      status = FALSE;
-   }
-
-   return status;
+   printf("\n");
 }
 

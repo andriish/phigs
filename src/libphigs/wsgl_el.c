@@ -448,6 +448,44 @@ void phg_set_text_ind(
 }
 
 /*******************************************************************************
+ * phg_add_names_set
+ *
+ * DESCR:	Add names to nameset
+ * RETURNS:	N/A
+ */
+
+void phg_add_names_set(
+   Ws *ws,
+   Pint_list *names
+   )
+{
+   Wsgl_handle wsgl = ws->render_context;
+
+   phg_nset_names_set(wsgl->cur_nameset,
+                      names->num_ints,
+                      names->ints);
+}
+
+/*******************************************************************************
+ * phg_remove_names_set
+ *
+ * DESCR:	Remove names from nameset
+ * RETURNS:	N/A
+ */
+
+void phg_remove_names_set(
+   Ws *ws,
+   Pint_list *names
+   )
+{
+   Wsgl_handle wsgl = ws->render_context;
+
+   phg_nset_names_clear(wsgl->cur_nameset,
+                        names->num_ints,
+                        names->ints);
+}
+
+/*******************************************************************************
  * phg_draw_marker_dot
  *
  * DESCR:	Draw marker dots helper function
