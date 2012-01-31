@@ -22,6 +22,7 @@
 #define _ws_inp_h
 
 #include <phigs/sin.h>
+#include <phigs/util.h>
 
 typedef struct {
    Pint         num;
@@ -46,8 +47,8 @@ typedef struct {
    Pint         dev_type;
    Pint         measure;
    struct {
-      Pint      incl;
-      Pint      excl;
+      Nameset   incl;
+      Nameset   excl;
    } filter;
    Ppick_path   scratch_path;
 } Ws_inp_pick;

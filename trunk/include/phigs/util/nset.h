@@ -21,17 +21,40 @@
 #ifndef _nset_h
 #define _nset_h
 
-#include <sys/types.h>
+struct _Nset;
+typedef struct _Nset *Nameset;
+
+/*******************************************************************************
+ * phg_nset_create
+ *
+ * DESCR:       Create nameset
+ * RETURNS:     Nameset handle or NULL
+ */
+
+Nameset phg_nset_create(
+   unsigned num_names
+   );
+
+/*******************************************************************************
+ * phg_nset_destroy
+ *
+ * DESCR:       Destroy nameset
+ * RETURNS:     N/A
+ */
+
+void phg_nset_destroy(
+   Nameset nset
+   );
 
 /*******************************************************************************
  * phg_nset_name_set
  *
  * DESCR:       Set name in nameset
- * RETURNS:     N/A
+ * RETURNS:     TRUE or FALSE
  */
 
-void phg_nset_name_set(
-   caddr_t data,
+int phg_nset_name_set(
+   Nameset nset,
    Pint name
    );
 
@@ -39,11 +62,11 @@ void phg_nset_name_set(
  * phg_nset_name_clear
  *
  * DESCR:       Clear name in nameset
- * RETURNS:     N/A
+ * RETURNS:     TRUE or FALSE
  */
 
-void phg_nset_name_clear(
-   caddr_t data,
+int phg_nset_name_clear(
+   Nameset nset,
    Pint name
    );
 
@@ -51,11 +74,11 @@ void phg_nset_name_clear(
  * phg_nset_names_set
  *
  * DESCR:       Set names in nameset from integer list
- * RETURNS:     N/A
+ * RETURNS:     TRUE of FALSE
  */
 
-void phg_nset_names_set(
-   caddr_t data,
+int phg_nset_names_set(
+   Nameset nset,
    Pint num_names,
    Pint *name_list
    );
@@ -64,11 +87,11 @@ void phg_nset_names_set(
  * phg_nset_names_clear
  *
  * DESCR:       Clear names in nameset from integer list
- * RETURNS:     N/A
+ * RETURNS:     TRUE of FALSE
  */
 
-void phg_nset_names_clear(
-   caddr_t data,
+int phg_nset_names_clear(
+   Nameset nset,
    Pint num_names,
    Pint *name_list
    );
@@ -81,8 +104,7 @@ void phg_nset_names_clear(
  */
 
 void phg_nset_names_set_all(
-   caddr_t data,
-   Pint num_chunks
+   Nameset nset
    );
 
 /*******************************************************************************
@@ -93,8 +115,19 @@ void phg_nset_names_set_all(
  */
 
 void phg_nset_names_clear_all(
-   caddr_t data,
-   Pint num_chunks
+   Nameset nset
+   );
+
+/*******************************************************************************
+ * phg_nset_names_copy_all
+ *
+ * DESCR:       Copy all names in nameset
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_nset_names_copy_all(
+   Nameset dest,
+   Nameset src
    );
 
 /*******************************************************************************
@@ -105,21 +138,19 @@ void phg_nset_names_clear_all(
  */
 
 int phg_nset_names_intersect(
-   caddr_t data1,
-   caddr_t data2,
-   Pint num_chunks
+   Nameset nset1,
+   Nameset nset2
    );
 
 /*******************************************************************************
- * phg_nset_name_is_set
+ * phg_nset_print
  *
- * DESCR:       Find out if name is set in the nameset
- * RETURNS:     TRUE or FALSE
+ * DESCR:       Print nameset
+ * RETURNS:     N/A
  */
 
-int phg_nset_name_is_set(
-   caddr_t data,
-   Pint name
+void phg_nset_print(
+   Nameset nset
    );
 
 #endif /* _nset_h */

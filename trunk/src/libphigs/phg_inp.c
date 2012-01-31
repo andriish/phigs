@@ -400,6 +400,40 @@ void pinit_pick3(
 }
 
 /*******************************************************************************
+ * pset_pick_filter
+ *
+ * DESCR:       Set pick device filter
+ * RETURNS:     N/A
+ */
+
+void pset_pick_filter(
+   Pint ws_id,
+   Pint pick_num,
+   Pfilter *filter
+   )
+{
+   Wst_input_wsdt *idt;
+   Ws_handle wsh;
+
+   /* TODO: Change to only accept outin workstations */
+   idt = input_ws_open(ws_id, Pfn_set_pick_filter, NULL, NULL);
+   if (idt != NULL) {
+      if ((pick_num > 0) &&  (pick_num <= idt->num_devs.pick)) {
+         wsh = PHG_WSID(ws_id);
+         (*wsh->set_filter)(wsh,
+                            PHG_ARGS_FLT_PICK,
+                            pick_num,
+                            &filter->incl_set,
+                            &filter->excl_set
+                            );
+      }
+      else {
+         ERR_REPORT(PHG_ERH, ERR250);
+      }
+   }
+}
+
+/*******************************************************************************
  * set_mode
  *
  * DESCR:       Set mode helper function

@@ -29,6 +29,7 @@
 #define NUM_DEFERRAL            5
 #define NUM_MODIFICATION        3
 #define NUM_SELECTABLE_STRUCTS  256
+#define WS_MAX_NAMES_IN_NAMESET 1024
 
 typedef enum {
    PHG_TIME_NOW,
@@ -212,6 +213,13 @@ typedef struct _Ws {
                    struct _Ws *ws,
                    Phg_args_rep_type type,
                    Phg_args_rep_data *rep);
+   void         (*set_filter)(
+                   struct _Ws *ws,
+                   Phg_args_flt_type type,
+                   Pint dev_id,
+                   Pint_list *incl_set,
+                   Pint_list *excl_set
+                   );
    void         (*set_ws_window)(
                    struct _Ws *ws,
                    Pint two_d,
@@ -596,6 +604,14 @@ void phg_wsb_set_rep(
     Phg_args_rep_data *rep
     );
 
+void phg_wsb_set_filter(
+    Ws *ws,
+    Phg_args_flt_type type,
+    Pint dev_id,
+    Pint_list *incl_set,
+    Pint_list *excl_set
+    );
+
 void phg_wsb_inq_posted(
     Ws *ws,
     Phg_ret *ret
@@ -763,6 +779,21 @@ void phg_wsb_inq_LUT_entry(
     Pgcolr *gcolr,
     Pview_rep3 *vrep
     );
+
+/*******************************************************************************
+ * phg_wsb_set_name_set
+ *
+ * DESCR:       Set filter name set
+ * RETURNS:     N/A
+ */
+
+void phg_wsb_set_name_set(
+   Ws *ws,
+   Phg_args_flt_type type,
+   Pint dev_id,
+   Pint_list *incl_set,
+   Pint_list *excl_set
+   );
 
 #endif
 

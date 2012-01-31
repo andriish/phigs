@@ -90,6 +90,7 @@ static void wsb_load_funcs(
     ws->update = phg_wsb_update;
     ws->set_disp_update_state = phg_wsb_set_disp_update_state;
     ws->set_rep = phg_wsb_set_rep;
+    ws->set_filter = phg_wsb_set_filter;
     ws->set_hlhsr_mode = phg_wsb_set_hlhsr_mode;
     ws->set_ws_window = phg_wsb_set_ws_window;
     ws->set_ws_vp = phg_wsb_set_ws_vp;
@@ -1515,18 +1516,17 @@ void phg_wsb_set_rep(
     }
 }
 
-#if 0
-void
-phg_wsb_set_filter( ws, type, devid, inc_set, exc_set )
-    Ws			*ws;
-    Phg_args_flt_type	type;
-    Pint		devid;
-    Pint_list		*inc_set;
-    Pint_list		*exc_set;
+void phg_wsb_set_filter(
+    Ws *ws,
+    Phg_args_flt_type type,
+    Pint dev_id,
+    Pint_list *incl_set,
+    Pint_list *excl_set
+    )
 {
-    Wsb_output_ws	*owsb = &ws->out_ws.model.b;
+    Wsb_output_ws *owsb = &ws->out_ws.model.b;
 
-    phg_wsx_set_name_set( ws, type, devid, inc_set, exc_set );
+    phg_wsb_set_name_set( ws, type, dev_id, incl_set, excl_set );
 
     if ( (type == PHG_ARGS_FLT_HIGH || type == PHG_ARGS_FLT_INVIS)
 	    && WSB_SOME_POSTED(&owsb->posted) ) {
@@ -1546,6 +1546,7 @@ phg_wsb_set_filter( ws, type, devid, inc_set, exc_set )
     }
 }
 
+#if 0
 void
 phg_wsb_inq_filter( ws, type, ret )
     Ws                  *ws;
@@ -2111,6 +2112,10 @@ int phg_wsb_resolve_pick(
         box.y = dc_pt->y;
         box.distance = 3.0;
 
+        wsgl_set_filter(ws,
+                        PHG_ARGS_FLT_PICK,
+                        dev->filter.incl,
+                        dev->filter.excl);
         wsgl_begin_pick(ws, &box);
 
         post_str = owsb->posted.highest.lower;
