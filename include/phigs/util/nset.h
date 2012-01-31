@@ -24,37 +24,100 @@
 #include <sys/types.h>
 
 /*******************************************************************************
- * phg_name_set
+ * phg_nset_name_set
  *
  * DESCR:       Set name in nameset
  * RETURNS:     N/A
  */
 
-void phg_name_set(
+void phg_nset_name_set(
    caddr_t data,
    Pint name
    );
 
 /*******************************************************************************
- * phg_name_clear
+ * phg_nset_name_clear
  *
  * DESCR:       Clear name in nameset
  * RETURNS:     N/A
  */
 
-void phg_name_clear(
+void phg_nset_name_clear(
    caddr_t data,
    Pint name
    );
 
 /*******************************************************************************
- * phg_name_is_set
+ * phg_nset_names_set
+ *
+ * DESCR:       Set names in nameset from integer list
+ * RETURNS:     N/A
+ */
+
+void phg_nset_names_set(
+   caddr_t data,
+   Pint num_names,
+   Pint *name_list
+   );
+
+/*******************************************************************************
+ * phg_nset_names_clear
+ *
+ * DESCR:       Clear names in nameset from integer list
+ * RETURNS:     N/A
+ */
+
+void phg_nset_names_clear(
+   caddr_t data,
+   Pint num_names,
+   Pint *name_list
+   );
+
+/*******************************************************************************
+ * phg_nset_names_set_all
+ *
+ * DESCR:       Set all names in nameset
+ * RETURNS:     N/A
+ */
+
+void phg_nset_names_set_all(
+   caddr_t data,
+   Pint num_chunks
+   );
+
+/*******************************************************************************
+ * phg_nset_names_clear_all
+ *
+ * DESCR:       Clear all names in nameset
+ * RETURNS:     N/A
+ */
+
+void phg_nset_names_clear_all(
+   caddr_t data,
+   Pint num_chunks
+   );
+
+/*******************************************************************************
+ * phg_nset_names_intersect
+ *
+ * DESCR:       Evaluate if there is an intersection between the two name sets
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_nset_names_intersect(
+   caddr_t data1,
+   caddr_t data2,
+   Pint num_chunks
+   );
+
+/*******************************************************************************
+ * phg_nset_name_is_set
  *
  * DESCR:       Find out if name is set in the nameset
  * RETURNS:     TRUE or FALSE
  */
 
-int phg_name_is_set(
+int phg_nset_name_is_set(
    caddr_t data,
    Pint name
    );
