@@ -45,7 +45,6 @@ typedef struct {
 
 typedef struct {
    Pint offset;
-   Pint pick_id;
 } Ws_struct;
 
 typedef struct _Wsgl {
@@ -62,8 +61,8 @@ typedef struct _Wsgl {
    Pview_rep3      view_rep;
    Ws_render_mode  render_mode;
    Stack           struct_stack;
-   Ws_struct       *cur_struct;
-   Ws_struct       str;
+   Ws_struct       cur_struct;
+   Pint            pick_id;
    Pint            select_size;
    GLuint          *select_buf;
    Pmatrix3        pick_tran;
@@ -232,6 +231,265 @@ void wsgl_end_pick(
    Pint *err_ind,
    Pint *depth,
    Ws_pick_elmt **elmts
+   );
+
+/*******************************************************************************
+ * phg_update_projection
+ *
+ * DESCR:       Update projection matrix
+ * RETURNS:     N/A
+ */
+
+void phg_update_projection(
+   Ws *ws
+   );
+
+/*******************************************************************************
+ * phg_update_modelview
+ *
+ * DESCR:       Update modelview matrix
+ * RETURNS:     N/A
+ */
+
+void phg_update_modelview(
+   Ws *ws
+   );
+
+/*******************************************************************************
+ * phg_set_view_ind
+ *
+ * DESCR:       Setup view
+ * RETURNS:     N/A
+ */
+
+void phg_set_view_ind(
+   Ws *ws,
+   Pint ind
+   );
+
+/*******************************************************************************
+ * phg_set_hlhsr_id
+ *
+ * DESCR:       Setup depth buffer checking
+ * RETURNS:     N/A
+ */
+
+void phg_set_hlhsr_id(
+   Pint hlhsr_id
+   );
+
+/*******************************************************************************
+ * phg_set_gcolr
+ *
+ * DESCR:       Setup colour
+ * RETURNS:     N/A
+ */
+
+void phg_set_gcolr(
+   Pgcolr *gcolr
+   );
+
+/*******************************************************************************
+ * phg_set_line_ind
+ *
+ * DESCR:       Setup line index
+ * RETURNS:     N/A
+ */
+
+void phg_set_line_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
+   );
+
+/*******************************************************************************
+ * phg_set_line_attr
+ *
+ * DESCR:       Setup line attributes
+ * RETURNS:     N/A
+ */
+
+void phg_set_line_attr(
+   Ws *ws,
+   Pline_bundle_plus *attr
+   );
+
+/*******************************************************************************
+ * phg_set_int_ind
+ *
+ * DESCR:       Setup interior index
+ * RETURNS:     N/A
+ */
+
+void phg_set_int_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
+   );
+
+/*******************************************************************************
+ * phg_set_int_attr
+ *
+ * DESCR:       Setup interior attributes
+ * RETURNS:     N/A
+ */
+
+void phg_set_int_attr(
+   Ws *ws,
+   Pint_bundle_plus *attr
+   );
+
+/*******************************************************************************
+ * phg_set_edge_ind
+ *
+ * DESCR:       Setup edge index
+ * RETURNS:     N/A
+ */
+
+void phg_set_edge_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
+   );
+
+/*******************************************************************************
+ * phg_set_edge_attr
+ *
+ * DESCR:       Setup interior attributes
+ * RETURNS:     N/A
+ */
+
+void phg_set_edge_attr(
+   Ws *ws,
+   Pedge_bundle_plus *attr
+   );
+
+/*******************************************************************************
+ * phg_set_marker_ind
+ *
+ * DESCR:       Setup marker index
+ * RETURNS:     N/A
+ */
+
+void phg_set_marker_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
+   );
+
+/*******************************************************************************
+ * phg_set_marker_attr
+ *
+ * DESCR:       Setup marker attributes
+ * RETURNS:     N/A
+ */
+
+void phg_set_marker_attr(
+   Ws *ws,
+   Pmarker_bundle_plus *attr
+   );
+
+/*******************************************************************************
+ * phg_set_text_ind
+ *
+ * DESCR:       Setup text index
+ * RETURNS:     N/A
+ */
+
+void phg_set_text_ind(
+   Ws *ws,
+   Pattr_group *attr_group,
+   Pint ind
+   );
+
+/*******************************************************************************
+ * phg_draw_polymarker
+ *
+ * DESCR:       Draw markers
+ * RETURNS:     N/A
+ */
+
+void phg_draw_polymarker(
+   Ws *ws,
+   Ppoint_list *point_list,
+   Pattr_group *attr
+   );
+
+/*******************************************************************************
+ * phg_draw_polymarker3
+ *
+ * DESCR:       Draw markers 3D
+ * RETURNS:     N/A
+ */
+
+void phg_draw_polymarker3(
+   Ws *ws,
+   Ppoint_list3 *point_list,
+   Pattr_group *attr
+   );
+
+/*******************************************************************************
+ * phg_draw_polyline
+ *
+ * DESCR:       Draw lines
+ * RETURNS:     N/A
+ */
+
+void phg_draw_polyline(
+   Ws *ws,
+   Ppoint_list *point_list,
+   Pattr_group *attr
+   );
+
+/*******************************************************************************
+ * phg_draw_polyline3
+ *
+ * DESCR:       Draw lines 3D
+ * RETURNS:     N/A
+ */
+
+void phg_draw_polyline3(
+   Ws *ws,
+   Ppoint_list3 *point_list,
+   Pattr_group *attr
+   );
+
+/*******************************************************************************
+ * phg_draw_fill_area
+ *
+ * DESCR:       Draw fill area
+ * RETURNS:     N/A
+ */
+
+void phg_draw_fill_area(
+   Ws *ws,
+   Ppoint_list *point_list,
+   Pattr_group *attr
+   );
+
+/*******************************************************************************
+ * phg_draw_fill_area3
+ *
+ * DESCR:       Draw fill area 3D
+ * RETURNS:     N/A
+ */
+
+void phg_draw_fill_area3(
+   Ws *ws,
+   Ppoint_list3 *point_list,
+   Pattr_group *attr
+   );
+
+/*******************************************************************************
+ * phg_draw_text
+ *
+ * DESCR:       Draw text
+ * RETURNS:     N/A
+ */
+
+void phg_draw_text(
+   Ppoint *pos,
+   char *text
    );
 
 extern unsigned char *wsgl_hatch_tbl[];
