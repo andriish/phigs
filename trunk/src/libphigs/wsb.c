@@ -72,6 +72,7 @@ SOFTWARE.
 #include <assert.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
+#include <phigs/util.h>
 #include <phigs/ws.h>
 #include <phigs/private/wsglP.h>
 #include <phigs/private/wsxP.h>
@@ -356,7 +357,43 @@ static int init_attributes(
     return 1;
 }
 
-int init_viewrep(
+static void destroy_resources(
+    Ws *ws
+    )
+{
+    Ws_output_ws *ows = &ws->out_ws;
+
+    if (ows->nset.invis_incl != NULL) {
+        phg_nset_destroy(ows->nset.invis_incl);
+    }
+    if (ows->nset.invis_excl != NULL) {
+       phg_nset_destroy(ows->nset.invis_excl);
+    }
+}
+
+static int init_resources(
+    Ws *ws
+    )
+{
+    int status = TRUE;
+    Ws_output_ws *ows = &ws->out_ws;
+
+    ows->nset.invis_incl = phg_nset_create(WS_MAX_NAMES_IN_NAMESET);
+    if (ows->nset.invis_incl == NULL) {
+        destroy_resources(ws);
+        status = FALSE;
+    }
+
+    ows->nset.invis_excl = phg_nset_create(WS_MAX_NAMES_IN_NAMESET);
+    if (ows->nset.invis_excl == NULL) {
+        destroy_resources(ws);
+        status = FALSE;
+    }
+
+    return status;
+}
+
+static int init_viewrep(
     Ws *ws
     )
 {
@@ -374,7 +411,7 @@ int init_viewrep(
         (*ws->set_rep)(ws, PHG_ARGS_VIEWREP, &rep);
     }
 
-    return 1;
+    return TRUE;
 }
 
 static void init_views(
@@ -489,6 +526,10 @@ Ws* phg_wsb_open_ws(
         goto abort;
     }
 
+    if (!init_resources(ws)) {
+        goto abort;
+    }
+
     init_views(ws);
 
     if (!init_viewrep(ws)) {
@@ -529,6 +570,7 @@ void wsb_destroy_ws(
 	if ( ws->display ) {
 	    if ( ws->drawable_id )
 		phg_wsx_release_window( ws );
+                destroy_resources(ws);
 
             /* NOTE:
              * Free renderer resource here if needed

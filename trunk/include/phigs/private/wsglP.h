@@ -72,6 +72,7 @@ typedef struct _Wsgl {
    Ws_struct       cur_struct;
    Pint            pick_id;
    Nameset         cur_nameset;
+   Ws_filter       invis_filter;
    Ws_filter       pick_filter;
    Pint            select_size;
    GLuint          *select_buf;

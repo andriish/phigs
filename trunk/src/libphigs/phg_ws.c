@@ -330,6 +330,59 @@ void pset_ws_win3(
 }
 
 /*******************************************************************************
+ * set_filter
+ *
+ * DESCR:	Set workstation filter helper function
+ * RETURNS:	N/A
+ */
+
+static void set_filter(
+   Pint ws_id,
+   Pint fn_id,
+   Phg_args_flt_type type,
+   Pfilter *filter
+   )
+{
+   Psl_ws_info *wsinfo;
+   Ws_handle wsh;
+
+   wsinfo = phg_ws_open(ws_id, fn_id);
+   if (wsinfo != NULL) {
+      switch (wsinfo->wstype->desc_tbl.phigs_dt.ws_category) {
+         case PCAT_OUTIN:
+         case PCAT_OUT:
+         case PCAT_MO:
+            wsh = PHG_WSID(ws_id);
+            (*wsh->set_filter)(wsh,
+                               type,
+                               1,
+                               &filter->incl_set,
+                               &filter->excl_set);
+            break;
+
+         default:
+            ERR_REPORT(PHG_ERH, ERR59);
+            break;
+      }
+   }
+}
+
+/*******************************************************************************
+ * pset_invis_filter
+ *
+ * DESCR:	Set workstation invisibility filter
+ * RETURNS:	N/A
+ */
+
+void pset_invis_filter(
+   Pint ws_id,
+   Pfilter *filter
+   )
+{
+   set_filter(ws_id, Pfn_set_invis_filter, PHG_ARGS_FLT_INVIS, filter);
+}
+
+/*******************************************************************************
  * pset_hlhsr_mode
  *
  * DESCR:	Set workstation hlhsr mode

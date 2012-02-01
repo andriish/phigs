@@ -236,7 +236,6 @@ void wsgl_flush(
          printf("Viewport changed: %d x %d\n",
                 ws->ws_rect.width,
                 ws->ws_rect.height);
-         printf("Type: %x\n", (unsigned) ws->type);
 #endif
 
          XResizeWindow(ws->display,
@@ -382,6 +381,23 @@ static int check_draw_primitive(
    Wsgl_handle wsgl = ws->render_context;
 
    switch (wsgl->render_mode) {
+      case WS_RENDER_MODE_DRAW:
+         if (wsgl->invis_filter.used) {
+            if (!phg_nset_names_intersect(wsgl->cur_nameset,
+                                         wsgl->invis_filter.incl) ||
+                phg_nset_names_intersect(wsgl->cur_nameset,
+                                         wsgl->invis_filter.excl)) {
+               status = TRUE;
+            }
+            else {
+               status = FALSE;
+            }
+         }
+         else {
+            status = TRUE;
+         }
+         break;
+
       case WS_RENDER_MODE_SELECT:
          if (wsgl->pick_filter.used) {
             if (phg_nset_names_intersect(wsgl->cur_nameset,
@@ -721,6 +737,18 @@ void wsgl_set_filter(
    Wsgl_handle wsgl = ws->render_context;
 
    switch (type) {
+      case PHG_ARGS_FLT_INVIS:
+         wsgl->invis_filter.used = TRUE;
+         wsgl->invis_filter.incl = incl;
+         wsgl->invis_filter.excl = excl;
+#ifdef DEBUG
+         printf("Include filter:\n");
+         phg_nset_print(wsgl->invis_filter.incl);
+         printf("Exclude filter:\n");
+         phg_nset_print(wsgl->invis_filter.excl);
+#endif
+         break;
+
       case PHG_ARGS_FLT_PICK:
          wsgl->pick_filter.used = TRUE;
          wsgl->pick_filter.incl = incl;
