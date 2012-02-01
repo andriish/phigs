@@ -24,6 +24,7 @@
 #include <X11/Xlib.h>
 #include <X11/Intrinsic.h>
 #include <GL/glx.h>
+#include <phigs/util.h>
 #include <phigs/ws_inp.h>
 
 #define NUM_DEFERRAL            5
@@ -147,6 +148,11 @@ typedef struct {
       Hash_table    colour;
       Hash_table    view;
    } htab;
+
+   struct {
+      Nameset       invis_incl;
+      Nameset       invis_excl;
+   } nset;
 
    union {
       Wsa_output_ws a;

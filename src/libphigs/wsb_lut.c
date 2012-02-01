@@ -545,8 +545,22 @@ void phg_wsb_set_name_set(
    )
 {
    Ws_inp_pick *pick;
+   Ws_output_ws *ows = &ws->out_ws;
 
    switch (type) {
+      case PHG_ARGS_FLT_INVIS:
+         phg_nset_names_set(ows->nset.invis_incl,
+                            incl_set->num_ints,
+                            incl_set->ints);
+         phg_nset_names_set(ows->nset.invis_excl,
+                            excl_set->num_ints,
+                            excl_set->ints);
+         wsgl_set_filter(ws,
+                         PHG_ARGS_FLT_INVIS,
+                         ows->nset.invis_incl,
+                         ows->nset.invis_excl);
+         break;
+
       case PHG_ARGS_FLT_PICK:
          pick = &ws->in_ws.devs.pick[dev_id - 1];
          phg_nset_names_set(pick->filter.incl,

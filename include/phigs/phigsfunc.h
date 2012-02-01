@@ -285,6 +285,18 @@ void pset_ws_win3(
    );
 
 /*******************************************************************************
+ * pset_invis_filter
+ *
+ * DESCR:       Set workstation invisibility filter
+ * RETURNS:     N/A
+ */
+
+void pset_invis_filter(
+   Pint ws_id,
+   Pfilter *filter
+   );
+
+/*******************************************************************************
  * pset_hlhsr_mode
  *
  * DESCR:       Set workstation hlhsr mode

@@ -101,6 +101,7 @@ Pint_list names_view_4 = {1, view_list_4};
 Pint view_list[] = {NAME_VIEW_1, NAME_VIEW_2, NAME_VIEW_3, NAME_VIEW_4};
 Pint_list pick_incl = {4, view_list};
 Pint_list pick_excl = {1, view_list_1};
+Pint_list empty_set = {0, NULL};
 
 void init_scene(void)
 {
@@ -447,10 +448,13 @@ void print_size(Pint ws_type)
 
 int main(void)
 {
+   Pfilter invis_filter;
    Ws *wsh1;
    XEvent event;
    int redraw1 = 0;
 
+   invis_filter.incl_set = pick_excl;
+   invis_filter.excl_set = pick_incl;
    popen_phigs(NULL, 0);
    init_scene();
    print_size(PWST_OUTIN_TRUE_DB);
@@ -458,6 +462,7 @@ int main(void)
    popen_ws(WS_1, NULL, PWST_OUTIN_TRUE_DB);
 
    pset_ws_win(WS_1, &win);
+   pset_invis_filter(WS_1, &invis_filter);
    pset_hlhsr_mode(WS_1, PHIGS_HLHSR_MODE_ZBUFF);
    pset_view_tran_in_pri(WS_1, 0, 4, PPRI_LOWER);
    ppost_struct(WS_1, STRUCT_MAIN, 0);
