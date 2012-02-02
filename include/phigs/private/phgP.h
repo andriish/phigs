@@ -69,6 +69,12 @@
 #define PHG_DATA_POINT_LIST3(ELMT) \
    ((Ppoint_list3 *) (((Css_eldata *) (ELMT))->ptr))
 
+#define PHG_ASF_INFO(ELMT) \
+   ((Pasf_info *) ((ELMT)->eldata.ptr))
+
+#define PHG_DATA_ASF_INFO(ELMT) \
+   ((Pasf_info *) (((Css_eldata *) (ELMT))->ptr))
+
 #define PHG_LOCAL_TRAN(ELMT) \
    ((Plocal_tran *) ((ELMT)->eldata.ptr))
 

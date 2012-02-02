@@ -30,6 +30,7 @@
 #define NUM_DEFERRAL            5
 #define NUM_MODIFICATION        3
 #define NUM_SELECTABLE_STRUCTS  256
+#define WS_MAX_ASF_FLAGS        32
 #define WS_MAX_NAMES_IN_NAMESET 1024
 
 typedef enum {

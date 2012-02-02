@@ -143,6 +143,18 @@ int phg_nset_names_intersect(
    );
 
 /*******************************************************************************
+ * phg_nset_name_is_set
+ *
+ * DESCR:       Check if name is set in nameset
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_nset_name_is_set(
+   Nameset nset,
+   Pint name
+   );
+
+/*******************************************************************************
  * phg_nset_print
  *
  * DESCR:       Print nameset

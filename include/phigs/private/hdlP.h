@@ -41,6 +41,20 @@ int phg_handle_names_set(
    );
 
 /*******************************************************************************
+ * phg_handle_asf_info
+ *
+ * DESCR:       Handle asf info
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_asf_info(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
+/*******************************************************************************
  * phg_handle_local_tran
  *
  * DESCR:       Handle local transformation
