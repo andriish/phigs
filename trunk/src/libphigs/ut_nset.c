@@ -274,6 +274,37 @@ int phg_nset_names_intersect(
 }
 
 /*******************************************************************************
+ * phg_nset_name_is_set
+ *
+ * DESCR:       Check if name is set in nameset
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_nset_name_is_set(
+   Nameset nset,
+   Pint name
+   )
+{
+   int status;
+   uint32_t bit;
+
+   if (name > nset->max_names) {
+      status = FALSE;
+   }
+   else {
+      bit = 0x1 << (name & 31);
+      if (nset->nameset[name >> 5] & bit) {
+         status = TRUE;
+      }
+      else {
+         status = FALSE;
+      }
+   }
+
+   return status;
+}
+
+/*******************************************************************************
  * phg_nset_print
  *
  * DESCR:       Print nameset

@@ -187,6 +187,7 @@ void css_print_eltype(Pelem_type eltype)
         case PELEM_EDGE_COLR_IND: name = "PELEM_EDGE_COLR_IND"; break;
         case PELEM_ADD_NAMES_SET: name = "PELEM_ADD_NAMES_SET"; break;
         case PELEM_REMOVE_NAMES_SET: name = "PELEM_REMOVE_NAMES_SET"; break;
+        case PELEM_INDIV_ASF: name = "PELEM_INDIV_ASF"; break;
         case PELEM_LOCAL_MODEL_TRAN: name = "PELEM_LOCAL_MODEL_TRAN"; break;
         case PELEM_LOCAL_MODEL_TRAN3: name = "PELEM_LOCAL_MODEL_TRAN3"; break;
         case PELEM_VIEW_IND: name = "PELEM_VIEW_IND"; break;

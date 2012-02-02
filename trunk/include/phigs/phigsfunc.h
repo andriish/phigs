@@ -653,6 +653,18 @@ void premove_names_set(
    );
 
 /*******************************************************************************
+ * pset_indiv_asf
+ *
+ * DESCR:       Creates a new element - Set attribute source flag
+ * RETURNS:     N/A
+ */
+
+void pset_indiv_asf(
+   Paspect asf_id,
+   Pasf asf_source
+   );
+
+/*******************************************************************************
  * pset_local_tran
  *
  * DESCR:       Creates a new element - Set local model space transofmation

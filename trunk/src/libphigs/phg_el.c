@@ -101,6 +101,33 @@ void premove_names_set(
 }
 
 /*******************************************************************************
+ * pset_indiv_asf
+ *
+ * DESCR:	Creates a new element - Set attribute source flag
+ * RETURNS:	N/A
+ */
+
+void pset_indiv_asf(
+   Paspect asf_id,
+   Pasf asf_source
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_indiv_asf);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_INDIV_ASF;
+      ARGS_ELMT_DATA(&args).asf_info.id = asf_id;
+      ARGS_ELMT_DATA(&args).asf_info.source = asf_source;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_local_tran
  *
  * DESCR:	Creates a new element - Set local model space transofmation

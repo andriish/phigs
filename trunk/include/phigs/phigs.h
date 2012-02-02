@@ -111,6 +111,7 @@ typedef enum {
    PELEM_TEXT_IND,
    PELEM_TEXT_FONT,
    PELEM_TEXT_COLR_IND,
+   PELEM_INDIV_ASF,
    PELEM_LOCAL_MODEL_TRAN,
    PELEM_LOCAL_MODEL_TRAN3,
    PELEM_VIEW_IND,
@@ -249,6 +250,24 @@ typedef enum {
    PASF_BUNDLED,
    PASF_INDIV
 } Pasf;
+
+typedef enum {
+   PASPECT_LINETYPE,
+   PASPECT_LINEWIDTH,
+   PASPECT_LINE_COLR_IND,
+   PASPECT_MARKER_TYPE,
+   PASPECT_MARKER_SIZE,
+   PASPECT_MARKER_COLR_IND,
+   PASPECT_TEXT_FONT,
+   PASPECT_TEXT_COLR_IND,
+   PASPECT_INT_STYLE,
+   PASPECT_INT_STYLE_IND,
+   PASPECT_INT_COLR_IND,
+   PASPECT_EDGE_FLAG,
+   PASPECT_EDGETYPE,
+   PASPECT_EDGEWIDTH,
+   PASPECT_EDGE_COLR_IND
+} Paspect;
 
 typedef enum {
    PFLAG_LINE,
@@ -453,6 +472,11 @@ typedef struct {
 } Ptext;
 
 typedef struct {
+   Paspect id;
+   Pasf    source;
+} Pasf_info;
+
+typedef struct {
    Pcompose_type compose_type;
    Pmatrix       matrix;
 } Plocal_tran;
@@ -538,6 +562,7 @@ typedef union {
    Ppoint_list  point_list;
    Ppoint_list3 point_list3;
    Ptext        text;
+   Pasf_info    asf_info;
    Plocal_tran  local_tran;
    Plocal_tran3 local_tran3;
    Pint_list    names;

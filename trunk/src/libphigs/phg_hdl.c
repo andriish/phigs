@@ -98,6 +98,62 @@ int phg_handle_names_set(
 }
 
 /*******************************************************************************
+ * phg_handle_asf_info
+ *
+ * DESCR:	Handle asf info
+ * RETURNS:	TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_asf_info(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   Pasf_info *data;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         data = malloc(sizeof(Pasf_info));
+         if (data == NULL)
+            return (FALSE);
+
+         data->id = ARGS_ELMT_DATA(argdata).asf_info.id;
+         data->source = ARGS_ELMT_DATA(argdata).asf_info.source;
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_REPLACE:
+         data = (Pasf_info *) elmt->eldata.ptr;
+         data->id = ARGS_ELMT_DATA(argdata).asf_info.id;
+         data->source = ARGS_ELMT_DATA(argdata).asf_info.source;
+      break;
+
+      case CSS_EL_COPY:
+         data = malloc(sizeof(Pasf_info));
+         if (data == NULL)
+            return (FALSE);
+
+         data->id = PHG_DATA_ASF_INFO(argdata)->id;
+         data->source = PHG_DATA_ASF_INFO(argdata)->source;
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_FREE:
+         free(ELMT_DATA_PTR(elmt));
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
+   }
+
+   return (TRUE);
+}
+
+/*******************************************************************************
  * phg_handle_local_tran
  *
  * DESCR:	Handle local transformation

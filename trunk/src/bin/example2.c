@@ -103,8 +103,11 @@ int main(int argc, char *argv[])
    pclose_struct();
 
    popen_struct(2);
+   pset_indiv_asf(PASPECT_EDGE_FLAG, PASF_INDIV);
    pset_edge_flag(PEDGE_OFF);
    pset_int_ind(ATTR_NO);
+   pset_indiv_asf(PASPECT_INT_STYLE, PASF_INDIV);
+   pset_indiv_asf(PASPECT_INT_STYLE_IND, PASF_INDIV);
    pset_int_style(PSTYLE_HATCH);
    pset_int_style_ind(HATCH_IND);
    pfill_area(&plist_tri);

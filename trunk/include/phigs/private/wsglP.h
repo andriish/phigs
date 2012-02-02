@@ -34,6 +34,12 @@ typedef enum {
 } Ws_render_mode;
 
 typedef struct {
+   Pattr_group  *bundl_group;
+   Pattr_group  *indiv_group;
+   Nameset      asf_nameset;
+} Ws_attr_st;
+
+typedef struct {
    Pint x, y;
    Pfloat distance;
 } Ws_hit_box;
@@ -55,7 +61,7 @@ typedef struct {
 } Ws_filter;
 
 typedef struct _Wsgl {
-   Pattr_group     *attr_group;
+   Ws_attr_st      attr;
    Plimit3         curr_win;
    Pint            win_changed;
    Plimit3         curr_vp;
@@ -136,6 +142,18 @@ void wsgl_set_viewport(
 void wsgl_set_hlhsr_mode(
    Ws *ws,
    Pint hlhsr_mode
+   );
+
+/*******************************************************************************
+ * phg_set_asf
+ *
+ * DESCR:       Setup asf
+ * RETURNS:     N/A
+ */
+
+void phg_set_asf(
+   Ws_attr_st *ast,
+   Pasf_info *asf_info
    );
 
 /*******************************************************************************
@@ -303,17 +321,6 @@ void phg_set_hlhsr_id(
    );
 
 /*******************************************************************************
- * phg_set_gcolr
- *
- * DESCR:       Setup colour
- * RETURNS:     N/A
- */
-
-void phg_set_gcolr(
-   Pgcolr *gcolr
-   );
-
-/*******************************************************************************
  * phg_set_line_ind
  *
  * DESCR:       Setup line index
@@ -324,18 +331,6 @@ void phg_set_line_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
-   );
-
-/*******************************************************************************
- * phg_set_line_attr
- *
- * DESCR:       Setup line attributes
- * RETURNS:     N/A
- */
-
-void phg_set_line_attr(
-   Ws *ws,
-   Pline_bundle_plus *attr
    );
 
 /*******************************************************************************
@@ -352,18 +347,6 @@ void phg_set_int_ind(
    );
 
 /*******************************************************************************
- * phg_set_int_attr
- *
- * DESCR:       Setup interior attributes
- * RETURNS:     N/A
- */
-
-void phg_set_int_attr(
-   Ws *ws,
-   Pint_bundle_plus *attr
-   );
-
-/*******************************************************************************
  * phg_set_edge_ind
  *
  * DESCR:       Setup edge index
@@ -377,18 +360,6 @@ void phg_set_edge_ind(
    );
 
 /*******************************************************************************
- * phg_set_edge_attr
- *
- * DESCR:       Setup interior attributes
- * RETURNS:     N/A
- */
-
-void phg_set_edge_attr(
-   Ws *ws,
-   Pedge_bundle_plus *attr
-   );
-
-/*******************************************************************************
  * phg_set_marker_ind
  *
  * DESCR:       Setup marker index
@@ -399,18 +370,6 @@ void phg_set_marker_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
-   );
-
-/*******************************************************************************
- * phg_set_marker_attr
- *
- * DESCR:       Setup marker attributes
- * RETURNS:     N/A
- */
-
-void phg_set_marker_attr(
-   Ws *ws,
-   Pmarker_bundle_plus *attr
    );
 
 /*******************************************************************************
@@ -460,7 +419,7 @@ void phg_remove_names_set(
 void phg_draw_polymarker(
    Ws *ws,
    Ppoint_list *point_list,
-   Pattr_group *attr
+   Ws_attr_st *ast
    );
 
 /*******************************************************************************
@@ -473,7 +432,7 @@ void phg_draw_polymarker(
 void phg_draw_polymarker3(
    Ws *ws,
    Ppoint_list3 *point_list,
-   Pattr_group *attr
+   Ws_attr_st *ast
    );
 
 /*******************************************************************************
@@ -486,7 +445,7 @@ void phg_draw_polymarker3(
 void phg_draw_polyline(
    Ws *ws,
    Ppoint_list *point_list,
-   Pattr_group *attr
+   Ws_attr_st *ast
    );
 
 /*******************************************************************************
@@ -499,7 +458,7 @@ void phg_draw_polyline(
 void phg_draw_polyline3(
    Ws *ws,
    Ppoint_list3 *point_list,
-   Pattr_group *attr
+   Ws_attr_st *ast
    );
 
 /*******************************************************************************
@@ -512,7 +471,7 @@ void phg_draw_polyline3(
 void phg_draw_fill_area(
    Ws *ws,
    Ppoint_list *point_list,
-   Pattr_group *attr
+   Ws_attr_st *ast
    );
 
 /*******************************************************************************
@@ -525,7 +484,7 @@ void phg_draw_fill_area(
 void phg_draw_fill_area3(
    Ws *ws,
    Ppoint_list3 *point_list,
-   Pattr_group *attr
+   Ws_attr_st *ast
    );
 
 /*******************************************************************************

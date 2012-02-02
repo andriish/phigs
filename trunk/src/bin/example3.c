@@ -142,13 +142,23 @@ void init_scene(void)
    protate_x(-3.14 / 4.0, &errnum, rot3);
 
    popen_struct(STRUCT_SCENE);
+   pset_indiv_asf(PASPECT_EDGE_FLAG, PASF_INDIV);
+   pset_indiv_asf(PASPECT_EDGETYPE, PASF_INDIV);
+   pset_indiv_asf(PASPECT_EDGE_COLR_IND, PASF_INDIV);
+   pset_indiv_asf(PASPECT_EDGEWIDTH, PASF_INDIV);
    pset_edge_flag(PEDGE_ON);
    pset_edge_colr(&white);
    pset_edgewidth(EDGE_WIDTH);
    pset_edgetype(PLINE_SOLID);
+   pset_indiv_asf(PASPECT_INT_COLR_IND, PASF_INDIV);
+   pset_indiv_asf(PASPECT_INT_STYLE, PASF_INDIV);
+   pset_indiv_asf(PASPECT_INT_STYLE_IND, PASF_INDIV);
    pset_int_colr(&dark);
    pset_int_style(FILL_STYLE);
    pset_int_style_ind(FILL_STYLE_IND);
+   pset_indiv_asf(PASPECT_MARKER_TYPE, PASF_INDIV);
+   pset_indiv_asf(PASPECT_MARKER_SIZE, PASF_INDIV);
+   pset_indiv_asf(PASPECT_MARKER_COLR_IND, PASF_INDIV);
    pset_marker_type(PMARKER_CROSS);
    pset_marker_size(0.1);
    pset_marker_colr(&red);
