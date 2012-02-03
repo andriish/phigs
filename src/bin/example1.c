@@ -139,13 +139,13 @@ int main(int argc, char *argv[])
    pset_marker_size(0.1);
    pset_marker_colr_ind(4);
    pset_local_tran3(tran3, PTYPE_REPLACE);
-   pexec_struct(0);
+   pcopy_all_elems_struct(0);
    tvec3.delta_z += SPACE;
    ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    pset_local_tran3(tran3, PTYPE_POSTCONCAT);
    pset_int_colr_ind(1);
-   pexec_struct(0);
+   pcopy_all_elems_struct(0);
    tvec3.delta_z += SPACE;
    ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
    pset_local_tran3(tran3, PTYPE_POSTCONCAT);
    pset_int_colr_ind(2);
    plabel(20);
-   pexec_struct(0);
+   pcopy_all_elems_struct(0);
    plabel(30);
    pclose_struct();
 

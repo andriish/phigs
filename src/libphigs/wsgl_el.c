@@ -70,7 +70,6 @@ void phg_update_projection(
    Ws *ws
    )
 {
-   Pmatrix3 mat;
    Wsgl_handle wsgl = ws->render_context;
 
 #ifdef DEBUG
@@ -79,11 +78,13 @@ void phg_update_projection(
 
    glMatrixMode(GL_PROJECTION);
    if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {
-      phg_mat_mul(mat, wsgl->pick_tran, wsgl->view_rep.map_matrix);
-      phg_set_matrix(mat, FALSE);
+      phg_mat_mul(wsgl->total_tran,
+                  wsgl->pick_tran,
+                  wsgl->cur_struct.view_rep.map_matrix);
+      phg_set_matrix(wsgl->total_tran, FALSE);
    }
    else {
-      phg_set_matrix(wsgl->view_rep.map_matrix, FALSE);
+      phg_set_matrix(wsgl->cur_struct.view_rep.map_matrix, FALSE);
    }
 }
 
@@ -105,7 +106,9 @@ void phg_update_modelview(
 #endif
 
    glMatrixMode(GL_MODELVIEW);
-   phg_mat_mul(wsgl->total_tran, wsgl->view_rep.ori_matrix, wsgl->local_tran);
+   phg_mat_mul(wsgl->total_tran,
+               wsgl->cur_struct.view_rep.ori_matrix,
+               wsgl->cur_struct.local_tran);
    phg_set_matrix(wsgl->total_tran, FALSE);
 }
 
@@ -130,8 +133,9 @@ void phg_set_view_ind(
                              PHG_ARGS_VIEWREP,
                              &ret);
    if (ret.err == 0) {
-      wsgl->curr_view_index = ind;
-      memcpy(&wsgl->view_rep, &ret.data.rep.viewrep, sizeof(Pview_rep3));
+      memcpy(&wsgl->cur_struct.view_rep,
+             &ret.data.rep.viewrep,
+             sizeof(Pview_rep3));
       phg_update_projection(ws);
       phg_update_modelview(ws);
    }
@@ -175,10 +179,10 @@ void phg_set_asf(
    )
 {
    if (asf_info->source == PASF_INDIV) {
-      phg_nset_name_set(ast->asf_nameset, asf_info->id);
+      phg_nset_name_set(&ast->asf_nameset, asf_info->id);
    }
    else {
-      phg_nset_name_clear(ast->asf_nameset, asf_info->id);
+      phg_nset_name_clear(&ast->asf_nameset, asf_info->id);
    }
 }
 
@@ -249,18 +253,18 @@ static void phg_setup_line_attr(
 {
    Pint type;
 
-   if (phg_nset_name_is_set(ast->asf_nameset, (Pint) PASPECT_LINE_COLR_IND)) {
-      phg_set_gcolr(&ast->indiv_group->line_bundle.colr);
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINE_COLR_IND)) {
+      phg_set_gcolr(&ast->indiv_group.line_bundle.colr);
    }
    else {
-      phg_set_gcolr(&ast->bundl_group->line_bundle.colr);
+      phg_set_gcolr(&ast->bundl_group.line_bundle.colr);
    }
 
-   if (phg_nset_name_is_set(ast->asf_nameset, (Pint) PASPECT_LINETYPE)) {
-      type = ast->indiv_group->line_bundle.type;
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINETYPE)) {
+      type = ast->indiv_group.line_bundle.type;
    }
    else {
-      type = ast->bundl_group->line_bundle.type;
+      type = ast->bundl_group.line_bundle.type;
    }
 
    switch (type) {
@@ -284,11 +288,11 @@ static void phg_setup_line_attr(
       break;
    }
 
-   if (phg_nset_name_is_set(ast->asf_nameset, (Pint) PASPECT_LINEWIDTH)) {
-      glLineWidth(ast->indiv_group->line_bundle.width);
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINEWIDTH)) {
+      glLineWidth(ast->indiv_group.line_bundle.width);
    }
    else {
-      glLineWidth(ast->bundl_group->line_bundle.width);
+      glLineWidth(ast->bundl_group.line_bundle.width);
    }
 }
 
@@ -332,11 +336,11 @@ static Pint_style phg_get_int_style(
 {
    Pint_style style;
 
-   if (phg_nset_name_is_set(ast->asf_nameset, (Pint) PASPECT_INT_STYLE)) {
-      style = ast->indiv_group->int_bundle.style;
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_STYLE)) {
+      style = ast->indiv_group.int_bundle.style;
    }
    else {
-      style = ast->bundl_group->int_bundle.style;
+      style = ast->bundl_group.int_bundle.style;
    }
 
    return style;
@@ -356,21 +360,21 @@ void phg_setup_int_attr(
    Pint_style style;
    Pint style_ind;
 
-   if (phg_nset_name_is_set(ast->asf_nameset, (Pint) PASPECT_INT_COLR_IND)) {
-      phg_set_gcolr(&ast->indiv_group->int_bundle.colr);
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_COLR_IND)) {
+      phg_set_gcolr(&ast->indiv_group.int_bundle.colr);
    }
    else {
-      phg_set_gcolr(&ast->bundl_group->int_bundle.colr);
+      phg_set_gcolr(&ast->bundl_group.int_bundle.colr);
    }
 
    style = phg_get_int_style(ast);
    if (style == PSTYLE_HATCH) {
-      if (phg_nset_name_is_set(ast->asf_nameset,
+      if (phg_nset_name_is_set(&ast->asf_nameset,
           (Pint) PASPECT_INT_STYLE_IND)) {
-         style_ind = ast->indiv_group->int_bundle.style_ind;
+         style_ind = ast->indiv_group.int_bundle.style_ind;
       }
       else {
-         style_ind = ast->bundl_group->int_bundle.style_ind;
+         style_ind = ast->bundl_group.int_bundle.style_ind;
       }
       glEnable(GL_POLYGON_STIPPLE);
       glPolygonStipple(wsgl_hatch_tbl[style_ind - 1]);
@@ -420,11 +424,11 @@ static Pint_style phg_get_edge_flag(
 {
    Pedge_flag flag;
 
-   if (phg_nset_name_is_set(ast->asf_nameset, (Pint) PASPECT_EDGE_FLAG)) {
-      flag = ast->indiv_group->edge_bundle.flag;
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_EDGE_FLAG)) {
+      flag = ast->indiv_group.edge_bundle.flag;
    }
    else {
-      flag = ast->bundl_group->edge_bundle.flag;
+      flag = ast->bundl_group.edge_bundle.flag;
    }
 
    return flag;
@@ -443,11 +447,11 @@ static Pfloat phg_get_edge_width(
 {
    Pfloat width;
 
-   if (phg_nset_name_is_set(ast->asf_nameset, (Pint) PASPECT_EDGEWIDTH)) {
-      width = ast->indiv_group->edge_bundle.width;
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_EDGEWIDTH)) {
+      width = ast->indiv_group.edge_bundle.width;
    }
    else {
-      width = ast->bundl_group->edge_bundle.width;
+      width = ast->bundl_group.edge_bundle.width;
    }
 
    return width;
@@ -466,20 +470,20 @@ static void phg_setup_edge_attr(
 {
    Pint type;
 
-   if (phg_nset_name_is_set(ast->asf_nameset, (Pint) PASPECT_EDGE_COLR_IND)) {
-      phg_set_gcolr(&ast->indiv_group->edge_bundle.colr);
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_EDGE_COLR_IND)) {
+      phg_set_gcolr(&ast->indiv_group.edge_bundle.colr);
    }
    else {
-      phg_set_gcolr(&ast->bundl_group->edge_bundle.colr);
+      phg_set_gcolr(&ast->bundl_group.edge_bundle.colr);
    }
 
    glLineWidth(phg_get_edge_width(ast));
 
-   if (phg_nset_name_is_set(ast->asf_nameset, (Pint) PASPECT_EDGETYPE)) {
-      type = ast->indiv_group->edge_bundle.type;
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_EDGETYPE)) {
+      type = ast->indiv_group.edge_bundle.type;
    }
    else {
-      type = ast->bundl_group->edge_bundle.type;
+      type = ast->bundl_group.edge_bundle.type;
    }
 
    /* Line style */
@@ -546,25 +550,26 @@ static void phg_setup_marker_attr(
    Pfloat *size
    )
 {
-   if (phg_nset_name_is_set(ast->asf_nameset, (Pint) PASPECT_MARKER_COLR_IND)) {
-      phg_set_gcolr(&ast->indiv_group->marker_bundle.colr);
+   if (phg_nset_name_is_set(&ast->asf_nameset,
+                            (Pint) PASPECT_MARKER_COLR_IND)) {
+      phg_set_gcolr(&ast->indiv_group.marker_bundle.colr);
    }
    else {
-      phg_set_gcolr(&ast->bundl_group->marker_bundle.colr);
+      phg_set_gcolr(&ast->bundl_group.marker_bundle.colr);
    }
 
-   if (phg_nset_name_is_set(ast->asf_nameset, (Pint) PASPECT_MARKER_TYPE)) {
-      *type = ast->indiv_group->marker_bundle.type;
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_MARKER_TYPE)) {
+      *type = ast->indiv_group.marker_bundle.type;
    }
    else {
-      *type = ast->bundl_group->marker_bundle.type;
+      *type = ast->bundl_group.marker_bundle.type;
    }
 
-   if (phg_nset_name_is_set(ast->asf_nameset, (Pint) PASPECT_MARKER_SIZE)) {
-      *size = ast->indiv_group->marker_bundle.size;
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_MARKER_SIZE)) {
+      *size = ast->indiv_group.marker_bundle.size;
    }
    else {
-      *size = ast->bundl_group->marker_bundle.size;
+      *size = ast->bundl_group.marker_bundle.size;
    }
 }
 
@@ -609,7 +614,7 @@ void phg_add_names_set(
 {
    Wsgl_handle wsgl = ws->render_context;
 
-   phg_nset_names_set(wsgl->cur_nameset,
+   phg_nset_names_set(&wsgl->cur_struct.cur_nameset,
                       names->num_ints,
                       names->ints);
 }
@@ -628,7 +633,7 @@ void phg_remove_names_set(
 {
    Wsgl_handle wsgl = ws->render_context;
 
-   phg_nset_names_clear(wsgl->cur_nameset,
+   phg_nset_names_clear(&wsgl->cur_struct.cur_nameset,
                         names->num_ints,
                         names->ints);
 }
