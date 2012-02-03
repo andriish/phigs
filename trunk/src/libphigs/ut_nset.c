@@ -25,12 +25,6 @@
 #include <phigs/phg.h>
 #include <phigs/util/nset.h>
 
-typedef struct _Nset {
-   unsigned max_names;
-   unsigned num_chunks;
-   uint32_t *nameset;
-} _Nameset;
-
 /*******************************************************************************
  * phg_nset_create
  *
@@ -52,15 +46,31 @@ Nameset phg_nset_create(
       num_chunks = num_names >> 5;
    }
 
-   nset = (Nameset) malloc(sizeof(_Nameset) + num_chunks * sizeof(uint32_t));
+   nset = (Nameset) malloc(sizeof(Nset) + num_chunks * sizeof(u_int32_t));
    if (nset != NULL) {
-      nset->max_names  = num_chunks << 5;
-      nset->num_chunks = num_chunks;
-      nset->nameset    = (uint32_t *) &nset[1];
-      memset(nset->nameset, 0, num_chunks * sizeof(uint32_t));
+      phg_nset_init(nset, num_chunks, (u_int32_t *) &nset[1]);
    }
 
    return nset;
+}
+
+/*******************************************************************************
+ * phg_nset_init
+ *
+ * DESCR:       Initialize nameset
+ * RETURNS:     N/A
+ */
+
+void phg_nset_init(
+   Nameset nset,
+   unsigned num_chunks,
+   u_int32_t *buf
+   )
+{
+   nset->max_names  = num_chunks << 5;
+   nset->num_chunks = num_chunks;
+   nset->nameset    = buf;
+   memset(nset->nameset, 0, num_chunks * sizeof(u_int32_t));
 }
 
 /*******************************************************************************
@@ -90,7 +100,7 @@ int phg_nset_name_set(
    )
 {
    int status;
-   uint32_t bit;
+   u_int32_t bit;
 
    if (name > nset->max_names) {
       status = FALSE;
@@ -117,7 +127,7 @@ int phg_nset_name_clear(
    )
 {
    int status;
-   uint32_t bit;
+   u_int32_t bit;
 
    if (name > nset->max_names) {
       status = FALSE;
@@ -200,7 +210,7 @@ void phg_nset_names_set_all(
    Nameset nset
    )
 {
-   memset(nset->nameset, 0xffffffff, nset->num_chunks * sizeof(uint32_t));
+   memset(nset->nameset, 0xffffffff, nset->num_chunks * sizeof(u_int32_t));
 }
 
 /*******************************************************************************
@@ -214,7 +224,7 @@ void phg_nset_names_clear_all(
    Nameset nset
    )
 {
-   memset(nset->nameset, 0x00000000, nset->num_chunks * sizeof(uint32_t));
+   memset(nset->nameset, 0x00000000, nset->num_chunks * sizeof(u_int32_t));
 }
 
 /*******************************************************************************
@@ -237,7 +247,7 @@ int phg_nset_names_copy_all(
    else {
       memcpy(dest->nameset,
              src->nameset,
-             src->num_chunks * sizeof(uint32_t));
+             src->num_chunks * sizeof(u_int32_t));
       status = TRUE;
    }
 
@@ -258,8 +268,8 @@ int phg_nset_names_intersect(
 {
    int status;
    unsigned i;
-   uint32_t *nameset1 = nset1->nameset;
-   uint32_t *nameset2 = nset2->nameset;
+   u_int32_t *nameset1 = nset1->nameset;
+   u_int32_t *nameset2 = nset2->nameset;
    unsigned num_chunks = PHG_MIN(nset1->num_chunks, nset2->num_chunks);
 
    status = FALSE;
@@ -286,7 +296,7 @@ int phg_nset_name_is_set(
    )
 {
    int status;
-   uint32_t bit;
+   u_int32_t bit;
 
    if (name > nset->max_names) {
       status = FALSE;

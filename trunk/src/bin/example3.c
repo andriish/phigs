@@ -24,9 +24,9 @@
 #include <phigs/phg.h>
 #include <phigs/private/wsxP.h>
 
-#define STRUCT_OBJECT  0
-#define STRUCT_SCENE   1
-#define STRUCT_MAIN    2
+#define STRUCT_SCENE   0
+#define STRUCT_MAIN    1
+#define STRUCT_BORDER  2
 
 #define NAME_VIEW_1    1
 #define NAME_VIEW_2    2
@@ -81,6 +81,7 @@ Ppoint_list plist_hline ={
 
 Pint errnum;
 Pvec3 tvec3;
+Pmatrix3 ident3;
 Pmatrix3 tran3;
 Pmatrix3 rot3;
 Pcolr_rep col_rep;
@@ -130,11 +131,7 @@ void init_scene(void)
    red.val.general.y = 0.0;
    red.val.general.z = 0.0;
 
-   popen_struct(STRUCT_OBJECT);
-   pfill_area3(&plist_quad);
-   ppolymarker3(&plist_quad);
-   pclose_struct();
-
+   phg_mat_identity(ident3);
    tvec3.delta_x = 0.0;
    tvec3.delta_y = 0.0;
    tvec3.delta_z = DEPTH;
@@ -164,16 +161,16 @@ void init_scene(void)
    pset_marker_colr(&red);
    pset_local_tran3(tran3, PTYPE_REPLACE);
    pset_pick_id(1);
-   pexec_struct(0);
-   pset_pick_id(0);
+   pfill_area3(&plist_quad);
+   ppolymarker3(&plist_quad);
    tvec3.delta_z += SPACE;
    ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    pset_local_tran3(tran3, PTYPE_POSTCONCAT);
    pset_int_colr(&medium);
    pset_pick_id(2);
-   pexec_struct(0);
-   pset_pick_id(0);
+   pfill_area3(&plist_quad);
+   ppolymarker3(&plist_quad);
    tvec3.delta_z += SPACE;
    ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
@@ -183,14 +180,13 @@ void init_scene(void)
    pset_int_colr(&light);
    plabel(20);
    pset_pick_id(3);
-   pexec_struct(0);
-   pset_pick_id(0);
+   pfill_area3(&plist_quad);
+   ppolymarker3(&plist_quad);
    plabel(30);
    pclose_struct();
 
    popen_struct(STRUCT_MAIN);
-   ppolyline(&plist_vline);
-   ppolyline(&plist_hline);
+   pset_view_ind(0);
    pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
    padd_names_set(&names_view_1);
    pset_view_ind(1);
@@ -208,6 +204,13 @@ void init_scene(void)
    pset_view_ind(4);
    pexec_struct(STRUCT_SCENE);
    premove_names_set(&names_view_4);
+   pclose_struct();
+
+   popen_struct(STRUCT_BORDER);
+   pexec_struct(STRUCT_MAIN);
+   pset_local_tran3(ident3, PTYPE_REPLACE);
+   ppolyline(&plist_vline);
+   ppolyline(&plist_hline);
    pclose_struct();
 }
 
@@ -464,7 +467,7 @@ int main(void)
    int redraw1 = 0;
 
    invis_filter.incl_set = pick_excl;
-   invis_filter.excl_set = pick_incl;
+   invis_filter.excl_set = empty_set;
    popen_phigs(NULL, 0);
    init_scene();
    print_size(PWST_OUTIN_TRUE_DB);
@@ -475,7 +478,7 @@ int main(void)
    pset_invis_filter(WS_1, &invis_filter);
    pset_hlhsr_mode(WS_1, PHIGS_HLHSR_MODE_ZBUFF);
    pset_view_tran_in_pri(WS_1, 0, 4, PPRI_LOWER);
-   ppost_struct(WS_1, STRUCT_MAIN, 0);
+   ppost_struct(WS_1, STRUCT_BORDER, 0);
    wsh1 = PHG_WSID(WS_1);
 
    if (wsh1 != NULL) {

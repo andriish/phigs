@@ -34,9 +34,10 @@ typedef enum {
 } Ws_render_mode;
 
 typedef struct {
-   Pattr_group  *bundl_group;
-   Pattr_group  *indiv_group;
-   Nameset      asf_nameset;
+   Pattr_group  bundl_group;
+   Pattr_group  indiv_group;
+   Nset         asf_nameset;
+   u_int32_t    nameset_buf[1];
 } Ws_attr_st;
 
 typedef struct {
@@ -51,7 +52,14 @@ typedef struct {
 } Ws_pick_elmt;
 
 typedef struct {
-   Pint offset;
+   Pint       id;
+   Pint       offset;
+   Ws_attr_st ast;
+   Pint       pick_id;
+   Nset       cur_nameset;
+   u_int32_t  nameset_buf[32];
+   Pview_rep3 view_rep;
+   Pmatrix3   local_tran;
 } Ws_struct;
 
 typedef struct {
@@ -61,7 +69,6 @@ typedef struct {
 } Ws_filter;
 
 typedef struct _Wsgl {
-   Ws_attr_st      attr;
    Plimit3         curr_win;
    Pint            win_changed;
    Plimit3         curr_vp;
@@ -69,15 +76,12 @@ typedef struct _Wsgl {
    Pint            hlhsr_changed;
    Pint            hlhsr_mode;
    Pgcolr          background;
-   Pmatrix3        local_tran, total_tran;
+   Pmatrix3        total_tran;
    Pmatrix3        pick_tran;
-   Pint            curr_view_index;
-   Pview_rep3      view_rep;
    Ws_render_mode  render_mode;
    Stack           struct_stack;
    Ws_struct       cur_struct;
-   Pint            pick_id;
-   Nameset         cur_nameset;
+   Pmatrix3        global_tran;
    Ws_filter       invis_filter;
    Ws_filter       pick_filter;
    Pint            select_size;
