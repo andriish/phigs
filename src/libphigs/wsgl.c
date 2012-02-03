@@ -63,10 +63,10 @@ int wsgl_init(
    }
 
    phg_nset_init(&wsgl->cur_struct.ast.asf_nameset,
-                 1,
+                 WS_MAX_ASF_FLAGS / 32,
                  wsgl->cur_struct.ast.nameset_buf);
    phg_nset_init(&wsgl->cur_struct.cur_nameset,
-                 32,
+                 WS_MAX_NAMES_IN_NAMESET / 32,
                  wsgl->cur_struct.nameset_buf);
 
    memcpy(&wsgl->background, background, sizeof(Pgcolr));
@@ -287,8 +287,9 @@ void wsgl_begin_rendering(
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-   phg_set_hlhsr_id(PHIGS_HLHSR_ID_OFF);
-   phg_mat_identity(wsgl->global_tran);
+   wsgl->cur_struct.hlhsr_id = PHIGS_HLHSR_ID_OFF;
+   phg_update_hlhsr_id(ws);
+   phg_mat_identity(wsgl->cur_struct.global_tran);
    phg_set_line_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
    phg_set_line_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
    phg_set_marker_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
@@ -474,6 +475,7 @@ void wsgl_end_structure(
 #endif
 
    stack_pop(wsgl->struct_stack, (caddr_t) &wsgl->cur_struct);
+   phg_update_hlhsr_id(ws);
    phg_update_projection(ws);
    phg_update_modelview(ws);
 
@@ -528,7 +530,8 @@ void wsgl_render_element(
          break;
 
       case PELEM_HLHSR_ID:
-         phg_set_hlhsr_id(PHG_INT(el));
+         wsgl->cur_struct.hlhsr_id = PHG_INT(el);
+         phg_update_hlhsr_id(ws);
          break;
 
       case PELEM_INDIV_ASF:
@@ -704,6 +707,11 @@ void wsgl_render_element(
          }
          break;
 
+      case PELEM_GLOBAL_MODEL_TRAN3:
+         phg_mat_copy(wsgl->cur_struct.global_tran, *PHG_MATRIX3(el));
+         phg_update_modelview(ws);
+         break;
+
       case PELEM_LOCAL_MODEL_TRAN3:
          switch (PHG_LOCAL_TRAN3(el)->compose_type) {
             case PTYPE_PRECONCAT:
@@ -825,7 +833,9 @@ void wsgl_begin_pick(
    printf("\n");
 #endif
 
-   phg_mat_identity(wsgl->global_tran);
+   wsgl->cur_struct.hlhsr_id = PHIGS_HLHSR_ID_OFF;
+   phg_update_hlhsr_id(ws);
+   phg_mat_identity(wsgl->cur_struct.global_tran);
    phg_set_line_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
    phg_set_line_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
    phg_set_marker_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);

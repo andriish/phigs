@@ -268,6 +268,112 @@ int phg_handle_local_tran3(
 }
 
 /*******************************************************************************
+ * phg_handle_matrix
+ *
+ * DESCR:	Handle matrix
+ * RETURNS:	TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_matrix(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   Pmatrix *data;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         data = malloc(sizeof(Pmatrix));
+         if (data == NULL)
+            return (FALSE);
+
+         phg_mat_copy_3x3(*data, ARGS_ELMT_DATA(argdata).global_tran);
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_REPLACE:
+         data = (Pmatrix *) elmt->eldata.ptr;
+         phg_mat_copy_3x3(*data, ARGS_ELMT_DATA(argdata).global_tran);
+      break;
+
+      case CSS_EL_COPY:
+         data = malloc(sizeof(Pmatrix));
+         if (data == NULL)
+            return (FALSE);
+
+         phg_mat_copy_3x3(*data, *PHG_DATA_MATRIX(argdata));
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_FREE:
+         free(ELMT_DATA_PTR(elmt));
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
+   }
+
+   return (TRUE);
+}
+
+/*******************************************************************************
+ * phg_handle_matrix3
+ *
+ * DESCR:	Handle matrix 3D
+ * RETURNS:	TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_matrix3(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   Pmatrix3 *data;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         data = malloc(sizeof(Pmatrix3));
+         if (data == NULL)
+            return (FALSE);
+
+         phg_mat_copy(*data, ARGS_ELMT_DATA(argdata).global_tran3);
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_REPLACE:
+         data = (Pmatrix3 *) elmt->eldata.ptr;
+         phg_mat_copy(*data, ARGS_ELMT_DATA(argdata).global_tran3);
+      break;
+
+      case CSS_EL_COPY:
+         data = malloc(sizeof(Pmatrix3));
+         if (data == NULL)
+            return (FALSE);
+
+         phg_mat_copy(*data, *PHG_DATA_MATRIX3(argdata));
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_FREE:
+         free(ELMT_DATA_PTR(elmt));
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
+   }
+
+   return (TRUE);
+}
+
+/*******************************************************************************
  * phg_handle_point_list
  *
  * DESCR:	Handle point list

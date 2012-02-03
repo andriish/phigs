@@ -82,6 +82,7 @@ Ppoint_list plist_hline ={
 Pint errnum;
 Pvec3 tvec3;
 Pmatrix3 ident3;
+Pmatrix3 scale3;
 Pmatrix3 tran3;
 Pmatrix3 rot3;
 Pcolr_rep col_rep;
@@ -132,6 +133,12 @@ void init_scene(void)
    red.val.general.z = 0.0;
 
    phg_mat_identity(ident3);
+
+   tvec3.delta_x = 1.0;
+   tvec3.delta_y = 1.0;
+   tvec3.delta_z = 1.0;
+   pscale3(&tvec3, &errnum, scale3);
+
    tvec3.delta_x = 0.0;
    tvec3.delta_y = 0.0;
    tvec3.delta_z = DEPTH;
@@ -186,7 +193,7 @@ void init_scene(void)
    pclose_struct();
 
    popen_struct(STRUCT_MAIN);
-   pset_view_ind(0);
+   pset_global_tran3(scale3);
    pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
    padd_names_set(&names_view_1);
    pset_view_ind(1);
@@ -208,7 +215,6 @@ void init_scene(void)
 
    popen_struct(STRUCT_BORDER);
    pexec_struct(STRUCT_MAIN);
-   pset_local_tran3(ident3, PTYPE_REPLACE);
    ppolyline(&plist_vline);
    ppolyline(&plist_hline);
    pclose_struct();

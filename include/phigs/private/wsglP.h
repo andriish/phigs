@@ -28,18 +28,6 @@
 #include <phigs/util.h>
 #include <GL/gl.h>
 
-typedef enum {
-   WS_RENDER_MODE_DRAW,
-   WS_RENDER_MODE_SELECT
-} Ws_render_mode;
-
-typedef struct {
-   Pattr_group  bundl_group;
-   Pattr_group  indiv_group;
-   Nset         asf_nameset;
-   u_int32_t    nameset_buf[1];
-} Ws_attr_st;
-
 typedef struct {
    Pint x, y;
    Pfloat distance;
@@ -51,15 +39,29 @@ typedef struct {
    Pint offset;
 } Ws_pick_elmt;
 
+typedef enum {
+   WS_RENDER_MODE_DRAW,
+   WS_RENDER_MODE_SELECT
+} Ws_render_mode;
+
+typedef struct {
+   Pattr_group  bundl_group;
+   Pattr_group  indiv_group;
+   Nset         asf_nameset;
+   u_int32_t    nameset_buf[WS_MAX_ASF_FLAGS / 32];
+} Ws_attr_st;
+
 typedef struct {
    Pint       id;
    Pint       offset;
+   Pint       hlhsr_id;
    Ws_attr_st ast;
-   Pint       pick_id;
    Nset       cur_nameset;
-   u_int32_t  nameset_buf[32];
+   u_int32_t  nameset_buf[WS_MAX_NAMES_IN_NAMESET / 32];
    Pview_rep3 view_rep;
+   Pmatrix3   global_tran;
    Pmatrix3   local_tran;
+   Pint       pick_id;
 } Ws_struct;
 
 typedef struct {
@@ -76,12 +78,12 @@ typedef struct _Wsgl {
    Pint            hlhsr_changed;
    Pint            hlhsr_mode;
    Pgcolr          background;
-   Pmatrix3        total_tran;
-   Pmatrix3        pick_tran;
    Ws_render_mode  render_mode;
    Stack           struct_stack;
    Ws_struct       cur_struct;
-   Pmatrix3        global_tran;
+   Pmatrix3        composite_tran;
+   Pmatrix3        model_tran;
+   Pmatrix3        pick_tran;
    Ws_filter       invis_filter;
    Ws_filter       pick_filter;
    Pint            select_size;
@@ -314,14 +316,14 @@ void phg_set_view_ind(
    );
 
 /*******************************************************************************
- * phg_set_hlhsr_id
+ * phg_update_hlhsr_id
  *
- * DESCR:       Setup depth buffer checking
+ * DESCR:       Update depth buffer checking flag
  * RETURNS:     N/A
  */
 
-void phg_set_hlhsr_id(
-   Pint hlhsr_id
+void phg_update_hlhsr_id(
+   Ws *ws
    );
 
 /*******************************************************************************

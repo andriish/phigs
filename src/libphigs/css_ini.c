@@ -123,6 +123,8 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_INDIV_ASF] = phg_handle_asf_info;
     fptr[(int)PELEM_LOCAL_MODEL_TRAN] = phg_handle_local_tran;
     fptr[(int)PELEM_LOCAL_MODEL_TRAN3] = phg_handle_local_tran3;
+    fptr[(int)PELEM_GLOBAL_MODEL_TRAN] = phg_handle_matrix;
+    fptr[(int)PELEM_GLOBAL_MODEL_TRAN3] = phg_handle_matrix3;
     fptr[(int)PELEM_VIEW_IND] = phg_handle_int;
     fptr[(int)PELEM_EXEC_STRUCT] = phg_css_struct_ref;
     fptr[(int)PELEM_LABEL] = phg_handle_int;

@@ -667,7 +667,7 @@ void pset_indiv_asf(
 /*******************************************************************************
  * pset_local_tran
  *
- * DESCR:       Creates a new element - Set local model space transofmation
+ * DESCR:       Creates a new element - Set local model space transformation
  * RETURNS:     N/A
  */
 
@@ -679,13 +679,35 @@ void pset_local_tran(
 /*******************************************************************************
  * pset_local_tran3
  *
- * DESCR:       Creates a new element - Set local model space transofmation 3D
+ * DESCR:       Creates a new element - Set local model space transformation 3D
  * RETURNS:     N/A
  */
 
 void pset_local_tran3(
    Pmatrix3 local_tran,
    Pcompose_type compose_type
+   );
+
+/*******************************************************************************
+ * pset_global_tran
+ *
+ * DESCR:       Creates a new element - Set global model space transformation
+ * RETURNS:     N/A
+ */
+
+void pset_global_tran(
+   Pmatrix global_tran
+   );
+
+/*******************************************************************************
+ * pset_global_tran3
+ *
+ * DESCR:       Creates a new element - Set global model space transformation 3D
+ * RETURNS:     N/A
+ */
+
+void pset_global_tran3(
+   Pmatrix3 global_tran
    );
 
 /*******************************************************************************

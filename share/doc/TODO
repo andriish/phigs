@@ -1,3 +1,7 @@
+2012-02-03:
+   Add clipping for picking according to viewrep volume
+
+--------------------------------------------------------------------------------
 2012-01-14:
    Break out creation of rendering context from phg_wsx_setup tool or,
    create another method for workstations using widgets

@@ -87,6 +87,18 @@
 #define PHG_DATA_LOCAL_TRAN3(ELMT) \
    ((Plocal_tran3 *) (((Css_eldata *) (ELMT))->ptr))
 
+#define PHG_MATRIX(ELMT) \
+   ((Pmatrix *) ((ELMT)->eldata.ptr))
+
+#define PHG_DATA_MATRIX(ELMT) \
+   ((Pmatrix *) (((Css_eldata *) (ELMT))->ptr))
+
+#define PHG_MATRIX3(ELMT) \
+   ((Pmatrix3 *) ((ELMT)->eldata.ptr))
+
+#define PHG_DATA_MATRIX3(ELMT) \
+   ((Pmatrix3 *) (((Css_eldata *) (ELMT))->ptr))
+
 #define PHG_TEXT(ELMT) \
    ((Ptext *) ((ELMT)->eldata.ptr))
 
