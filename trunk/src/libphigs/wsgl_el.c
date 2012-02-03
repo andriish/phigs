@@ -78,10 +78,10 @@ void phg_update_projection(
 
    glMatrixMode(GL_PROJECTION);
    if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {
-      phg_mat_mul(wsgl->total_tran,
+      phg_mat_mul(wsgl->model_tran,
                   wsgl->pick_tran,
                   wsgl->cur_struct.view_rep.map_matrix);
-      phg_set_matrix(wsgl->total_tran, FALSE);
+      phg_set_matrix(wsgl->model_tran, FALSE);
    }
    else {
       phg_set_matrix(wsgl->cur_struct.view_rep.map_matrix, FALSE);
@@ -106,10 +106,13 @@ void phg_update_modelview(
 #endif
 
    glMatrixMode(GL_MODELVIEW);
-   phg_mat_mul(wsgl->total_tran,
-               wsgl->cur_struct.view_rep.ori_matrix,
+   phg_mat_mul(wsgl->composite_tran,
+               wsgl->cur_struct.global_tran,
                wsgl->cur_struct.local_tran);
-   phg_set_matrix(wsgl->total_tran, FALSE);
+   phg_mat_mul(wsgl->model_tran,
+               wsgl->cur_struct.view_rep.ori_matrix,
+               wsgl->composite_tran);
+   phg_set_matrix(wsgl->model_tran, FALSE);
 }
 
 /*******************************************************************************
@@ -142,27 +145,29 @@ void phg_set_view_ind(
 }
 
 /*******************************************************************************
- * phg_set_hlhsr_id
+ * phg_update_hlhsr_id
  *
- * DESCR:	Setup depth buffer checking
+ * DESCR:	Update depth buffer checking flag
  * RETURNS:	N/A
  */
 
-void phg_set_hlhsr_id(
-   Pint hlhsr_id
+void phg_update_hlhsr_id(
+   Ws *ws
    )
 {
-   switch(hlhsr_id) {
+   Wsgl_handle wsgl = ws->render_context;
+
+   switch(wsgl->cur_struct.hlhsr_id) {
       case PHIGS_HLHSR_ID_OFF:
          glDepthFunc(GL_ALWAYS);
-      break;
+         break;
 
       case PHIGS_HLHSR_ID_ON:
          glDepthFunc(GL_LESS);
-      break;
+         break;
 
       default:
-      break;
+         break;
    }
 }
 

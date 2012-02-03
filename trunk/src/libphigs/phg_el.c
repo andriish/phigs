@@ -130,7 +130,7 @@ void pset_indiv_asf(
 /*******************************************************************************
  * pset_local_tran
  *
- * DESCR:	Creates a new element - Set local model space transofmation
+ * DESCR:	Creates a new element - Set local model space transformation
  * RETURNS:	N/A
  */
 
@@ -157,7 +157,7 @@ void pset_local_tran(
 /*******************************************************************************
  * pset_local_tran3
  *
- * DESCR:	Creates a new element - Set local model space transofmation 3D
+ * DESCR:	Creates a new element - Set local model space transformation 3D
  * RETURNS:	N/A
  */
 
@@ -177,6 +177,56 @@ void pset_local_tran3(
       ARGS_ELMT_TYPE(&args) = PELEM_LOCAL_MODEL_TRAN3;
       ARGS_ELMT_DATA(&args).local_tran3.compose_type = compose_type;
       phg_mat_copy(ARGS_ELMT_DATA(&args).local_tran3.matrix, local_tran);
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_global_tran
+ *
+ * DESCR:	Creates a new element - Set global model space transformation
+ * RETURNS:	N/A
+ */
+
+void pset_global_tran(
+   Pmatrix global_tran
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_global_tran);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_GLOBAL_MODEL_TRAN;
+      phg_mat_copy_3x3(ARGS_ELMT_DATA(&args).global_tran, global_tran);
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_global_tran3
+ *
+ * DESCR:	Creates a new element - Set global model space transformation 3D
+ * RETURNS:	N/A
+ */
+
+void pset_global_tran3(
+   Pmatrix3 global_tran
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_global_tran3);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_GLOBAL_MODEL_TRAN3;
+      phg_mat_copy(ARGS_ELMT_DATA(&args).global_tran3, global_tran);
       phg_add_el(PHG_CSS, &args);
    }
 }

@@ -83,6 +83,34 @@ int phg_handle_local_tran3(
    );
 
 /*******************************************************************************
+ * phg_handle_matrix
+ *
+ * DESCR:       Handle matrix
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_matrix(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
+/*******************************************************************************
+ * phg_handle_matrix3
+ *
+ * DESCR:       Handle matrix 3D
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_matrix3(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
+/*******************************************************************************
  * phg_handle_point_list
  *
  * DESCR:       Handle point list

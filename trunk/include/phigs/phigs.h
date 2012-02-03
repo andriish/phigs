@@ -114,6 +114,8 @@ typedef enum {
    PELEM_INDIV_ASF,
    PELEM_LOCAL_MODEL_TRAN,
    PELEM_LOCAL_MODEL_TRAN3,
+   PELEM_GLOBAL_MODEL_TRAN,
+   PELEM_GLOBAL_MODEL_TRAN3,
    PELEM_VIEW_IND,
    PELEM_EXEC_STRUCT,
    PELEM_LABEL,
@@ -565,6 +567,8 @@ typedef union {
    Pasf_info    asf_info;
    Plocal_tran  local_tran;
    Plocal_tran3 local_tran3;
+   Pmatrix      global_tran;
+   Pmatrix3     global_tran3;
    Pint_list    names;
    Pedge_flag   edge_flag;
    Pint_style   int_style;
