@@ -90,14 +90,25 @@ int main(int argc, char *argv[])
    popen_phigs(NULL, 0);
 
    popen_struct(0);
+   pset_indiv_asf(PASPECT_LINETYPE, PASF_BUNDLED);
+   pset_indiv_asf(PASPECT_LINEWIDTH, PASF_BUNDLED);
+   pset_indiv_asf(PASPECT_MARKER_COLR_IND, PASF_BUNDLED);
    pset_line_ind(ATTR_NO);
    ppolyline(&plist_line);
+   pset_indiv_asf(PASPECT_MARKER_TYPE, PASF_BUNDLED);
+   pset_indiv_asf(PASPECT_MARKER_SIZE, PASF_BUNDLED);
+   pset_indiv_asf(PASPECT_MARKER_COLR_IND, PASF_BUNDLED);
    pset_marker_ind(ATTR_NO);
    ppolymarker(&plist_mark);
    pclose_struct();
 
    popen_struct(1);
+   pset_indiv_asf(PASPECT_EDGE_FLAG, PASF_BUNDLED);
+   pset_indiv_asf(PASPECT_EDGETYPE, PASF_BUNDLED);
+   pset_indiv_asf(PASPECT_EDGEWIDTH, PASF_BUNDLED);
+   pset_indiv_asf(PASPECT_EDGE_COLR_IND, PASF_BUNDLED);
    pset_edge_ind(ATTR_NO);
+   pset_indiv_asf(PASPECT_INT_COLR_IND, PASF_BUNDLED);
    pset_int_ind(ATTR_NO);
    pfill_area(&plist_quad);
    pclose_struct();
