@@ -268,28 +268,23 @@ void wsgl_flush(
 }
 
 /*******************************************************************************
- * wsgl_begin_rendering
+ * init_rendering_state
  *
- * DESCR:	Start a rendiering session for workstation
+ * DESCR:	Initialize rendering state helper function
  * RETURNS:	N/A
  */
 
-void wsgl_begin_rendering(
+static void init_rendering_state(
    Ws *ws
    )
 {
    Wsgl_handle wsgl = ws->render_context;
 
-#ifdef DEBUG
-   printf("Begin rendering\n");
-#endif
-
-   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
    wsgl->cur_struct.hlhsr_id = PHIGS_HLHSR_ID_OFF;
    phg_update_hlhsr_id(ws);
+   phg_mat_identity(wsgl->composite_tran);
    phg_mat_identity(wsgl->cur_struct.global_tran);
+   phg_mat_identity(wsgl->cur_struct.local_tran);
    phg_set_line_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
    phg_set_line_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
    phg_set_marker_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
@@ -303,6 +298,27 @@ void wsgl_begin_rendering(
    phg_nset_names_set_all(&wsgl->cur_struct.ast.asf_nameset);
    phg_set_view_ind(ws, 0);
    phg_nset_names_clear_all(&wsgl->cur_struct.cur_nameset);
+   wsgl->cur_struct.pick_id = 0;
+}
+
+/*******************************************************************************
+ * wsgl_begin_rendering
+ *
+ * DESCR:	Start a rendiering session for workstation
+ * RETURNS:	N/A
+ */
+
+void wsgl_begin_rendering(
+   Ws *ws
+   )
+{
+#ifdef DEBUG
+   printf("Begin rendering\n");
+#endif
+
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   init_rendering_state(ws);
 }
 
 /*******************************************************************************
@@ -444,6 +460,7 @@ void wsgl_begin_structure(
    stack_push(wsgl->struct_stack, (caddr_t) &wsgl->cur_struct);
    wsgl->cur_struct.id      = struct_id;
    wsgl->cur_struct.offset  = 0;
+   phg_mat_copy(wsgl->cur_struct.global_tran, wsgl->composite_tran);
    phg_mat_identity(wsgl->cur_struct.local_tran);
    phg_update_modelview(ws);
 
@@ -833,24 +850,7 @@ void wsgl_begin_pick(
    printf("\n");
 #endif
 
-   wsgl->cur_struct.hlhsr_id = PHIGS_HLHSR_ID_OFF;
-   phg_update_hlhsr_id(ws);
-   phg_mat_identity(wsgl->cur_struct.global_tran);
-   phg_set_line_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   phg_set_line_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   phg_set_marker_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   phg_set_marker_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   phg_set_text_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   phg_set_text_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   phg_set_edge_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   phg_set_edge_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   phg_set_int_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   phg_set_int_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   phg_nset_names_set_all(&wsgl->cur_struct.ast.asf_nameset);
-   phg_set_view_ind(ws, 0);
-   phg_nset_names_clear_all(&wsgl->cur_struct.cur_nameset);
-   wsgl->cur_struct.pick_id = 0;
-
+   init_rendering_state(ws);
    glSelectBuffer(wsgl->select_size, wsgl->select_buf);
    glRenderMode(GL_SELECT);
    glInitNames();
