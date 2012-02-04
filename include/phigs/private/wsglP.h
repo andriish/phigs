@@ -59,8 +59,8 @@ typedef struct {
    Nset       cur_nameset;
    u_int32_t  nameset_buf[WS_MAX_NAMES_IN_NAMESET / 32];
    Pview_rep3 view_rep;
-   Pmatrix3   global_tran;
    Pmatrix3   local_tran;
+   Pmatrix3   global_tran;
    Pint       pick_id;
 } Ws_struct;
 

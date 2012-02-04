@@ -24,9 +24,10 @@
 #include <phigs/phg.h>
 #include <phigs/private/wsxP.h>
 
-#define STRUCT_SCENE   0
-#define STRUCT_MAIN    1
-#define STRUCT_BORDER  2
+#define STRUCT_OBJECT  0
+#define STRUCT_SCENE   1
+#define STRUCT_MAIN    2
+#define STRUCT_BORDER  3
 
 #define NAME_VIEW_1    1
 #define NAME_VIEW_2    2
@@ -81,7 +82,6 @@ Ppoint_list plist_hline ={
 
 Pint errnum;
 Pvec3 tvec3;
-Pmatrix3 ident3;
 Pmatrix3 scale3;
 Pmatrix3 tran3;
 Pmatrix3 rot3;
@@ -132,7 +132,10 @@ void init_scene(void)
    red.val.general.y = 0.0;
    red.val.general.z = 0.0;
 
-   phg_mat_identity(ident3);
+   popen_struct(STRUCT_OBJECT);
+   pfill_area3(&plist_quad);
+   ppolymarker3(&plist_quad);
+   pclose_struct();
 
    tvec3.delta_x = 1.0;
    tvec3.delta_y = 1.0;
@@ -158,16 +161,14 @@ void init_scene(void)
    pset_marker_colr(&red);
    pset_local_tran3(tran3, PTYPE_REPLACE);
    pset_pick_id(1);
-   pfill_area3(&plist_quad);
-   ppolymarker3(&plist_quad);
+   pexec_struct(STRUCT_OBJECT);
    tvec3.delta_z += SPACE;
    ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    pset_local_tran3(tran3, PTYPE_POSTCONCAT);
    pset_int_colr(&medium);
    pset_pick_id(2);
-   pfill_area3(&plist_quad);
-   ppolymarker3(&plist_quad);
+   pexec_struct(STRUCT_OBJECT);
    tvec3.delta_z += SPACE;
    ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
@@ -177,8 +178,7 @@ void init_scene(void)
    pset_int_colr(&light);
    plabel(20);
    pset_pick_id(3);
-   pfill_area3(&plist_quad);
-   ppolymarker3(&plist_quad);
+   pexec_struct(STRUCT_OBJECT);
    plabel(30);
    pclose_struct();
 
