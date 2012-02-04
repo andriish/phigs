@@ -300,7 +300,7 @@ void wsgl_begin_rendering(
    phg_set_edge_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
    phg_set_int_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
    phg_set_int_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   phg_nset_names_clear_all(&wsgl->cur_struct.ast.asf_nameset);
+   phg_nset_names_set_all(&wsgl->cur_struct.ast.asf_nameset);
    phg_set_view_ind(ws, 0);
    phg_nset_names_clear_all(&wsgl->cur_struct.cur_nameset);
 }
@@ -846,7 +846,7 @@ void wsgl_begin_pick(
    phg_set_edge_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
    phg_set_int_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
    phg_set_int_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   phg_nset_names_clear_all(&wsgl->cur_struct.ast.asf_nameset);
+   phg_nset_names_set_all(&wsgl->cur_struct.ast.asf_nameset);
    phg_set_view_ind(ws, 0);
    phg_nset_names_clear_all(&wsgl->cur_struct.cur_nameset);
    wsgl->cur_struct.pick_id = 0;

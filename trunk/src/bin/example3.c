@@ -146,23 +146,13 @@ void init_scene(void)
    protate_x(-3.14 / 4.0, &errnum, rot3);
 
    popen_struct(STRUCT_SCENE);
-   pset_indiv_asf(PASPECT_EDGE_FLAG, PASF_INDIV);
-   pset_indiv_asf(PASPECT_EDGETYPE, PASF_INDIV);
-   pset_indiv_asf(PASPECT_EDGE_COLR_IND, PASF_INDIV);
-   pset_indiv_asf(PASPECT_EDGEWIDTH, PASF_INDIV);
    pset_edge_flag(PEDGE_ON);
    pset_edge_colr(&white);
    pset_edgewidth(EDGE_WIDTH);
    pset_edgetype(PLINE_SOLID);
-   pset_indiv_asf(PASPECT_INT_COLR_IND, PASF_INDIV);
-   pset_indiv_asf(PASPECT_INT_STYLE, PASF_INDIV);
-   pset_indiv_asf(PASPECT_INT_STYLE_IND, PASF_INDIV);
    pset_int_colr(&dark);
    pset_int_style(FILL_STYLE);
    pset_int_style_ind(FILL_STYLE_IND);
-   pset_indiv_asf(PASPECT_MARKER_TYPE, PASF_INDIV);
-   pset_indiv_asf(PASPECT_MARKER_SIZE, PASF_INDIV);
-   pset_indiv_asf(PASPECT_MARKER_COLR_IND, PASF_INDIV);
    pset_marker_type(PMARKER_CROSS);
    pset_marker_size(0.1);
    pset_marker_colr(&red);
@@ -261,7 +251,7 @@ void init_pick(Pint ws_id, Pint dev_id, Pop_mode mode, Pecho_switch echo)
    Ppick_data3 rec;
    rec.pets.pet_r1.unused = 0;
    pick_filter.incl_set = pick_incl;
-   pick_filter.excl_set = pick_excl;
+   pick_filter.excl_set = empty_set;
 
    pinit_pick3(ws_id, dev_id, PIN_STATUS_OK, &pik, 1, &echo_volume,
                &rec, PORDER_TOP_FIRST);
@@ -473,7 +463,7 @@ int main(void)
    int redraw1 = 0;
 
    invis_filter.incl_set = pick_excl;
-   invis_filter.excl_set = empty_set;
+   invis_filter.excl_set = pick_incl;
    popen_phigs(NULL, 0);
    init_scene();
    print_size(PWST_OUTIN_TRUE_DB);
