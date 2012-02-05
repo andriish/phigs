@@ -139,6 +139,34 @@ int phg_handle_point_list3(
    );
 
 /*******************************************************************************
+ * phg_handle_point_list_list
+ *
+ * DESCR:       Handle list of point lists
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_point_list_list(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
+/*******************************************************************************
+ * phg_handle_point_list_list3
+ *
+ * DESCR:       Handle list of point lists 3D
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_point_list_list3(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
+/*******************************************************************************
  * phg_handle_text
  *
  * DESCR:       Handle text

@@ -86,6 +86,8 @@ typedef enum {
    PELEM_REMOVE_NAMES_SET,
    PELEM_FILL_AREA,
    PELEM_FILL_AREA3,
+   PELEM_FILL_AREA_SET,
+   PELEM_FILL_AREA_SET3,
    PELEM_POLYLINE,
    PELEM_POLYLINE3,
    PELEM_POLYMARKER,
@@ -469,6 +471,16 @@ typedef struct {
 } Ppoint_list3;
 
 typedef struct {
+   Pint        num_point_lists;
+   Ppoint_list *point_lists;
+} Ppoint_list_list;
+
+typedef struct {
+   Pint         num_point_lists;
+   Ppoint_list3 *point_lists;
+} Ppoint_list_list3;
+
+typedef struct {
    Ppoint pos;
    char   *char_string;
 } Ptext;
@@ -559,20 +571,22 @@ typedef struct {
 } Pposted_struct_list;
 
 typedef union {
-   Pint         int_data;
-   Pfloat       float_data;
-   Ppoint_list  point_list;
-   Ppoint_list3 point_list3;
-   Ptext        text;
-   Pasf_info    asf_info;
-   Plocal_tran  local_tran;
-   Plocal_tran3 local_tran3;
-   Pmatrix      global_tran;
-   Pmatrix3     global_tran3;
-   Pint_list    names;
-   Pedge_flag   edge_flag;
-   Pint_style   int_style;
-   Pgcolr       colr;
+   Pint              int_data;
+   Pfloat            float_data;
+   Ppoint_list       point_list;
+   Ppoint_list3      point_list3;
+   Ppoint_list_list  point_list_list;
+   Ppoint_list_list3 point_list_list3;
+   Ptext             text;
+   Pasf_info         asf_info;
+   Plocal_tran       local_tran;
+   Plocal_tran3      local_tran3;
+   Pmatrix           global_tran;
+   Pmatrix3          global_tran3;
+   Pint_list         names;
+   Pedge_flag        edge_flag;
+   Pint_style        int_style;
+   Pgcolr            colr;
 } Pelem_data;
 
 typedef struct {

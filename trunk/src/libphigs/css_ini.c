@@ -95,6 +95,8 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_REMOVE_NAMES_SET] = phg_handle_names_set;
     fptr[(int)PELEM_FILL_AREA] = phg_handle_point_list;
     fptr[(int)PELEM_FILL_AREA3] = phg_handle_point_list3;
+    fptr[(int)PELEM_FILL_AREA_SET] = phg_handle_point_list_list;
+    fptr[(int)PELEM_FILL_AREA_SET3] = phg_handle_point_list_list3;
     fptr[(int)PELEM_POLYLINE] = phg_handle_point_list;
     fptr[(int)PELEM_POLYLINE3] = phg_handle_point_list3;
     fptr[(int)PELEM_POLYMARKER] = phg_handle_point_list;

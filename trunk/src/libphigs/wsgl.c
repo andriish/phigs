@@ -683,6 +683,14 @@ void wsgl_render_element(
          }
          break;
 
+      case PELEM_FILL_AREA_SET:
+         if (check_draw_primitive(ws)) {
+            phg_draw_fill_area_set(ws,
+                                   PHG_POINT_LIST_LIST(el),
+                                   &wsgl->cur_struct.ast);
+         }
+         break;
+
       case PELEM_POLYLINE:
          if (check_draw_primitive(ws)) {
             phg_draw_polyline(ws,

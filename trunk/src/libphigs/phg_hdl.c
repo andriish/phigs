@@ -518,6 +518,125 @@ int phg_handle_point_list3(
 }
 
 /*******************************************************************************
+ * phg_handle_point_list_list
+ *
+ * DESCR:	Handle list of point lists
+ * RETURNS:	TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_point_list_list(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   Pint i, num_lists, num_points;
+   Ppoint *points;
+   Ppoint_list_list *data, *point_list_list;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         point_list_list = &ARGS_ELMT_DATA(argdata).point_list_list;
+         num_lists = point_list_list->num_point_lists;
+         data = malloc(sizeof(Ppoint_list_list) +
+                       num_lists * sizeof(Ppoint_list));
+         if (data == NULL)
+            return (FALSE);
+
+         data->num_point_lists = num_lists;
+         data->point_lists = (Ppoint_list *) &data[1];
+         for (i = 0; i < num_lists; i++) {
+            num_points = point_list_list->point_lists[i].num_points;
+            points = malloc(sizeof(Ppoint) * num_points);
+            if (points == NULL) {
+               while(--i >= 0) {
+                  free(data->point_lists[i].points);
+               }
+            }
+            memcpy(points,
+                   point_list_list->point_lists[i].points,
+                   sizeof(Ppoint) * num_points);
+            data->point_lists[i].num_points = num_points;
+            data->point_lists[i].points = points;
+         }
+
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_REPLACE:
+#ifdef TODO
+         point_list = &ARGS_ELMT_DATA(argdata).point_list;
+         n = point_list->num_points;
+         data = realloc(ELMT_DATA_PTR(elmt),
+                        sizeof(Ppoint_list) + n * sizeof(Ppoint));
+         if (data == NULL)
+            return (FALSE);
+
+         data->num_points = n;
+         data->points = (Ppoint *) &data[1];
+         memcpy(data->points, point_list->points, sizeof(Ppoint) * n);
+         elmt->eldata.ptr = data;
+#else
+         return (FALSE);
+#endif
+      break;
+
+      case CSS_EL_COPY:
+#ifdef TODO
+         n = PHG_DATA_POINT_LIST(argdata)->num_points;
+         data = malloc(sizeof(Ppoint_list) + n * sizeof(Ppoint));
+         if (data == NULL)
+            return (FALSE);
+
+         data->num_points = n;
+         data->points = (Ppoint *) &data[1];
+         memcpy(data->points,
+                PHG_DATA_POINT_LIST(argdata)->points,
+                sizeof(Ppoint) * n);
+         elmt->eldata.ptr = data;
+#else
+         return (FALSE);
+#endif
+      break;
+
+      case CSS_EL_FREE:
+         point_list_list = (Ppoint_list_list *) ELMT_DATA_PTR(elmt);
+         num_lists = point_list_list->num_point_lists;
+         for (i = 0; i < num_lists; i++) {
+            free(point_list_list->point_lists[i].points);
+         }
+         free(point_list_list);
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
+   }
+
+   return (TRUE);
+}
+
+/*******************************************************************************
+ * phg_handle_point_list_list3
+ *
+ * DESCR:       Handle list of point lists 3D
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_point_list_list3(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   /* TODO */
+   return (FALSE);
+}
+
+/*******************************************************************************
  * phg_handle_text
  *
  * DESCR:	Handle text

@@ -446,6 +446,45 @@ void pfill_area3(
 }
 
 /*******************************************************************************
+ * pfill_area_set
+ *
+ * DESCR:	Creates a new element - Fill area set
+ * RETURNS:	N/A
+ */
+
+void pfill_area_set(
+   Ppoint_list_list *point_list_list
+   )
+{
+   unsigned size;
+   Pint num_lists;
+   Ppoint_list *point_lists;
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_fill_area_set);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA_SET;
+      num_lists = point_list_list->num_point_lists;
+      size = sizeof(Ppoint_list) * num_lists;
+
+      if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size)) {
+         ERR_REPORT(PHG_ERH, ERR900);
+      }
+      else {
+         point_lists = (Ppoint_list *) PHG_SCRATCH.buf;
+         memcpy(point_lists, point_list_list->point_lists, size);
+         ARGS_ELMT_DATA(&args).point_list_list.num_point_lists = num_lists;
+         ARGS_ELMT_DATA(&args).point_list_list.point_lists = point_lists;
+         phg_add_el(PHG_CSS, &args);
+      }
+   }
+}
+
+/*******************************************************************************
  * plabel
  *
  * DESCR:	Creates a new element - Label

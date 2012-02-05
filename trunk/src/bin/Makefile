@@ -12,7 +12,7 @@ OUTPATH=../../bin
 .c.o:
 	$(CC) $(DFLAGS) $(CFLAGS) $(INCFLAGS) -c $*.c
 
-all: example1 example2 example3
+all: example1 example2 example3 example4
 
 example1: example1.o
 	$(CC) $(LDFLAGS) -o $(OUTPATH)/example1 $(OBJS) example1.o $(LIBS)
@@ -23,6 +23,9 @@ example2: $(OBJS) example2.o
 example3: $(OBJS) example3.o
 	$(CC) $(LDFLAGS) -o $(OUTPATH)/example3 $(OBJS) example3.o $(LIBS)
 
+example4: $(OBJS) example4.o
+	$(CC) $(LDFLAGS) -o $(OUTPATH)/example4 $(OBJS) example4.o $(LIBS)
+
 cleanup:
 	$(RM) -rf *.o
 
@@ -31,4 +34,5 @@ clean:
 	$(RM) -rf $(OUTPATH)/example1
 	$(RM) -rf $(OUTPATH)/example2
 	$(RM) -rf $(OUTPATH)/example3
+	$(RM) -rf $(OUTPATH)/example4
 
