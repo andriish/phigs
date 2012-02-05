@@ -1078,6 +1078,27 @@ void phg_draw_fill_area_set(
 }
 
 /*******************************************************************************
+ * phg_draw_fill_area_set3
+ *
+ * DESCR:	Draw fill area set 3D
+ * RETURNS:	N/A
+ */
+
+void phg_draw_fill_area_set3(
+   Ws *ws,
+   Ppoint_list_list3 *point_list_list,
+   Ws_attr_st *ast
+   )
+{
+   Pint i, num_lists;
+
+   num_lists = point_list_list->num_point_lists;
+   for (i = 0; i < num_lists; i++) {
+      phg_draw_fill_area3(ws, &point_list_list->point_lists[i], ast);
+   }
+}
+
+/*******************************************************************************
  * phg_draw_text
  *
  * DESCR:	Draw text

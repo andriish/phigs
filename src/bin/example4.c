@@ -25,65 +25,104 @@
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>
 
-#define WIDTH         0.5
-#define HEIGHT        0.5
+#define ANGLE_DELTA   0.1
+#define WIDTH         1.0
+#define HEIGHT        1.0
+#define DEPTH         1.0
 #define STRUCT_OBJECT   0
+#define LABEL_TRANS    10
 
-Ppoint pts_quad1[] = {
-   {0.0, 0.0},
-   {WIDTH, 0.0 },
-   {WIDTH, HEIGHT},
-   {0.0, HEIGHT}
+Ppoint3 pts_cube[] = {
+   /* Front */
+   {0.0, 0.0, 0.0},
+   {WIDTH, 0.0, 0.0},
+   {WIDTH, HEIGHT, 0.0},
+   {0.0, HEIGHT, 0.0},
+
+   /* Back */
+   {0.0, 0.0, DEPTH},
+   {WIDTH, 0.0, DEPTH},
+   {WIDTH, HEIGHT, DEPTH},
+   {0.0, HEIGHT, DEPTH},
+
+   /* Bottom */
+   {0.0, 0.0, 0.0},
+   {WIDTH, 0.0, 0.0},
+   {WIDTH, 0.0, DEPTH},
+   {0.0, 0.0, DEPTH},
+
+   /* Top */
+   {0.0, HEIGHT, 0.0},
+   {WIDTH, HEIGHT, 0.0},
+   {WIDTH, HEIGHT, DEPTH},
+   {0.0, HEIGHT, DEPTH},
+
+   /* Left */
+   {0.0, 0.0, 0.0},
+   {0.0, 0.0, DEPTH},
+   {0.0, HEIGHT, DEPTH},
+   {0.0, HEIGHT, 0.0},
+
+   /* Right */
+   {WIDTH, 0.0, 0.0},
+   {WIDTH, 0.0, DEPTH},
+   {WIDTH, HEIGHT, DEPTH},
+   {WIDTH, HEIGHT, 0.0}
 };
 
-Ppoint_list plist_quad1 = {
-   4, pts_quad1
+Ppoint_list3 plist_cube[] = {
+   {4, &pts_cube[0]},
+   {4, &pts_cube[4]},
+   {4, &pts_cube[8]},
+   {4, &pts_cube[12]},
+   {4, &pts_cube[16]},
+   {4, &pts_cube[20]}
 };
 
-Ppoint pts_quad2[] = {
-   {WIDTH, HEIGHT},
-   {2.0 * WIDTH, HEIGHT},
-   {2.0 * WIDTH, 2.0 * HEIGHT},
-   {WIDTH, 2.0 * HEIGHT}
+Ppoint_list_list3 shape = {
+   6, plist_cube
 };
-
-Ppoint_list plist_quad2 = {
-   4, pts_quad2
-};
-
-Ppoint_list_list shape;
 
 Pint errnum;
-Pgcolr green, yellow;
+Pmatrix3 rot3, rotx, roty;
+Pint view_ind = 5;
+Pfloat angle_x = 0.0;
+Pfloat angle_y = 0.0;
+Pgcolr blue;
 
 int main(int argc, char *argv[])
 {
    XEvent event;
    KeySym ks;
 
-   green.type = PMODEL_RGB;
-   green.val.general.x = 0.0;
-   green.val.general.y = 1.0;
-   green.val.general.z = 0.0;
+   if (argc > 1) {
+      view_ind = atoi(argv[1]);
+      printf("Use view: %d\n", view_ind);
+   }
 
-   yellow.type = PMODEL_RGB;
-   yellow.val.general.x = 1.0;
-   yellow.val.general.y = 1.0;
-   yellow.val.general.z = 0.0;
+   blue.type = PMODEL_RGB;
+   blue.val.general.x = 0.0;
+   blue.val.general.y = 0.0;
+   blue.val.general.z = 1.0;
 
-   shape.num_point_lists = 2;
-   shape.point_lists = malloc(sizeof(Ppoint_list) * 2);
-   memcpy(&shape.point_lists[0], &plist_quad1, sizeof(Ppoint_list));
-   memcpy(&shape.point_lists[1], &plist_quad2, sizeof(Ppoint_list));
    popen_phigs(NULL, 0);
+   phg_mat_identity(rot3);
 
    popen_struct(STRUCT_OBJECT);
-   pset_int_colr(&green);
-   pfill_area_set(&shape);
+   pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
+   pset_view_ind(view_ind);
+   pset_edge_flag(PEDGE_ON);
+   pset_int_colr(&blue);
+   plabel(LABEL_TRANS);
+   pset_local_tran3(rot3, PTYPE_REPLACE);
+   pfill_area_set3(&shape);
    pclose_struct();
 
    popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);
+   pset_hlhsr_mode(0, PHIGS_HLHSR_MODE_ZBUFF);
+   pset_disp_upd_st(0, PDEFER_BNIL, PMODE_UQUM);
    ppost_struct(0, STRUCT_OBJECT, 0);
+   pupd_ws(0, PFLAG_PERFORM);
 
    XSelectInput(PHG_WSID(0)->display,
                 PHG_WSID(0)->drawable_id,
@@ -99,18 +138,29 @@ int main(int argc, char *argv[])
 
          case KeyPress:
             ks = XLookupKeysym((XKeyEvent *) &event, 0);
-            if (ks == XK_Down) {
-               punpost_struct(0, 1);
-               pupd_ws(0, PFLAG_PERFORM);
+            if (ks == XK_Up) {
+               angle_x -= ANGLE_DELTA;
             }
-            else if (ks == XK_Up) {
-               ppost_struct(0, 1, 0);
-               pupd_ws(0, PFLAG_PERFORM);
+            else if (ks == XK_Down) {
+               angle_x += ANGLE_DELTA;
             }
             else if (ks == XK_Left) {
-               punpost_all_structs(0);
-               pupd_ws(0, PFLAG_PERFORM);
+               angle_y -= ANGLE_DELTA;
             }
+            else if (ks == XK_Right) {
+               angle_y += ANGLE_DELTA;
+            }
+            protate_x(angle_x * 3.14 / 2.0, &errnum, rotx);
+            protate_y(angle_y * 3.14 / 2.0, &errnum, roty);
+            pcompose_matrix3(rotx, roty, &errnum, rot3);
+            popen_struct(STRUCT_OBJECT);
+            pset_elem_ptr(0);
+            pset_elem_ptr_label(LABEL_TRANS);
+            pset_edit_mode(PEDIT_REPLACE);
+            poffset_elem_ptr(1);
+            pset_local_tran3(rot3, PTYPE_REPLACE);
+            pclose_struct();
+            pupd_ws(0, PFLAG_PERFORM);
             break;
 
          default:

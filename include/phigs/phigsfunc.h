@@ -811,6 +811,17 @@ void pfill_area_set(
    );
 
 /*******************************************************************************
+ * pfill_area_set3
+ *
+ * DESCR:       Creates a new element - Fill area set 3D
+ * RETURNS:     N/A
+ */
+
+void pfill_area_set3(
+   Ppoint_list_list3 *point_list_list
+   );
+
+/*******************************************************************************
  * plabel
  *
  * DESCR:       Creates a new element - Label
