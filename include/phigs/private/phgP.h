@@ -63,6 +63,12 @@
 #define PHG_DATA_POINT_LIST(ELMT) \
    ((Ppoint_list *) (((Css_eldata *) (ELMT))->ptr))
 
+#define PHG_POINT_LIST_LIST(ELMT) \
+   ((Ppoint_list_list *) ((ELMT)->eldata.ptr))
+
+#define PHG_DATA_POINT_LIST_LIST(ELMT) \
+   ((Ppoint_list_list *) (((Css_eldata *) (ELMT))->ptr))
+
 #define PHG_POINT_LIST3(ELMT) \
    ((Ppoint_list3 *) ((ELMT)->eldata.ptr))
 

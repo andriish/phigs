@@ -494,6 +494,19 @@ void phg_draw_fill_area3(
    );
 
 /*******************************************************************************
+ * phg_draw_fill_area_set
+ *
+ * DESCR:       Draw fill area set
+ * RETURNS:     N/A
+ */
+
+void phg_draw_fill_area_set(
+   Ws *ws,
+   Ppoint_list_list *point_list_list,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * phg_draw_text
  *
  * DESCR:       Draw text
