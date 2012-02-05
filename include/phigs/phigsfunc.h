@@ -208,6 +208,7 @@
 #define         Pfn_set_text_colr               (313)
 #define         Pfn_set_int_colr                (316)
 #define         Pfn_set_edge_colr               (327)
+#define         Pfn_fill_area3_data             (328)
 
 #define         Pfn_INQUIRY                     (1000)
 
@@ -819,6 +820,22 @@ void pfill_area_set(
 
 void pfill_area_set3(
    Ppoint_list_list3 *point_list_list
+   );
+
+/*******************************************************************************
+ * pfill_area3_data
+ *
+ * DESCR:       Creates a new element - Fill area with data 3D
+ * RETURNS:     N/A
+ */
+
+void pfill_area3_data(
+   Pint fflag,
+   Pint vflag,
+   Pint colr_model,
+   Pfacet_data3 *fdata,
+   Pint num_vertices,
+   Pfacet_vdata3 *vdata
    );
 
 /*******************************************************************************

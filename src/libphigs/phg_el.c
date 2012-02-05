@@ -524,6 +524,41 @@ void pfill_area_set3(
 }
 
 /*******************************************************************************
+ * pfill_area3_data
+ *
+ * DESCR:	Creates a new element - Fill area with data 3D
+ * RETURNS:	N/A
+ */
+
+void pfill_area3_data(
+   Pint fflag,
+   Pint vflag,
+   Pint colr_model,
+   Pfacet_data3 *fdata,
+   Pint num_vertices,
+   Pfacet_vdata3 *vdata
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_fill_area3_data);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA3_DATA;
+      ARGS_ELMT_DATA(&args).fasd3.fflag = fflag;
+      ARGS_ELMT_DATA(&args).fasd3.vflag = vflag;
+      ARGS_ELMT_DATA(&args).fasd3.colr_model = colr_model;
+      memcpy(&ARGS_ELMT_DATA(&args).fasd3.fdata, fdata, sizeof(Pfacet_data3));
+      ARGS_ELMT_DATA(&args).fasd3.num_vertices = num_vertices;
+      ARGS_ELMT_DATA(&args).fasd3.vdata = vdata;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * plabel
  *
  * DESCR:	Creates a new element - Label
