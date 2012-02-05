@@ -664,6 +664,85 @@ int phg_handle_point_list_list3(
 }
 
 /*******************************************************************************
+ * phg_handle_fasd3
+ *
+ * DESCR:       Handle facet list 3D
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_fasd3(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   Pfasd3 *data, *fasd3;
+   Pint num_vertices;
+   Pfacet_vdata3 *vdata;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         fasd3 = &ARGS_ELMT_DATA(argdata).fasd3;
+         data = malloc(sizeof(Pfasd3));
+         if (data == NULL)
+            return (FALSE);
+
+         data->colr_model = fasd3->colr_model;
+         switch(fasd3->fflag) {
+            case PFA_COLOUR:
+               memcpy(&data->fdata.colour,
+                      &fasd3->fdata.colour,
+                      sizeof(Pcoval));
+               break;
+
+            default:
+               break;
+         }
+         data->fflag = fasd3->fflag;
+
+         num_vertices = fasd3->num_vertices;
+         switch (fasd3->vflag) {
+            case PVERT_COLOUR:
+               vdata = malloc(sizeof(Pfacet_vdata3) +
+                              num_vertices * sizeof(Pptco3));
+               vdata->ptco = (Pptco3 *) &vdata[1];
+               memcpy(vdata->ptco,
+                      fasd3->vdata->ptco,
+                      num_vertices * sizeof(Pptco3));
+               data->num_vertices = num_vertices;
+               data->vdata = vdata;
+               break;
+
+            default:
+               break;
+         }
+         data->vflag = fasd3->vflag;
+
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_REPLACE:
+         return (FALSE);
+      break;
+
+      case CSS_EL_COPY:
+         return (FALSE);
+      break;
+
+      case CSS_EL_FREE:
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
+   }
+
+   return (TRUE);
+}
+
+/*******************************************************************************
  * phg_handle_text
  *
  * DESCR:	Handle text

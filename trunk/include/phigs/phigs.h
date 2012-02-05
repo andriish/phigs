@@ -22,31 +22,43 @@
 #define _phigs_h
 
 /* Max name length */
-#define PHIGS_MAX_NAME_LEN   255
+#define PHIGS_MAX_NAME_LEN      255
 
 /* Line types */
-#define PLINE_SOLID            1
-#define PLINE_DASH             2
-#define PLINE_DOT              3
-#define PLINE_DASH_DOT         4
+#define PLINE_SOLID               1
+#define PLINE_DASH                2
+#define PLINE_DOT                 3
+#define PLINE_DASH_DOT            4
 
 /* Marker types */
-#define PMARKER_DOT            1
-#define PMARKER_PLUS           2
-#define PMARKER_ASTERISK       3
-#define PMARKER_CIRLCE         4
-#define PMARKER_CROSS          5
+#define PMARKER_DOT               1
+#define PMARKER_PLUS              2
+#define PMARKER_ASTERISK          3
+#define PMARKER_CIRLCE            4
+#define PMARKER_CROSS             5
 
 /* Color model */
-#define PINDIRECT              0
-#define PMODEL_RGB             1
+#define PINDIRECT                 0
+#define PMODEL_RGB                1
 
 /* HLHSR constants */
-#define PHIGS_HLHSR_MODE_NONE  0
-#define PHIGS_HLHSR_MODE_ZBUFF 1
+#define PHIGS_HLHSR_MODE_NONE     0
+#define PHIGS_HLHSR_MODE_ZBUFF    1
 
-#define PHIGS_HLHSR_ID_OFF     0
-#define PHIGS_HLHSR_ID_ON      1
+#define PHIGS_HLHSR_ID_OFF        0
+#define PHIGS_HLHSR_ID_ON         1
+
+/* Facet data flags */
+#define PFA_NONE                  0
+#define PFA_COLOUR                1
+#define PFA_NORMAL                2
+#define PFA_COLOUR_NORMAL         3
+
+/* Vertex data flags */
+#define PVERT_COORD               0
+#define PVERT_COLOUR              1
+#define PVERT_NORMAL              2
+#define PVERT_COLOUR_NORMAL       3
 
 /* PHIGS states */
 typedef enum {
@@ -88,6 +100,7 @@ typedef enum {
    PELEM_FILL_AREA3,
    PELEM_FILL_AREA_SET,
    PELEM_FILL_AREA_SET3,
+   PELEM_FILL_AREA3_DATA,
    PELEM_POLYLINE,
    PELEM_POLYLINE3,
    PELEM_POLYMARKER,
@@ -526,6 +539,28 @@ typedef union {
    Phsv hsv;
 } Pcolr_rep;
 
+typedef union {
+   Pint      ind;
+   Pcolr_rep direct;
+} Pcoval;
+
+typedef struct {
+   Ppoint3 point;
+   struct {
+      Pfloat x;
+      Pfloat y;
+      Pfloat z;
+   } colour;
+} Pptco3;
+
+typedef union {
+   Pcoval     colour;
+} Pfacet_data3;
+
+typedef union {
+   Pptco3     *ptco;
+} Pfacet_vdata3;
+
 typedef struct {
    Pint size_x;
    Pint size_y;
@@ -570,6 +605,15 @@ typedef struct {
    Pposted_struct *postings;
 } Pposted_struct_list;
 
+typedef struct {
+   Pint          fflag;
+   Pint          vflag;
+   Pint          colr_model;
+   Pfacet_data3  fdata;
+   Pint          num_vertices;
+   Pfacet_vdata3 *vdata;
+} Pfasd3;
+
 typedef union {
    Pint              int_data;
    Pfloat            float_data;
@@ -577,6 +621,7 @@ typedef union {
    Ppoint_list3      point_list3;
    Ppoint_list_list  point_list_list;
    Ppoint_list_list3 point_list_list3;
+   Pfasd3            fasd3;
    Ptext             text;
    Pasf_info         asf_info;
    Plocal_tran       local_tran;

@@ -166,6 +166,7 @@ void css_print_eltype(Pelem_type eltype)
         case PELEM_FILL_AREA3: name = "PELEM_FILL_AREA3"; break;
         case PELEM_FILL_AREA_SET: name = "PELEM_FILL_AREA_SET"; break;
         case PELEM_FILL_AREA_SET3: name = "PELEM_FILL_AREA_SET3"; break;
+        case PELEM_FILL_AREA3_DATA: name = "PELEM_FILL_AREA3_DATA"; break;
         case PELEM_FILL_AREA: name = "PELEM_FILL_AREA"; break;
         case PELEM_LINE_IND: name = "PELEM_LINE_IND"; break;
         case PELEM_LINETYPE: name = "PELEM_LINETYPE"; break;
