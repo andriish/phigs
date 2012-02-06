@@ -539,27 +539,29 @@ typedef union {
    Phsv hsv;
 } Pcolr_rep;
 
+typedef struct {
+   Pfloat x;
+   Pfloat y;
+   Pfloat z;
+} Pcobundl;
+
 typedef union {
-   Pint      ind;
-   Pcolr_rep direct;
+   Pint     ind;
+   Pcobundl direct;
 } Pcoval;
+
+typedef union {
+   Pcoval colour;
+} Pfacet_data3;
 
 typedef struct {
    Ppoint3 point;
-   struct {
-      Pfloat x;
-      Pfloat y;
-      Pfloat z;
-   } colour;
+   Pcoval  colour;
 } Pptco3;
 
 typedef union {
-   Pcoval     colour;
-} Pfacet_data3;
-
-typedef union {
-   Pptco3     *ptco;
-} Pfacet_vdata3;
+   Pptco3 *ptco;
+} Pvertex_data3;
 
 typedef struct {
    Pint size_x;
@@ -611,7 +613,7 @@ typedef struct {
    Pint          colr_model;
    Pfacet_data3  fdata;
    Pint          num_vertices;
-   Pfacet_vdata3 *vdata;
+   Pvertex_data3 *vdata;
 } Pfasd3;
 
 typedef union {

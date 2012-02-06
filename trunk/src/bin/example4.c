@@ -90,44 +90,6 @@ Pfloat angle_x = 0.0;
 Pfloat angle_y = 0.0;
 Pgcolr blue;
 
-void init_shape(void)
-{
-   Pptco3 vertex_data[4];
-   Pfacet_data3 fdata;
-   Pfacet_vdata3 vdata;
-
-   vertex_data[0].point.x = 0.0;
-   vertex_data[0].point.y = 0.0;
-   vertex_data[0].point.z = 0.0;
-   vertex_data[0].colour.x = 1.0;
-   vertex_data[0].colour.y = 0.0;
-   vertex_data[0].colour.z = 0.0;
-
-   vertex_data[1].point.x = WIDTH;
-   vertex_data[1].point.y = 0.0;
-   vertex_data[1].point.z = 0.0;
-   vertex_data[1].colour.x = 1.0;
-   vertex_data[1].colour.y = 1.0;
-   vertex_data[1].colour.z = 0.0;
-
-   vertex_data[2].point.x = WIDTH;
-   vertex_data[2].point.y = HEIGHT;
-   vertex_data[2].point.z = 0.0;
-   vertex_data[2].colour.x = 0.0;
-   vertex_data[2].colour.y = 1.0;
-   vertex_data[2].colour.z = 1.0;
-
-   vertex_data[3].point.x = 0.0;
-   vertex_data[3].point.y = HEIGHT;
-   vertex_data[3].point.z = 0.0;
-   vertex_data[3].colour.x = 1.0;
-   vertex_data[3].colour.y = 0.0;
-   vertex_data[3].colour.z = 1.0;
-
-   vdata.ptco = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_COLOUR, PMODEL_RGB, &fdata, 4, &vdata);
-}
-
 int main(int argc, char *argv[])
 {
    XEvent event;

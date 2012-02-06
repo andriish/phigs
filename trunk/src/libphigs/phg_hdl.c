@@ -679,7 +679,7 @@ int phg_handle_fasd3(
 {
    Pfasd3 *data, *fasd3;
    Pint num_vertices;
-   Pfacet_vdata3 *vdata;
+   Pvertex_data3 *vdata;
 
    switch (op) {
       case CSS_EL_CREATE:
@@ -704,7 +704,7 @@ int phg_handle_fasd3(
          num_vertices = fasd3->num_vertices;
          switch (fasd3->vflag) {
             case PVERT_COLOUR:
-               vdata = malloc(sizeof(Pfacet_vdata3) +
+               vdata = malloc(sizeof(Pvertex_data3) +
                               num_vertices * sizeof(Pptco3));
                vdata->ptco = (Pptco3 *) &vdata[1];
                memcpy(vdata->ptco,

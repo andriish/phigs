@@ -1099,6 +1099,52 @@ void phg_draw_fill_area_set3(
 }
 
 /*******************************************************************************
+ * phg_draw_fill_area3_data
+ *
+ * DESCR:	Draw fill area width data 3D
+ * RETURNS:	N/A
+ */
+
+void phg_draw_fill_area3_data(
+   Ws *ws,
+   Pfasd3 *fasd3,
+   Ws_attr_st *ast
+   )
+{
+   Pint i;
+
+   switch (fasd3->vflag) {
+      case PVERT_COLOUR:
+         if (fasd3->colr_model == PMODEL_RGB) {
+            glBegin(GL_POLYGON);
+            for (i = 0; i < fasd3->num_vertices; i++) {
+               glColor3f(fasd3->vdata->ptco[i].colour.direct.x,
+                         fasd3->vdata->ptco[i].colour.direct.y,
+                         fasd3->vdata->ptco[i].colour.direct.z);
+               glVertex3f(fasd3->vdata->ptco[i].point.x,
+                          fasd3->vdata->ptco[i].point.y,
+                          fasd3->vdata->ptco[i].point.z);
+            }
+            glEnd();
+         }
+         else if (fasd3->colr_model == PINDIRECT) {
+            glBegin(GL_POLYGON);
+            for (i = 0; i < fasd3->num_vertices; i++) {
+               glIndexi(fasd3->vdata->ptco[i].colour.ind);
+               glVertex3f(fasd3->vdata->ptco[i].point.x,
+                          fasd3->vdata->ptco[i].point.y,
+                          fasd3->vdata->ptco[i].point.z);
+            }
+            glEnd();
+         }
+         break;
+
+      default:
+         break;
+   }
+}
+
+/*******************************************************************************
  * phg_draw_text
  *
  * DESCR:	Draw text
