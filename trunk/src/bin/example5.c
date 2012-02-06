@@ -37,6 +37,7 @@ Pmatrix3 rot3, rotx, roty;
 Pint view_ind = 5;
 Pfloat angle_x = 0.0;
 Pfloat angle_y = 0.0;
+Pgcolr edge_colr;
 
 void init_shape(void)
 {
@@ -247,12 +248,20 @@ int main(int argc, char *argv[])
       printf("Use view: %d\n", view_ind);
    }
 
+   edge_colr.type = PMODEL_RGB;
+   edge_colr.val.general.x = 0.0;
+   edge_colr.val.general.y = 0.0;
+   edge_colr.val.general.z = 1.0;
+
    popen_phigs(NULL, 0);
    phg_mat_identity(rot3);
 
    popen_struct(STRUCT_OBJECT);
    pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
    pset_view_ind(view_ind);
+   pset_int_style(PSTYLE_SOLID);
+   pset_edge_flag(PEDGE_ON);
+   pset_edge_colr(&edge_colr);
    plabel(LABEL_TRANS);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    init_shape();
