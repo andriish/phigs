@@ -191,7 +191,7 @@ typedef enum {
 } Pedge_flag;
 
 typedef enum {
-   PSTYLE_HOLLOW,
+   PSTYLE_EMPTY,
    PSTYLE_SOLID,
    PSTYLE_PAT,
    PSTYLE_HATCH
