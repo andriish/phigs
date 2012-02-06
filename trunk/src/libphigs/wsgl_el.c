@@ -390,6 +390,37 @@ void phg_setup_int_attr(
 }
 
 /*******************************************************************************
+ * phg_setup_int_nocol
+ *
+ * DESCR:	Setup interior attributes without color helper function
+ * RETURNS:	N/A
+ */
+
+void phg_setup_int_attr_nocol(
+   Ws_attr_st *ast
+   )
+{
+   Pint_style style;
+   Pint style_ind;
+
+   style = phg_get_int_style(ast);
+   if (style == PSTYLE_HATCH) {
+      if (phg_nset_name_is_set(&ast->asf_nameset,
+          (Pint) PASPECT_INT_STYLE_IND)) {
+         style_ind = ast->indiv_group.int_bundle.style_ind;
+      }
+      else {
+         style_ind = ast->bundl_group.int_bundle.style_ind;
+      }
+      glEnable(GL_POLYGON_STIPPLE);
+      glPolygonStipple(wsgl_hatch_tbl[style_ind - 1]);
+   }
+   else {
+      glDisable(GL_POLYGON_STIPPLE);
+   }
+}
+
+/*******************************************************************************
  * phg_set_edge_ind
  *
  * DESCR:	Setup edge index
@@ -1122,7 +1153,7 @@ void phg_draw_fill_area3_data(
       case PVERT_COLOUR:
          if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
             if ((style == PSTYLE_SOLID) || (style == PSTYLE_HATCH)) {
-               phg_setup_int_attr(ast);
+               phg_setup_int_attr_nocol(ast);
                if (fasd3->colr_model == PMODEL_RGB) {
                   glBegin(GL_POLYGON);
                   for (i = 0; i < fasd3->num_vertices; i++) {
@@ -1188,7 +1219,7 @@ void phg_draw_fill_area3_data(
             }
             else if (((style == PSTYLE_SOLID) || (style == PSTYLE_HATCH)) &&
                       (flag == PEDGE_ON)) {
-               phg_setup_int_attr(ast);
+               phg_setup_int_attr_nocol(ast);
                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                glEnable(GL_POLYGON_OFFSET_FILL);
                phg_set_polygon_offset(phg_get_edge_width(ast));
