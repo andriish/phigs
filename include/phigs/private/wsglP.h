@@ -520,6 +520,19 @@ void phg_draw_fill_area_set3(
    );
 
 /*******************************************************************************
+ * phg_draw_fill_area3_data
+ *
+ * DESCR:       Draw fill area width data 3D
+ * RETURNS:     N/A
+ */
+
+void phg_draw_fill_area3_data(
+   Ws *ws,
+   Pfasd3 *fasd3,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * phg_draw_text
  *
  * DESCR:       Draw text

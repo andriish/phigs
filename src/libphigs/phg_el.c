@@ -536,7 +536,7 @@ void pfill_area3_data(
    Pint colr_model,
    Pfacet_data3 *fdata,
    Pint num_vertices,
-   Pfacet_vdata3 *vdata
+   Pvertex_data3 *vdata
    )
 {
    Phg_args_add_el args;
