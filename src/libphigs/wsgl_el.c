@@ -352,44 +352,6 @@ static Pint_style phg_get_int_style(
 }
 
 /*******************************************************************************
- * phg_setup_int_attr
- *
- * DESCR:	Setup interior attributes helper function
- * RETURNS:	N/A
- */
-
-void phg_setup_int_attr(
-   Ws_attr_st *ast
-   )
-{
-   Pint_style style;
-   Pint style_ind;
-
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_COLR_IND)) {
-      phg_set_gcolr(&ast->indiv_group.int_bundle.colr);
-   }
-   else {
-      phg_set_gcolr(&ast->bundl_group.int_bundle.colr);
-   }
-
-   style = phg_get_int_style(ast);
-   if (style == PSTYLE_HATCH) {
-      if (phg_nset_name_is_set(&ast->asf_nameset,
-          (Pint) PASPECT_INT_STYLE_IND)) {
-         style_ind = ast->indiv_group.int_bundle.style_ind;
-      }
-      else {
-         style_ind = ast->bundl_group.int_bundle.style_ind;
-      }
-      glEnable(GL_POLYGON_STIPPLE);
-      glPolygonStipple(wsgl_hatch_tbl[style_ind - 1]);
-   }
-   else {
-      glDisable(GL_POLYGON_STIPPLE);
-   }
-}
-
-/*******************************************************************************
  * phg_setup_int_nocol
  *
  * DESCR:	Setup interior attributes without color helper function
@@ -404,20 +366,55 @@ void phg_setup_int_attr_nocol(
    Pint style_ind;
 
    style = phg_get_int_style(ast);
-   if (style == PSTYLE_HATCH) {
-      if (phg_nset_name_is_set(&ast->asf_nameset,
-          (Pint) PASPECT_INT_STYLE_IND)) {
-         style_ind = ast->indiv_group.int_bundle.style_ind;
-      }
-      else {
-         style_ind = ast->bundl_group.int_bundle.style_ind;
-      }
-      glEnable(GL_POLYGON_STIPPLE);
-      glPolygonStipple(wsgl_hatch_tbl[style_ind - 1]);
+   switch (style) {
+      case PSTYLE_HOLLOW:
+         glDisable(GL_POLYGON_STIPPLE);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+         break;
+
+      case PSTYLE_SOLID:
+         glDisable(GL_POLYGON_STIPPLE);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+         break;
+
+      case PSTYLE_HATCH:
+         if (phg_nset_name_is_set(&ast->asf_nameset,
+             (Pint) PASPECT_INT_STYLE_IND)) {
+            style_ind = ast->indiv_group.int_bundle.style_ind;
+         }
+         else {
+            style_ind = ast->bundl_group.int_bundle.style_ind;
+         }
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+         glEnable(GL_POLYGON_STIPPLE);
+         glPolygonStipple(wsgl_hatch_tbl[style_ind - 1]);
+         break;
+
+      default:
+         glDisable(GL_POLYGON_STIPPLE);
+         break;
+   }
+}
+
+/*******************************************************************************
+ * phg_setup_int_attr
+ *
+ * DESCR:	Setup interior attributes helper function
+ * RETURNS:	N/A
+ */
+
+void phg_setup_int_attr(
+   Ws_attr_st *ast
+   )
+{
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_COLR_IND)) {
+      phg_set_gcolr(&ast->indiv_group.int_bundle.colr);
    }
    else {
-      glDisable(GL_POLYGON_STIPPLE);
+      phg_set_gcolr(&ast->bundl_group.int_bundle.colr);
    }
+
+   phg_setup_int_attr_nocol(ast);
 }
 
 /*******************************************************************************
@@ -690,9 +687,10 @@ static void phg_draw_marker_dot(
 
    glPointSize(scale);
    glBegin(GL_POINTS);
-   for (i = 0; i < point_list->num_points; i++)
+   for (i = 0; i < point_list->num_points; i++) {
       glVertex2f(point_list->points[i].x,
                  point_list->points[i].y);
+   }
    glEnd();
 }
 
@@ -910,9 +908,10 @@ void phg_draw_polyline(
 
    phg_setup_line_attr(ast);
    glBegin(GL_LINES);
-   for (i = 0; i < point_list->num_points; i++)
+   for (i = 0; i < point_list->num_points; i++) {
       glVertex2f(point_list->points[i].x,
                  point_list->points[i].y);
+   }
    glEnd();
 }
 
@@ -933,10 +932,11 @@ void phg_draw_polyline3(
 
    phg_setup_line_attr(ast);
    glBegin(GL_LINES);
-   for (i = 0; i < point_list->num_points; i++)
+   for (i = 0; i < point_list->num_points; i++) {
       glVertex3f(point_list->points[i].x,
                  point_list->points[i].y,
                  point_list->points[i].z);
+   }
    glEnd();
 }
 
@@ -971,21 +971,23 @@ void phg_draw_fill_area(
    Pint_style style;
 
    style = phg_get_int_style(ast);
-   if ((style == PSTYLE_SOLID) || (style == PSTYLE_HATCH)) {
+   if (style != PSTYLE_EMPTY) {
       phg_setup_int_attr(ast);
       glBegin(GL_POLYGON);
-      for (i = 0; i < point_list->num_points; i++)
+      for (i = 0; i < point_list->num_points; i++) {
          glVertex2f(point_list->points[i].x,
                     point_list->points[i].y);
+      }
       glEnd();
    }
 
    if (phg_get_edge_flag(ast) == PEDGE_ON) {
       phg_setup_edge_attr(ast);
       glBegin(GL_LINE_LOOP);
-      for (i = 0; i < point_list->num_points; i++)
+      for (i = 0; i < point_list->num_points; i++) {
          glVertex2f(point_list->points[i].x,
                     point_list->points[i].y);
+      }
       glEnd();
    }
 }
@@ -1011,29 +1013,31 @@ void phg_draw_fill_area3(
    style = phg_get_int_style(ast);
    flag = phg_get_edge_flag(ast);
    if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
-      if ((style == PSTYLE_SOLID) || (style == PSTYLE_HATCH)) {
+      if (style != PSTYLE_EMPTY) {
          phg_setup_int_attr(ast);
          glBegin(GL_POLYGON);
-         for (i = 0; i < point_list->num_points; i++)
+         for (i = 0; i < point_list->num_points; i++) {
             glVertex3f(point_list->points[i].x,
                        point_list->points[i].y,
                        point_list->points[i].z);
+         }
          glEnd();
       }
 
       if (flag == PEDGE_ON) {
          phg_setup_edge_attr(ast);
          glBegin(GL_LINE_LOOP);
-         for (i = 0; i < point_list->num_points; i++)
+         for (i = 0; i < point_list->num_points; i++) {
             glVertex3f(point_list->points[i].x,
                        point_list->points[i].y,
                        point_list->points[i].z);
+         }
          glEnd();
       }
    }
    else {
-      if ((style == PSTYLE_EMPTY) &&
-          (flag == PEDGE_ON)) {
+      if ((flag == PEDGE_ON) &&
+          ((style == PSTYLE_EMPTY) || (style == PSTYLE_HOLLOW))) {
          phg_set_polygon_offset(phg_get_edge_width(ast));
          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
          glEnable(GL_POLYGON_OFFSET_FILL);
@@ -1041,48 +1045,79 @@ void phg_draw_fill_area3(
                    wsgl->background.val.general.y,
                    wsgl->background.val.general.z);
          glBegin(GL_POLYGON);
-         for (i = 0; i < point_list->num_points; i++)
+         for (i = 0; i < point_list->num_points; i++) {
             glVertex3f(point_list->points[i].x,
                        point_list->points[i].y,
                        point_list->points[i].z);
+         }
          glEnd();
          glDisable(GL_POLYGON_OFFSET_FILL);
 
-         phg_setup_edge_attr(ast);
+         if (flag == PEDGE_ON) {
+            phg_setup_edge_attr(ast);
+         }
          glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
          glBegin(GL_POLYGON);
-         for (i = 0; i < point_list->num_points; i++)
+         for (i = 0; i < point_list->num_points; i++) {
             glVertex3f(point_list->points[i].x,
                        point_list->points[i].y,
                        point_list->points[i].z);
+         }
          glEnd();
-         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
       }
-      else if (((style == PSTYLE_SOLID) || (style == PSTYLE_HATCH)) &&
-               (flag == PEDGE_ON)) {
-         phg_setup_int_attr(ast);
+      else if ((flag == PEDGE_OFF) &&
+               (style == PSTYLE_HOLLOW)) {
+         phg_set_polygon_offset(phg_get_edge_width(ast));
          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
          glEnable(GL_POLYGON_OFFSET_FILL);
-         phg_set_polygon_offset(phg_get_edge_width(ast));
+         glColor3f(wsgl->background.val.general.x,
+                   wsgl->background.val.general.y,
+                   wsgl->background.val.general.z);
          glBegin(GL_POLYGON);
-         for (i = 0; i < point_list->num_points; i++)
+         for (i = 0; i < point_list->num_points; i++) {
             glVertex3f(point_list->points[i].x,
                        point_list->points[i].y,
                        point_list->points[i].z);
+         }
          glEnd();
          glDisable(GL_POLYGON_OFFSET_FILL);
 
-         phg_setup_edge_attr(ast);
-         glDisable(GL_POLYGON_STIPPLE);
-         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+         phg_setup_int_attr(ast);
          glBegin(GL_POLYGON);
-         for (i = 0; i < point_list->num_points; i++)
+         for (i = 0; i < point_list->num_points; i++) {
             glVertex3f(point_list->points[i].x,
                        point_list->points[i].y,
                        point_list->points[i].z);
+         }
          glEnd();
-         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      }
+      else {
+         if (style != PSTYLE_EMPTY) {
+            phg_setup_int_attr(ast);
+            glEnable(GL_POLYGON_OFFSET_FILL);
+            phg_set_polygon_offset(phg_get_edge_width(ast));
+            glBegin(GL_POLYGON);
+            for (i = 0; i < point_list->num_points; i++) {
+               glVertex3f(point_list->points[i].x,
+                          point_list->points[i].y,
+                          point_list->points[i].z);
+            }
+            glEnd();
+            glDisable(GL_POLYGON_OFFSET_FILL);
+         }
+
+         if (flag == PEDGE_ON) {
+            phg_setup_edge_attr(ast);
+            glDisable(GL_POLYGON_STIPPLE);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glBegin(GL_POLYGON);
+            for (i = 0; i < point_list->num_points; i++) {
+               glVertex3f(point_list->points[i].x,
+                          point_list->points[i].y,
+                          point_list->points[i].z);
+            }
+            glEnd();
+         }
       }
    }
 }
@@ -1152,7 +1187,7 @@ void phg_draw_fill_area3_data(
    switch (fasd3->vflag) {
       case PVERT_COLOUR:
          if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
-            if ((style == PSTYLE_SOLID) || (style == PSTYLE_HATCH)) {
+            if (style != PSTYLE_EMPTY) {
                phg_setup_int_attr_nocol(ast);
                if (fasd3->colr_model == PMODEL_RGB) {
                   glBegin(GL_POLYGON);
@@ -1177,6 +1212,7 @@ void phg_draw_fill_area3_data(
                   glEnd();
                }
             }
+
             if (flag == PEDGE_ON) {
                phg_setup_edge_attr(ast);
                glBegin(GL_LINE_LOOP);
@@ -1189,8 +1225,8 @@ void phg_draw_fill_area3_data(
             }
          }
          else {
-            if ((style == PSTYLE_EMPTY) &&
-                (flag == PEDGE_ON)) {
+            if ((flag == PEDGE_ON) &&
+                ((style == PSTYLE_EMPTY) || (style == PSTYLE_HOLLOW))) {
                phg_set_polygon_offset(phg_get_edge_width(ast));
                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                glEnable(GL_POLYGON_OFFSET_FILL);
@@ -1206,7 +1242,9 @@ void phg_draw_fill_area3_data(
                glEnd();
                glDisable(GL_POLYGON_OFFSET_FILL);
 
-               phg_setup_edge_attr(ast);
+               if (flag == PEDGE_ON) {
+                  phg_setup_edge_attr(ast);
+               }
                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                glBegin(GL_POLYGON);
                for (i = 0; i < fasd3->num_vertices; i++) {
@@ -1215,41 +1253,15 @@ void phg_draw_fill_area3_data(
                              fasd3->vdata->ptco[i].point.z);
                }
                glEnd();
-               glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             }
-            else if (((style == PSTYLE_SOLID) || (style == PSTYLE_HATCH)) &&
-                      (flag == PEDGE_ON)) {
-               phg_setup_int_attr_nocol(ast);
+            else if ((flag == PEDGE_OFF) &&
+                     (style == PSTYLE_HOLLOW)) {
+               phg_set_polygon_offset(phg_get_edge_width(ast));
                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                glEnable(GL_POLYGON_OFFSET_FILL);
-               phg_set_polygon_offset(phg_get_edge_width(ast));
-               if (fasd3->colr_model == PMODEL_RGB) {
-                  glBegin(GL_POLYGON);
-                  for (i = 0; i < fasd3->num_vertices; i++) {
-                     glColor3f(fasd3->vdata->ptco[i].colour.direct.x,
-                               fasd3->vdata->ptco[i].colour.direct.y,
-                               fasd3->vdata->ptco[i].colour.direct.z);
-                     glVertex3f(fasd3->vdata->ptco[i].point.x,
-                                fasd3->vdata->ptco[i].point.y,
-                                fasd3->vdata->ptco[i].point.z);
-                  }
-                  glEnd();
-               }
-               else if (fasd3->colr_model == PINDIRECT) {
-                  glBegin(GL_POLYGON);
-                  for (i = 0; i < fasd3->num_vertices; i++) {
-                     glIndexi(fasd3->vdata->ptco[i].colour.ind);
-                     glVertex3f(fasd3->vdata->ptco[i].point.x,
-                                fasd3->vdata->ptco[i].point.y,
-                                fasd3->vdata->ptco[i].point.z);
-                  }
-                  glEnd();
-               }
-               glDisable(GL_POLYGON_OFFSET_FILL);
-
-               phg_setup_edge_attr(ast);
-               glDisable(GL_POLYGON_STIPPLE);
-               glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+               glColor3f(wsgl->background.val.general.x,
+                         wsgl->background.val.general.y,
+                         wsgl->background.val.general.z);
                glBegin(GL_POLYGON);
                for (i = 0; i < fasd3->num_vertices; i++) {
                   glVertex3f(fasd3->vdata->ptco[i].point.x,
@@ -1257,7 +1269,64 @@ void phg_draw_fill_area3_data(
                              fasd3->vdata->ptco[i].point.z);
                }
                glEnd();
-               glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+               glDisable(GL_POLYGON_OFFSET_FILL);
+
+               phg_setup_int_attr_nocol(ast);
+               glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+               glBegin(GL_POLYGON);
+                  glColor3f(1.0, 0.0, 0.0);
+               for (i = 0; i < fasd3->num_vertices; i++) {
+                  glColor3f(fasd3->vdata->ptco[i].colour.direct.x,
+                            fasd3->vdata->ptco[i].colour.direct.y,
+                            fasd3->vdata->ptco[i].colour.direct.z);
+                  glVertex3f(fasd3->vdata->ptco[i].point.x,
+                             fasd3->vdata->ptco[i].point.y,
+                             fasd3->vdata->ptco[i].point.z);
+               }
+               glEnd();
+            }
+            else {
+               if (style != PSTYLE_EMPTY) {
+                  phg_setup_int_attr_nocol(ast);
+                  glEnable(GL_POLYGON_OFFSET_FILL);
+                  phg_set_polygon_offset(phg_get_edge_width(ast));
+                  if (fasd3->colr_model == PMODEL_RGB) {
+                     glBegin(GL_POLYGON);
+                     for (i = 0; i < fasd3->num_vertices; i++) {
+                        glColor3f(fasd3->vdata->ptco[i].colour.direct.x,
+                                  fasd3->vdata->ptco[i].colour.direct.y,
+                                  fasd3->vdata->ptco[i].colour.direct.z);
+                        glVertex3f(fasd3->vdata->ptco[i].point.x,
+                                   fasd3->vdata->ptco[i].point.y,
+                                   fasd3->vdata->ptco[i].point.z);
+                     }
+                     glEnd();
+                  }
+                  else if (fasd3->colr_model == PINDIRECT) {
+                     glBegin(GL_POLYGON);
+                     for (i = 0; i < fasd3->num_vertices; i++) {
+                        glIndexi(fasd3->vdata->ptco[i].colour.ind);
+                        glVertex3f(fasd3->vdata->ptco[i].point.x,
+                                   fasd3->vdata->ptco[i].point.y,
+                                   fasd3->vdata->ptco[i].point.z);
+                     }
+                     glEnd();
+                  }
+                  glDisable(GL_POLYGON_OFFSET_FILL);
+               }
+
+               if (flag == PEDGE_ON) {
+                  phg_setup_edge_attr(ast);
+                  glDisable(GL_POLYGON_STIPPLE);
+                  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                  glBegin(GL_POLYGON);
+                  for (i = 0; i < fasd3->num_vertices; i++) {
+                     glVertex3f(fasd3->vdata->ptco[i].point.x,
+                                fasd3->vdata->ptco[i].point.y,
+                                fasd3->vdata->ptco[i].point.z);
+                  }
+                  glEnd();
+               }
             }
          }
          break;

@@ -259,7 +259,6 @@ int main(int argc, char *argv[])
    popen_struct(STRUCT_OBJECT);
    pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
    pset_view_ind(view_ind);
-   pset_int_style(PSTYLE_SOLID);
    pset_edge_flag(PEDGE_ON);
    pset_edge_colr(&edge_colr);
    plabel(LABEL_TRANS);

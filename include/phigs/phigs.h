@@ -192,8 +192,8 @@ typedef enum {
 
 typedef enum {
    PSTYLE_EMPTY,
+   PSTYLE_HOLLOW,
    PSTYLE_SOLID,
-   PSTYLE_PAT,
    PSTYLE_HATCH
 } Pint_style;
 
