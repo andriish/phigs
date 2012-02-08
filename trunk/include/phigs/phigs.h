@@ -55,9 +55,10 @@
 #define PFA_COLOUR_NORMAL         3
 
 /* Vertex data flags */
-#define PVERT_COLOUR              0
-#define PVERT_NORMAL              1
-#define PVERT_COLOUR_NORMAL       2
+#define PVERT_POINT               0
+#define PVERT_COLOUR              1
+#define PVERT_NORMAL              2
+#define PVERT_COLOUR_NORMAL       3
 
 /* PHIGS states */
 typedef enum {
@@ -564,9 +565,17 @@ typedef struct {
    Pvec3   normal;
 } Pptnorm3;
 
+typedef struct {
+   Ppoint3 point;
+   Pcoval  colour;
+   Pvec3   normal;
+} Pptconorm3;
+
 typedef union {
-   Pptco3   *ptco;
-   Pptnorm3 *ptnorm;
+   Ppoint3    *point;
+   Pptco3     *ptco;
+   Pptnorm3   *ptnorm;
+   Pptconorm3 *ptconorm;
 } Pvertex_data3;
 
 typedef struct {
