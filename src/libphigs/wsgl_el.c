@@ -1179,6 +1179,54 @@ void phg_draw_fill_area_set3(
 }
 
 /*******************************************************************************
+ * phg_setup_facet_data3
+ *
+ * DESCR:	Setup facet data helper function 3D
+ * RETURNS:	N/A
+ */
+
+void phg_setup_facet_data3(
+   Pfasd3 *fasd3
+   )
+{
+   switch (fasd3->fflag) {
+      case PFA_COLOUR:
+         if (fasd3->colr_model == PMODEL_RGB) {
+            glColor3f(fasd3->fdata.colour.direct.x,
+                      fasd3->fdata.colour.direct.y,
+                      fasd3->fdata.colour.direct.z);
+         }
+         else if (fasd3->colr_model == PINDIRECT) {
+            glIndexi(fasd3->fdata.colour.ind);
+         }
+         break;
+
+      case PFA_NORMAL:
+         glNormal3f(fasd3->fdata.normal.delta_x,
+                    fasd3->fdata.normal.delta_y,
+                    fasd3->fdata.normal.delta_z);
+         break;
+
+      case PFA_COLOUR_NORMAL:
+         if (fasd3->colr_model == PMODEL_RGB) {
+            glColor3f(fasd3->fdata.conorm.colour.direct.x,
+                      fasd3->fdata.conorm.colour.direct.y,
+                      fasd3->fdata.conorm.colour.direct.z);
+         }
+         else if (fasd3->colr_model == PINDIRECT) {
+            glIndexi(fasd3->fdata.conorm.colour.ind);
+         }
+         glNormal3f(fasd3->fdata.conorm.normal.delta_x,
+                    fasd3->fdata.conorm.normal.delta_y,
+                    fasd3->fdata.conorm.normal.delta_z);
+         break;
+
+      default:
+         break;
+   }
+}
+
+/*******************************************************************************
  * phg_draw_fill_area3_data
  *
  * DESCR:	Draw fill area width data 3D
@@ -1203,23 +1251,7 @@ void phg_draw_fill_area3_data(
          if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
             if (style != PSTYLE_EMPTY) {
                phg_setup_int_attr_nocol(ast);
-               if ((fasd3->fflag == PFA_COLOUR) ||
-                   (fasd3->fflag == PFA_COLOUR_NORMAL)) {
-                  if (fasd3->colr_model == PMODEL_RGB) {
-                     glColor3f(fasd3->fdata.colour.direct.x,
-                               fasd3->fdata.colour.direct.y,
-                               fasd3->fdata.colour.direct.z);
-                  }
-                  else if (fasd3->colr_model == PINDIRECT) {
-                     glIndexi(fasd3->fdata.colour.ind);
-                  }
-               }
-               if ((fasd3->fflag == PFA_NORMAL) ||
-                   (fasd3->fflag == PFA_COLOUR_NORMAL)) {
-                  glNormal3f(fasd3->fdata.normal.delta_x,
-                             fasd3->fdata.normal.delta_y,
-                             fasd3->fdata.normal.delta_z);
-               }
+               phg_setup_facet_data3(fasd3);
                glBegin(GL_POLYGON);
                for (i = 0; i < fasd3->num_vertices; i++) {
                   glVertex3f(fasd3->vdata->point[i].x,
@@ -1285,23 +1317,7 @@ void phg_draw_fill_area3_data(
 
                phg_setup_int_attr_nocol(ast);
                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-               if ((fasd3->fflag == PFA_COLOUR) ||
-                   (fasd3->fflag == PFA_COLOUR_NORMAL)) {
-                  if (fasd3->colr_model == PMODEL_RGB) {
-                     glColor3f(fasd3->fdata.colour.direct.x,
-                               fasd3->fdata.colour.direct.y,
-                               fasd3->fdata.colour.direct.z);
-                  }
-                  else if (fasd3->colr_model == PINDIRECT) {
-                     glIndexi(fasd3->fdata.colour.ind);
-                  }
-               }
-               if ((fasd3->fflag == PFA_NORMAL) ||
-                   (fasd3->fflag == PFA_COLOUR_NORMAL)) {
-                  glNormal3f(fasd3->fdata.normal.delta_x,
-                             fasd3->fdata.normal.delta_y,
-                             fasd3->fdata.normal.delta_z);
-               }
+               phg_setup_facet_data3(fasd3);
                glBegin(GL_POLYGON);
                for (i = 0; i < fasd3->num_vertices; i++) {
                   glVertex3f(fasd3->vdata->point[i].x,
@@ -1315,23 +1331,7 @@ void phg_draw_fill_area3_data(
                   phg_setup_int_attr_nocol(ast);
                   glEnable(GL_POLYGON_OFFSET_FILL);
                   phg_set_polygon_offset(phg_get_edge_width(ast));
-                  if ((fasd3->fflag == PFA_COLOUR) ||
-                      (fasd3->fflag == PFA_COLOUR_NORMAL)) {
-                     if (fasd3->colr_model == PMODEL_RGB) {
-                        glColor3f(fasd3->fdata.colour.direct.x,
-                                  fasd3->fdata.colour.direct.y,
-                                  fasd3->fdata.colour.direct.z);
-                     }
-                     else if (fasd3->colr_model == PINDIRECT) {
-                        glIndexi(fasd3->fdata.colour.ind);
-                     }
-                  }
-                  if ((fasd3->fflag == PFA_NORMAL) ||
-                      (fasd3->fflag == PFA_COLOUR_NORMAL)) {
-                     glNormal3f(fasd3->fdata.normal.delta_x,
-                                fasd3->fdata.normal.delta_y,
-                                fasd3->fdata.normal.delta_z);
-                  }
+                  phg_setup_facet_data3(fasd3);
                   glBegin(GL_POLYGON);
                   for (i = 0; i < fasd3->num_vertices; i++) {
                      glVertex3f(fasd3->vdata->point[i].x,
@@ -1362,12 +1362,7 @@ void phg_draw_fill_area3_data(
          if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
             if (style != PSTYLE_EMPTY) {
                phg_setup_int_attr_nocol(ast);
-               if ((fasd3->fflag == PFA_NORMAL) ||
-                   (fasd3->fflag == PFA_COLOUR_NORMAL)) {
-                  glNormal3f(fasd3->fdata.normal.delta_x,
-                             fasd3->fdata.normal.delta_y,
-                             fasd3->fdata.normal.delta_z);
-               }
+               phg_setup_facet_data3(fasd3);
                if (fasd3->colr_model == PMODEL_RGB) {
                   glBegin(GL_POLYGON);
                   for (i = 0; i < fasd3->num_vertices; i++) {
@@ -1448,12 +1443,7 @@ void phg_draw_fill_area3_data(
 
                phg_setup_int_attr_nocol(ast);
                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-               if ((fasd3->fflag == PFA_NORMAL) ||
-                   (fasd3->fflag == PFA_COLOUR_NORMAL)) {
-                  glNormal3f(fasd3->fdata.normal.delta_x,
-                             fasd3->fdata.normal.delta_y,
-                             fasd3->fdata.normal.delta_z);
-               }
+               phg_setup_facet_data3(fasd3);
                if (fasd3->colr_model == PMODEL_RGB) {
                   glBegin(GL_POLYGON);
                   for (i = 0; i < fasd3->num_vertices; i++) {
@@ -1482,12 +1472,7 @@ void phg_draw_fill_area3_data(
                   phg_setup_int_attr_nocol(ast);
                   glEnable(GL_POLYGON_OFFSET_FILL);
                   phg_set_polygon_offset(phg_get_edge_width(ast));
-                  if ((fasd3->fflag == PFA_NORMAL) ||
-                      (fasd3->fflag == PFA_COLOUR_NORMAL)) {
-                     glNormal3f(fasd3->fdata.normal.delta_x,
-                                fasd3->fdata.normal.delta_y,
-                                fasd3->fdata.normal.delta_z);
-                  }
+                  phg_setup_facet_data3(fasd3);
                   if (fasd3->colr_model == PMODEL_RGB) {
                      glBegin(GL_POLYGON);
                      for (i = 0; i < fasd3->num_vertices; i++) {
@@ -1533,17 +1518,7 @@ void phg_draw_fill_area3_data(
          if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
             if (style != PSTYLE_EMPTY) {
                phg_setup_int_attr_nocol(ast);
-               if ((fasd3->fflag == PFA_COLOUR) ||
-                   (fasd3->fflag == PFA_COLOUR_NORMAL)) {
-                  if (fasd3->colr_model == PMODEL_RGB) {
-                     glColor3f(fasd3->fdata.colour.direct.x,
-                               fasd3->fdata.colour.direct.y,
-                               fasd3->fdata.colour.direct.z);
-                  }
-                  else if (fasd3->colr_model == PINDIRECT) {
-                     glIndexi(fasd3->fdata.colour.ind);
-                  }
-               }
+               phg_setup_facet_data3(fasd3);
                glBegin(GL_POLYGON);
                for (i = 0; i < fasd3->num_vertices; i++) {
                   glNormal3f(fasd3->vdata->ptnorm[i].normal.delta_x,
@@ -1612,17 +1587,7 @@ void phg_draw_fill_area3_data(
 
                phg_setup_int_attr_nocol(ast);
                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-               if ((fasd3->fflag == PFA_COLOUR) ||
-                   (fasd3->fflag == PFA_COLOUR_NORMAL)) {
-                  if (fasd3->colr_model == PMODEL_RGB) {
-                     glColor3f(fasd3->fdata.colour.direct.x,
-                               fasd3->fdata.colour.direct.y,
-                               fasd3->fdata.colour.direct.z);
-                  }
-                  else if (fasd3->colr_model == PINDIRECT) {
-                     glIndexi(fasd3->fdata.colour.ind);
-                  }
-               }
+               phg_setup_facet_data3(fasd3);
                glBegin(GL_POLYGON);
                for (i = 0; i < fasd3->num_vertices; i++) {
                   glNormal3f(fasd3->vdata->ptnorm[i].normal.delta_x,
@@ -1639,17 +1604,7 @@ void phg_draw_fill_area3_data(
                   phg_setup_int_attr_nocol(ast);
                   glEnable(GL_POLYGON_OFFSET_FILL);
                   phg_set_polygon_offset(phg_get_edge_width(ast));
-                  if ((fasd3->fflag == PFA_COLOUR) ||
-                      (fasd3->fflag == PFA_COLOUR_NORMAL)) {
-                     if (fasd3->colr_model == PMODEL_RGB) {
-                        glColor3f(fasd3->fdata.colour.direct.x,
-                                  fasd3->fdata.colour.direct.y,
-                                  fasd3->fdata.colour.direct.z);
-                     }
-                     else if (fasd3->colr_model == PINDIRECT) {
-                        glIndexi(fasd3->fdata.colour.ind);
-                     }
-                  }
+                  phg_setup_facet_data3(fasd3);
                   glBegin(GL_POLYGON);
                   for (i = 0; i < fasd3->num_vertices; i++) {
                      glNormal3f(fasd3->vdata->ptnorm[i].normal.delta_x,

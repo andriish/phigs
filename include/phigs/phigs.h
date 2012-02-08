@@ -550,11 +550,6 @@ typedef union {
    Pcobundl direct;
 } Pcoval;
 
-typedef union {
-   Pcoval colour;
-   Pvec3  normal;
-} Pfacet_data3;
-
 typedef struct {
    Ppoint3 point;
    Pcoval  colour;
@@ -570,6 +565,12 @@ typedef struct {
    Pcoval  colour;
    Pvec3   normal;
 } Pptconorm3;
+
+typedef union {
+   Pcoval     colour;
+   Pvec3      normal;
+   Pptconorm3 conorm;
+} Pfacet_data3;
 
 typedef union {
    Ppoint3    *point;
