@@ -55,6 +55,7 @@ typedef struct {
    Pint       id;
    Pint       offset;
    Pint       hlhsr_id;
+   int        lighting;
    Ws_attr_st ast;
    Nset       cur_nameset;
    u_int32_t  nameset_buf[WS_MAX_NAMES_IN_NAMESET / 32];
@@ -71,11 +72,11 @@ typedef struct {
 } Ws_filter;
 
 typedef struct _Wsgl {
-   Plimit3         curr_win;
-   Pint            win_changed;
-   Plimit3         curr_vp;
-   Pint            vp_changed;
-   Pint            hlhsr_changed;
+   Plimit3         cur_win;
+   int             win_changed;
+   Plimit3         cur_vp;
+   int             vp_changed;
+   int             hlhsr_changed;
    Pint            hlhsr_mode;
    Pgcolr          background;
    Ws_render_mode  render_mode;
