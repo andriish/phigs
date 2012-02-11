@@ -60,6 +60,12 @@
 #define PVERT_NORMAL              2
 #define PVERT_COLOUR_NORMAL       3
 
+/* Light source types */
+#define PLIGHT_AMBIENT            0
+#define PLIGHT_DIRECTIONAL        1
+#define PLIGHT_POSITIONAL         2
+#define PLIGHT_SPOT               3
+
 /* PHIGS states */
 typedef enum {
    PSYS_ST_PHCL,
@@ -578,6 +584,42 @@ typedef union {
    Pptnorm3   *ptnorm;
    Pptconorm3 *ptconorm;
 } Pvertex_data3;
+
+typedef struct {
+   Pgcolr colr;
+} Pamb_light_src_rec;
+
+typedef struct {
+   Pgcolr colr;
+   Pvec3  dir;
+} Pdir_light_src_rec;
+
+typedef struct {
+   Pgcolr  colr;
+   Ppoint3 pos;
+   Pfloat  coef[2];
+} Ppos_light_src_rec;
+
+typedef struct {
+   Pgcolr  colr;
+   Ppoint3 pos;
+   Pvec3   dir;
+   Pfloat  exp;
+   Pfloat  coef[2];
+   Pfloat  angle;
+} Pspot_light_src_rec;
+
+typedef union {
+   Pamb_light_src_rec  ambient;
+   Pdir_light_src_rec  directional;
+   Ppos_light_src_rec  positional;
+   Pspot_light_src_rec spot;
+} Plight_src_rec;
+
+typedef struct {
+   Pint           type;
+   Plight_src_rec rec;
+} Plight_src_bundle;
 
 typedef struct {
    Pint size_x;

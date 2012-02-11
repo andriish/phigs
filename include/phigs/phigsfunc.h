@@ -209,6 +209,7 @@
 #define         Pfn_set_int_colr                (316)
 #define         Pfn_set_edge_colr               (327)
 #define         Pfn_fill_area3_data             (328)
+#define         Pfn_set_light_src_rep           (329)
 
 #define         Pfn_INQUIRY                     (1000)
 
@@ -459,6 +460,19 @@ void pset_view_tran_in_pri(
    Pint view_ind,
    Pint ref_view_ind,
    Prel_pri rel_pri
+   );
+
+/*******************************************************************************
+ * pset_light_src_rep
+ *
+ * DESCR:       Set light source for workstation
+ * RETURNS:     N/A
+ */
+
+void pset_light_src_rep(
+   Pint ws_id,
+   Pint light_src_ind,
+   Plight_src_bundle *light_src_rep
    );
 
 /*******************************************************************************

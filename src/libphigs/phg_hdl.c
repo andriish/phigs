@@ -696,6 +696,18 @@ int phg_handle_fasd3(
                       sizeof(Pcoval));
                break;
 
+            case PFA_NORMAL:
+               memcpy(&data->fdata.normal,
+                      &fasd3->fdata.normal,
+                      sizeof(Pvec3));
+               break;
+
+            case PFA_COLOUR_NORMAL:
+               memcpy(&data->fdata.conorm,
+                      &fasd3->fdata.conorm,
+                      sizeof(Pptconorm3));
+               break;
+
             default:
                break;
          }
@@ -710,6 +722,28 @@ int phg_handle_fasd3(
                memcpy(vdata->ptco,
                       fasd3->vdata->ptco,
                       num_vertices * sizeof(Pptco3));
+               data->num_vertices = num_vertices;
+               data->vdata = vdata;
+               break;
+
+            case PVERT_NORMAL:
+               vdata = malloc(sizeof(Pvertex_data3) +
+                              num_vertices * sizeof(Pptnorm3));
+               vdata->ptnorm = (Pptnorm3 *) &vdata[1];
+               memcpy(vdata->ptnorm,
+                      fasd3->vdata->ptnorm,
+                      num_vertices * sizeof(Pptnorm3));
+               data->num_vertices = num_vertices;
+               data->vdata = vdata;
+               break;
+
+            case PVERT_COLOUR_NORMAL:
+               vdata = malloc(sizeof(Pvertex_data3) +
+                              num_vertices * sizeof(Pptconorm3));
+               vdata->ptconorm = (Pptconorm3 *) &vdata[1];
+               memcpy(vdata->ptconorm,
+                      fasd3->vdata->ptconorm,
+                      num_vertices * sizeof(Pptconorm3));
                data->num_vertices = num_vertices;
                data->vdata = vdata;
                break;

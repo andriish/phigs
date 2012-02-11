@@ -67,6 +67,7 @@ typedef union {
    Pedge_bundle_plus   extedgerep;
    Pcolr_rep           corep;
    Pview_rep3          viewrep;
+   Plight_src_bundle   lightsrcrep;
 } Phg_ret_rep;
 
 typedef struct {

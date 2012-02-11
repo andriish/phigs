@@ -109,6 +109,11 @@ int phg_wsb_create_LUTs(
         goto end;
     }
 
+    if (!phg_create_table(&ows->htab.light_source, &err, HASH_SIZE)) {
+        status = 0;
+        goto end;
+    }
+
 end:
 
     if (!status) {
@@ -145,6 +150,8 @@ void phg_wsb_destroy_LUTs(
        phg_htab_destroy(ows->htab.colour, (void(*)())NULL);
     if (ows->htab.view)
        phg_htab_destroy(ows->htab.view, (void(*)())NULL);
+    if (ows->htab.light_source)
+       phg_htab_destroy(ows->htab.light_source, (void(*)())NULL);
 }
 
 /*******************************************************************************
@@ -392,6 +399,26 @@ void phg_wsb_set_LUT_entry(
             }
             break;
 
+        case PHG_ARGS_LIGHTSRCREP:
+#ifdef DEBUG
+            printf("Set lightsrcrep: %d\n", rep->index);
+#endif
+            data = malloc(sizeof(Plight_src_bundle));
+            if (data != NULL) {
+                memcpy(data,
+                       &rep->bundl.lightsrcrep,
+                       sizeof(Plight_src_bundle));
+                if (!phg_htab_add_entry(ows->htab.light_source,
+                                        rep->index,
+                                        data)) {
+                    ERR_BUF(ws->erh, ERR900);
+                }
+            }
+            else {
+                ERR_BUF(ws->erh, ERR900);
+            }
+            break;
+
         default:
             break;
     }
@@ -520,6 +547,19 @@ void phg_wsb_inq_LUT_entry(
                 printf("\n");
                 phg_mat_print(vrep->map_matrix);
 #endif
+                ret->err = 0;
+            }
+            break;
+
+        case PHG_ARGS_LIGHTSRCREP:
+#ifdef DEBUG
+            printf("Inq light source: %d\n", index);
+#endif
+            if (!phg_htab_get_entry(ows->htab.light_source, index, &data)) {
+                ret->err = ERR101;
+            }
+            else {
+                memcpy(&rep->lightsrcrep, data, sizeof(Plight_src_bundle));
                 ret->err = 0;
             }
             break;
