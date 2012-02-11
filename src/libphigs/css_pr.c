@@ -205,6 +205,7 @@ void css_print_eltype(Pelem_type eltype)
         case PELEM_MARKER_COLR: name = "PELEM_MARKER_COLR"; break;
         case PELEM_EDGE_COLR: name = "PELEM_EDGE_COLR"; break;
         case PELEM_TEXT_COLR: name = "PELEM_TEXT_COLR"; break;
+        case PELEM_LIGHT_SRC_STATE: name = "PELEM_LIGHT_SRC_STATE"; break;
 
       default:
 	fprintf(stderr, "UNKNOWN TYPE: %d", eltype);

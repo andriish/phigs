@@ -210,6 +210,7 @@
 #define         Pfn_set_edge_colr               (327)
 #define         Pfn_fill_area3_data             (328)
 #define         Pfn_set_light_src_rep           (329)
+#define         Pfn_set_light_src_state         (330)
 
 #define         Pfn_INQUIRY                     (1000)
 
@@ -1158,6 +1159,18 @@ void pset_edge_colr(
 
 void pexec_struct(
    Pint struct_id
+   );
+
+/*******************************************************************************
+ * pset_light_src_state
+ *
+ * DESCR:       Creates a new element - Set light source state
+ * RETURNS:     N/A
+ */
+
+void pset_light_src_state(
+   Pint_list *activation,
+   Pint_list *deactivation
    );
 
 /*******************************************************************************

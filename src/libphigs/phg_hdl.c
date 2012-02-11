@@ -1130,3 +1130,96 @@ int phg_handle_colr(
    return (TRUE);
 }
 
+/*******************************************************************************
+ * phg_handle_lss
+ *
+ * DESCR:	Handle light source state
+ * RETURNS:	TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_lss(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   int n1, n2;
+   Plss *data, *lss;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         lss = &ARGS_ELMT_DATA(argdata).lss;
+         n1 = lss->activation.num_ints;
+         n2 = lss->deactivation.num_ints;
+         data = malloc(sizeof(Plss) + (n1 + n2) * sizeof(Pint));
+         if (data == NULL)
+            return (FALSE);
+
+         data->activation.num_ints = n1;
+         data->deactivation.num_ints = n2;
+         data->activation.ints = (Pint *) &data[1];
+         data->deactivation.ints = &data->activation.ints[n1];
+         memcpy(data->activation.ints,
+                lss->activation.ints,
+                sizeof(Pint) * n1);
+         memcpy(data->deactivation.ints,
+                lss->deactivation.ints,
+                sizeof(Pint) * n2);
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_REPLACE:
+         lss = &ARGS_ELMT_DATA(argdata).lss;
+         n1 = lss->activation.num_ints;
+         n2 = lss->deactivation.num_ints;
+         data = realloc(ELMT_DATA_PTR(elmt),
+                        sizeof(Plss) + (n1 + n2) * sizeof(Pint));
+         if (data == NULL)
+            return (FALSE);
+
+         data->activation.num_ints = n1;
+         data->deactivation.num_ints = n2;
+         data->activation.ints = (Pint *) &data[1];
+         data->deactivation.ints = &data->activation.ints[n1];
+         memcpy(data->activation.ints,
+                lss->activation.ints,
+                sizeof(Pint) * n1);
+         memcpy(data->deactivation.ints,
+                lss->deactivation.ints,
+                sizeof(Pint) * n2);
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_COPY:
+         n1 = PHG_DATA_LSS(argdata)->activation.num_ints;
+         n2 = PHG_DATA_LSS(argdata)->deactivation.num_ints;
+         data = malloc(sizeof(Plss) + (n1 + n2) * sizeof(Pint));
+         if (data == NULL)
+            return (FALSE);
+
+         data->activation.num_ints = n1;
+         data->deactivation.num_ints = n2;
+         data->activation.ints = (Pint *) &data[1];
+         data->deactivation.ints = &data->activation.ints[n1];
+         memcpy(data->activation.ints,
+                PHG_DATA_LSS(argdata)->activation.ints,
+                sizeof(Pint) * n1);
+         memcpy(data->deactivation.ints,
+                PHG_DATA_LSS(argdata)->deactivation.ints,
+                sizeof(Pint) * n2);
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_FREE:
+         free(ELMT_DATA_PTR(elmt));
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
+   }
+
+   return (TRUE);
+}

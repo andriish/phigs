@@ -264,5 +264,19 @@ int phg_handle_colr(
    Css_el_op op
    );
 
+/*******************************************************************************
+ * phg_handle_lss
+ *
+ * DESCR:       Handle light source state
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_lss(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
 #endif /* _hdlP_h */
 

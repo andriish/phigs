@@ -38,6 +38,10 @@ Pint view_ind = 5;
 Pfloat angle_x = 0.0;
 Pfloat angle_y = 0.0;
 Pgcolr edge_colr;
+Pint lights_on[] = {1};
+Pint light_off[] = {0};
+Pint_list lights_on_list = {1, lights_on};
+Pint_list lights_off_list = {0, light_off};
 
 void init_shape(void)
 {
@@ -119,6 +123,7 @@ int main(int argc, char *argv[])
    pset_edge_colr(&edge_colr);
    plabel(LABEL_TRANS);
    pset_local_tran3(rot3, PTYPE_REPLACE);
+   pset_light_src_state(&lights_on_list, &lights_off_list);
    init_shape();
    pclose_struct();
 

@@ -141,6 +141,12 @@
 #define PHG_DATA_COLR(ELMT) \
    ((Pgcolr *) (((Css_eldata *) (ELMT))->ptr))
 
+#define PHG_LSS(ELMT) \
+   ((Plss *) ((ELMT)->eldata.ptr))
+
+#define PHG_DATA_LSS(ELMT) \
+   ((Plss *) (((Css_eldata *) (ELMT))->ptr))
+
 #define PHG_IN_RANGE( low, high, val) \
    ((val) >= (low) && (val) <= (high))
 
