@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <math.h>
 #include <phigs/phigs.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
@@ -786,6 +786,51 @@ void pset_view_tran_in_pri(
       else if (ref_view_ind != view_ind) {
          wsh = PHG_WSID(ws_id);
          (*wsh->set_view_input_priority)(wsh, view_ind, ref_view_ind, rel_pri);
+      }
+   }
+}
+
+/*******************************************************************************
+ * pset_light_src_rep
+ *
+ * DESCR:	Set light source for workstation
+ * RETURNS:	N/A
+ */
+
+void pset_light_src_rep(
+   Pint ws_id,
+   Pint light_src_ind,
+   Plight_src_bundle *light_src_rep
+   )
+{
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+   Phg_args_rep_data rep;
+   Ws_handle wsh;
+
+   wsinfo = phg_ws_open(ws_id, Pfn_set_light_src_rep);
+   if (wsinfo != NULL) {
+      dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+      if (!(dt->ws_category == PCAT_OUT ||
+            dt->ws_category == PCAT_OUTIN ||
+            dt->ws_category == PCAT_MO)) {
+         ERR_REPORT(PHG_ERH, ERR59);
+      }
+      else if (light_src_ind < 1) {
+         ERR_REPORT(PHG_ERH, ERR129);
+      }
+      else if ((light_src_rep->type == PLIGHT_SPOT) &&
+               ((light_src_rep->rec.spot.angle < 0) ||
+                (light_src_rep->rec.spot.angle > M_PI))) {
+         ERR_REPORT(PHG_ERH, ERR132);
+      }
+      else {
+         wsh = PHG_WSID(ws_id);
+         rep.index = light_src_ind;
+         memcpy(&rep.bundl.lightsrcrep,
+                light_src_rep,
+                sizeof(Plight_src_bundle));
+         (*wsh->set_rep)(wsh, PHG_ARGS_LIGHTSRCREP, &rep);
       }
    }
 }

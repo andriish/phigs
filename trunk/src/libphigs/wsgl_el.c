@@ -1186,7 +1186,8 @@ void phg_draw_fill_area_set3(
  */
 
 void phg_setup_facet_data3(
-   Pfasd3 *fasd3
+   Pfasd3 *fasd3,
+   Ws_attr_st *ast
    )
 {
    switch (fasd3->fflag) {
@@ -1222,6 +1223,13 @@ void phg_setup_facet_data3(
          break;
 
       default:
+         if (phg_nset_name_is_set(&ast->asf_nameset,
+             (Pint) PASPECT_INT_COLR_IND)) {
+            phg_set_gcolr(&ast->indiv_group.int_bundle.colr);
+         }
+         else {
+            phg_set_gcolr(&ast->bundl_group.int_bundle.colr);
+         }
          break;
    }
 }
@@ -1251,7 +1259,7 @@ void phg_draw_fill_area3_data(
          if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
             if (style != PSTYLE_EMPTY) {
                phg_setup_int_attr_nocol(ast);
-               phg_setup_facet_data3(fasd3);
+               phg_setup_facet_data3(fasd3, ast);
                glBegin(GL_POLYGON);
                for (i = 0; i < fasd3->num_vertices; i++) {
                   glVertex3f(fasd3->vdata->point[i].x,
@@ -1317,7 +1325,7 @@ void phg_draw_fill_area3_data(
 
                phg_setup_int_attr_nocol(ast);
                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-               phg_setup_facet_data3(fasd3);
+               phg_setup_facet_data3(fasd3, ast);
                glBegin(GL_POLYGON);
                for (i = 0; i < fasd3->num_vertices; i++) {
                   glVertex3f(fasd3->vdata->point[i].x,
@@ -1331,7 +1339,7 @@ void phg_draw_fill_area3_data(
                   phg_setup_int_attr_nocol(ast);
                   glEnable(GL_POLYGON_OFFSET_FILL);
                   phg_set_polygon_offset(phg_get_edge_width(ast));
-                  phg_setup_facet_data3(fasd3);
+                  phg_setup_facet_data3(fasd3, ast);
                   glBegin(GL_POLYGON);
                   for (i = 0; i < fasd3->num_vertices; i++) {
                      glVertex3f(fasd3->vdata->point[i].x,
@@ -1362,7 +1370,7 @@ void phg_draw_fill_area3_data(
          if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
             if (style != PSTYLE_EMPTY) {
                phg_setup_int_attr_nocol(ast);
-               phg_setup_facet_data3(fasd3);
+               phg_setup_facet_data3(fasd3, ast);
                if (fasd3->colr_model == PMODEL_RGB) {
                   glBegin(GL_POLYGON);
                   for (i = 0; i < fasd3->num_vertices; i++) {
@@ -1443,7 +1451,7 @@ void phg_draw_fill_area3_data(
 
                phg_setup_int_attr_nocol(ast);
                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-               phg_setup_facet_data3(fasd3);
+               phg_setup_facet_data3(fasd3, ast);
                if (fasd3->colr_model == PMODEL_RGB) {
                   glBegin(GL_POLYGON);
                   for (i = 0; i < fasd3->num_vertices; i++) {
@@ -1472,7 +1480,7 @@ void phg_draw_fill_area3_data(
                   phg_setup_int_attr_nocol(ast);
                   glEnable(GL_POLYGON_OFFSET_FILL);
                   phg_set_polygon_offset(phg_get_edge_width(ast));
-                  phg_setup_facet_data3(fasd3);
+                  phg_setup_facet_data3(fasd3, ast);
                   if (fasd3->colr_model == PMODEL_RGB) {
                      glBegin(GL_POLYGON);
                      for (i = 0; i < fasd3->num_vertices; i++) {
@@ -1518,7 +1526,7 @@ void phg_draw_fill_area3_data(
          if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
             if (style != PSTYLE_EMPTY) {
                phg_setup_int_attr_nocol(ast);
-               phg_setup_facet_data3(fasd3);
+               phg_setup_facet_data3(fasd3, ast);
                glBegin(GL_POLYGON);
                for (i = 0; i < fasd3->num_vertices; i++) {
                   glNormal3f(fasd3->vdata->ptnorm[i].normal.delta_x,
@@ -1587,7 +1595,7 @@ void phg_draw_fill_area3_data(
 
                phg_setup_int_attr_nocol(ast);
                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-               phg_setup_facet_data3(fasd3);
+               phg_setup_facet_data3(fasd3, ast);
                glBegin(GL_POLYGON);
                for (i = 0; i < fasd3->num_vertices; i++) {
                   glNormal3f(fasd3->vdata->ptnorm[i].normal.delta_x,
@@ -1604,7 +1612,7 @@ void phg_draw_fill_area3_data(
                   phg_setup_int_attr_nocol(ast);
                   glEnable(GL_POLYGON_OFFSET_FILL);
                   phg_set_polygon_offset(phg_get_edge_width(ast));
-                  phg_setup_facet_data3(fasd3);
+                  phg_setup_facet_data3(fasd3, ast);
                   glBegin(GL_POLYGON);
                   for (i = 0; i < fasd3->num_vertices; i++) {
                      glNormal3f(fasd3->vdata->ptnorm[i].normal.delta_x,

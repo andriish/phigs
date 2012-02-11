@@ -148,6 +148,7 @@ typedef struct {
       Hash_table    edge;
       Hash_table    colour;
       Hash_table    view;
+      Hash_table    light_source;
    } htab;
 
    struct {
