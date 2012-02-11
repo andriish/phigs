@@ -112,7 +112,7 @@ void wsgl_set_window(
    Wsgl_handle wsgl = ws->render_context;
 
    wsgl->win_changed = 1;
-   memcpy(&wsgl->curr_win, win, sizeof(Plimit3));
+   memcpy(&wsgl->cur_win, win, sizeof(Plimit3));
 }
 
 /*******************************************************************************
@@ -130,7 +130,7 @@ void wsgl_set_viewport(
    Wsgl_handle wsgl = ws->render_context;
 
    wsgl->vp_changed = 1;
-   memcpy(&wsgl->curr_vp, vp, sizeof(Plimit3));
+   memcpy(&wsgl->cur_vp, vp, sizeof(Plimit3));
 }
 
 /*******************************************************************************
@@ -194,7 +194,7 @@ void wsgl_flush(
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
 
    if (wsgl->vp_changed || wsgl->win_changed) {
-      phg_wsx_compute_ws_transform(&wsgl->curr_win, &wsgl->curr_vp, &ws_xform);
+      phg_wsx_compute_ws_transform(&wsgl->cur_win, &wsgl->cur_vp, &ws_xform);
 
 #ifdef DEBUG
       printf("View: %f %f %f\n"
@@ -217,10 +217,10 @@ void wsgl_flush(
       if (wsgl->vp_changed) {
          wsgl->vp_changed = 0;
 
-         ws->ws_rect.x      = (int) wsgl->curr_vp.x_min;
-         ws->ws_rect.y      = (int) wsgl->curr_vp.y_min;
-         ws->ws_rect.width  = (int) wsgl->curr_vp.x_max - wsgl->curr_vp.x_min;
-         ws->ws_rect.height = (int) wsgl->curr_vp.y_max - wsgl->curr_vp.y_min;
+         ws->ws_rect.x      = (int) wsgl->cur_vp.x_min;
+         ws->ws_rect.y      = (int) wsgl->cur_vp.y_min;
+         ws->ws_rect.width  = (int) wsgl->cur_vp.x_max - wsgl->cur_vp.x_min;
+         ws->ws_rect.height = (int) wsgl->cur_vp.y_max - wsgl->cur_vp.y_min;
 
 #ifdef DEBUG
          printf("Viewport changed: %d x %d\n",
@@ -230,8 +230,8 @@ void wsgl_flush(
 
          XResizeWindow(ws->display,
                        ws->drawable_id,
-                       wsgl->curr_vp.x_max,
-                       wsgl->curr_vp.y_max);
+                       wsgl->cur_vp.x_max,
+                       wsgl->cur_vp.y_max);
       }
 
       if (wsgl->win_changed) {

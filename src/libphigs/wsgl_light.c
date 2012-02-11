@@ -29,7 +29,6 @@
 #include <phigs/private/wsxP.h>
 #include <phigs/private/wsglP.h>
 
-#ifdef TODO
 /*******************************************************************************
  * get_light_id
  *
@@ -58,30 +57,71 @@ static GLuint get_light_id(
 }
 
 /*******************************************************************************
- * setup_amb_light_src
+ * setup_amb_light
  *
  * DESCR:	Setup ambient light source helper function
  * RETURNS:	N/A
  */
 
-static void setup_amb_light_src(
-   Ws *ws,
-   Pint ind
+static void setup_amb_light(
+   Pint ind,
+   Pamb_light_src_rec *rec
    )
 {
-   Wsgl_handle wsgl = ws->render_context;
    GLfloat amb[4];
    GLuint id;
 
-   amb[0] = wsgl->cur_light[ind].rec.ambient.colour.direct.x;
-   amb[1] = wsgl->cur_light[ind].rec.ambient.colour.direct.y;
-   amb[2] = wsgl->cur_light[ind].rec.ambient.colour.direct.z;
+   amb[0] = rec->colr.val.general.x;
+   amb[1] = rec->colr.val.general.y;
+   amb[2] = rec->colr.val.general.z;
    amb[3] = 1.0;
+
+#ifdef DEBUG
+   printf("Ambient light: %f %f %f\n", amb[0], amb[1], amb[2]);
+#endif
 
    id = get_light_id(ind);
    glLightfv(id, GL_AMBIENT, amb);
+   glEnable(id);
 }
+
+/*******************************************************************************
+ * setup_dir_light
+ *
+ * DESCR:	Setup directional light source helper function
+ * RETURNS:	N/A
+ */
+
+static void setup_dir_light(
+   Pint ind,
+   Pdir_light_src_rec *rec
+   )
+{
+   GLfloat dif[4];
+   GLfloat pos[4];
+   GLuint id;
+
+   dif[0] = rec->colr.val.general.x;
+   dif[1] = rec->colr.val.general.y;
+   dif[2] = rec->colr.val.general.z;
+   dif[3] = 1.0;
+
+   pos[0] = rec->dir.delta_x;
+   pos[1] = rec->dir.delta_y;
+   pos[2] = rec->dir.delta_z;
+   pos[3] = 0.0;
+
+#ifdef DEBUG
+   printf("Directional light: %f %f %f @(%f, %f %f)\n",
+          dif[0], dif[1], dif[2],
+          pos[0], pos[1], pos[2]);
 #endif
+
+   id = get_light_id(ind);
+   glLightfv(id, GL_DIFFUSE, dif);
+   glLightfv(id, GL_POSITION, pos);
+   glEnable(id);
+}
 
 /*******************************************************************************
  * wsgl_setup_light_src_state
@@ -95,7 +135,39 @@ void wsgl_setup_light_src_state(
    Plss *lss
    )
 {
-   Pint i, ind;
+   Pint i, ind, count;
+   Phg_ret ret;
+   Wsgl *wsgl = ws->render_context;
+
+   count = 0;
+   /* Activate light sources */
+   for (i = 0; i < lss->activation.num_ints; i++) {
+      ind = lss->activation.ints[i];
+#ifdef DEBUG
+      printf("Activate light source: %d\n", ind);
+#endif
+      (*ws->inq_representation)(ws,
+                                ind,
+                                PINQ_REALIZED,
+                                PHG_ARGS_LIGHTSRCREP,
+                                &ret);
+      if (ret.err == 0) {
+         switch (ret.data.rep.lightsrcrep.type) {
+            case PLIGHT_AMBIENT:
+               setup_amb_light(ind, &ret.data.rep.lightsrcrep.rec.ambient);
+               count++;
+               break;
+
+            case PLIGHT_DIRECTIONAL:
+               setup_dir_light(ind, &ret.data.rep.lightsrcrep.rec.directional);
+               count++;
+               break;
+
+            default:
+               break;
+         }
+      }
+   }
 
    /* Deactivate light sources */
    for (i = 0; i < lss->deactivation.num_ints; i++) {
@@ -103,14 +175,15 @@ void wsgl_setup_light_src_state(
 #ifdef DEBUG
       printf("Deactivate light source: %d\n", ind);
 #endif
+      glDisable(get_light_id(ind));
+      count--;
    }
 
-   /* Activate light sources */
-   for (i = 0; i < lss->activation.num_ints; i++) {
-      ind = lss->activation.ints[i];
-#ifdef DEBUG
-      printf("Activate light source: %d\n", ind);
-#endif
+   if (count) {
+      wsgl->cur_struct.lighting = TRUE;
+   }
+   else {
+      wsgl->cur_struct.lighting = FALSE;
    }
 }
 

@@ -359,7 +359,8 @@ static Pint_style phg_get_int_style(
  */
 
 void phg_setup_int_attr_nocol(
-   Ws_attr_st *ast
+   Ws_attr_st *ast,
+   int lighting
    )
 {
    Pint_style style;
@@ -394,6 +395,9 @@ void phg_setup_int_attr_nocol(
          glDisable(GL_POLYGON_STIPPLE);
          break;
    }
+   if (lighting) {
+      glEnable(GL_LIGHTING);
+   }
 }
 
 /*******************************************************************************
@@ -414,7 +418,7 @@ void phg_setup_int_attr(
       phg_set_gcolr(&ast->bundl_group.int_bundle.colr);
    }
 
-   phg_setup_int_attr_nocol(ast);
+   phg_setup_int_attr_nocol(ast, 0);
 }
 
 /*******************************************************************************
@@ -502,6 +506,8 @@ static void phg_setup_edge_attr(
    )
 {
    Pint type;
+
+   glDisable(GL_LIGHTING);
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_EDGE_COLR_IND)) {
       phg_set_gcolr(&ast->indiv_group.edge_bundle.colr);
@@ -1258,7 +1264,7 @@ void phg_draw_fill_area3_data(
       case PVERT_POINT:
          if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
             if (style != PSTYLE_EMPTY) {
-               phg_setup_int_attr_nocol(ast);
+               phg_setup_int_attr_nocol(ast, wsgl->cur_struct.lighting);
                phg_setup_facet_data3(fasd3, ast);
                glBegin(GL_POLYGON);
                for (i = 0; i < fasd3->num_vertices; i++) {
@@ -1323,7 +1329,7 @@ void phg_draw_fill_area3_data(
                glEnd();
                glDisable(GL_POLYGON_OFFSET_FILL);
 
-               phg_setup_int_attr_nocol(ast);
+               phg_setup_int_attr_nocol(ast, wsgl->cur_struct.lighting);
                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                phg_setup_facet_data3(fasd3, ast);
                glBegin(GL_POLYGON);
@@ -1336,7 +1342,7 @@ void phg_draw_fill_area3_data(
             }
             else {
                if (style != PSTYLE_EMPTY) {
-                  phg_setup_int_attr_nocol(ast);
+                  phg_setup_int_attr_nocol(ast, wsgl->cur_struct.lighting);
                   glEnable(GL_POLYGON_OFFSET_FILL);
                   phg_set_polygon_offset(phg_get_edge_width(ast));
                   phg_setup_facet_data3(fasd3, ast);
@@ -1369,7 +1375,7 @@ void phg_draw_fill_area3_data(
       case PVERT_COLOUR:
          if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
             if (style != PSTYLE_EMPTY) {
-               phg_setup_int_attr_nocol(ast);
+               phg_setup_int_attr_nocol(ast, wsgl->cur_struct.lighting);
                phg_setup_facet_data3(fasd3, ast);
                if (fasd3->colr_model == PMODEL_RGB) {
                   glBegin(GL_POLYGON);
@@ -1449,7 +1455,7 @@ void phg_draw_fill_area3_data(
                glEnd();
                glDisable(GL_POLYGON_OFFSET_FILL);
 
-               phg_setup_int_attr_nocol(ast);
+               phg_setup_int_attr_nocol(ast, wsgl->cur_struct.lighting);
                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                phg_setup_facet_data3(fasd3, ast);
                if (fasd3->colr_model == PMODEL_RGB) {
@@ -1477,7 +1483,7 @@ void phg_draw_fill_area3_data(
             }
             else {
                if (style != PSTYLE_EMPTY) {
-                  phg_setup_int_attr_nocol(ast);
+                  phg_setup_int_attr_nocol(ast, wsgl->cur_struct.lighting);
                   glEnable(GL_POLYGON_OFFSET_FILL);
                   phg_set_polygon_offset(phg_get_edge_width(ast));
                   phg_setup_facet_data3(fasd3, ast);
@@ -1525,7 +1531,7 @@ void phg_draw_fill_area3_data(
       case PVERT_NORMAL:
          if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
             if (style != PSTYLE_EMPTY) {
-               phg_setup_int_attr_nocol(ast);
+               phg_setup_int_attr_nocol(ast, wsgl->cur_struct.lighting);
                phg_setup_facet_data3(fasd3, ast);
                glBegin(GL_POLYGON);
                for (i = 0; i < fasd3->num_vertices; i++) {
@@ -1593,7 +1599,7 @@ void phg_draw_fill_area3_data(
                glEnd();
                glDisable(GL_POLYGON_OFFSET_FILL);
 
-               phg_setup_int_attr_nocol(ast);
+               phg_setup_int_attr_nocol(ast, wsgl->cur_struct.lighting);
                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                phg_setup_facet_data3(fasd3, ast);
                glBegin(GL_POLYGON);
@@ -1609,7 +1615,7 @@ void phg_draw_fill_area3_data(
             }
             else {
                if (style != PSTYLE_EMPTY) {
-                  phg_setup_int_attr_nocol(ast);
+                  phg_setup_int_attr_nocol(ast, wsgl->cur_struct.lighting);
                   glEnable(GL_POLYGON_OFFSET_FILL);
                   phg_set_polygon_offset(phg_get_edge_width(ast));
                   phg_setup_facet_data3(fasd3, ast);
@@ -1629,6 +1635,7 @@ void phg_draw_fill_area3_data(
                if (flag == PEDGE_ON) {
                   phg_setup_edge_attr(ast);
                   glDisable(GL_POLYGON_STIPPLE);
+                  glDisable(GL_LIGHTING);
                   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                   glBegin(GL_POLYGON);
                   for (i = 0; i < fasd3->num_vertices; i++) {
@@ -1637,6 +1644,7 @@ void phg_draw_fill_area3_data(
                                 fasd3->vdata->ptnorm[i].point.z);
                   }
                   glEnd();
+                  glEnable(GL_LIGHTING);
                }
             }
          }
@@ -1645,7 +1653,7 @@ void phg_draw_fill_area3_data(
       case PVERT_COLOUR_NORMAL:
          if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
             if (style != PSTYLE_EMPTY) {
-               phg_setup_int_attr_nocol(ast);
+               phg_setup_int_attr_nocol(ast, wsgl->cur_struct.lighting);
                if (fasd3->colr_model == PMODEL_RGB) {
                   glBegin(GL_POLYGON);
                   for (i = 0; i < fasd3->num_vertices; i++) {
@@ -1730,7 +1738,7 @@ void phg_draw_fill_area3_data(
                glEnd();
                glDisable(GL_POLYGON_OFFSET_FILL);
 
-               phg_setup_int_attr_nocol(ast);
+               phg_setup_int_attr_nocol(ast, wsgl->cur_struct.lighting);
                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                if (fasd3->colr_model == PMODEL_RGB) {
                   glBegin(GL_POLYGON);
@@ -1763,7 +1771,7 @@ void phg_draw_fill_area3_data(
             }
             else {
                if (style != PSTYLE_EMPTY) {
-                  phg_setup_int_attr_nocol(ast);
+                  phg_setup_int_attr_nocol(ast, wsgl->cur_struct.lighting);
                   glEnable(GL_POLYGON_OFFSET_FILL);
                   phg_set_polygon_offset(phg_get_edge_width(ast));
                   if (fasd3->colr_model == PMODEL_RGB) {
