@@ -544,6 +544,18 @@ void phg_draw_text(
    char *text
    );
 
+/*******************************************************************************
+ * wsgl_setup_light_src_state
+ *
+ * DESCR:       Setup light source state for workstation
+ * RETURNS:     N/A
+ */
+
+void wsgl_setup_light_src_state(
+   Ws *ws,
+   Plss *lss
+   );
+
 extern unsigned char *wsgl_hatch_tbl[];
 
 #endif /* _wsglP_h */

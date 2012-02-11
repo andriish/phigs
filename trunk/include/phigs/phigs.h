@@ -147,6 +147,7 @@ typedef enum {
    PELEM_MARKER_COLR,
    PELEM_EDGE_COLR,
    PELEM_TEXT_COLR,
+   PELEM_LIGHT_SRC_STATE,
    PELEM_NUM_EL_TYPES
 } Pelem_type;
 
@@ -674,6 +675,11 @@ typedef struct {
    Pvertex_data3 *vdata;
 } Pfasd3;
 
+typedef struct {
+   Pint_list activation;
+   Pint_list deactivation;
+} Plss;
+
 typedef union {
    Pint              int_data;
    Pfloat            float_data;
@@ -692,6 +698,7 @@ typedef union {
    Pedge_flag        edge_flag;
    Pint_style        int_style;
    Pgcolr            colr;
+   Plss              lss;
 } Pelem_data;
 
 typedef struct {

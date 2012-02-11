@@ -1291,3 +1291,34 @@ void pexec_struct(
    }
 }
 
+/*******************************************************************************
+ * pset_light_src_state
+ *
+ * DESCR:	Creates a new element - Set light source state
+ * RETURNS:	N/A
+ */
+
+void pset_light_src_state(
+   Pint_list *activation,
+   Pint_list *deactivation
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_light_src_state);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_LIGHT_SRC_STATE;
+      memcpy(&ARGS_ELMT_DATA(&args).lss.activation,
+             activation,
+             sizeof(Plss));
+      memcpy(&ARGS_ELMT_DATA(&args).lss.deactivation,
+             deactivation,
+             sizeof(Plss));
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+

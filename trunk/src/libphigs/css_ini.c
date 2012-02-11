@@ -138,6 +138,7 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_MARKER_COLR] = phg_handle_colr;
     fptr[(int)PELEM_EDGE_COLR] = phg_handle_colr;
     fptr[(int)PELEM_TEXT_COLR] = phg_handle_colr;
+    fptr[(int)PELEM_LIGHT_SRC_STATE] = phg_handle_lss;
 
     if ( !(cssh->stab = phg_css_stab_init(CSS_STAB_SIZE)) ) {
 	free((char *)cssh);

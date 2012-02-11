@@ -778,6 +778,10 @@ void wsgl_render_element(
          phg_set_view_ind(ws, PHG_INT(el));
          break;
 
+      case PELEM_LIGHT_SRC_STATE:
+         wsgl_setup_light_src_state(ws, PHG_LSS(el));
+         break;
+
       default:
          css_print_eltype(el->eltype);
          printf(" not processed\n");
