@@ -48,14 +48,13 @@ typedef struct {
    Pattr_group  bundl_group;
    Pattr_group  indiv_group;
    Nset         asf_nameset;
-   u_int32_t    nameset_buf[WS_MAX_ASF_FLAGS / 32];
+   u_int32_t    ast_buf[1];
 } Ws_attr_st;
 
 typedef struct {
    Pint       id;
    Pint       offset;
    Pint       hlhsr_id;
-   int        lighting;
    Ws_attr_st ast;
    Nset       cur_nameset;
    u_int32_t  nameset_buf[WS_MAX_NAMES_IN_NAMESET / 32];
@@ -63,6 +62,9 @@ typedef struct {
    Pmatrix3   local_tran;
    Pmatrix3   global_tran;
    Pint       pick_id;
+   int        lighting;
+   Nset       lightstat;
+   u_int32_t  lightstat_buf[1];
 } Ws_struct;
 
 typedef struct {
@@ -546,13 +548,24 @@ void phg_draw_text(
    );
 
 /*******************************************************************************
- * wsgl_setup_light_src_state
+ * wsgl_update_light_src_state
  *
- * DESCR:       Setup light source state for workstation
+ * DESCR:       Update light source state for workstation
  * RETURNS:     N/A
  */
 
-void wsgl_setup_light_src_state(
+void wsgl_update_light_src_state(
+   Ws *ws
+   );
+
+/*******************************************************************************
+ * wsgl_set_light_src_state
+ *
+ * DESCR:       Set light source state for workstation
+ * RETURNS:     N/A
+ */
+
+void wsgl_set_light_src_state(
    Ws *ws,
    Plss *lss
    );

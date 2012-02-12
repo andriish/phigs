@@ -63,11 +63,14 @@ int wsgl_init(
    }
 
    phg_nset_init(&wsgl->cur_struct.ast.asf_nameset,
-                 WS_MAX_ASF_FLAGS / 32,
-                 wsgl->cur_struct.ast.nameset_buf);
+                 1,
+                 wsgl->cur_struct.ast.ast_buf);
    phg_nset_init(&wsgl->cur_struct.cur_nameset,
                  WS_MAX_NAMES_IN_NAMESET / 32,
                  wsgl->cur_struct.nameset_buf);
+   phg_nset_init(&wsgl->cur_struct.lightstat,
+                 1,
+                 wsgl->cur_struct.lightstat_buf);
 
    memcpy(&wsgl->background, background, sizeof(Pgcolr));
    wsgl->render_mode = WS_RENDER_MODE_DRAW;
@@ -298,6 +301,7 @@ static void init_rendering_state(
    phg_nset_names_set_all(&wsgl->cur_struct.ast.asf_nameset);
    phg_set_view_ind(ws, 0);
    phg_nset_names_clear_all(&wsgl->cur_struct.cur_nameset);
+   phg_nset_names_clear_all(&wsgl->cur_struct.lightstat);
    wsgl->cur_struct.pick_id = 0;
 }
 
@@ -495,6 +499,7 @@ void wsgl_end_structure(
    phg_update_hlhsr_id(ws);
    phg_update_projection(ws);
    phg_update_modelview(ws);
+   wsgl_update_light_src_state(ws);
 
 #ifdef DEBUG
    printf("Pop: id = %d, offset = %d\n",
@@ -779,7 +784,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_LIGHT_SRC_STATE:
-         wsgl_setup_light_src_state(ws, PHG_LSS(el));
+         wsgl_set_light_src_state(ws, PHG_LSS(el));
          break;
 
       default:
