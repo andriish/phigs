@@ -124,66 +124,95 @@ static void setup_dir_light(
 }
 
 /*******************************************************************************
- * wsgl_setup_light_src_state
+ * wsgl_update_light_src_state
  *
- * DESCR:	Setup light source state for workstation
+ * DESCR:	Update light source state for workstation
  * RETURNS:	N/A
  */
 
-void wsgl_setup_light_src_state(
+void wsgl_update_light_src_state(
+   Ws *ws
+   )
+{
+   Pint i;
+   Phg_ret ret;
+   Wsgl *wsgl = ws->render_context;
+
+   glPushMatrix();
+   glLoadIdentity();
+
+   /* Activate light sources */
+   for (i = 0; i < WS_MAX_LIGHT_SRC; i++) {
+      if (phg_nset_name_is_set(&wsgl->cur_struct.lightstat, i)) {
+#ifdef DEBUG
+         printf("Setup light source: %d\n", i);
+#endif
+         (*ws->inq_representation)(ws,
+                                   i,
+                                   PINQ_REALIZED,
+                                   PHG_ARGS_LIGHTSRCREP,
+                                   &ret);
+         if (ret.err == 0) {
+            switch (ret.data.rep.lightsrcrep.type) {
+               case PLIGHT_AMBIENT:
+                  setup_amb_light(i, &ret.data.rep.lightsrcrep.rec.ambient);
+                  break;
+
+               case PLIGHT_DIRECTIONAL:
+                  setup_dir_light(i, &ret.data.rep.lightsrcrep.rec.directional);
+                  break;
+
+               default:
+                  break;
+            }
+         }
+      }
+      else {
+         glDisable(get_light_id(i));
+      }
+   }
+
+   glPopMatrix();
+}
+
+/*******************************************************************************
+ * wsgl_set_light_src_state
+ *
+ * DESCR:	Set light source state for workstation
+ * RETURNS:	N/A
+ */
+
+void wsgl_set_light_src_state(
    Ws *ws,
    Plss *lss
    )
 {
-   Pint i, ind, count;
-   Phg_ret ret;
+   Pint i;
    Wsgl *wsgl = ws->render_context;
 
-   count = 0;
-   /* Activate light sources */
    for (i = 0; i < lss->activation.num_ints; i++) {
-      ind = lss->activation.ints[i];
-#ifdef DEBUG
-      printf("Activate light source: %d\n", ind);
-#endif
-      (*ws->inq_representation)(ws,
-                                ind,
-                                PINQ_REALIZED,
-                                PHG_ARGS_LIGHTSRCREP,
-                                &ret);
-      if (ret.err == 0) {
-         switch (ret.data.rep.lightsrcrep.type) {
-            case PLIGHT_AMBIENT:
-               setup_amb_light(ind, &ret.data.rep.lightsrcrep.rec.ambient);
-               count++;
-               break;
-
-            case PLIGHT_DIRECTIONAL:
-               setup_dir_light(ind, &ret.data.rep.lightsrcrep.rec.directional);
-               count++;
-               break;
-
-            default:
-               break;
-         }
-      }
+      phg_nset_name_set(&wsgl->cur_struct.lightstat,
+                        lss->activation.ints[i]);
    }
 
-   /* Deactivate light sources */
    for (i = 0; i < lss->deactivation.num_ints; i++) {
-      ind = lss->deactivation.ints[i];
-#ifdef DEBUG
-      printf("Deactivate light source: %d\n", ind);
-#endif
-      glDisable(get_light_id(ind));
-      count--;
+      phg_nset_name_clear(&wsgl->cur_struct.lightstat,
+                          lss->deactivation.ints[i]);
    }
 
-   if (count) {
-      wsgl->cur_struct.lighting = TRUE;
-   }
-   else {
+   if (phg_nset_names_is_empty_all(&wsgl->cur_struct.lightstat)) {
       wsgl->cur_struct.lighting = FALSE;
    }
+   else {
+      wsgl->cur_struct.lighting = TRUE;
+   }
+
+#ifdef DEBUG
+   printf("Lighting nameset: ");
+   phg_nset_print(&wsgl->cur_struct.lightstat);
+   printf("Lighting is %s\n", (wsgl->cur_struct.lighting) ? "On" : "Off");
+#endif
+
+   wsgl_update_light_src_state(ws);
 }
 

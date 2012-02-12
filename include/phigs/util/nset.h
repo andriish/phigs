@@ -175,6 +175,17 @@ int phg_nset_name_is_set(
    );
 
 /*******************************************************************************
+ * phg_nset_names_is_empty_all
+ *
+ * DESCR:       Check if all names in nameset is empty
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_nset_names_is_empty_all(
+   Nameset nset
+   );
+
+/*******************************************************************************
  * phg_nset_print
  *
  * DESCR:       Print nameset
