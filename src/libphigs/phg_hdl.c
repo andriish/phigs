@@ -1223,3 +1223,60 @@ int phg_handle_lss(
 
    return (TRUE);
 }
+
+/*******************************************************************************
+ * phg_handle_refl_props
+ *
+ * DESCR:	Handler surface reflectance properties
+ * RETURNS:	TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_refl_props(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   Prefl_props *data, *props;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         props = &ARGS_ELMT_DATA(argdata).props;
+         data = malloc(sizeof(Prefl_props));
+         if (data == NULL)
+            return (FALSE);
+
+         memcpy(data, props, sizeof(Prefl_props));
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_REPLACE:
+         props = &ARGS_ELMT_DATA(argdata).props;
+         data = (Prefl_props *) elmt->eldata.ptr;
+         memcpy(data, props, sizeof(Prefl_props));
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_COPY:
+         data = malloc(sizeof(Prefl_props));
+         if (data == NULL)
+            return (FALSE);
+
+         memcpy(data, PHG_DATA_REFL_PROPS(argdata), sizeof(Prefl_props));
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_FREE:
+         free(ELMT_DATA_PTR(elmt));
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
+   }
+
+   return (TRUE);
+}
+

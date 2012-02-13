@@ -787,6 +787,16 @@ void wsgl_render_element(
          wsgl_set_light_src_state(ws, PHG_LSS(el));
          break;
 
+      case PELEM_INT_REFL_EQN:
+         wsgl->cur_struct.ast.indiv_group.int_bundle.refl_eqn = PHG_INT(el);
+         break;
+
+      case PELEM_REFL_PROPS:
+         memcpy(&wsgl->cur_struct.ast.indiv_group.int_bundle.refl_props,
+                PHG_REFL_PROPS(el),
+                sizeof(Prefl_props));
+         break;
+
       default:
          css_print_eltype(el->eltype);
          printf(" not processed\n");

@@ -42,6 +42,7 @@ Pint lights_on[] = {1, 2};
 Pint light_off[] = {0};
 Pint_list lights_on_list = {2, lights_on};
 Pint_list lights_off_list = {0, light_off};
+Prefl_props refl_props;
 
 void init_shape(void)
 {
@@ -282,6 +283,9 @@ int main(int argc, char *argv[])
    edge_colr.val.general.y = 1.0;
    edge_colr.val.general.z = 1.0;
 
+   refl_props.ambient_coef = 0.2;
+   refl_props.diffuse_coef = 1.0;
+
    popen_phigs(NULL, 0);
    phg_mat_identity(rot3);
 
@@ -291,6 +295,8 @@ int main(int argc, char *argv[])
    pset_edge_flag(PEDGE_ON);
    pset_edge_colr(&edge_colr);
    pset_light_src_state(&lights_on_list, &lights_off_list);
+   pset_refl_eqn(PREFL_AMB_DIFF);
+   pset_refl_props(&refl_props);
    plabel(LABEL_TRANS);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    init_shape();

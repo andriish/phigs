@@ -147,6 +147,12 @@
 #define PHG_DATA_LSS(ELMT) \
    ((Plss *) (((Css_eldata *) (ELMT))->ptr))
 
+#define PHG_REFL_PROPS(ELMT) \
+   ((Prefl_props *) ((ELMT)->eldata.ptr))
+
+#define PHG_DATA_REFL_PROPS(ELMT) \
+   ((Prefl_props *) (((Css_eldata *) (ELMT))->ptr))
+
 #define PHG_IN_RANGE( low, high, val) \
    ((val) >= (low) && (val) <= (high))
 

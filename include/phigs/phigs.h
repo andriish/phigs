@@ -154,6 +154,8 @@ typedef enum {
    PELEM_EDGE_COLR,
    PELEM_TEXT_COLR,
    PELEM_LIGHT_SRC_STATE,
+   PELEM_INT_REFL_EQN,
+   PELEM_REFL_PROPS,
    PELEM_NUM_EL_TYPES
 } Pelem_type;
 
@@ -717,6 +719,7 @@ typedef union {
    Pint_style        int_style;
    Pgcolr            colr;
    Plss              lss;
+   Prefl_props       props;
 } Pelem_data;
 
 typedef struct {

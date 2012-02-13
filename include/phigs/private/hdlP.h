@@ -278,5 +278,19 @@ int phg_handle_lss(
    Css_el_op op
    );
 
+/*******************************************************************************
+ * phg_handle_refl_props
+ *
+ * DESCR:       Handler surface reflectance properties
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_refl_props(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
 #endif /* _hdlP_h */
 
