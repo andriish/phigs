@@ -1322,3 +1322,53 @@ void pset_light_src_state(
    }
 }
 
+/*******************************************************************************
+ * pset_refl_eqn
+ *
+ * DESCR:	Creates a new element - Set surface reflectance equation
+ * RETURNS:	N/A
+ */
+
+void pset_refl_eqn(
+   Pint refl_equ
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_refl_eqn);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_INT_REFL_EQN;
+      ARGS_ELMT_DATA(&args).int_data = refl_equ;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_refl_props
+ *
+ * DESCR:	Creates a new element - Set surface reflectance properties
+ * RETURNS:	N/A
+ */
+
+void pset_refl_props(
+   Prefl_props *refl_props
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_refl_props);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_REFL_PROPS;
+      memcpy(&ARGS_ELMT_DATA(&args).props, refl_props, sizeof(Prefl_props));
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
