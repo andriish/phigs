@@ -49,6 +49,10 @@ void init_shape(void)
    Pfacet_data3 fdata;
    Pvertex_data3 vdata;
 
+   fdata.colour.direct.x = 0.0;
+   fdata.colour.direct.y = 0.5;
+   fdata.colour.direct.z = 0.5;
+
    /* Back */
    vertex_data[0].point.x = 0.0;
    vertex_data[0].point.y = 0.0;
@@ -79,7 +83,7 @@ void init_shape(void)
    vertex_data[3].normal.delta_z = -1.0;
 
    vdata.ptnorm = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
+   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
 
    /* Front */
    vertex_data[0].point.x = 0.0;
@@ -111,7 +115,7 @@ void init_shape(void)
    vertex_data[3].normal.delta_z = 1.0;
 
    vdata.ptnorm = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
+   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
 
    /* Bottom */
    vertex_data[0].point.x = 0.0;
@@ -143,7 +147,7 @@ void init_shape(void)
    vertex_data[3].normal.delta_z = 0.0;
 
    vdata.ptnorm = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
+   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
 
    /* Top */
    vertex_data[0].point.x = 0.0;
@@ -175,7 +179,7 @@ void init_shape(void)
    vertex_data[3].normal.delta_z = 0.0;
 
    vdata.ptnorm = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
+   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
 
    /* Left */
    vertex_data[0].point.x = 0.0;
@@ -207,7 +211,7 @@ void init_shape(void)
    vertex_data[3].normal.delta_z = 0.0;
 
    vdata.ptnorm = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
+   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
 
    vertex_data[0].point.x = WIDTH;
    vertex_data[0].point.y = 0.0;
@@ -238,7 +242,7 @@ void init_shape(void)
    vertex_data[3].normal.delta_z = 0.0;
 
    vdata.ptnorm = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
+   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
 }
 
 void setup_light(Pint ws_id)
@@ -246,14 +250,14 @@ void setup_light(Pint ws_id)
    Plight_src_bundle light;
 
    light.type = PLIGHT_AMBIENT;
-   light.rec.ambient.colr.val.general.x = 0.5;
+   light.rec.ambient.colr.val.general.x = 0.2;
    light.rec.ambient.colr.val.general.y = 0.2;
    light.rec.ambient.colr.val.general.z = 0.2;
 
    pset_light_src_rep(ws_id, 1, &light);
 
    light.type = PLIGHT_DIRECTIONAL;
-   light.rec.directional.colr.val.general.x = 0.0;
+   light.rec.directional.colr.val.general.x = 1.0;
    light.rec.directional.colr.val.general.y = 1.0;
    light.rec.directional.colr.val.general.z = 1.0;
    light.rec.directional.dir.delta_x = 0.25;
@@ -274,9 +278,9 @@ int main(int argc, char *argv[])
    }
 
    edge_colr.type = PMODEL_RGB;
-   edge_colr.val.general.x = 0.2;
-   edge_colr.val.general.y = 0.0;
-   edge_colr.val.general.z = 0.0;
+   edge_colr.val.general.x = 1.0;
+   edge_colr.val.general.y = 1.0;
+   edge_colr.val.general.z = 1.0;
 
    popen_phigs(NULL, 0);
    phg_mat_identity(rot3);

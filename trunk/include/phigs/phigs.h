@@ -66,6 +66,12 @@
 #define PLIGHT_POSITIONAL         2
 #define PLIGHT_SPOT               3
 
+/* Surface reflection */
+#define PREFL_NONE                0
+#define PREFL_AMBIENT             1
+#define PREFL_AMB_DIFF            2
+#define PREFL_AMB_DIFF_SPEC       3
+
 /* PHIGS states */
 typedef enum {
    PSYS_ST_PHCL,
@@ -290,7 +296,9 @@ typedef enum {
    PASPECT_EDGE_FLAG,
    PASPECT_EDGETYPE,
    PASPECT_EDGEWIDTH,
-   PASPECT_EDGE_COLR_IND
+   PASPECT_EDGE_COLR_IND,
+   PASPECT_REFL_PROPS,
+   PASPECT_INT_REFL_EQN
 } Paspect;
 
 typedef enum {
@@ -415,9 +423,19 @@ typedef struct {
 } Pint_bundle;
 
 typedef struct {
-   Pint_style style;
-   Pint       style_ind;
-   Pgcolr     colr;
+   Pfloat     ambient_coef;
+   Pfloat     diffuse_coef;
+   Pfloat     specular_coef;
+   Pgcolr     specular_colr;
+   Pfloat     specualr_exp;
+} Prefl_props;
+
+typedef struct {
+   Pint_style  style;
+   Pint        style_ind;
+   Pgcolr      colr;
+   Pint        refl_eqn;
+   Prefl_props refl_props;
 } Pint_bundle_plus;
 
 typedef struct {
