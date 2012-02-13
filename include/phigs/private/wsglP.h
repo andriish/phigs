@@ -343,6 +343,17 @@ void phg_set_line_ind(
    );
 
 /*******************************************************************************
+ * phg_setup_line_attr
+ *
+ * DESCR:       Setup line attributes
+ * RETURNS:     N/A
+ */
+
+void phg_setup_line_attr(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * phg_set_int_ind
  *
  * DESCR:       Setup interior index
@@ -353,6 +364,52 @@ void phg_set_int_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
+   );
+
+/*******************************************************************************
+ * phg_get_int_style
+ *
+ * DESCR:       Get interior style
+ * RETURNS:     Interiour style
+ */
+
+Pint_style phg_get_int_style(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * phg_setup_int_nocol
+ *
+ * DESCR:       Setup interior attributes without color 
+ * RETURNS:     N/A
+ */
+
+void phg_setup_int_attr_nocol(
+   Ws_attr_st *ast,
+   int lighting
+   );
+
+/*******************************************************************************
+ * phg_setup_int_attr
+ *
+ * DESCR:       Setup interior attributes 
+ * RETURNS:     N/A
+ */
+
+void phg_setup_int_attr(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * phg_setup_facet_data3
+ *
+ * DESCR:       Setup facet data helper 
+ * RETURNS:     N/A
+ */
+
+void phg_setup_facet_data3(
+   Pfasd3 *fasd3,
+   Ws_attr_st *ast
    );
 
 /*******************************************************************************
@@ -369,6 +426,39 @@ void phg_set_edge_ind(
    );
 
 /*******************************************************************************
+ * phg_get_edge_flag
+ *
+ * DESCR:       Get edge flag
+ * RETURNS:     Edge flag
+ */
+
+Pint_style phg_get_edge_flag(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * phg_get_edge_width
+ *
+ * DESCR:       Get edge width
+ * RETURNS:     Edge width
+ */
+
+Pfloat phg_get_edge_width(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * phg_setup_edge_attr
+ *
+ * DESCR:       Setup edge attributes 
+ * RETURNS:     N/A
+ */
+
+void phg_setup_edge_attr(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * phg_set_marker_ind
  *
  * DESCR:       Setup marker index
@@ -379,6 +469,30 @@ void phg_set_marker_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
+   );
+
+/*******************************************************************************
+ * phg_setup_marker_attr
+ *
+ * DESCR:       Setup marker attributes 
+ * RETURNS:     N/A
+ */
+
+void phg_setup_marker_attr(
+   Ws_attr_st *ast,
+   Pint *type,
+   Pfloat *size
+   );
+
+/*******************************************************************************
+ * phg_setup_background
+ *
+ * DESCR:       Setup background colour 
+ * RETURNS:     N/A
+ */
+
+void phg_setup_background(
+   Ws *ws
    );
 
 /*******************************************************************************
