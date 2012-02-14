@@ -787,6 +787,10 @@ void wsgl_render_element(
          wsgl_set_light_src_state(ws, PHG_LSS(el));
          break;
 
+      case PELEM_INT_SHAD_METH:
+         wsgl->cur_struct.ast.indiv_group.int_bundle.shad_meth = PHG_INT(el);
+         break;
+
       case PELEM_INT_REFL_EQN:
          wsgl->cur_struct.ast.indiv_group.int_bundle.refl_eqn = PHG_INT(el);
          break;
