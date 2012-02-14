@@ -365,6 +365,7 @@ void phg_setup_int_attr_nocol(
 {
    Pint_style style;
    Pint style_ind;
+   Pint shad_meth;
 
    style = phg_get_int_style(ast);
    switch (style) {
@@ -396,9 +397,22 @@ void phg_setup_int_attr_nocol(
          break;
    }
 
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_SHAD_METH)) {
+      shad_meth = ast->indiv_group.int_bundle.shad_meth;
+   }
+   else {
+      shad_meth = ast->bundl_group.int_bundle.shad_meth;
+   }
+
+   if (shad_meth == PSD_NONE) {
+      glShadeModel(GL_FLAT);
+   }
+   else {
+      glShadeModel(GL_SMOOTH);
+   }
+
    if (lighting) {
       glEnable(GL_LIGHTING);
-      glEnable(GL_COLOR_MATERIAL);
    }
 }
 
@@ -454,6 +468,7 @@ static void phg_set_int_front_surf_prop(
 
    switch (refl_eqn) {
       case PREFL_AMBIENT:
+         glEnable(GL_COLOR_MATERIAL);
          glColorMaterial(GL_FRONT, GL_AMBIENT);
          glColor3f(fasd3->fdata.colour.direct.x *
                    refl_props->ambient_coef,
@@ -464,6 +479,7 @@ static void phg_set_int_front_surf_prop(
          break;
 
       case PREFL_AMB_DIFF:
+         glEnable(GL_COLOR_MATERIAL);
          glColorMaterial(GL_FRONT, GL_AMBIENT);
          glColor3f(fasd3->fdata.colour.direct.x *
                    refl_props->ambient_coef,
@@ -481,6 +497,7 @@ static void phg_set_int_front_surf_prop(
          break;
 
       case PREFL_AMB_DIFF_SPEC:
+         glEnable(GL_COLOR_MATERIAL);
          glColorMaterial(GL_FRONT, GL_AMBIENT);
          glColor3f(fasd3->fdata.colour.direct.x *
                    refl_props->ambient_coef,
@@ -505,7 +522,7 @@ static void phg_set_int_front_surf_prop(
          break;
 
       default:
-         glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+         glDisable(GL_COLOR_MATERIAL);
          glColor3f(fasd3->fdata.colour.direct.x,
                    fasd3->fdata.colour.direct.y,
                    fasd3->fdata.colour.direct.z);

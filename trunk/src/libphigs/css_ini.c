@@ -139,6 +139,7 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_EDGE_COLR] = phg_handle_colr;
     fptr[(int)PELEM_TEXT_COLR] = phg_handle_colr;
     fptr[(int)PELEM_LIGHT_SRC_STATE] = phg_handle_lss;
+    fptr[(int)PELEM_INT_SHAD_METH] = phg_handle_int;
     fptr[(int)PELEM_INT_REFL_EQN] = phg_handle_int;
     fptr[(int)PELEM_REFL_PROPS] = phg_handle_refl_props;
 

@@ -100,6 +100,7 @@ static void init_output_ws_dt(
    wsdt->default_interior_bundle_table[0].style = PSTYLE_SOLID;
    wsdt->default_interior_bundle_table[0].style_ind = 1;
    memcpy(&wsdt->default_interior_bundle_table[0].colr, &fg, sizeof(Pgcolr));
+   wsdt->default_interior_bundle_table[0].shad_meth = PSD_NONE;
    wsdt->default_interior_bundle_table[0].refl_eqn = PREFL_NONE;
    wsdt->default_interior_bundle_table[0].refl_props.ambient_coef = 1.0;
    wsdt->default_interior_bundle_table[0].refl_props.diffuse_coef = 1.0;

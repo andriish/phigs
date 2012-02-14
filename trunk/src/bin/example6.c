@@ -295,6 +295,7 @@ int main(int argc, char *argv[])
    pset_edge_flag(PEDGE_ON);
    pset_edge_colr(&edge_colr);
    pset_light_src_state(&lights_on_list, &lights_off_list);
+   pset_int_shad_meth(PSD_COLOUR);
    pset_refl_eqn(PREFL_AMB_DIFF);
    pset_refl_props(&refl_props);
    plabel(LABEL_TRANS);

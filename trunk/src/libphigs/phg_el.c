@@ -1323,6 +1323,31 @@ void pset_light_src_state(
 }
 
 /*******************************************************************************
+ * pset_int_shad_meth
+ *
+ * DESCR:	Creates a new element - Set interiour shading method
+ * RETURNS:	N/A
+ */
+
+void pset_int_shad_meth(
+   Pint shad_meth
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_int_shad_meth);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_INT_SHAD_METH;
+      ARGS_ELMT_DATA(&args).int_data = shad_meth;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_refl_eqn
  *
  * DESCR:	Creates a new element - Set surface reflectance equation

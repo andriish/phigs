@@ -60,17 +60,21 @@
 #define PVERT_NORMAL              2
 #define PVERT_COLOUR_NORMAL       3
 
-/* Light source types */
-#define PLIGHT_AMBIENT            0
-#define PLIGHT_DIRECTIONAL        1
-#define PLIGHT_POSITIONAL         2
-#define PLIGHT_SPOT               3
+/* Shading methods */
+#define PSD_NONE                  1
+#define PSD_COLOUR                2
 
 /* Surface reflection */
-#define PREFL_NONE                0
-#define PREFL_AMBIENT             1
-#define PREFL_AMB_DIFF            2
-#define PREFL_AMB_DIFF_SPEC       3
+#define PREFL_NONE                1
+#define PREFL_AMBIENT             2
+#define PREFL_AMB_DIFF            3
+#define PREFL_AMB_DIFF_SPEC       4
+
+/* Light source types */
+#define PLIGHT_AMBIENT            1
+#define PLIGHT_DIRECTIONAL        2
+#define PLIGHT_POSITIONAL         3
+#define PLIGHT_SPOT               4
 
 /* PHIGS states */
 typedef enum {
@@ -154,6 +158,7 @@ typedef enum {
    PELEM_EDGE_COLR,
    PELEM_TEXT_COLR,
    PELEM_LIGHT_SRC_STATE,
+   PELEM_INT_SHAD_METH,
    PELEM_INT_REFL_EQN,
    PELEM_REFL_PROPS,
    PELEM_NUM_EL_TYPES
@@ -299,6 +304,7 @@ typedef enum {
    PASPECT_EDGETYPE,
    PASPECT_EDGEWIDTH,
    PASPECT_EDGE_COLR_IND,
+   PASPECT_INT_SHAD_METH,
    PASPECT_REFL_PROPS,
    PASPECT_INT_REFL_EQN
 } Paspect;
@@ -437,6 +443,7 @@ typedef struct {
    Pint        style_ind;
    Pgcolr      colr;
    Pint        refl_eqn;
+   Pint        shad_meth;
    Prefl_props refl_props;
 } Pint_bundle_plus;
 

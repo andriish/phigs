@@ -206,6 +206,7 @@ void css_print_eltype(Pelem_type eltype)
         case PELEM_EDGE_COLR: name = "PELEM_EDGE_COLR"; break;
         case PELEM_TEXT_COLR: name = "PELEM_TEXT_COLR"; break;
         case PELEM_LIGHT_SRC_STATE: name = "PELEM_LIGHT_SRC_STATE"; break;
+        case PELEM_INT_SHAD_METH: name = "PELEM_INT_SHAD_METH"; break;
         case PELEM_INT_REFL_EQN: name = "PELEM_INT_REFL_EQN"; break;
         case PELEM_REFL_PROPS: name = "PELEM_REFL_PROP"; break;
 

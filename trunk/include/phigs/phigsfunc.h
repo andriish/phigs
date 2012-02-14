@@ -211,8 +211,9 @@
 #define         Pfn_fill_area3_data             (328)
 #define         Pfn_set_light_src_rep           (329)
 #define         Pfn_set_light_src_state         (330)
-#define         Pfn_set_refl_eqn                (331)
-#define         Pfn_set_refl_props              (332)
+#define         Pfn_set_int_shad_meth           (331)
+#define         Pfn_set_refl_eqn                (332)
+#define         Pfn_set_refl_props              (333)
 
 #define         Pfn_INQUIRY                     (1000)
 
@@ -1173,6 +1174,17 @@ void pexec_struct(
 void pset_light_src_state(
    Pint_list *activation,
    Pint_list *deactivation
+   );
+
+/*******************************************************************************
+ * pset_int_shad_meth
+ *
+ * DESCR:       Creates a new element - Set interiour shading method
+ * RETURNS:     N/A
+ */
+
+void pset_int_shad_meth(
+   Pint shad_meth
    );
 
 /*******************************************************************************

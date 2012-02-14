@@ -261,6 +261,7 @@ int main(int argc, char *argv[])
    pset_view_ind(view_ind);
    pset_edge_flag(PEDGE_ON);
    pset_edge_colr(&edge_colr);
+   pset_int_shad_meth(PSD_COLOUR);
    plabel(LABEL_TRANS);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    init_shape();
