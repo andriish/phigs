@@ -688,12 +688,11 @@ int phg_handle_fasd3(
          if (data == NULL)
             return (FALSE);
 
-         data->colr_model = fasd3->colr_model;
          switch(fasd3->fflag) {
             case PFA_COLOUR:
-               memcpy(&data->fdata.colour,
-                      &fasd3->fdata.colour,
-                      sizeof(Pcoval));
+               memcpy(&data->fdata.colr,
+                      &fasd3->fdata.colr,
+                      sizeof(Pgcolr));
                break;
 
             case PFA_NORMAL:
@@ -715,6 +714,17 @@ int phg_handle_fasd3(
 
          num_vertices = fasd3->num_vertices;
          switch (fasd3->vflag) {
+            case PVERT_POINT:
+               vdata = malloc(sizeof(Pvertex_data3) +
+                              num_vertices * sizeof(Ppoint3));
+               vdata->point = (Ppoint3 *) &vdata[1];
+               memcpy(vdata->point,
+                      fasd3->vdata->point,
+                      num_vertices * sizeof(Ppoint3));
+               data->num_vertices = num_vertices;
+               data->vdata = vdata;
+               break;
+
             case PVERT_COLOUR:
                vdata = malloc(sizeof(Pvertex_data3) +
                               num_vertices * sizeof(Pptco3));

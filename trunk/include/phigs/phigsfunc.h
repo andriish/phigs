@@ -850,7 +850,6 @@ void pfill_area_set3(
 void pfill_area3_data(
    Pint fflag,
    Pint vflag,
-   Pint colr_model,
    Pfacet_data3 *fdata,
    Pint num_vertices,
    Pvertex_data3 *vdata

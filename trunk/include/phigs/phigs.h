@@ -579,14 +579,9 @@ typedef struct {
    Pfloat z;
 } Pcobundl;
 
-typedef union {
-   Pint     ind;
-   Pcobundl direct;
-} Pcoval;
-
 typedef struct {
    Ppoint3 point;
-   Pcoval  colour;
+   Pgcolr  colr;
 } Pptco3;
 
 typedef struct {
@@ -596,12 +591,12 @@ typedef struct {
 
 typedef struct {
    Ppoint3 point;
-   Pcoval  colour;
+   Pgcolr  colr;
    Pvec3   normal;
 } Pptconorm3;
 
 typedef union {
-   Pcoval     colour;
+   Pgcolr     colr;
    Pvec3      normal;
    Pptconorm3 conorm;
 } Pfacet_data3;
@@ -696,7 +691,6 @@ typedef struct {
 typedef struct {
    Pint          fflag;
    Pint          vflag;
-   Pint          colr_model;
    Pfacet_data3  fdata;
    Pint          num_vertices;
    Pvertex_data3 *vdata;

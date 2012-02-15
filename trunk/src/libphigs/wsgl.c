@@ -499,7 +499,6 @@ void wsgl_end_structure(
    phg_update_hlhsr_id(ws);
    phg_update_projection(ws);
    phg_update_modelview(ws);
-   wsgl_update_light_src_state(ws);
 
 #ifdef DEBUG
    printf("Pop: id = %d, offset = %d\n",
