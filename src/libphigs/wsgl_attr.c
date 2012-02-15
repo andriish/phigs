@@ -194,11 +194,11 @@ void phg_set_asf(
 /*******************************************************************************
  * phg_set_gcolr
  *
- * DESCR:	Setup colour helper function
+ * DESCR:	Set colour
  * RETURNS:	N/A
  */
 
-static void phg_set_gcolr(
+void phg_set_gcolr(
    Pgcolr *gcolr
    )
 {
@@ -359,8 +359,7 @@ Pint_style phg_get_int_style(
  */
 
 void phg_setup_int_attr_nocol(
-   Ws_attr_st *ast,
-   int lighting
+   Ws_attr_st *ast
    )
 {
    Pint_style style;
@@ -387,13 +386,14 @@ void phg_setup_int_attr_nocol(
          else {
             style_ind = ast->bundl_group.int_bundle.style_ind;
          }
-         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
          glEnable(GL_POLYGON_STIPPLE);
          glPolygonStipple(wsgl_hatch_tbl[style_ind - 1]);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
          break;
 
       default:
          glDisable(GL_POLYGON_STIPPLE);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
          break;
    }
 
@@ -409,10 +409,6 @@ void phg_setup_int_attr_nocol(
    }
    else {
       glShadeModel(GL_SMOOTH);
-   }
-
-   if (lighting) {
-      glEnable(GL_LIGHTING);
    }
 }
 
@@ -434,23 +430,58 @@ void phg_setup_int_attr(
       phg_set_gcolr(&ast->bundl_group.int_bundle.colr);
    }
 
-   phg_setup_int_attr_nocol(ast, 0);
+   phg_setup_int_attr_nocol(ast);
 }
 
 /*******************************************************************************
- * phg_set_int_front_surf_prop
+ * phg_get_int_colr
  *
- * DESCR:	Setup front facet surface properties helper function
- * RETURNS:	N/A
+ * DESCR:	Get facet colour
+ * RETURNS:	Facet colour
  */
 
-static void phg_set_int_front_surf_prop(
+Pgcolr* phg_get_int_colr(
    Pfasd3 *fasd3,
    Ws_attr_st *ast
    )
 {
+   Pgcolr *gcolr;
+
+   switch (fasd3->fflag) {
+      case PFA_COLOUR:
+         gcolr = &fasd3->fdata.colr;
+         break;
+
+      case PFA_COLOUR_NORMAL:
+         gcolr = &fasd3->fdata.conorm.colr;
+         break;
+
+      default:
+         if (phg_nset_name_is_set(&ast->asf_nameset,
+                                  (Pint) PASPECT_INT_COLR_IND)) {
+            gcolr = &ast->indiv_group.int_bundle.colr;
+         }
+         else {
+            gcolr = &ast->bundl_group.int_bundle.colr;
+         }
+         break;
+   }
+
+   return gcolr;
+}
+
+/*******************************************************************************
+ * phg_get_int_refl_eqn
+ *
+ * DESCR:	Get interiour reflection equation
+ * RETURNS:	N/A
+ */
+
+Pint phg_get_int_refl_eqn(
+   Ws_attr_st *ast
+   )
+{
    Pint refl_eqn;
-   Prefl_props *refl_props;
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_REFL_EQN)) {
       refl_eqn = ast->indiv_group.int_bundle.refl_eqn;
@@ -459,6 +490,22 @@ static void phg_set_int_front_surf_prop(
       refl_eqn = ast->bundl_group.int_bundle.refl_eqn;
    }
 
+   return refl_eqn;
+}
+
+/*******************************************************************************
+ * phg_get_refl_props
+ *
+ * DESCR:	Get surface reflectance properties
+ * RETURNS:	Pointer to surface reflectance properties
+ */
+
+Prefl_props* phg_get_refl_props(
+   Ws_attr_st *ast
+   )
+{
+   Prefl_props *refl_props;
+
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_REFL_PROPS)) {
       refl_props = &ast->indiv_group.int_bundle.refl_props;
    }
@@ -466,120 +513,7 @@ static void phg_set_int_front_surf_prop(
       refl_props = &ast->bundl_group.int_bundle.refl_props;
    }
 
-   switch (refl_eqn) {
-      case PREFL_AMBIENT:
-         glEnable(GL_COLOR_MATERIAL);
-         glColorMaterial(GL_FRONT, GL_AMBIENT);
-         glColor3f(fasd3->fdata.colour.direct.x *
-                   refl_props->ambient_coef,
-                   fasd3->fdata.colour.direct.y *
-                   refl_props->ambient_coef,
-                   fasd3->fdata.colour.direct.z *
-                   refl_props->ambient_coef);
-         break;
-
-      case PREFL_AMB_DIFF:
-         glEnable(GL_COLOR_MATERIAL);
-         glColorMaterial(GL_FRONT, GL_AMBIENT);
-         glColor3f(fasd3->fdata.colour.direct.x *
-                   refl_props->ambient_coef,
-                   fasd3->fdata.colour.direct.y *
-                   refl_props->ambient_coef,
-                   fasd3->fdata.colour.direct.z *
-                   refl_props->ambient_coef);
-         glColorMaterial(GL_FRONT, GL_DIFFUSE);
-         glColor3f(fasd3->fdata.colour.direct.x *
-                   refl_props->diffuse_coef,
-                   fasd3->fdata.colour.direct.y *
-                   refl_props->diffuse_coef,
-                   fasd3->fdata.colour.direct.z *
-                   refl_props->diffuse_coef);
-         break;
-
-      case PREFL_AMB_DIFF_SPEC:
-         glEnable(GL_COLOR_MATERIAL);
-         glColorMaterial(GL_FRONT, GL_AMBIENT);
-         glColor3f(fasd3->fdata.colour.direct.x *
-                   refl_props->ambient_coef,
-                   fasd3->fdata.colour.direct.y *
-                   refl_props->ambient_coef,
-                   fasd3->fdata.colour.direct.z *
-                   refl_props->ambient_coef);
-         glColorMaterial(GL_FRONT, GL_DIFFUSE);
-         glColor3f(fasd3->fdata.colour.direct.x *
-                   refl_props->diffuse_coef,
-                   fasd3->fdata.colour.direct.y *
-                   refl_props->diffuse_coef,
-                   fasd3->fdata.colour.direct.z *
-                   refl_props->diffuse_coef);
-         glColorMaterial(GL_FRONT, GL_SPECULAR);
-         glColor3f(refl_props->specular_colr.val.general.x *
-                   refl_props->diffuse_coef,
-                   refl_props->specular_colr.val.general.y *
-                   refl_props->diffuse_coef,
-                   refl_props->specular_colr.val.general.z *
-                   refl_props->diffuse_coef);
-         break;
-
-      default:
-         glDisable(GL_COLOR_MATERIAL);
-         glColor3f(fasd3->fdata.colour.direct.x,
-                   fasd3->fdata.colour.direct.y,
-                   fasd3->fdata.colour.direct.z);
-         break;
-   }
-}
-
-/*******************************************************************************
- * phg_setup_facet_data3
- *
- * DESCR:	Setup facet data helper
- * RETURNS:	N/A
- */
-
-void phg_setup_facet_data3(
-   Pfasd3 *fasd3,
-   Ws_attr_st *ast
-   )
-{
-   switch (fasd3->fflag) {
-      case PFA_COLOUR:
-         if (fasd3->colr_model == PMODEL_RGB) {
-            phg_set_int_front_surf_prop(fasd3, ast);
-         }
-         else if (fasd3->colr_model == PINDIRECT) {
-            glIndexi(fasd3->fdata.colour.ind);
-         }
-         break;
-
-      case PFA_NORMAL:
-         glNormal3f(fasd3->fdata.normal.delta_x,
-                    fasd3->fdata.normal.delta_y,
-                    fasd3->fdata.normal.delta_z);
-         break;
-
-      case PFA_COLOUR_NORMAL:
-         if (fasd3->colr_model == PMODEL_RGB) {
-            phg_set_int_front_surf_prop(fasd3, ast);
-         }
-         else if (fasd3->colr_model == PINDIRECT) {
-            glIndexi(fasd3->fdata.colour.ind);
-         }
-         glNormal3f(fasd3->fdata.conorm.normal.delta_x,
-                    fasd3->fdata.conorm.normal.delta_y,
-                    fasd3->fdata.conorm.normal.delta_z);
-         break;
-
-      default:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-             (Pint) PASPECT_INT_COLR_IND)) {
-            phg_set_gcolr(&ast->indiv_group.int_bundle.colr);
-         }
-         else {
-            phg_set_gcolr(&ast->bundl_group.int_bundle.colr);
-         }
-         break;
-   }
+   return refl_props;
 }
 
 /*******************************************************************************

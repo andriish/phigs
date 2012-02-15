@@ -62,7 +62,6 @@ typedef struct {
    Pmatrix3   local_tran;
    Pmatrix3   global_tran;
    Pint       pick_id;
-   int        lighting;
    Nset       lightstat;
    u_int32_t  lightstat_buf[1];
 } Ws_struct;
@@ -163,6 +162,17 @@ void wsgl_set_hlhsr_mode(
 void phg_set_asf(
    Ws_attr_st *ast,
    Pasf_info *asf_info
+   );
+
+/*******************************************************************************
+ * phg_set_gcolr
+ *
+ * DESCR:       Set colour
+ * RETURNS:     N/A
+ */
+
+void phg_set_gcolr(
+   Pgcolr *gcolr
    );
 
 /*******************************************************************************
@@ -385,8 +395,7 @@ Pint_style phg_get_int_style(
  */
 
 void phg_setup_int_attr_nocol(
-   Ws_attr_st *ast,
-   int lighting
+   Ws_attr_st *ast
    );
 
 /*******************************************************************************
@@ -401,14 +410,36 @@ void phg_setup_int_attr(
    );
 
 /*******************************************************************************
- * phg_setup_facet_data3
+ * phg_get_int_colr
  *
- * DESCR:       Setup facet data helper 
+ * DESCR:       Get facet colour
+ * RETURNS:     Facet colour
+ */
+
+Pgcolr* phg_get_int_colr(
+   Pfasd3 *fasd3,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * phg_get_int_refl_eqn
+ *
+ * DESCR:       Get interiour reflection equation
  * RETURNS:     N/A
  */
 
-void phg_setup_facet_data3(
-   Pfasd3 *fasd3,
+Pint phg_get_int_refl_eqn(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * phg_get_refl_props
+ *
+ * DESCR:       Get surface reflectance properties
+ * RETURNS:     Pointer to surface reflectance properties
+ */
+
+Prefl_props* phg_get_refl_props(
    Ws_attr_st *ast
    );
 
@@ -662,17 +693,6 @@ void phg_draw_text(
    );
 
 /*******************************************************************************
- * wsgl_update_light_src_state
- *
- * DESCR:       Update light source state for workstation
- * RETURNS:     N/A
- */
-
-void wsgl_update_light_src_state(
-   Ws *ws
-   );
-
-/*******************************************************************************
  * wsgl_set_light_src_state
  *
  * DESCR:       Set light source state for workstation
@@ -682,6 +702,22 @@ void wsgl_update_light_src_state(
 void wsgl_set_light_src_state(
    Ws *ws,
    Plss *lss
+   );
+
+/*******************************************************************************
+ * wsgl_light_colr
+ *
+ * DESCR:       Perform lighting calculations and set colour for vertex
+ * RETURNS:     N/A
+ */
+
+void wsgl_light_colr(
+   Ws *ws,
+   Pgcolr *result,
+   Pint refl_eqn,
+   Prefl_props *refl_props,
+   Pgcolr *coval,
+   Pvec3 *normal
    );
 
 extern unsigned char *wsgl_hatch_tbl[];

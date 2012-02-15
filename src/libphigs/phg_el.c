@@ -533,7 +533,6 @@ void pfill_area_set3(
 void pfill_area3_data(
    Pint fflag,
    Pint vflag,
-   Pint colr_model,
    Pfacet_data3 *fdata,
    Pint num_vertices,
    Pvertex_data3 *vdata
@@ -550,7 +549,6 @@ void pfill_area3_data(
       ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA3_DATA;
       ARGS_ELMT_DATA(&args).fasd3.fflag = fflag;
       ARGS_ELMT_DATA(&args).fasd3.vflag = vflag;
-      ARGS_ELMT_DATA(&args).fasd3.colr_model = colr_model;
       memcpy(&ARGS_ELMT_DATA(&args).fasd3.fdata, fdata, sizeof(Pfacet_data3));
       ARGS_ELMT_DATA(&args).fasd3.num_vertices = num_vertices;
       ARGS_ELMT_DATA(&args).fasd3.vdata = vdata;

@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>
@@ -31,6 +32,10 @@
 #define DEPTH         1.0
 #define STRUCT_OBJECT   0
 #define LABEL_TRANS    10
+#define INT_STYLE      PSTYLE_SOLID
+#define EDGE_FLAG      PEDGE_ON
+#define HLHSR_FLAG     PHIGS_HLHSR_ID_ON
+#define INIT_SHAPE     init_shape_normal_per_facet
 
 Pint errnum;
 Pmatrix3 rot3, rotx, roty;
@@ -44,15 +49,194 @@ Pint_list lights_on_list = {2, lights_on};
 Pint_list lights_off_list = {0, light_off};
 Prefl_props refl_props;
 
-void init_shape(void)
+void setup_light(Pint ws_id)
+{
+   Plight_src_bundle light;
+
+   light.type = PLIGHT_AMBIENT;
+   light.rec.ambient.colr.val.general.x = 1.0;
+   light.rec.ambient.colr.val.general.y = 0.0;
+   light.rec.ambient.colr.val.general.z = 0.0;
+
+   pset_light_src_rep(ws_id, 1, &light);
+
+   light.type = PLIGHT_DIRECTIONAL;
+   light.rec.directional.colr.val.general.x = 0.0;
+   light.rec.directional.colr.val.general.y = 1.0;
+   light.rec.directional.colr.val.general.z = 1.0;
+   light.rec.directional.dir.delta_x = 1/sqrt(3.0);
+   light.rec.directional.dir.delta_y = 1/sqrt(3.0);
+   light.rec.directional.dir.delta_z = 1/sqrt(3.0);
+
+   pset_light_src_rep(ws_id, 2, &light);
+}
+
+void init_shape_normal_per_facet(void)
+{
+   Ppoint3 vertex_data[5];
+   Pfacet_data3 fdata;
+   Pvertex_data3 vdata;
+
+   fdata.conorm.colr.type = PMODEL_RGB;
+   fdata.conorm.colr.val.general.x = 0.75;
+   fdata.conorm.colr.val.general.y = 0.75;
+   fdata.conorm.colr.val.general.z = 0.75;
+
+   /* Back */
+   fdata.conorm.normal.delta_x = 0.0;
+   fdata.conorm.normal.delta_y = 0.0;
+   fdata.conorm.normal.delta_z = -1.0;
+
+   vertex_data[0].x = 0.0;
+   vertex_data[0].y = 0.0;
+   vertex_data[0].z = 0.0;
+
+   vertex_data[1].x = WIDTH;
+   vertex_data[1].y = 0.0;
+   vertex_data[1].z = 0.0;
+
+   vertex_data[2].x = WIDTH;
+   vertex_data[2].y = HEIGHT;
+   vertex_data[2].z = 0.0;
+
+   vertex_data[3].x = 0.0;
+   vertex_data[3].y = HEIGHT;
+   vertex_data[3].z = 0.0;
+
+   vdata.point = vertex_data;
+   pfill_area3_data(PFA_COLOUR_NORMAL, PVERT_POINT, &fdata, 4, &vdata);
+
+   /* Front */
+   fdata.conorm.normal.delta_x = 0.0;
+   fdata.conorm.normal.delta_y = 0.0;
+   fdata.conorm.normal.delta_z = 1.0;
+
+   vertex_data[0].x = 0.0;
+   vertex_data[0].y = 0.0;
+   vertex_data[0].z = DEPTH;
+
+   vertex_data[1].x = WIDTH;
+   vertex_data[1].y = 0.0;
+   vertex_data[1].z = DEPTH;
+
+   vertex_data[2].x = WIDTH;
+   vertex_data[2].y = HEIGHT;
+   vertex_data[2].z = DEPTH;
+
+   vertex_data[3].x = 0.0;
+   vertex_data[3].y = HEIGHT;
+   vertex_data[3].z = DEPTH;
+
+   vdata.point = vertex_data;
+   pfill_area3_data(PFA_COLOUR_NORMAL, PVERT_POINT, &fdata, 4, &vdata);
+
+   /* Bottom */
+   fdata.conorm.normal.delta_x = 0.0;
+   fdata.conorm.normal.delta_y = -1.0;
+   fdata.conorm.normal.delta_z = 0.0;
+
+   vertex_data[0].x = 0.0;
+   vertex_data[0].y = 0.0;
+   vertex_data[0].z = 0.0;
+
+   vertex_data[1].x = WIDTH;
+   vertex_data[1].y = 0.0;
+   vertex_data[1].z = 0.0;
+
+   vertex_data[2].x = WIDTH;
+   vertex_data[2].y = 0.0;
+   vertex_data[2].z = DEPTH;
+
+   vertex_data[3].x = 0.0;
+   vertex_data[3].y = 0.0;
+   vertex_data[3].z = DEPTH;
+
+   vdata.point = vertex_data;
+   pfill_area3_data(PFA_COLOUR_NORMAL, PVERT_POINT, &fdata, 4, &vdata);
+
+   /* Top */
+   fdata.conorm.normal.delta_x = 0.0;
+   fdata.conorm.normal.delta_y = 1.0;
+   fdata.conorm.normal.delta_z = 0.0;
+
+   vertex_data[0].x = 0.0;
+   vertex_data[0].y = HEIGHT;
+   vertex_data[0].z = 0.0;
+
+   vertex_data[1].x = WIDTH;
+   vertex_data[1].y = HEIGHT;
+   vertex_data[1].z = 0.0;
+
+   vertex_data[2].x = WIDTH;
+   vertex_data[2].y = HEIGHT;
+   vertex_data[2].z = DEPTH;
+
+   vertex_data[3].x = 0.0;
+   vertex_data[3].y = HEIGHT;
+   vertex_data[3].z = DEPTH;
+
+   vdata.point = vertex_data;
+   pfill_area3_data(PFA_COLOUR_NORMAL, PVERT_POINT, &fdata, 4, &vdata);
+
+   /* Left */
+   fdata.conorm.normal.delta_x = -1.0;
+   fdata.conorm.normal.delta_y = 0.0;
+   fdata.conorm.normal.delta_z = 0.0;
+
+   vertex_data[0].x = 0.0;
+   vertex_data[0].y = 0.0;
+   vertex_data[0].z = 0.0;
+
+   vertex_data[1].x = 0.0;
+   vertex_data[1].y = 0.0;
+   vertex_data[1].z = DEPTH;
+
+   vertex_data[2].x = 0.0;
+   vertex_data[2].y = HEIGHT;
+   vertex_data[2].z = DEPTH;
+
+   vertex_data[3].x = 0.0;
+   vertex_data[3].y = HEIGHT;
+   vertex_data[3].z = 0.0;
+
+   vdata.point = vertex_data;
+   pfill_area3_data(PFA_COLOUR_NORMAL, PVERT_POINT, &fdata, 4, &vdata);
+
+   /* Right */
+   fdata.conorm.normal.delta_x = 1.0;
+   fdata.conorm.normal.delta_y = 0.0;
+   fdata.conorm.normal.delta_z = 0.0;
+
+   vertex_data[0].x = WIDTH;
+   vertex_data[0].y = 0.0;
+   vertex_data[0].z = 0.0;
+
+   vertex_data[1].x = WIDTH;
+   vertex_data[1].y = 0.0;
+   vertex_data[1].z = DEPTH;
+
+   vertex_data[2].x = WIDTH;
+   vertex_data[2].y = HEIGHT;
+   vertex_data[2].z = DEPTH;
+
+   vertex_data[3].x = WIDTH;
+   vertex_data[3].y = HEIGHT;
+   vertex_data[3].z = 0.0;
+
+   vdata.point = vertex_data;
+   pfill_area3_data(PFA_COLOUR_NORMAL, PVERT_POINT, &fdata, 4, &vdata);
+}
+
+void init_shape_normal_per_vertex(void)
 {
    Pptnorm3 vertex_data[5];
    Pfacet_data3 fdata;
    Pvertex_data3 vdata;
 
-   fdata.colour.direct.x = 0.0;
-   fdata.colour.direct.y = 0.5;
-   fdata.colour.direct.z = 0.5;
+   fdata.colr.type = PMODEL_RGB;
+   fdata.colr.val.general.x = 0.75;
+   fdata.colr.val.general.y = 0.75;
+   fdata.colr.val.general.z = 0.75;
 
    /* Back */
    vertex_data[0].point.x = 0.0;
@@ -84,7 +268,7 @@ void init_shape(void)
    vertex_data[3].normal.delta_z = -1.0;
 
    vdata.ptnorm = vertex_data;
-   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
+   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, &fdata, 4, &vdata);
 
    /* Front */
    vertex_data[0].point.x = 0.0;
@@ -116,7 +300,7 @@ void init_shape(void)
    vertex_data[3].normal.delta_z = 1.0;
 
    vdata.ptnorm = vertex_data;
-   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
+   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, &fdata, 4, &vdata);
 
    /* Bottom */
    vertex_data[0].point.x = 0.0;
@@ -148,7 +332,7 @@ void init_shape(void)
    vertex_data[3].normal.delta_z = 0.0;
 
    vdata.ptnorm = vertex_data;
-   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
+   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, &fdata, 4, &vdata);
 
    /* Top */
    vertex_data[0].point.x = 0.0;
@@ -180,7 +364,7 @@ void init_shape(void)
    vertex_data[3].normal.delta_z = 0.0;
 
    vdata.ptnorm = vertex_data;
-   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
+   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, &fdata, 4, &vdata);
 
    /* Left */
    vertex_data[0].point.x = 0.0;
@@ -212,7 +396,7 @@ void init_shape(void)
    vertex_data[3].normal.delta_z = 0.0;
 
    vdata.ptnorm = vertex_data;
-   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
+   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, &fdata, 4, &vdata);
 
    vertex_data[0].point.x = WIDTH;
    vertex_data[0].point.y = 0.0;
@@ -243,29 +427,549 @@ void init_shape(void)
    vertex_data[3].normal.delta_z = 0.0;
 
    vdata.ptnorm = vertex_data;
-   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, PMODEL_RGB, &fdata, 4, &vdata);
+   pfill_area3_data(PFA_COLOUR, PVERT_NORMAL, &fdata, 4, &vdata);
 }
 
-void setup_light(Pint ws_id)
+void init_colour_shape_normal_per_facet(void)
 {
-   Plight_src_bundle light;
+   Pptco3 vertex_data[5];
+   Pfacet_data3 fdata;
+   Pvertex_data3 vdata;
 
-   light.type = PLIGHT_AMBIENT;
-   light.rec.ambient.colr.val.general.x = 0.2;
-   light.rec.ambient.colr.val.general.y = 0.2;
-   light.rec.ambient.colr.val.general.z = 0.2;
+   /* Back */
+   fdata.normal.delta_x = 0.0;
+   fdata.normal.delta_y = 0.0;
+   fdata.normal.delta_z = -1.0;
 
-   pset_light_src_rep(ws_id, 1, &light);
+   vertex_data[0].point.x = 0.0;
+   vertex_data[0].point.y = 0.0;
+   vertex_data[0].point.z = 0.0;
+   vertex_data[0].colr.type = PMODEL_RGB;
+   vertex_data[0].colr.val.general.x = 1.0;
+   vertex_data[0].colr.val.general.y = 0.0;
+   vertex_data[0].colr.val.general.z = 0.0;
 
-   light.type = PLIGHT_DIRECTIONAL;
-   light.rec.directional.colr.val.general.x = 1.0;
-   light.rec.directional.colr.val.general.y = 1.0;
-   light.rec.directional.colr.val.general.z = 1.0;
-   light.rec.directional.dir.delta_x = 0.25;
-   light.rec.directional.dir.delta_y = 0.75;
-   light.rec.directional.dir.delta_z = 1.0;
+   vertex_data[1].point.x = WIDTH;
+   vertex_data[1].point.y = 0.0;
+   vertex_data[1].point.z = 0.0;
+   vertex_data[1].colr.type = PMODEL_RGB;
+   vertex_data[1].colr.val.general.x = 1.0;
+   vertex_data[1].colr.val.general.y = 1.0;
+   vertex_data[1].colr.val.general.z = 0.0;
 
-   pset_light_src_rep(ws_id, 2, &light);
+   vertex_data[2].point.x = WIDTH;
+   vertex_data[2].point.y = HEIGHT;
+   vertex_data[2].point.z = 0.0;
+   vertex_data[2].colr.type = PMODEL_RGB;
+   vertex_data[2].colr.val.general.x = 0.0;
+   vertex_data[2].colr.val.general.y = 1.0;
+   vertex_data[2].colr.val.general.z = 1.0;
+
+   vertex_data[3].point.x = 0.0;
+   vertex_data[3].point.y = HEIGHT;
+   vertex_data[3].point.z = 0.0;
+   vertex_data[3].colr.type = PMODEL_RGB;
+   vertex_data[3].colr.val.general.x = 1.0;
+   vertex_data[3].colr.val.general.y = 0.0;
+   vertex_data[3].colr.val.general.z = 1.0;
+
+   vdata.ptco = vertex_data;
+   pfill_area3_data(PFA_NORMAL, PVERT_COLOUR, &fdata, 4, &vdata);
+
+   /* Front */
+   fdata.normal.delta_x = 0.0;
+   fdata.normal.delta_y = 0.0;
+   fdata.normal.delta_z = 1.0;
+
+   vertex_data[0].point.x = 0.0;
+   vertex_data[0].point.y = 0.0;
+   vertex_data[0].point.z = DEPTH;
+   vertex_data[0].colr.type = PMODEL_RGB;
+   vertex_data[0].colr.val.general.x = 1.0;
+   vertex_data[0].colr.val.general.y = 0.0;
+   vertex_data[0].colr.val.general.z = 1.0;
+
+   vertex_data[1].point.x = WIDTH;
+   vertex_data[1].point.y = 0.0;
+   vertex_data[1].point.z = DEPTH;
+   vertex_data[1].colr.type = PMODEL_RGB;
+   vertex_data[1].colr.val.general.x = 0.0;
+   vertex_data[1].colr.val.general.y = 1.0;
+   vertex_data[1].colr.val.general.z = 1.0;
+
+   vertex_data[2].point.x = WIDTH;
+   vertex_data[2].point.y = HEIGHT;
+   vertex_data[2].point.z = DEPTH;
+   vertex_data[2].colr.type = PMODEL_RGB;
+   vertex_data[2].colr.val.general.x = 1.0;
+   vertex_data[2].colr.val.general.y = 1.0;
+   vertex_data[2].colr.val.general.z = 0.0;
+
+   vertex_data[3].point.x = 0.0;
+   vertex_data[3].point.y = HEIGHT;
+   vertex_data[3].point.z = DEPTH;
+   vertex_data[3].colr.type = PMODEL_RGB;
+   vertex_data[3].colr.val.general.x = 0.0;
+   vertex_data[3].colr.val.general.y = 1.0;
+   vertex_data[3].colr.val.general.z = 1.0;
+
+   vdata.ptco = vertex_data;
+   pfill_area3_data(PFA_NORMAL, PVERT_COLOUR, &fdata, 4, &vdata);
+
+   /* Bottom */
+   fdata.normal.delta_x = 0.0;
+   fdata.normal.delta_y = -1.0;
+   fdata.normal.delta_z = 0.0;
+
+   vertex_data[0].point.x = 0.0;
+   vertex_data[0].point.y = 0.0;
+   vertex_data[0].point.z = 0.0;
+   vertex_data[0].colr.type = PMODEL_RGB;
+   vertex_data[0].colr.val.general.x = 1.0;
+   vertex_data[0].colr.val.general.y = 0.0;
+   vertex_data[0].colr.val.general.z = 0.0;
+
+   vertex_data[1].point.x = WIDTH;
+   vertex_data[1].point.y = 0.0;
+   vertex_data[1].point.z = 0.0;
+   vertex_data[1].colr.type = PMODEL_RGB;
+   vertex_data[1].colr.val.general.x = 1.0;
+   vertex_data[1].colr.val.general.y = 1.0;
+   vertex_data[1].colr.val.general.z = 0.0;
+
+   vertex_data[2].point.x = WIDTH;
+   vertex_data[2].point.y = 0.0;
+   vertex_data[2].point.z = DEPTH;
+   vertex_data[2].colr.type = PMODEL_RGB;
+   vertex_data[2].colr.val.general.x = 0.0;
+   vertex_data[2].colr.val.general.y = 1.0;
+   vertex_data[2].colr.val.general.z = 1.0;
+
+   vertex_data[3].point.x = 0.0;
+   vertex_data[3].point.y = 0.0;
+   vertex_data[3].point.z = DEPTH;
+   vertex_data[3].colr.type = PMODEL_RGB;
+   vertex_data[3].colr.val.general.x = 1.0;
+   vertex_data[3].colr.val.general.y = 0.0;
+   vertex_data[3].colr.val.general.z = 1.0;
+
+   vdata.ptco = vertex_data;
+   pfill_area3_data(PFA_NORMAL, PVERT_COLOUR, &fdata, 4, &vdata);
+
+   /* Top */
+   fdata.normal.delta_x = 0.0;
+   fdata.normal.delta_y = 1.0;
+   fdata.normal.delta_z = 0.0;
+
+   vertex_data[0].point.x = 0.0;
+   vertex_data[0].point.y = HEIGHT;
+   vertex_data[0].point.z = 0.0;
+   vertex_data[0].colr.type = PMODEL_RGB;
+   vertex_data[0].colr.val.general.x = 1.0;
+   vertex_data[0].colr.val.general.y = 0.0;
+   vertex_data[0].colr.val.general.z = 1.0;
+
+   vertex_data[1].point.x = WIDTH;
+   vertex_data[1].point.y = HEIGHT;
+   vertex_data[1].point.z = 0.0;
+   vertex_data[1].colr.type = PMODEL_RGB;
+   vertex_data[1].colr.val.general.x = 0.0;
+   vertex_data[1].colr.val.general.y = 1.0;
+   vertex_data[1].colr.val.general.z = 1.0;
+
+   vertex_data[2].point.x = WIDTH;
+   vertex_data[2].point.y = HEIGHT;
+   vertex_data[2].point.z = DEPTH;
+   vertex_data[2].colr.type = PMODEL_RGB;
+   vertex_data[2].colr.val.general.x = 1.0;
+   vertex_data[2].colr.val.general.y = 1.0;
+   vertex_data[2].colr.val.general.z = 0.0;
+
+   vertex_data[3].point.x = 0.0;
+   vertex_data[3].point.y = HEIGHT;
+   vertex_data[3].point.z = DEPTH;
+   vertex_data[3].colr.type = PMODEL_RGB;
+   vertex_data[3].colr.val.general.x = 0.0;
+   vertex_data[3].colr.val.general.y = 1.0;
+   vertex_data[3].colr.val.general.z = 1.0;
+
+   vdata.ptco = vertex_data;
+   pfill_area3_data(PFA_NORMAL, PVERT_COLOUR, &fdata, 4, &vdata);
+
+   /* Left */
+   fdata.normal.delta_x = -1.0;
+   fdata.normal.delta_y = 0.0;
+   fdata.normal.delta_z = 0.0;
+
+   vertex_data[0].point.x = 0.0;
+   vertex_data[0].point.y = 0.0;
+   vertex_data[0].point.z = 0.0;
+   vertex_data[0].colr.type = PMODEL_RGB;
+   vertex_data[0].colr.val.general.x = 1.0;
+   vertex_data[0].colr.val.general.y = 0.0;
+   vertex_data[0].colr.val.general.z = 0.0;
+
+   vertex_data[1].point.x = 0.0;
+   vertex_data[1].point.y = 0.0;
+   vertex_data[1].point.z = DEPTH;
+   vertex_data[1].colr.type = PMODEL_RGB;
+   vertex_data[1].colr.val.general.x = 1.0;
+   vertex_data[1].colr.val.general.y = 0.0;
+   vertex_data[1].colr.val.general.z = 1.0;
+
+   vertex_data[2].point.x = 0.0;
+   vertex_data[2].point.y = HEIGHT;
+   vertex_data[2].point.z = DEPTH;
+   vertex_data[2].colr.type = PMODEL_RGB;
+   vertex_data[2].colr.val.general.x = 0.0;
+   vertex_data[2].colr.val.general.y = 1.0;
+   vertex_data[2].colr.val.general.z = 1.0;
+
+   vertex_data[3].point.x = 0.0;
+   vertex_data[3].point.y = HEIGHT;
+   vertex_data[3].point.z = 0.0;
+   vertex_data[3].colr.type = PMODEL_RGB;
+   vertex_data[3].colr.val.general.x = 1.0;
+   vertex_data[3].colr.val.general.y = 0.0;
+   vertex_data[3].colr.val.general.z = 1.0;
+
+   vdata.ptco = vertex_data;
+   pfill_area3_data(PFA_NORMAL, PVERT_COLOUR, &fdata, 4, &vdata);
+
+   /* Right */
+   fdata.normal.delta_x = 1.0;
+   fdata.normal.delta_y = 0.0;
+   fdata.normal.delta_z = 0.0;
+
+   vertex_data[0].point.x = WIDTH;
+   vertex_data[0].point.y = 0.0;
+   vertex_data[0].point.z = 0.0;
+   vertex_data[0].colr.type = PMODEL_RGB;
+   vertex_data[0].colr.val.general.x = 1.0;
+   vertex_data[0].colr.val.general.y = 1.0;
+   vertex_data[0].colr.val.general.z = 0.0;
+
+   vertex_data[1].point.x = WIDTH;
+   vertex_data[1].point.y = 0.0;
+   vertex_data[1].point.z = DEPTH;
+   vertex_data[1].colr.type = PMODEL_RGB;
+   vertex_data[1].colr.val.general.x = 0.0;
+   vertex_data[1].colr.val.general.y = 1.0;
+   vertex_data[1].colr.val.general.z = 1.0;
+
+   vertex_data[2].point.x = WIDTH;
+   vertex_data[2].point.y = HEIGHT;
+   vertex_data[2].point.z = DEPTH;
+   vertex_data[2].colr.type = PMODEL_RGB;
+   vertex_data[2].colr.val.general.x = 1.0;
+   vertex_data[2].colr.val.general.y = 1.0;
+   vertex_data[2].colr.val.general.z = 0.0;
+
+   vertex_data[3].point.x = WIDTH;
+   vertex_data[3].point.y = HEIGHT;
+   vertex_data[3].point.z = 0.0;
+   vertex_data[3].colr.type = PMODEL_RGB;
+   vertex_data[3].colr.val.general.x = 0.0;
+   vertex_data[3].colr.val.general.y = 1.0;
+   vertex_data[3].colr.val.general.z = 1.0;
+
+   vdata.ptco = vertex_data;
+   pfill_area3_data(PFA_NORMAL, PVERT_COLOUR, &fdata, 4, &vdata);
+}
+
+void init_colour_shape_normal_per_vertex(void)
+{
+   Pptconorm3 vertex_data[5];
+   Pfacet_data3 fdata;
+   Pvertex_data3 vdata;
+
+   /* Back */
+   vertex_data[0].point.x = 0.0;
+   vertex_data[0].point.y = 0.0;
+   vertex_data[0].point.z = 0.0;
+   vertex_data[0].colr.type = PMODEL_RGB;
+   vertex_data[0].colr.val.general.x = 1.0;
+   vertex_data[0].colr.val.general.y = 0.0;
+   vertex_data[0].colr.val.general.z = 0.0;
+   vertex_data[0].normal.delta_x = 0.0;
+   vertex_data[0].normal.delta_y = 0.0;
+   vertex_data[0].normal.delta_z = -1.0;
+
+   vertex_data[1].point.x = WIDTH;
+   vertex_data[1].point.y = 0.0;
+   vertex_data[1].point.z = 0.0;
+   vertex_data[1].colr.type = PMODEL_RGB;
+   vertex_data[1].colr.val.general.x = 1.0;
+   vertex_data[1].colr.val.general.y = 1.0;
+   vertex_data[1].colr.val.general.z = 0.0;
+   vertex_data[1].normal.delta_x = 0.0;
+   vertex_data[1].normal.delta_y = 0.0;
+   vertex_data[1].normal.delta_z = -1.0;
+
+   vertex_data[2].point.x = WIDTH;
+   vertex_data[2].point.y = HEIGHT;
+   vertex_data[2].point.z = 0.0;
+   vertex_data[2].colr.type = PMODEL_RGB;
+   vertex_data[2].colr.val.general.x = 0.0;
+   vertex_data[2].colr.val.general.y = 1.0;
+   vertex_data[2].colr.val.general.z = 1.0;
+   vertex_data[2].normal.delta_x = 0.0;
+   vertex_data[2].normal.delta_y = 0.0;
+   vertex_data[2].normal.delta_z = -1.0;
+
+   vertex_data[3].point.x = 0.0;
+   vertex_data[3].point.y = HEIGHT;
+   vertex_data[3].point.z = 0.0;
+   vertex_data[3].colr.type = PMODEL_RGB;
+   vertex_data[3].colr.val.general.x = 1.0;
+   vertex_data[3].colr.val.general.y = 0.0;
+   vertex_data[3].colr.val.general.z = 1.0;
+   vertex_data[3].normal.delta_x = 0.0;
+   vertex_data[3].normal.delta_y = 0.0;
+   vertex_data[3].normal.delta_z = -1.0;
+
+   vdata.ptconorm = vertex_data;
+   pfill_area3_data(PFA_NONE, PVERT_COLOUR_NORMAL, &fdata, 4, &vdata);
+
+   /* Front */
+   vertex_data[0].point.x = 0.0;
+   vertex_data[0].point.y = 0.0;
+   vertex_data[0].point.z = DEPTH;
+   vertex_data[0].colr.type = PMODEL_RGB;
+   vertex_data[0].colr.val.general.x = 1.0;
+   vertex_data[0].colr.val.general.y = 0.0;
+   vertex_data[0].colr.val.general.z = 1.0;
+   vertex_data[0].normal.delta_x = 0.0;
+   vertex_data[0].normal.delta_y = 0.0;
+   vertex_data[0].normal.delta_z = 1.0;
+
+   vertex_data[1].point.x = WIDTH;
+   vertex_data[1].point.y = 0.0;
+   vertex_data[1].point.z = DEPTH;
+   vertex_data[1].colr.type = PMODEL_RGB;
+   vertex_data[1].colr.val.general.x = 0.0;
+   vertex_data[1].colr.val.general.y = 1.0;
+   vertex_data[1].colr.val.general.z = 1.0;
+   vertex_data[1].normal.delta_x = 0.0;
+   vertex_data[1].normal.delta_y = 0.0;
+   vertex_data[1].normal.delta_z = 1.0;
+
+   vertex_data[2].point.x = WIDTH;
+   vertex_data[2].point.y = HEIGHT;
+   vertex_data[2].point.z = DEPTH;
+   vertex_data[2].colr.type = PMODEL_RGB;
+   vertex_data[2].colr.val.general.x = 1.0;
+   vertex_data[2].colr.val.general.y = 1.0;
+   vertex_data[2].colr.val.general.z = 0.0;
+   vertex_data[2].normal.delta_x = 0.0;
+   vertex_data[2].normal.delta_y = 0.0;
+   vertex_data[2].normal.delta_z = 1.0;
+
+   vertex_data[3].point.x = 0.0;
+   vertex_data[3].point.y = HEIGHT;
+   vertex_data[3].point.z = DEPTH;
+   vertex_data[3].colr.type = PMODEL_RGB;
+   vertex_data[3].colr.val.general.x = 0.0;
+   vertex_data[3].colr.val.general.y = 1.0;
+   vertex_data[3].colr.val.general.z = 1.0;
+   vertex_data[3].normal.delta_x = 0.0;
+   vertex_data[3].normal.delta_y = 0.0;
+   vertex_data[3].normal.delta_z = 1.0;
+
+   vdata.ptconorm = vertex_data;
+   pfill_area3_data(PFA_NONE, PVERT_COLOUR_NORMAL, &fdata, 4, &vdata);
+
+   /* Bottom */
+   vertex_data[0].point.x = 0.0;
+   vertex_data[0].point.y = 0.0;
+   vertex_data[0].point.z = 0.0;
+   vertex_data[0].colr.type = PMODEL_RGB;
+   vertex_data[0].colr.val.general.x = 1.0;
+   vertex_data[0].colr.val.general.y = 0.0;
+   vertex_data[0].colr.val.general.z = 0.0;
+   vertex_data[0].normal.delta_x = 0.0;
+   vertex_data[0].normal.delta_y = -1.0;
+   vertex_data[0].normal.delta_z = 0.0;
+
+   vertex_data[1].point.x = WIDTH;
+   vertex_data[1].point.y = 0.0;
+   vertex_data[1].point.z = 0.0;
+   vertex_data[1].colr.type = PMODEL_RGB;
+   vertex_data[1].colr.val.general.x = 1.0;
+   vertex_data[1].colr.val.general.y = 1.0;
+   vertex_data[1].colr.val.general.z = 0.0;
+   vertex_data[1].normal.delta_x = 0.0;
+   vertex_data[1].normal.delta_y = -1.0;
+   vertex_data[1].normal.delta_z = 0.0;
+
+   vertex_data[2].point.x = WIDTH;
+   vertex_data[2].point.y = 0.0;
+   vertex_data[2].point.z = DEPTH;
+   vertex_data[2].colr.type = PMODEL_RGB;
+   vertex_data[2].colr.val.general.x = 0.0;
+   vertex_data[2].colr.val.general.y = 1.0;
+   vertex_data[2].colr.val.general.z = 1.0;
+   vertex_data[2].normal.delta_x = 0.0;
+   vertex_data[2].normal.delta_y = -1.0;
+   vertex_data[2].normal.delta_z = 0.0;
+
+   vertex_data[3].point.x = 0.0;
+   vertex_data[3].point.y = 0.0;
+   vertex_data[3].point.z = DEPTH;
+   vertex_data[3].colr.type = PMODEL_RGB;
+   vertex_data[3].colr.val.general.x = 1.0;
+   vertex_data[3].colr.val.general.y = 0.0;
+   vertex_data[3].colr.val.general.z = 1.0;
+   vertex_data[3].normal.delta_x = 0.0;
+   vertex_data[3].normal.delta_y = -1.0;
+   vertex_data[3].normal.delta_z = 0.0;
+
+   vdata.ptconorm = vertex_data;
+   pfill_area3_data(PFA_NONE, PVERT_COLOUR_NORMAL, &fdata, 4, &vdata);
+
+   /* Top */
+   vertex_data[0].point.x = 0.0;
+   vertex_data[0].point.y = HEIGHT;
+   vertex_data[0].point.z = 0.0;
+   vertex_data[0].colr.type = PMODEL_RGB;
+   vertex_data[0].colr.val.general.x = 1.0;
+   vertex_data[0].colr.val.general.y = 0.0;
+   vertex_data[0].colr.val.general.z = 1.0;
+   vertex_data[0].normal.delta_x = 0.0;
+   vertex_data[0].normal.delta_y = 1.0;
+   vertex_data[0].normal.delta_z = 0.0;
+
+   vertex_data[1].point.x = WIDTH;
+   vertex_data[1].point.y = HEIGHT;
+   vertex_data[1].point.z = 0.0;
+   vertex_data[1].colr.type = PMODEL_RGB;
+   vertex_data[1].colr.val.general.x = 0.0;
+   vertex_data[1].colr.val.general.y = 1.0;
+   vertex_data[1].colr.val.general.z = 1.0;
+   vertex_data[1].normal.delta_x = 0.0;
+   vertex_data[1].normal.delta_y = 1.0;
+   vertex_data[1].normal.delta_z = 0.0;
+
+   vertex_data[2].point.x = WIDTH;
+   vertex_data[2].point.y = HEIGHT;
+   vertex_data[2].point.z = DEPTH;
+   vertex_data[2].colr.type = PMODEL_RGB;
+   vertex_data[2].colr.val.general.x = 1.0;
+   vertex_data[2].colr.val.general.y = 1.0;
+   vertex_data[2].colr.val.general.z = 0.0;
+   vertex_data[2].normal.delta_x = 0.0;
+   vertex_data[2].normal.delta_y = 1.0;
+   vertex_data[2].normal.delta_z = 0.0;
+
+   vertex_data[3].point.x = 0.0;
+   vertex_data[3].point.y = HEIGHT;
+   vertex_data[3].point.z = DEPTH;
+   vertex_data[3].colr.type = PMODEL_RGB;
+   vertex_data[3].colr.val.general.x = 0.0;
+   vertex_data[3].colr.val.general.y = 1.0;
+   vertex_data[3].colr.val.general.z = 1.0;
+   vertex_data[3].normal.delta_x = 0.0;
+   vertex_data[3].normal.delta_y = 1.0;
+   vertex_data[3].normal.delta_z = 0.0;
+
+   vdata.ptconorm = vertex_data;
+   pfill_area3_data(PFA_NONE, PVERT_COLOUR_NORMAL, &fdata, 4, &vdata);
+
+   /* Left */
+   vertex_data[0].point.x = 0.0;
+   vertex_data[0].point.y = 0.0;
+   vertex_data[0].point.z = 0.0;
+   vertex_data[0].colr.type = PMODEL_RGB;
+   vertex_data[0].colr.val.general.x = 1.0;
+   vertex_data[0].colr.val.general.y = 0.0;
+   vertex_data[0].colr.val.general.z = 0.0;
+   vertex_data[0].normal.delta_x = -1.0;
+   vertex_data[0].normal.delta_y = 0.0;
+   vertex_data[0].normal.delta_z = 0.0;
+
+   vertex_data[1].point.x = 0.0;
+   vertex_data[1].point.y = 0.0;
+   vertex_data[1].point.z = DEPTH;
+   vertex_data[1].colr.type = PMODEL_RGB;
+   vertex_data[1].colr.val.general.x = 1.0;
+   vertex_data[1].colr.val.general.y = 0.0;
+   vertex_data[1].colr.val.general.z = 1.0;
+   vertex_data[1].normal.delta_x = -1.0;
+   vertex_data[1].normal.delta_y = 0.0;
+   vertex_data[1].normal.delta_z = 0.0;
+
+   vertex_data[2].point.x = 0.0;
+   vertex_data[2].point.y = HEIGHT;
+   vertex_data[2].point.z = DEPTH;
+   vertex_data[2].colr.type = PMODEL_RGB;
+   vertex_data[2].colr.val.general.x = 0.0;
+   vertex_data[2].colr.val.general.y = 1.0;
+   vertex_data[2].colr.val.general.z = 1.0;
+   vertex_data[2].normal.delta_x = -1.0;
+   vertex_data[2].normal.delta_y = 0.0;
+   vertex_data[2].normal.delta_z = 0.0;
+
+   vertex_data[3].point.x = 0.0;
+   vertex_data[3].point.y = HEIGHT;
+   vertex_data[3].point.z = 0.0;
+   vertex_data[3].colr.type = PMODEL_RGB;
+   vertex_data[3].colr.val.general.x = 1.0;
+   vertex_data[3].colr.val.general.y = 0.0;
+   vertex_data[3].colr.val.general.z = 1.0;
+   vertex_data[3].normal.delta_x = -1.0;
+   vertex_data[3].normal.delta_y = 0.0;
+   vertex_data[3].normal.delta_z = 0.0;
+
+   vdata.ptconorm = vertex_data;
+   pfill_area3_data(PFA_NONE, PVERT_COLOUR_NORMAL, &fdata, 4, &vdata);
+
+   /* Right */
+   vertex_data[0].point.x = WIDTH;
+   vertex_data[0].point.y = 0.0;
+   vertex_data[0].point.z = 0.0;
+   vertex_data[0].colr.type = PMODEL_RGB;
+   vertex_data[0].colr.val.general.x = 1.0;
+   vertex_data[0].colr.val.general.y = 1.0;
+   vertex_data[0].colr.val.general.z = 0.0;
+   vertex_data[0].normal.delta_x = 1.0;
+   vertex_data[0].normal.delta_y = 0.0;
+   vertex_data[0].normal.delta_z = 0.0;
+
+   vertex_data[1].point.x = WIDTH;
+   vertex_data[1].point.y = 0.0;
+   vertex_data[1].point.z = DEPTH;
+   vertex_data[1].colr.type = PMODEL_RGB;
+   vertex_data[1].colr.val.general.x = 0.0;
+   vertex_data[1].colr.val.general.y = 1.0;
+   vertex_data[1].colr.val.general.z = 1.0;
+   vertex_data[1].normal.delta_x = 1.0;
+   vertex_data[1].normal.delta_y = 0.0;
+   vertex_data[1].normal.delta_z = 0.0;
+
+   vertex_data[2].point.x = WIDTH;
+   vertex_data[2].point.y = HEIGHT;
+   vertex_data[2].point.z = DEPTH;
+   vertex_data[2].colr.type = PMODEL_RGB;
+   vertex_data[2].colr.val.general.x = 1.0;
+   vertex_data[2].colr.val.general.y = 1.0;
+   vertex_data[2].colr.val.general.z = 0.0;
+   vertex_data[2].normal.delta_x = 1.0;
+   vertex_data[2].normal.delta_y = 0.0;
+   vertex_data[2].normal.delta_z = 0.0;
+
+   vertex_data[3].point.x = WIDTH;
+   vertex_data[3].point.y = HEIGHT;
+   vertex_data[3].point.z = 0.0;
+   vertex_data[3].colr.type = PMODEL_RGB;
+   vertex_data[3].colr.val.general.x = 0.0;
+   vertex_data[3].colr.val.general.y = 1.0;
+   vertex_data[3].colr.val.general.z = 1.0;
+   vertex_data[3].normal.delta_x = 1.0;
+   vertex_data[3].normal.delta_y = 0.0;
+   vertex_data[3].normal.delta_z = 0.0;
+
+   vdata.ptconorm = vertex_data;
+   pfill_area3_data(PFA_NONE, PVERT_COLOUR_NORMAL, &fdata, 4, &vdata);
 }
 
 int main(int argc, char *argv[])
@@ -283,24 +987,25 @@ int main(int argc, char *argv[])
    edge_colr.val.general.y = 1.0;
    edge_colr.val.general.z = 1.0;
 
-   refl_props.ambient_coef = 0.2;
+   refl_props.ambient_coef = 0.25;
    refl_props.diffuse_coef = 1.0;
 
    popen_phigs(NULL, 0);
    phg_mat_identity(rot3);
 
    popen_struct(STRUCT_OBJECT);
-   pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
+   pset_hlhsr_id(HLHSR_FLAG);
    pset_view_ind(view_ind);
-   pset_edge_flag(PEDGE_ON);
+   pset_edge_flag(EDGE_FLAG);
    pset_edge_colr(&edge_colr);
+   pset_int_style(INT_STYLE);
    pset_light_src_state(&lights_on_list, &lights_off_list);
    pset_int_shad_meth(PSD_COLOUR);
    pset_refl_eqn(PREFL_AMB_DIFF);
    pset_refl_props(&refl_props);
    plabel(LABEL_TRANS);
    pset_local_tran3(rot3, PTYPE_REPLACE);
-   init_shape();
+   INIT_SHAPE();
    pclose_struct();
 
    popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);
