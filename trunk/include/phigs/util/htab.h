@@ -73,19 +73,6 @@ int phg_htab_add_entry(
     );
 
 /*******************************************************************************
- * phg_htab_add_entry
- *
- * DESCR:       Add hash table entry
- * RETURNS:     TRUE or FALSE
- */
-
-int phg_htab_add_entry(
-    Hash_table htab,
-    int key,
-    caddr_t cdata
-    );
-
-/*******************************************************************************
  * phg_htab_get_entry
  *
  * DESCR:       Get hash table entry

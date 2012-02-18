@@ -90,6 +90,7 @@ typedef struct _Wsgl {
    Ws_filter       pick_filter;
    Pint            select_size;
    GLuint          *select_buf;
+   GLint           glc_context;
 } Wsgl;
 
 /*******************************************************************************
@@ -540,6 +541,17 @@ void phg_set_text_ind(
    );
 
 /*******************************************************************************
+ * phg_setup_text_attr
+ *
+ * DESCR:       Setup text attributes
+ * RETURNS:     N/A
+ */
+
+void phg_setup_text_attr(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * phg_add_names_set
  *
  * DESCR:       Add names to nameset
@@ -688,8 +700,8 @@ void phg_draw_fill_area3_data(
  */
 
 void phg_draw_text(
-   Ppoint *pos,
-   char *text
+   Ptext *text,
+   Ws_attr_st *ast
    );
 
 /*******************************************************************************

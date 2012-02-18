@@ -87,7 +87,7 @@ static void init_output_ws_dt(
    memcpy(&wsdt->default_polymarker_bundle_table[0].colr, &fg, sizeof(Pgcolr));
 
    wsdt->num_predefined_text_indices = WST_MIN_PREDEF_TEXT_REPS;
-   wsdt->default_text_bundle_table[0].font = 0;
+   wsdt->default_text_bundle_table[0].font = 1;
    memcpy(&wsdt->default_text_bundle_table[0].colr, &fg, sizeof(Pgcolr));
 
    wsdt->num_predefined_edge_indices = WST_MIN_PREDEF_EDGE_REPS;

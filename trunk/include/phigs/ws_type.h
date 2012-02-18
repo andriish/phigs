@@ -192,7 +192,6 @@ typedef struct {
    Pint       num_hlhsr_modes;
    Pint       *hlhsr_modes;
 
-
    /* View */
    Pint       num_predefined_views;
    Pview_rep3

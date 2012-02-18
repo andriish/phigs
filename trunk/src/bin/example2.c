@@ -69,6 +69,8 @@ Ppoint_list plist_quad = {
    4, pts_quad
 };
 
+Ppoint text_pos = {0.0, 0.0};
+
 Pcolr_rep col_rep;
 int view_index = 0;
 
@@ -129,6 +131,9 @@ int main(int argc, char *argv[])
    pset_int_colr_ind(0);
    pexec_struct(0);
    pexec_struct(1);
+   pset_text_colr_ind(1);
+   pset_text_font(1);
+   ptext(&text_pos, "Hello World!");
    pclose_struct();
 
    popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);
