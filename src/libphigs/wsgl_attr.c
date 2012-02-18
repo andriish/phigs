@@ -753,6 +753,32 @@ void phg_set_text_ind(
 }
 
 /*******************************************************************************
+ * phg_setup_text_attr
+ *
+ * DESCR:	Setup text attributes
+ * RETURNS:	N/A
+ */
+
+void phg_setup_text_attr(
+   Ws_attr_st *ast
+   )
+{
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_TEXT_COLR_IND)) {
+      phg_set_gcolr(&ast->indiv_group.text_bundle.colr);
+   }
+   else {
+      phg_set_gcolr(&ast->bundl_group.text_bundle.colr);
+   }
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_TEXT_FONT)) {
+      glcFont(ast->indiv_group.text_bundle.font);
+   }
+   else {
+      glcFont(ast->bundl_group.text_bundle.font);
+   }
+}
+
+/*******************************************************************************
  * phg_add_names_set
  *
  * DESCR:	Add names to nameset

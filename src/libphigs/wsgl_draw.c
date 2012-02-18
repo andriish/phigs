@@ -1122,11 +1122,15 @@ void phg_draw_fill_area3_data(
  */
 
 void phg_draw_text(
-   Ppoint *pos,
-   char *text
+   Ptext *text,
+   Ws_attr_st *ast
    )
 {
-   printf("Draw text: ");
-   printf("%f %f: %s\n", pos->x, pos->y, text);
+   phg_setup_text_attr(ast);
+
+   /* TODO: Text position in NPC coordinates */
+   glRasterPos2f(text->pos.x, text->pos.y);
+
+   glcRenderString(text->char_string);
 }
 

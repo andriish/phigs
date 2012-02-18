@@ -90,17 +90,10 @@ int phg_wsx_setup_tool(
       status = FALSE;
    }
    else {
-
-      /* Create window */
+      /* Initial attributes */
       attrs.colormap = cmap;
       attrs.border_pixel = WhitePixel(display, best_info->screen);
       attrs.background_pixel = BlackPixel(display, best_info->screen);
-      phg_wsx_pixel_colour(ws, cmap, attrs.background_pixel, &background);
-      if (!wsgl_init(ws, &background, NUM_SELECTABLE_STRUCTS)) {
-         ERR_BUF(ws->erh, ERR900);
-         free(ws);
-         ws = NULL;
-      }
 
       /* Initialize rendering context */
       ws->glx_context = phg_wsx_create_context(ws, best_info, &err_ind);
@@ -109,6 +102,7 @@ int phg_wsx_setup_tool(
           status = FALSE;
       }
       else {
+         /* Create window */
          drawable_id = XCreateWindow(display,
                                      RootWindow(display, best_info->screen),
                                      xdt->tool.x, xdt->tool.y,
@@ -122,7 +116,7 @@ int phg_wsx_setup_tool(
             status = FALSE;
          }
          else {
-            /* Create window */
+            /* Initialize attributes */
             size_hints.flags = USPosition | USSize;
             size_hints.x = xdt->tool.x;
             size_hints.y = xdt->tool.y;
@@ -138,7 +132,17 @@ int phg_wsx_setup_tool(
             XWindowEvent(display, drawable_id, ExposureMask, &event);
             XSelectInput(display, drawable_id, (long) 0);
             ws->drawable_id = drawable_id;
-            status = TRUE;
+
+            /* Initialize renderer */
+            phg_wsx_pixel_colour(ws, cmap, attrs.background_pixel, &background);
+            if (!wsgl_init(ws, &background, NUM_SELECTABLE_STRUCTS)) {
+               ERR_BUF(ws->erh, ERR900);
+               free(ws);
+               status = FALSE;
+            }
+            else {
+               status = TRUE;
+            }
          }
       }
    }
