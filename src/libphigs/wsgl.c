@@ -37,23 +37,6 @@
 #include <phigs/private/wsglP.h>
 
 /*******************************************************************************
- * wsgl_make_current
- *
- * DESCR:	Make rendering context current helper function
- * RETURNS:	N/A
- */
-
-static void wsgl_make_current(
-   Ws *ws
-   )
-{
-   Wsgl_handle wsgl = ws->render_context;
-
-   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
-   glcContext(wsgl->glc_context);
-}
-
-/*******************************************************************************
  * wsgl_init
  *
  * DESCR:	Initialize renderer
@@ -94,20 +77,8 @@ int wsgl_init(
    wsgl->render_mode = WS_RENDER_MODE_DRAW;
    wsgl->select_size = select_size;
    wsgl->select_buf  = (unsigned *) &wsgl[1];
-
-   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
-   wsgl->glc_context = glcGenContext();
-   if (wsgl->glc_context == 0) {
-      status = FALSE;
-   }
-   else {
-      glcContext(wsgl->glc_context);
-      glcScale(24, 24);
-      /* TODO: Fill in these in workstation type local this this workstation */
-      glcNewFontFromFamily(1, "Times");
-      ws->render_context = wsgl;
-      status = TRUE;
-   }
+   ws->render_context = wsgl;
+   status = TRUE;
 
    return status;
 }
@@ -199,7 +170,7 @@ void wsgl_clear(
    printf("wsgl_clear\n");
 #endif
 
-   wsgl_make_current(ws);
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    if (ws->has_double_buffer) {
       glXSwapBuffers(ws->display, ws->drawable_id);
@@ -224,7 +195,7 @@ void wsgl_flush(
    int clear_flag = 0;
    Wsgl_handle wsgl = ws->render_context;
 
-   wsgl_make_current(ws);
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
 
    if (wsgl->vp_changed || wsgl->win_changed) {
       phg_wsx_compute_ws_transform(&wsgl->cur_win, &wsgl->cur_vp, &ws_xform);
@@ -350,7 +321,7 @@ void wsgl_begin_rendering(
    printf("Begin rendering\n");
 #endif
 
-   wsgl_make_current(ws);
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    init_rendering_state(ws);
 }
@@ -909,7 +880,7 @@ void wsgl_begin_pick(
 #ifdef DEBUG
    printf("Begin pick\n");
 #endif
-   wsgl_make_current(ws);
+   glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
 
    glGetIntegerv(GL_VIEWPORT, vp);
    v.delta_x = ((float) vp[2] - 2.0 * ((float) box->x - (float) vp[0])) /

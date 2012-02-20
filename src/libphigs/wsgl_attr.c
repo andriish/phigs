@@ -28,6 +28,11 @@
 #include <phigs/ws.h>
 #include <phigs/private/wsglP.h>
 
+static Phg_font *fonts[] = {
+   &phg_mroman,
+   &phg_roman
+};
+
 /*******************************************************************************
  * phg_set_matrix
  *
@@ -769,13 +774,38 @@ void phg_setup_text_attr(
    else {
       phg_set_gcolr(&ast->bundl_group.text_bundle.colr);
    }
+}
+
+
+/*******************************************************************************
+ * phg_get_text_font
+ *
+ * DESCR:	Get text font
+ * RETURNS:	Pointer to font or NULL
+ */
+
+Phg_font* phg_get_text_font(
+   Ws_attr_st *ast
+   )
+{
+   Pint font;
+   Phg_font *fnt;
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_TEXT_FONT)) {
-      glcFont(ast->indiv_group.text_bundle.font);
+      font = ast->indiv_group.text_bundle.font;
    }
    else {
-      glcFont(ast->bundl_group.text_bundle.font);
+      font = ast->bundl_group.text_bundle.font;
    }
+
+   if (font < 1) {
+      fnt = NULL;
+   }
+   else {
+      fnt = fonts[font - 1];
+   }
+
+   return fnt;
 }
 
 /*******************************************************************************

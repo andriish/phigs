@@ -1115,6 +1115,38 @@ void phg_draw_fill_area3_data(
 }
 
 /*******************************************************************************
+ * phg_draw_char
+ *
+ * DESCR:	Draw text character helper function
+ * RETURNS:	N/A
+ */
+
+void phg_draw_char(
+   Ppoint *pos,
+   char c,
+   Phg_font *font
+   )
+{
+   Phg_char *ch;
+   Ppoint_list *spath;
+   int i, z;
+
+   ch = &font->chars[(int) c];
+   if (ch->num_paths > 0) {
+      for (i = 0, spath = ch->paths;
+           i < ch->num_paths;
+           i++, spath++) {
+         glBegin(GL_LINE_STRIP);
+         for(z = 0; z < spath->num_points; z++) {
+            glVertex2f(pos->x + (spath->points[z].x * 0.08),
+                       pos->y + (spath->points[z].y * 0.08));
+         }
+         glEnd();
+      }
+   }
+}
+
+/*******************************************************************************
  * phg_draw_text
  *
  * DESCR:	Draw text
@@ -1126,11 +1158,21 @@ void phg_draw_text(
    Ws_attr_st *ast
    )
 {
+   Phg_font *fnt;
+   Ppoint pt;
+   char *str;
+   size_t i, len;
+
    phg_setup_text_attr(ast);
 
-   /* TODO: Text position in NPC coordinates */
-   glRasterPos2f(text->pos.x, text->pos.y);
-
-   glcRenderString(text->char_string);
+   fnt = phg_get_text_font(ast);
+   str = text->char_string;
+   pt.x = text->pos.x;
+   pt.y = text->pos.y;
+   len = strlen(str);
+   for (i = 0; i < len; i++) {
+       phg_draw_char(&pt, str[i], fnt);
+       pt.x += fnt->chars[(int) str[i]].right * 0.08;
+   }
 }
 
