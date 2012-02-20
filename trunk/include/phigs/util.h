@@ -27,7 +27,6 @@
 #include <phigs/util/htab.h>
 #include <phigs/util/mat.h>
 #include <phigs/util/nset.h>
-#include <phigs/util/glc.h>
 
 /*******************************************************************************
  * phg_grow_scratch

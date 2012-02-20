@@ -69,7 +69,7 @@ Ppoint_list plist_quad = {
    4, pts_quad
 };
 
-Ppoint text_pos = {0.0, 0.0};
+Ppoint text_pos = {0.0, 0.75};
 
 Pcolr_rep col_rep;
 int view_index = 0;

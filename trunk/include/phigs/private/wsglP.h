@@ -90,7 +90,6 @@ typedef struct _Wsgl {
    Ws_filter       pick_filter;
    Pint            select_size;
    GLuint          *select_buf;
-   GLint           glc_context;
 } Wsgl;
 
 /*******************************************************************************
@@ -548,6 +547,17 @@ void phg_set_text_ind(
  */
 
 void phg_setup_text_attr(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * phg_get_text_font
+ *
+ * DESCR:       Get text font
+ * RETURNS:     Pointer to font or NULL
+ */
+
+Phg_font* phg_get_text_font(
    Ws_attr_st *ast
    );
 

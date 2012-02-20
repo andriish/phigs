@@ -223,5 +223,8 @@ int phg_echo_limits_valid(
    Wst_phigs_dt *dt
    );
 
+extern Phg_font phg_mroman;
+extern Phg_font phg_roman;
+
 #endif
 

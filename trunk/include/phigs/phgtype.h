@@ -34,6 +34,21 @@
 #define PHG_ZERO_TOLERANCE      1.0e-30
 
 typedef struct {
+   Pint        num_paths;
+   Ppoint_list *paths;
+   Pfloat      center;
+   Pfloat      right;
+} Phg_char;
+
+typedef struct {
+   char     *name;
+   Pint     num_chars;
+   Phg_char *chars;
+   Pfloat   top;
+   Pfloat   bottom;
+} Phg_font;
+
+typedef struct {
    Pint   view_ind;
    Ppoint position;
 } Ploc;
