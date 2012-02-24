@@ -69,7 +69,8 @@ Ppoint_list plist_quad = {
    4, pts_quad
 };
 
-Ppoint text_pos = {0.0, 0.75};
+Ppoint text_pos = {0.05, 0.35};
+Pvec   text_up  = {0.5, 0.866};
 
 Pcolr_rep col_rep;
 int view_index = 0;
@@ -133,6 +134,11 @@ int main(int argc, char *argv[])
    pexec_struct(1);
    pset_text_colr_ind(1);
    pset_text_font(1);
+   pset_text_prec(PREC_STROKE);
+   pset_char_ht(0.08);
+   pset_char_expan(1.0);
+   pset_char_space(0);
+   pset_char_up_vec(&text_up);
    ptext(&text_pos, "Hello World!");
    pclose_struct();
 

@@ -1109,6 +1109,131 @@ void pset_text_font(
 }
 
 /*******************************************************************************
+ * pset_text_prec
+ *
+ * DESCR:	Creates a new element - Text Precision Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_text_prec(
+   Ptext_prec prec
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_text_prec);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_TEXT_PREC;
+      ARGS_ELMT_DATA(&args).text_prec = prec;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_char_ht
+ *
+ * DESCR:	Creates a new element - Character height Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_char_ht(
+   Pfloat char_ht
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_char_ht);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_CHAR_HT;
+      ARGS_ELMT_DATA(&args).float_data = char_ht;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_char_expan
+ *
+ * DESCR:	Creates a new element - Character expansion factor Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_char_expan(
+   Pfloat char_expan
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_char_expan);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_CHAR_EXPAN;
+      ARGS_ELMT_DATA(&args).float_data = char_expan;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_char_space
+ *
+ * DESCR:	Creates a new element - Character spaceing Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_char_space(
+   Pfloat char_space
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_char_space);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_CHAR_SPACE;
+      ARGS_ELMT_DATA(&args).float_data = char_space;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_char_up_vec
+ *
+ * DESCR:	Creates a new element - Character up vector Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_char_up_vec(
+   Pvec *char_up_vec
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_char_up_vec);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_CHAR_UP_VEC;
+      memcpy(&ARGS_ELMT_DATA(&args).vec, char_up_vec, sizeof(Pvec));
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_text_ind
  *
  * DESCR:	Creates a new element - Text Attribute Index

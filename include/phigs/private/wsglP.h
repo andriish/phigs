@@ -540,6 +540,17 @@ void phg_set_text_ind(
    );
 
 /*******************************************************************************
+ * phg_get_text_prec
+ *
+ * DESCR:       Get text precision
+ * RETURNS:     Text precision
+ */
+
+Ptext_prec phg_get_text_prec(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * phg_setup_text_attr
  *
  * DESCR:       Setup text attributes
@@ -547,18 +558,34 @@ void phg_set_text_ind(
  */
 
 void phg_setup_text_attr(
-   Ws_attr_st *ast
+   Ws_attr_st *ast,
+   Phg_font **fnt,
+   Pfloat *char_ht,
+   Pfloat *char_expan
    );
 
 /*******************************************************************************
- * phg_get_text_font
+ * phg_get_char_text_attr
  *
- * DESCR:       Get text font
- * RETURNS:     Pointer to font or NULL
+ * DESCR:       Get text attributes
+ * RETURNS:     N/A
  */
 
-Phg_font* phg_get_text_font(
-   Ws_attr_st *ast
+void phg_get_char_text_attr(
+   Ws_attr_st *ast,
+   Pfloat *char_space
+   );
+
+/*******************************************************************************
+ * phg_get_stroke_text_attr
+ *
+ * DESCR:       Get text attributes
+ * RETURNS:     N/A
+ */
+
+void phg_get_stroke_text_attr(
+   Ws_attr_st *ast,
+   Pvec *char_up_vec
    );
 
 /*******************************************************************************
@@ -710,6 +737,7 @@ void phg_draw_fill_area3_data(
  */
 
 void phg_draw_text(
+   Ws *ws,
    Ptext *text,
    Ws_attr_st *ast
    );

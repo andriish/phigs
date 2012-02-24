@@ -122,6 +122,11 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_EDGE_FLAG] = phg_handle_edge_flag;
     fptr[(int)PELEM_TEXT_IND] = phg_handle_int;
     fptr[(int)PELEM_TEXT_FONT] = phg_handle_int;
+    fptr[(int)PELEM_TEXT_PREC] = phg_handle_text_prec;
+    fptr[(int)PELEM_CHAR_HT] = phg_handle_float;
+    fptr[(int)PELEM_CHAR_EXPAN] = phg_handle_float;
+    fptr[(int)PELEM_CHAR_SPACE] = phg_handle_float;
+    fptr[(int)PELEM_CHAR_UP_VEC] = phg_handle_vec;
     fptr[(int)PELEM_TEXT_COLR_IND] = phg_handle_int;
     fptr[(int)PELEM_INDIV_ASF] = phg_handle_asf_info;
     fptr[(int)PELEM_LOCAL_MODEL_TRAN] = phg_handle_local_tran;

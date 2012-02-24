@@ -55,6 +55,20 @@ int phg_handle_asf_info(
    );
 
 /*******************************************************************************
+ * phg_handle_vec
+ *
+ * DESCR:       Handle vector
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_vec(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
+/*******************************************************************************
  * phg_handle_local_tran
  *
  * DESCR:       Handle local transformation
@@ -174,6 +188,20 @@ int phg_handle_point_list_list3(
  */
 
 int phg_handle_fasd3(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
+/*******************************************************************************
+ * phg_handle_text_prec
+ *
+ * DESCR:       Handle text precition
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_text_prec(
    Css_handle cssh,
    El_handle elmt,
    caddr_t argdata,
