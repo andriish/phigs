@@ -215,7 +215,7 @@ void phg_draw_polymarker3(
    Ppoint_list plist;
 
    if (PHG_SCRATCH_SPACE(&ws->scratch,
-                         point_list->num_points * sizeof(Pposted_struct))) {
+                         point_list->num_points * sizeof(Ppoint))) {
       plist.num_points = point_list->num_points;
       plist.points = (Ppoint *) ws->scratch.buf;
 
@@ -1115,34 +1115,118 @@ void phg_draw_fill_area3_data(
 }
 
 /*******************************************************************************
- * phg_draw_char
+ * draw_text_string
  *
- * DESCR:	Draw text character helper function
+ * DESCR:	Draw text with string precision helper function
  * RETURNS:	N/A
  */
 
-void phg_draw_char(
-   Ppoint *pos,
-   char c,
-   Phg_font *font
+static void draw_text_string(
+   Ws *ws,
+   Ptext *text,
+   Ws_attr_st *ast
    )
 {
+   Phg_font *fnt;
+   Pfloat char_ht;
+   Pfloat char_expan;
+   char *str;
+   size_t i, len;
    Phg_char *ch;
    Ppoint_list *spath;
-   int i, z;
+   Ppoint pos;
+   int j, z;
 
-   ch = &font->chars[(int) c];
-   if (ch->num_paths > 0) {
-      for (i = 0, spath = ch->paths;
-           i < ch->num_paths;
-           i++, spath++) {
-         glBegin(GL_LINE_STRIP);
-         for(z = 0; z < spath->num_points; z++) {
-            glVertex2f(pos->x + (spath->points[z].x * 0.08),
-                       pos->y + (spath->points[z].y * 0.08));
-         }
-         glEnd();
-      }
+   phg_setup_text_attr(ast, &fnt, &char_ht, &char_expan);
+
+   pos.x = text->pos.x;
+   pos.y = text->pos.y;
+   str = text->char_string;
+
+   len = strlen(str);
+   for (i = 0; i < len; i++) {
+
+       ch = &fnt->chars[(int) str[i]];
+       if (ch->num_paths > 0) {
+
+          for (j = 0, spath = ch->paths;
+               j < ch->num_paths;
+               j++, spath++) {
+
+             glBegin(GL_LINE_STRIP);
+             for(z = 0; z < spath->num_points; z++) {
+                glVertex2f(pos.x + spath->points[z].x * char_ht * char_expan,
+                           pos.y + spath->points[z].y * char_ht);
+             }
+             glEnd();
+          }
+       }
+
+       pos.x += ch->right * char_ht * char_expan;
+   }
+}
+
+/*******************************************************************************
+ * draw_text_stroke
+ *
+ * DESCR:	Draw text with stroke precision helper function
+ * RETURNS:	N/A
+ */
+
+static void draw_text_stroke(
+   Ws *ws,
+   Ptext *text,
+   Ws_attr_st *ast
+   )
+{
+   Phg_font *fnt;
+   Pfloat char_ht;
+   Pfloat char_expan;
+   Pfloat char_space;
+   char *str;
+   size_t i, len;
+   Phg_char *ch;
+   Ppoint_list *spath;
+   Ppoint pt, pos;
+   int j, z;
+   Pvec up, right;
+
+   phg_setup_text_attr(ast, &fnt, &char_ht, &char_expan);
+   phg_get_char_text_attr(ast, &char_space);
+   phg_get_stroke_text_attr(ast, &up);
+
+   right.delta_x =  up.delta_y;
+   right.delta_y = -up.delta_x;
+
+   pos.x = text->pos.x;
+   pos.y = text->pos.y;
+   str = text->char_string;
+
+   len = strlen(str);
+   for (i = 0; i < len; i++) {
+
+       ch = &fnt->chars[(int) str[i]];
+       if (ch->num_paths > 0) {
+
+          for (j = 0, spath = ch->paths;
+               j < ch->num_paths;
+               j++, spath++) {
+
+             glBegin(GL_LINE_STRIP);
+             for(z = 0; z < spath->num_points; z++) {
+                pt.x = spath->points[z].x * right.delta_x +
+                       spath->points[z].y * right.delta_y;
+                pt.y = spath->points[z].x * up.delta_x +
+                       spath->points[z].y * up.delta_y;
+                glVertex2f(pos.x + pt.x * char_ht * char_expan,
+                           pos.y + pt.y * char_ht);
+             }
+             glEnd();
+          }
+       }
+
+       pos.x += (ch->right + char_space) * right.delta_x * char_ht * char_expan;
+       pos.y += (ch->right + char_space) * up.delta_x * char_ht * char_expan;
    }
 }
 
@@ -1154,25 +1238,26 @@ void phg_draw_char(
  */
 
 void phg_draw_text(
+   Ws *ws,
    Ptext *text,
    Ws_attr_st *ast
    )
 {
-   Phg_font *fnt;
-   Ppoint pt;
-   char *str;
-   size_t i, len;
+   Ptext_prec prec;
 
-   phg_setup_text_attr(ast);
+   prec = phg_get_text_prec(ast);
+   switch (prec) {
+      case PREC_STRING:
+         draw_text_string(ws, text, ast);
+         break;
 
-   fnt = phg_get_text_font(ast);
-   str = text->char_string;
-   pt.x = text->pos.x;
-   pt.y = text->pos.y;
-   len = strlen(str);
-   for (i = 0; i < len; i++) {
-       phg_draw_char(&pt, str[i], fnt);
-       pt.x += fnt->chars[(int) str[i]].right * 0.08;
+      case PREC_CHAR:
+         /* TODO */
+         break;
+
+      case PREC_STROKE:
+         draw_text_stroke(ws, text, ast);
+         break;
    }
 }
 

@@ -61,8 +61,8 @@
 #define		Pfn_set_char_expan		(37)
 #define		Pfn_set_char_space		(38)
 #define		Pfn_set_text_colr_ind		(39)
-#define		Pfn_char_ht			(40)
-#define		Pfn_char_up_vec			(41)
+#define		Pfn_set_char_ht			(40)
+#define		Pfn_set_char_up_vec		(41)
 #define		Pfn_set_text_path		(42)
 #define		Pfn_set_text_align		(43)
 #define		Pfn_set_anno_char_ht		(44)
@@ -1084,6 +1084,61 @@ void pset_edgewidth(
 
 void pset_text_font(
    Pint font
+   );
+
+/*******************************************************************************
+ * pset_text_prec
+ *
+ * DESCR:       Creates a new element - Text Precision Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_text_prec(
+   Ptext_prec prec
+   );
+
+/*******************************************************************************
+ * pset_char_ht
+ *
+ * DESCR:       Creates a new element - Character height Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_char_ht(
+   Pfloat char_ht
+   );
+
+/*******************************************************************************
+ * pset_char_expan
+ *
+ * DESCR:       Creates a new element - Character expansion factor Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_char_expan(
+   Pfloat char_expan
+   );
+
+/*******************************************************************************
+ * pset_char_space
+ *
+ * DESCR:       Creates a new element - Character spaceing Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_char_space(
+   Pfloat char_space
+   );
+
+/*******************************************************************************
+ * pset_char_up_vec
+ *
+ * DESCR:       Creates a new element - Character up vector Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_char_up_vec(
+   Pvec *char_up_vec
    );
 
 /*******************************************************************************

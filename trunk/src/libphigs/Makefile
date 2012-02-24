@@ -23,7 +23,7 @@ OBJS=ut.o ut_mat.o ut_list.o ut_htab.o ut_nset.o ut_stk.o css_ini.o css_stb.o  \
 all: libphigs
 
 libphigs: $(OBJS)
-	$(AR) rv $(OUTPATH)/libphigs.a $(OBJS)
+	$(AR) cr $(OUTPATH)/libphigs.a $(OBJS)
 	$(RANLIB) $(OUTPATH)/libphigs.a
 
 cleanup:

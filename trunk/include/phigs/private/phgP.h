@@ -93,6 +93,12 @@
 #define PHG_DATA_ASF_INFO(ELMT) \
    ((Pasf_info *) (((Css_eldata *) (ELMT))->ptr))
 
+#define PHG_VEC(ELMT) \
+   ((Pvec *) ((ELMT)->eldata.ptr))
+
+#define PHG_DATA_VEC(ELMT) \
+   ((Pvec *) (((Css_eldata *) (ELMT))->ptr))
+
 #define PHG_LOCAL_TRAN(ELMT) \
    ((Plocal_tran *) ((ELMT)->eldata.ptr))
 
@@ -116,6 +122,12 @@
 
 #define PHG_DATA_MATRIX3(ELMT) \
    ((Pmatrix3 *) (((Css_eldata *) (ELMT))->ptr))
+
+#define PHG_TEXT_PREC(ELMT) \
+   *((Ptext_prec *) ((ELMT)->eldata.ptr))
+
+#define PHG_DATA_TEXT_PREC(ELMT) \
+   *((Ptext_prec *) (((Css_eldata *) (ELMT))->ptr))
 
 #define PHG_TEXT(ELMT) \
    ((Ptext *) ((ELMT)->eldata.ptr))

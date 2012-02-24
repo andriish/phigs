@@ -656,6 +656,30 @@ void wsgl_render_element(
          wsgl->cur_struct.ast.indiv_group.text_bundle.font = PHG_INT(el);
          break;
 
+      case PELEM_TEXT_PREC:
+         wsgl->cur_struct.ast.indiv_group.text_bundle.prec = PHG_TEXT_PREC(el);
+         break;
+
+      case PELEM_CHAR_HT:
+         wsgl->cur_struct.ast.indiv_group.text_bundle.char_ht = PHG_FLOAT(el);
+         break;
+
+      case PELEM_CHAR_EXPAN:
+         wsgl->cur_struct.ast.indiv_group.text_bundle.char_expan =
+            PHG_FLOAT(el);
+         break;
+
+      case PELEM_CHAR_SPACE:
+         wsgl->cur_struct.ast.indiv_group.text_bundle.char_space =
+            PHG_FLOAT(el);
+         break;
+
+      case PELEM_CHAR_UP_VEC:
+         memcpy(&wsgl->cur_struct.ast.indiv_group.text_bundle.char_up_vec,
+                PHG_VEC(el),
+                sizeof(Pvec));
+         break;
+
       case PELEM_LINE_IND:
          phg_set_line_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
          break;
@@ -754,7 +778,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_TEXT:
-         phg_draw_text(PHG_TEXT(el), &wsgl->cur_struct.ast);
+         phg_draw_text(ws, PHG_TEXT(el), &wsgl->cur_struct.ast);
          break;
 
       case PELEM_GLOBAL_MODEL_TRAN3:

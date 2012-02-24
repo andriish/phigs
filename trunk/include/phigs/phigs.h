@@ -141,6 +141,11 @@ typedef enum {
    PELEM_EDGE_FLAG,
    PELEM_TEXT_IND,
    PELEM_TEXT_FONT,
+   PELEM_TEXT_PREC,
+   PELEM_CHAR_HT,
+   PELEM_CHAR_EXPAN,
+   PELEM_CHAR_SPACE,
+   PELEM_CHAR_UP_VEC,
    PELEM_TEXT_COLR_IND,
    PELEM_INDIV_ASF,
    PELEM_LOCAL_MODEL_TRAN,
@@ -296,6 +301,11 @@ typedef enum {
    PASPECT_MARKER_SIZE,
    PASPECT_MARKER_COLR_IND,
    PASPECT_TEXT_FONT,
+   PASPECT_TEXT_PREC,
+   PASPECT_CHAR_HT,
+   PASPECT_CHAR_EXPAN,
+   PASPECT_CHAR_SPACE,
+   PASPECT_CHAR_UP_VEC,
    PASPECT_TEXT_COLR_IND,
    PASPECT_INT_STYLE,
    PASPECT_INT_STYLE_IND,
@@ -314,6 +324,12 @@ typedef enum {
    PFLAG_FILL,
    PFLAG_FILL_SET
 } Pline_fill_ctrl_flag;
+
+typedef enum {
+   PREC_STRING,
+   PREC_CHAR,
+   PREC_STROKE
+} Ptext_prec;
 
 typedef enum {
    PPR_OFF,
@@ -387,77 +403,6 @@ typedef struct {
 } Pgcolr;
 
 typedef struct {
-   Pint   type;
-   Pfloat width;
-   Pint   colr_ind;
-} Pline_bundle;
-
-typedef struct {
-   Pint   type;
-   Pfloat width;
-   Pgcolr colr;
-} Pline_bundle_plus;
-
-typedef struct {
-   Pint   type;
-   Pfloat size;
-   Pint   colr_ind;
-} Pmarker_bundle;
-
-typedef struct {
-   Pint   type;
-   Pfloat size;
-   Pgcolr colr;
-} Pmarker_bundle_plus;
-
-typedef struct {
-   Pedge_flag flag;
-   Pint       type;
-   Pfloat     width;
-   Pint       colr_ind;
-} Pedge_bundle;
-
-typedef struct {
-   Pedge_flag flag;
-   Pint       type;
-   Pfloat     width;
-   Pgcolr     colr;
-} Pedge_bundle_plus;
-
-typedef struct {
-   Pint_style style;
-   Pint       style_ind;
-   Pint       colr_ind;
-} Pint_bundle;
-
-typedef struct {
-   Pfloat     ambient_coef;
-   Pfloat     diffuse_coef;
-   Pfloat     specular_coef;
-   Pgcolr     specular_colr;
-   Pfloat     specualr_exp;
-} Prefl_props;
-
-typedef struct {
-   Pint_style  style;
-   Pint        style_ind;
-   Pgcolr      colr;
-   Pint        refl_eqn;
-   Pint        shad_meth;
-   Prefl_props refl_props;
-} Pint_bundle_plus;
-
-typedef struct {
-   Pint font;
-   Pint colr_ind;
-} Ptext_bundle;
-
-typedef struct {
-   Pint   font;
-   Pgcolr colr;
-} Ptext_bundle_plus;
-
-typedef struct {
    Pint num_ints;
    Pint *ints;
 } Pint_list;
@@ -528,14 +473,95 @@ typedef struct {
 } Ppoint_list_list3;
 
 typedef struct {
-   Ppoint pos;
-   char   *char_string;
-} Ptext;
+   Pint   type;
+   Pfloat width;
+   Pint   colr_ind;
+} Pline_bundle;
+
+typedef struct {
+   Pint   type;
+   Pfloat width;
+   Pgcolr colr;
+} Pline_bundle_plus;
+
+typedef struct {
+   Pint   type;
+   Pfloat size;
+   Pint   colr_ind;
+} Pmarker_bundle;
+
+typedef struct {
+   Pint   type;
+   Pfloat size;
+   Pgcolr colr;
+} Pmarker_bundle_plus;
+
+typedef struct {
+   Pedge_flag flag;
+   Pint       type;
+   Pfloat     width;
+   Pint       colr_ind;
+} Pedge_bundle;
+
+typedef struct {
+   Pedge_flag flag;
+   Pint       type;
+   Pfloat     width;
+   Pgcolr     colr;
+} Pedge_bundle_plus;
+
+typedef struct {
+   Pint_style style;
+   Pint       style_ind;
+   Pint       colr_ind;
+} Pint_bundle;
+
+typedef struct {
+   Pfloat     ambient_coef;
+   Pfloat     diffuse_coef;
+   Pfloat     specular_coef;
+   Pgcolr     specular_colr;
+   Pfloat     specualr_exp;
+} Prefl_props;
+
+typedef struct {
+   Pint_style  style;
+   Pint        style_ind;
+   Pgcolr      colr;
+   Pint        refl_eqn;
+   Pint        shad_meth;
+   Prefl_props refl_props;
+} Pint_bundle_plus;
+
+typedef struct {
+   Pint       font;
+   Ptext_prec prec;
+   Pfloat     char_ht;
+   Pfloat     char_expan;
+   Pfloat     char_space;
+   Pvec       char_up_vec;
+   Pint       colr_ind;
+} Ptext_bundle;
+
+typedef struct {
+   Pint       font;
+   Ptext_prec prec;
+   Pfloat     char_ht;
+   Pfloat     char_expan;
+   Pfloat     char_space;
+   Pvec       char_up_vec;
+   Pgcolr     colr;
+} Ptext_bundle_plus;
 
 typedef struct {
    Paspect id;
    Pasf    source;
 } Pasf_info;
+
+typedef struct {
+   Ppoint pos;
+   char   *char_string;
+} Ptext;
 
 typedef struct {
    Pcompose_type compose_type;
@@ -572,12 +598,6 @@ typedef union {
    Prgb rgb;
    Phsv hsv;
 } Pcolr_rep;
-
-typedef struct {
-   Pfloat x;
-   Pfloat y;
-   Pfloat z;
-} Pcobundl;
 
 typedef struct {
    Ppoint3 point;
@@ -709,8 +729,10 @@ typedef union {
    Ppoint_list_list  point_list_list;
    Ppoint_list_list3 point_list_list3;
    Pfasd3            fasd3;
+   Ptext_prec        text_prec;
    Ptext             text;
    Pasf_info         asf_info;
+   Pvec              vec;
    Plocal_tran       local_tran;
    Plocal_tran3      local_tran3;
    Pmatrix           global_tran;

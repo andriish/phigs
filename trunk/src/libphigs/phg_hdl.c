@@ -154,6 +154,59 @@ int phg_handle_asf_info(
 }
 
 /*******************************************************************************
+ * phg_handle_vec
+ *
+ * DESCR:	Handle vector
+ * RETURNS:	TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_vec(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   Pvec *data;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         data = malloc(sizeof(Pvec));
+         if (data == NULL)
+            return (FALSE);
+
+         memcpy(data, &ARGS_ELMT_DATA(argdata).vec, sizeof(Pvec));
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_REPLACE:
+         data = (Pvec *) elmt->eldata.ptr;
+         memcpy(data, &ARGS_ELMT_DATA(argdata).vec, sizeof(Pvec));
+      break;
+
+      case CSS_EL_COPY:
+         data = malloc(sizeof(Pvec));
+         if (data == NULL)
+            return (FALSE);
+
+         memcpy(data, PHG_DATA_VEC(argdata), sizeof(Pvec));
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_FREE:
+         free(ELMT_DATA_PTR(elmt));
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
+   }
+
+   return (TRUE);
+}
+
+/*******************************************************************************
  * phg_handle_local_tran
  *
  * DESCR:	Handle local transformation
@@ -775,6 +828,60 @@ int phg_handle_fasd3(
       break;
 
       case CSS_EL_FREE:
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
+   }
+
+   return (TRUE);
+}
+
+/*******************************************************************************
+ * phg_handle_text_prec
+ *
+ * DESCR:	Handle text precition
+ * RETURNS:	TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_text_prec(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   Ptext_prec *data;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         data = malloc(sizeof(Ptext_prec));
+         if (data == NULL)
+            return (FALSE);
+
+         *data = ARGS_ELMT_DATA(argdata).text_prec;
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_REPLACE:
+         data = (Ptext_prec *) elmt->eldata.ptr;
+         *data = ARGS_ELMT_DATA(argdata).text_prec;
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_COPY:
+         data = malloc(sizeof(Ptext_prec));
+         if (data == NULL)
+            return (FALSE);
+
+         *data = PHG_DATA_TEXT_PREC(argdata);
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_FREE:
+         free(ELMT_DATA_PTR(elmt));
       break;
 
       default:
