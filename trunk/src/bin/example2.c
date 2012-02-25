@@ -138,6 +138,7 @@ int main(int argc, char *argv[])
    pset_char_ht(0.08);
    pset_char_expan(1.0);
    pset_char_space(0);
+   pset_text_path(PPATH_RIGHT);
    pset_char_up_vec(&text_up);
    ptext(&text_pos, "Hello World!");
    pclose_struct();

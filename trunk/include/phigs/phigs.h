@@ -142,6 +142,7 @@ typedef enum {
    PELEM_TEXT_IND,
    PELEM_TEXT_FONT,
    PELEM_TEXT_PREC,
+   PELEM_TEXT_PATH,
    PELEM_CHAR_HT,
    PELEM_CHAR_EXPAN,
    PELEM_CHAR_SPACE,
@@ -302,10 +303,8 @@ typedef enum {
    PASPECT_MARKER_COLR_IND,
    PASPECT_TEXT_FONT,
    PASPECT_TEXT_PREC,
-   PASPECT_CHAR_HT,
    PASPECT_CHAR_EXPAN,
    PASPECT_CHAR_SPACE,
-   PASPECT_CHAR_UP_VEC,
    PASPECT_TEXT_COLR_IND,
    PASPECT_INT_STYLE,
    PASPECT_INT_STYLE_IND,
@@ -330,6 +329,13 @@ typedef enum {
    PREC_CHAR,
    PREC_STROKE
 } Ptext_prec;
+
+typedef enum {
+   PPATH_RIGHT,
+   PPATH_LEFT,
+   PPATH_UP,
+   PPATH_DOWN
+} Ptext_path;
 
 typedef enum {
    PPR_OFF,
@@ -536,20 +542,16 @@ typedef struct {
 typedef struct {
    Pint       font;
    Ptext_prec prec;
-   Pfloat     char_ht;
    Pfloat     char_expan;
    Pfloat     char_space;
-   Pvec       char_up_vec;
    Pint       colr_ind;
 } Ptext_bundle;
 
 typedef struct {
    Pint       font;
    Ptext_prec prec;
-   Pfloat     char_ht;
    Pfloat     char_expan;
    Pfloat     char_space;
-   Pvec       char_up_vec;
    Pgcolr     colr;
 } Ptext_bundle_plus;
 
@@ -730,6 +732,7 @@ typedef union {
    Ppoint_list_list3 point_list_list3;
    Pfasd3            fasd3;
    Ptext_prec        text_prec;
+   Ptext_path        text_path;
    Ptext             text;
    Pasf_info         asf_info;
    Pvec              vec;

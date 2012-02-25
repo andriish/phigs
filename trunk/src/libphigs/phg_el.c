@@ -1134,6 +1134,31 @@ void pset_text_prec(
 }
 
 /*******************************************************************************
+ * pset_text_path
+ *
+ * DESCR:	Creates a new element - Text Path Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_text_path(
+   Ptext_path text_path
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_text_path);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_TEXT_PATH;
+      ARGS_ELMT_DATA(&args).text_path = text_path;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_char_ht
  *
  * DESCR:	Creates a new element - Character height Attribute

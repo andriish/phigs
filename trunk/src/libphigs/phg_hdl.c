@@ -894,6 +894,60 @@ int phg_handle_text_prec(
 }
 
 /*******************************************************************************
+ * phg_handle_text_path
+ *
+ * DESCR:	Handle text path
+ * RETURNS:	TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_text_path(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   Ptext_path *data;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         data = malloc(sizeof(Ptext_path));
+         if (data == NULL)
+            return (FALSE);
+
+         *data = ARGS_ELMT_DATA(argdata).text_path;
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_REPLACE:
+         data = (Ptext_path *) elmt->eldata.ptr;
+         *data = ARGS_ELMT_DATA(argdata).text_path;
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_COPY:
+         data = malloc(sizeof(Ptext_path));
+         if (data == NULL)
+            return (FALSE);
+
+         *data = PHG_DATA_TEXT_PATH(argdata);
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_FREE:
+         free(ELMT_DATA_PTR(elmt));
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
+   }
+
+   return (TRUE);
+}
+
+/*******************************************************************************
  * phg_handle_text
  *
  * DESCR:	Handle text
