@@ -223,6 +223,20 @@ int phg_handle_text_path(
    );
 
 /*******************************************************************************
+ * phg_handle_text_align
+ *
+ * DESCR:       Handle text alignment
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_text_align(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
+/*******************************************************************************
  * phg_handle_text
  *
  * DESCR:       Handle text

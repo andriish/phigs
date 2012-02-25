@@ -69,8 +69,9 @@ Ppoint_list plist_quad = {
    4, pts_quad
 };
 
-Ppoint text_pos = {0.05, 0.35};
-Pvec   text_up  = {0.5, 0.866};
+Ppoint      text_pos   = {0.1, 0.35};
+Ptext_align text_align = {PHOR_NORM, PVERT_NORM};
+Pvec        text_up    = {0.5, 0.866};
 
 Pcolr_rep col_rep;
 int view_index = 0;
@@ -139,6 +140,7 @@ int main(int argc, char *argv[])
    pset_char_expan(1.0);
    pset_char_space(0);
    pset_text_path(PPATH_RIGHT);
+   pset_text_align(&text_align);
    pset_char_up_vec(&text_up);
    ptext(&text_pos, "Hello World!");
    pclose_struct();

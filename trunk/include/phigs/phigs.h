@@ -143,6 +143,7 @@ typedef enum {
    PELEM_TEXT_FONT,
    PELEM_TEXT_PREC,
    PELEM_TEXT_PATH,
+   PELEM_TEXT_ALIGN,
    PELEM_CHAR_HT,
    PELEM_CHAR_EXPAN,
    PELEM_CHAR_SPACE,
@@ -336,6 +337,22 @@ typedef enum {
    PPATH_UP,
    PPATH_DOWN
 } Ptext_path;
+
+typedef enum {
+   PHOR_NORM,
+   PHOR_LEFT,
+   PHOR_CTR,
+   PHOR_RIGHT
+} Phor_text_align;
+
+typedef enum {
+   PVERT_NORM,
+   PVERT_TOP,
+   PVERT_CAP,
+   PVERT_HALF,
+   PVERT_BASE,
+   PVERT_BOTTOM
+} Pvert_text_align;
 
 typedef enum {
    PPR_OFF,
@@ -561,6 +578,11 @@ typedef struct {
 } Pasf_info;
 
 typedef struct {
+   Phor_text_align  hor;
+   Pvert_text_align vert;
+} Ptext_align;
+
+typedef struct {
    Ppoint pos;
    char   *char_string;
 } Ptext;
@@ -733,6 +755,7 @@ typedef union {
    Pfasd3            fasd3;
    Ptext_prec        text_prec;
    Ptext_path        text_path;
+   Ptext_align       text_align;
    Ptext             text;
    Pasf_info         asf_info;
    Pvec              vec;

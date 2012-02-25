@@ -49,6 +49,7 @@ typedef struct {
    Pattr_group  indiv_group;
    Pfloat       char_ht;
    Ptext_path   text_path;
+   Ptext_align  text_align;
    Pvec         char_up_vec;
    Nset         asf_nameset;
    u_int32_t    ast_buf[1];

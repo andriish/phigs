@@ -135,6 +135,12 @@
 #define PHG_DATA_TEXT_PATH(ELMT) \
    *((Ptext_path *) (((Css_eldata *) (ELMT))->ptr))
 
+#define PHG_TEXT_ALIGN(ELMT) \
+   ((Ptext_align *) ((ELMT)->eldata.ptr))
+
+#define PHG_DATA_TEXT_ALIGN(ELMT) \
+   ((Ptext_align *) (((Css_eldata *) (ELMT))->ptr))
+
 #define PHG_TEXT(ELMT) \
    ((Ptext *) ((ELMT)->eldata.ptr))
 

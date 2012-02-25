@@ -180,6 +180,7 @@ void css_print_eltype(Pelem_type eltype)
         case PELEM_TEXT_FONT: name = "PELEM_TEXT_FONT"; break;
         case PELEM_TEXT_PREC: name = "PELEM_TEXT_PREC"; break;
         case PELEM_TEXT_PATH: name = "PELEM_TEXT_PATH"; break;
+        case PELEM_TEXT_ALIGN: name = "PELEM_TEXT_ALIGN"; break;
         case PELEM_CHAR_HT: name = "PELEM_CHAR_HT"; break;
         case PELEM_CHAR_EXPAN: name = "PELEM_CHAR_EXPAN"; break;
         case PELEM_CHAR_SPACE: name = "PELEM_CHAR_SPACE"; break;

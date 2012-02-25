@@ -1159,6 +1159,31 @@ void pset_text_path(
 }
 
 /*******************************************************************************
+ * pset_text_align
+ *
+ * DESCR:	Creates a new element - Text Alignment Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_text_align(
+   Ptext_align *text_align
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_text_align);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_TEXT_ALIGN;
+      memcpy(&ARGS_ELMT_DATA(&args).text_path, text_align, sizeof(Ptext_align));
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_char_ht
  *
  * DESCR:	Creates a new element - Character height Attribute

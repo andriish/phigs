@@ -682,6 +682,12 @@ void wsgl_render_element(
          wsgl->cur_struct.ast.text_path = PHG_TEXT_PATH(el);
          break;
 
+      case PELEM_TEXT_ALIGN:
+         memcpy(&wsgl->cur_struct.ast.text_align,
+                PHG_TEXT_ALIGN(el),
+                sizeof(Ptext_align));
+         break;
+
       case PELEM_CHAR_UP_VEC:
          memcpy(&wsgl->cur_struct.ast.char_up_vec,
                 PHG_VEC(el),
