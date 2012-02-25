@@ -124,6 +124,7 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_TEXT_FONT] = phg_handle_int;
     fptr[(int)PELEM_TEXT_PREC] = phg_handle_text_prec;
     fptr[(int)PELEM_TEXT_PATH] = phg_handle_text_path;
+    fptr[(int)PELEM_TEXT_ALIGN] = phg_handle_text_align;
     fptr[(int)PELEM_CHAR_HT] = phg_handle_float;
     fptr[(int)PELEM_CHAR_EXPAN] = phg_handle_float;
     fptr[(int)PELEM_CHAR_SPACE] = phg_handle_float;

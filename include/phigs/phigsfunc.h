@@ -1109,6 +1109,17 @@ void pset_text_path(
    );
 
 /*******************************************************************************
+ * pset_text_align
+ *
+ * DESCR:       Creates a new element - Text Alignment Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_text_align(
+   Ptext_align *text_align
+   );
+
+/*******************************************************************************
  * pset_char_ht
  *
  * DESCR:       Creates a new element - Character height Attribute

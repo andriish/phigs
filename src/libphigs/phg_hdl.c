@@ -948,6 +948,60 @@ int phg_handle_text_path(
 }
 
 /*******************************************************************************
+ * phg_handle_text_align
+ *
+ * DESCR:	Handle text alignment
+ * RETURNS:	TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_text_align(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   Ptext_align *data;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         data = malloc(sizeof(Ptext_align));
+         if (data == NULL)
+            return (FALSE);
+
+         memcpy(data, &ARGS_ELMT_DATA(argdata).text_align, sizeof(Ptext_align));
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_REPLACE:
+         data = (Ptext_align *) elmt->eldata.ptr;
+         memcpy(data, &ARGS_ELMT_DATA(argdata).text_align, sizeof(Ptext_align));
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_COPY:
+         data = malloc(sizeof(Ptext_align));
+         if (data == NULL)
+            return (FALSE);
+
+         memcpy(data, PHG_DATA_TEXT_ALIGN(argdata), sizeof(Ptext_align));
+         elmt->eldata.ptr = data;
+      break;
+
+      case CSS_EL_FREE:
+         free(ELMT_DATA_PTR(elmt));
+      break;
+
+      default:
+         /* Default */
+         return (FALSE);
+      break;
+   }
+
+   return (TRUE);
+}
+
+/*******************************************************************************
  * phg_handle_text
  *
  * DESCR:	Handle text
