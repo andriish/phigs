@@ -21,12 +21,12 @@
 #ifndef _nset_h
 #define _nset_h
 
-#include <sys/types.h>
+#include <stdint.h>
 
 typedef struct {
    unsigned max_names;
    unsigned num_chunks;
-   u_int32_t *nameset;
+   uint32_t *nameset;
 } Nset;
 
 typedef Nset *Nameset;
@@ -52,7 +52,7 @@ Nameset phg_nset_create(
 void phg_nset_init(
    Nameset nset,
    unsigned num_chunks,
-   u_int32_t *buf
+   uint32_t *buf
    );
 
 /*******************************************************************************
