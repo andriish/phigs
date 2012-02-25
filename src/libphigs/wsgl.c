@@ -295,6 +295,10 @@ static void init_rendering_state(
    phg_set_marker_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
    phg_set_text_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
    phg_set_text_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
+   wsgl->cur_struct.ast.char_ht = 0.01;
+   wsgl->cur_struct.ast.text_path = PPATH_RIGHT;
+   wsgl->cur_struct.ast.char_up_vec.delta_x = 0.0;
+   wsgl->cur_struct.ast.char_up_vec.delta_y = 1.0;
    phg_set_edge_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
    phg_set_edge_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
    phg_set_int_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
@@ -661,7 +665,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_CHAR_HT:
-         wsgl->cur_struct.ast.indiv_group.text_bundle.char_ht = PHG_FLOAT(el);
+         wsgl->cur_struct.ast.char_ht = PHG_FLOAT(el);
          break;
 
       case PELEM_CHAR_EXPAN:
@@ -674,8 +678,12 @@ void wsgl_render_element(
             PHG_FLOAT(el);
          break;
 
+      case PELEM_TEXT_PATH:
+         wsgl->cur_struct.ast.text_path = PHG_TEXT_PATH(el);
+         break;
+
       case PELEM_CHAR_UP_VEC:
-         memcpy(&wsgl->cur_struct.ast.indiv_group.text_bundle.char_up_vec,
+         memcpy(&wsgl->cur_struct.ast.char_up_vec,
                 PHG_VEC(el),
                 sizeof(Pvec));
          break;

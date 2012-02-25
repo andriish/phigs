@@ -790,7 +790,6 @@ Ptext_prec phg_get_text_prec(
 void phg_setup_text_attr(
    Ws_attr_st *ast,
    Phg_font **fnt,
-   Pfloat *char_ht,
    Pfloat *char_expan
    )
 {
@@ -819,13 +818,6 @@ void phg_setup_text_attr(
       *fnt = fonts[font - 1];
    }
 
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_CHAR_HT)) {
-      *char_ht = ast->indiv_group.text_bundle.char_ht;
-   }
-   else {
-      *char_ht = ast->bundl_group.text_bundle.char_ht;
-   }
-
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_CHAR_EXPAN)) {
       *char_expan = ast->indiv_group.text_bundle.char_expan;
    }
@@ -851,30 +843,6 @@ void phg_get_char_text_attr(
    }
    else {
       *char_space = ast->bundl_group.text_bundle.char_space;
-   }
-}
-
-/*******************************************************************************
- * phg_get_stroke_text_attr
- *
- * DESCR:	Get text attributes
- * RETURNS:	N/A
- */
-
-void phg_get_stroke_text_attr(
-   Ws_attr_st *ast,
-   Pvec *char_up_vec
-   )
-{
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_CHAR_UP_VEC)) {
-      memcpy(char_up_vec,
-             &ast->indiv_group.text_bundle.char_up_vec,
-             sizeof(Pvec));
-   }
-   else {
-      memcpy(char_up_vec,
-             &ast->bundl_group.text_bundle.char_up_vec,
-             sizeof(Pvec));
    }
 }
 

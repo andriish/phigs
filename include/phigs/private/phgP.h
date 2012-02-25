@@ -129,6 +129,12 @@
 #define PHG_DATA_TEXT_PREC(ELMT) \
    *((Ptext_prec *) (((Css_eldata *) (ELMT))->ptr))
 
+#define PHG_TEXT_PATH(ELMT) \
+   *((Ptext_path *) ((ELMT)->eldata.ptr))
+
+#define PHG_DATA_TEXT_PATH(ELMT) \
+   *((Ptext_path *) (((Css_eldata *) (ELMT))->ptr))
+
 #define PHG_TEXT(ELMT) \
    ((Ptext *) ((ELMT)->eldata.ptr))
 

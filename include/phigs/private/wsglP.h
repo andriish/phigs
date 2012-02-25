@@ -47,6 +47,9 @@ typedef enum {
 typedef struct {
    Pattr_group  bundl_group;
    Pattr_group  indiv_group;
+   Pfloat       char_ht;
+   Ptext_path   text_path;
+   Pvec         char_up_vec;
    Nset         asf_nameset;
    u_int32_t    ast_buf[1];
 } Ws_attr_st;
@@ -560,7 +563,6 @@ Ptext_prec phg_get_text_prec(
 void phg_setup_text_attr(
    Ws_attr_st *ast,
    Phg_font **fnt,
-   Pfloat *char_ht,
    Pfloat *char_expan
    );
 
@@ -574,18 +576,6 @@ void phg_setup_text_attr(
 void phg_get_char_text_attr(
    Ws_attr_st *ast,
    Pfloat *char_space
-   );
-
-/*******************************************************************************
- * phg_get_stroke_text_attr
- *
- * DESCR:       Get text attributes
- * RETURNS:     N/A
- */
-
-void phg_get_stroke_text_attr(
-   Ws_attr_st *ast,
-   Pvec *char_up_vec
    );
 
 /*******************************************************************************

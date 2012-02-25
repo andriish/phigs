@@ -45,7 +45,6 @@ static void init_output_ws_dt(
    )
 {
    Pgcolr fg;
-   Pvec up;
 
    wsdt->ws_class             = PCLASS_RASTER;
    wsdt->deferral_mode        = PDEFER_ASAP;
@@ -87,15 +86,11 @@ static void init_output_ws_dt(
    wsdt->default_polymarker_bundle_table[0].size = 1.0;
    memcpy(&wsdt->default_polymarker_bundle_table[0].colr, &fg, sizeof(Pgcolr));
 
-   up.delta_x = 0.0;
-   up.delta_y = 1.0;
    wsdt->num_predefined_text_indices = WST_MIN_PREDEF_TEXT_REPS;
    wsdt->default_text_bundle_table[0].font = 1;
    wsdt->default_text_bundle_table[0].prec = PREC_STRING;
-   wsdt->default_text_bundle_table[0].char_ht = 0.01;
    wsdt->default_text_bundle_table[0].char_expan = 1.0;
    wsdt->default_text_bundle_table[0].char_space = 0.0;
-   memcpy(&wsdt->default_text_bundle_table[0].char_up_vec, &up, sizeof(Pvec));
    memcpy(&wsdt->default_text_bundle_table[0].colr, &fg, sizeof(Pgcolr));
 
    wsdt->num_predefined_edge_indices = WST_MIN_PREDEF_EDGE_REPS;

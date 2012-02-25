@@ -209,6 +209,20 @@ int phg_handle_text_prec(
    );
 
 /*******************************************************************************
+ * phg_handle_text_path
+ *
+ * DESCR:       Handle text path
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_text_path(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
+/*******************************************************************************
  * phg_handle_text
  *
  * DESCR:       Handle text

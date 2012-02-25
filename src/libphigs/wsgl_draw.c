@@ -1137,7 +1137,8 @@ static void draw_text_string(
    Ppoint pos;
    int j, z;
 
-   phg_setup_text_attr(ast, &fnt, &char_ht, &char_expan);
+   phg_setup_text_attr(ast, &fnt, &char_expan);
+   char_ht = ast->char_ht;
 
    pos.x = text->pos.x;
    pos.y = text->pos.y;
@@ -1191,9 +1192,10 @@ static void draw_text_stroke(
    int j, z;
    Pvec up, right;
 
-   phg_setup_text_attr(ast, &fnt, &char_ht, &char_expan);
+   phg_setup_text_attr(ast, &fnt, &char_expan);
+   char_ht = ast->char_ht;
    phg_get_char_text_attr(ast, &char_space);
-   phg_get_stroke_text_attr(ast, &up);
+   memcpy(&up, &ast->char_up_vec, sizeof(Pvec));
 
    right.delta_x =  up.delta_y;
    right.delta_y = -up.delta_x;

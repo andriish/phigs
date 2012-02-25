@@ -1098,6 +1098,17 @@ void pset_text_prec(
    );
 
 /*******************************************************************************
+ * pset_text_path
+ *
+ * DESCR:       Creates a new element - Text Path Attribute
+ * RETURNS:     N/A
+ */
+
+void pset_text_path(
+   Ptext_path text_path
+   );
+
+/*******************************************************************************
  * pset_char_ht
  *
  * DESCR:       Creates a new element - Character height Attribute
