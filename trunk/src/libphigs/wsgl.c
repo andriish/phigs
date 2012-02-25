@@ -23,7 +23,7 @@
 #include <string.h>
 #include <limits.h>
 #include <math.h>
-#include <sys/types.h>
+#include <stdint.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <X11/Xlib.h>
@@ -364,7 +364,7 @@ static void store_cur_struct(
    Ws *ws
    )
 {
-   u_int32_t encode;
+   uint32_t encode;
    Wsgl_handle wsgl = ws->render_context;
 
    if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {

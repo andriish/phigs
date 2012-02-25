@@ -21,7 +21,7 @@
 #ifndef _wsglP_h
 #define _wsglP_h
 
-#include <sys/types.h>
+#include <stdint.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
@@ -52,7 +52,7 @@ typedef struct {
    Ptext_align  text_align;
    Pvec         char_up_vec;
    Nset         asf_nameset;
-   u_int32_t    ast_buf[1];
+   uint32_t     ast_buf[1];
 } Ws_attr_st;
 
 typedef struct {
@@ -61,13 +61,13 @@ typedef struct {
    Pint       hlhsr_id;
    Ws_attr_st ast;
    Nset       cur_nameset;
-   u_int32_t  nameset_buf[WS_MAX_NAMES_IN_NAMESET / 32];
+   uint32_t   nameset_buf[WS_MAX_NAMES_IN_NAMESET / 32];
    Pview_rep3 view_rep;
    Pmatrix3   local_tran;
    Pmatrix3   global_tran;
    Pint       pick_id;
    Nset       lightstat;
-   u_int32_t  lightstat_buf[1];
+   uint32_t   lightstat_buf[1];
 } Ws_struct;
 
 typedef struct {
