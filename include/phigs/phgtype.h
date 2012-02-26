@@ -21,6 +21,7 @@
 #ifndef _phgtype_h
 #define _phgtype_h
 
+#include <stdint.h>
 #include <sys/types.h>
 
 #ifndef TRUE
@@ -32,6 +33,21 @@
 #endif
 
 #define PHG_ZERO_TOLERANCE      1.0e-30
+
+typedef void (*Phg_conv_long)  (uint32_t *);
+typedef void (*Phg_conv_short) (uint16_t *);
+typedef void (*Phg_conv_float) (float *);
+
+typedef struct {
+   Phg_conv_long  conv_long;
+   Phg_conv_short conv_short;
+   Phg_conv_float conv_float;
+} Phg_swap;
+
+typedef struct {
+   uint16_t elementType;
+   uint16_t length;
+} Phg_elmt_info;
 
 typedef struct {
    Pint        num_paths;
