@@ -40,6 +40,12 @@
 #endif
 #endif
 
+#ifdef DEBUG
+#define TOCSIZE                  256
+#else
+#define TOCSIZE                  4
+#endif
+
 /* Archive element opcodes */
 #define PHG_AR_BAF               0x1010      /* Begin Archive File */
 #define PHG_AR_AFD               0x1111      /* Archive File Descriptor */
@@ -48,6 +54,9 @@
 #define PHG_AR_EOA               0x1414      /* End Of Archive */
 #define PHG_AR_AFS               0x1515      /* Archive Free Space */
 #define PHG_AR_AFI               0x1616      /* Archive File Index element */
+
+#define PHG_AR_STRUCT            0x1         /* block contains structure */
+#define PHG_AR_FREE_SPACE        0x2         /* block is free space */
 
 typedef enum {
     PHG_AR_WRITING_ARCHIVE,
@@ -107,6 +116,24 @@ typedef struct {
     int32_t  str;
     uint32_t nelts;
 } Phg_ar_index_entry;
+
+typedef struct _Phg_ar_toc {
+   Phg_ar_index       head;
+   Phg_ar_index_entry *entry;
+   struct _Phg_ar_toc *next;
+} Phg_ar_toc;
+
+typedef struct _Ar_struct {
+   char              fname[PHG_MAX_NAMELEN];
+   Pint              arid;
+   Pint              fd;
+   Phg_ar_toc        *toc;
+   uint8_t           format;
+   uint32_t          afiOffset;
+   struct _Ar_struct *next;
+} Ar_struct;
+
+typedef Ar_struct *Ar_handle;
 
 #endif /* _ar_h */
 

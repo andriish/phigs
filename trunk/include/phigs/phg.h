@@ -42,6 +42,7 @@ extern "C" {
 #include <phigs/phg_dt.h>
 #include <phigs/sin.h>
 #include <phigs/private/evtP.h>
+#include <phigs/ar.h>
 
 #define PHG_NUM_EVENTS         35
 

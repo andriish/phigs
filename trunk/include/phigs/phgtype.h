@@ -33,6 +33,7 @@
 #endif
 
 #define PHG_ZERO_TOLERANCE      1.0e-30
+#define PHG_MAX_NAMELEN         255
 
 typedef void (*Phg_conv_long)  (uint32_t *);
 typedef void (*Phg_conv_short) (uint16_t *);
