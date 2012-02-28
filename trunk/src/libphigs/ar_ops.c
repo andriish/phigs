@@ -74,20 +74,9 @@ SOFTWARE.
 #include <phigs/ar.h>
 #include <phigs/private/arP.h>
 
-/* parameters for LSEEK */
-#ifndef L_SET
-#define  L_SET       0  /* absolute offset */
-#endif
-#ifndef L_INCR
-#define  L_INCR      1  /* relative to current offset */
-#endif
-#ifndef L_XTND
-#define  L_XTND      2  /* relative to end of file */
-#endif
+#define PADDING(n) ( ((n)%4 == 0) ? 0 : 4 - ((n)%4) )
 
 static uint32_t ar_int_pad = 0x55555555;
-
-#define PADDING(n) ( ((n)%4 == 0) ? 0 : 4 - ((n)%4) )
 
 #define WRITE_PAD(fd, length)            \
     (write(fd, (char *)&ar_int_pad, (int)PADDING(length)) != PADDING(length))
