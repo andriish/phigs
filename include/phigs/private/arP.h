@@ -21,6 +21,20 @@
 #ifndef _arP_h
 #define _arP_h
 
+#define PHG_AR_FOR_ALL_TOC_ENTRIES(_arh, _e)                        \
+    {                                                               \
+        Phg_ar_toc *_t;                                             \
+        int         _l;                                             \
+        for (_t = (_arh)->toc; _t; _t = _t->next) {                 \
+            _l = 0;                                                 \
+            while (_l < _t->head.numUsed) {                         \
+                if (_t->entry[_l].type == PHG_AR_FREE_SPACE)        \
+                    _l++;                                           \
+                else {                                              \
+                    _e = &_t->entry[_l++];
+
+#define PHG_AR_END_FOR_ALL_TOC_ENTRIES }}}}
+
 /******************************************************************************
  * phg_ar_set_conversion
  *
@@ -89,6 +103,168 @@ void phg_ar_convert_elements(
     int nelts,
     char *buffer,
     Phg_ar_archiving_direction direction
+    );
+
+/*******************************************************************************
+ * phg_ar_write_baf
+ *
+ * DESCR:       Begin Archive File (BAF) write
+ * RETURNS:     Zero on success, otherwise error
+ */
+
+int phg_ar_write_baf(
+    Ar_handle arh
+    );
+
+/*******************************************************************************
+ * phg_ar_read_baf
+ *
+ * DESCR:       Begin Archive File (BAF) read
+ * RETURNS:     Zero on success, otherwise error
+ */
+
+int phg_ar_read_baf(
+    Ar_handle arh
+    );
+
+/*******************************************************************************
+ * phg_ar_read_afd
+ *
+ * DESCR:       Archive File Descriptor (AFD) write
+ * RETURNS:     Zero on success, otherwise error
+ */
+
+int phg_ar_write_afd(
+    Ar_handle arh
+    );
+
+/*******************************************************************************
+ * phg_ar_read_afd
+ *
+ * DESCR:       Archive File Descriptor (AFD) read
+ * RETURNS:     Zero on success, otherwise error
+ */
+
+int phg_ar_read_afd(
+    Ar_handle arh
+    );
+
+/*******************************************************************************
+ * phg_ar_init_toc
+ *
+ * DESCR:       Archive File initialize table of contents
+ * RETURNS:     Pointer to entry or NULL
+ */
+
+Phg_ar_toc* phg_ar_init_toc(
+    Ar_handle arh
+    );
+
+/*******************************************************************************
+ * phg_ar_free_toc
+ *
+ * DESCR:       Archive File free table of contents
+ * RETURNS:     N/A
+ */
+
+void phg_ar_free_toc(
+    Ar_handle arh
+    );
+
+/*******************************************************************************
+ * phg_ar_read_toc
+ *
+ * DESCR:       Table of Contents (TOC) read
+ * RETURNS:     Zero on success, otherwise error
+ */
+
+int phg_ar_read_toc(
+    Ar_handle arh
+    );
+
+/*******************************************************************************
+ * phg_ar_write_toc
+ *
+ * DESCR:       Table of Contents (TOC) write
+ * RETURNS:     Zero on success, otherwise error
+ */
+
+int phg_ar_write_toc(
+    Ar_handle arh
+    );
+
+/*******************************************************************************
+ * phg_ar_read_eoa
+ *
+ * DESCR:       End of Archive (EOA) element read
+ * RETURNS:     Zero on success, otherwise error
+ */
+
+int phg_ar_read_eoa(
+    Ar_handle arh
+    );
+
+/*******************************************************************************
+ * phg_ar_read_eoa
+ *
+ * DESCR:       End of Archive (EOA) element write
+ * RETURNS:     Zero on success, otherwise error
+ */
+
+int phg_ar_write_eoa(
+    int fd
+    );
+
+/*******************************************************************************
+ * phg_ar_get_entry_from_archive
+ *
+ * DESCR:       Archive File entry get
+ * RETURNS:     Pointer to archive index entry or NULL
+ */
+
+Phg_ar_index_entry* phg_ar_get_entry_from_archive(
+    Ar_handle arh,
+    Pint struct_id
+    );
+
+/*******************************************************************************
+ * phg_ar_read_struct_from_archive
+ *
+ * DESCR:       Archive File entry read
+ * RETURNS:     Zero on success, otherwise error
+ */
+
+int phg_ar_read_struct_from_archive(
+    Ar_handle arh,
+    Phg_ar_index_entry *entry,
+    caddr_t mem
+    );
+
+/*******************************************************************************
+ * phg_ar_free_entry
+ *
+ * DESCR:       Turns a structure entry into free space 
+ * RETURNS:     N/A
+ */
+
+void phg_ar_free_entry(
+    Ar_handle arh,
+    Phg_ar_index_entry *entry
+    );
+
+/*******************************************************************************
+ * phg_ar_write_struct_to_archive
+ *
+ * DESCR:       Archive File write structure to archive
+ * RETURNS:     Zero on success, otherwise error
+ */
+int phg_ar_write_struct_to_archive(
+    Ar_handle arh,
+    Pint str,
+    Pconf_res res_flag,
+    Pint nbytes,
+    Pint nelts,
+    caddr_t mem
     );
 
 #endif /* _arP_h */

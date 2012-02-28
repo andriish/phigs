@@ -251,6 +251,12 @@ typedef enum {
 } Prel_pri;
 
 typedef enum {
+   PRES_MAINTAIN,
+   PRES_ABANDON,
+   PRES_UPD
+} Pconf_res;
+
+typedef enum {
    PVISUAL_ST_CORRECT,
    PVISUAL_ST_DEFER,
    PVISUAL_ST_SIMULATED
