@@ -54,6 +54,7 @@ typedef struct {
    Input_q_handle  input_q;
    List            wst_list;
    Ws_handle       *ws_list;
+   Ar_handle       ar_list;
    Phg_scratch     scratch;
 } Phg_struct;
 
@@ -68,6 +69,7 @@ extern Phg_handle phg;
 #define PHG_INPUT_Q (phg->input_q)
 #define PHG_WST_LIST (phg->wst_list)
 #define PHG_WS_LIST (phg->ws_list)
+#define PHG_AR_LIST (phg->ar_list)
 #define PHG_WSID(n) (phg->ws_list[(n)])
 #define PHG_SCRATCH (phg->scratch)
 

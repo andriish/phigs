@@ -135,5 +135,28 @@ typedef struct _Ar_struct {
 
 typedef Ar_struct *Ar_handle;
 
+/*******************************************************************************
+ * phg_ar_open
+ *
+ * DESCR:       Open archive file
+ * RETURNS:     N/A
+ */
+
+void phg_ar_open(
+    Phg_args_ar_open *args,
+    Phg_ret *ret
+    );
+
+/*******************************************************************************
+ * phg_ar_close
+ *
+ * DESCR:       Close archive file
+ * RETURNS:     N/A
+ */
+
+void phg_ar_close(
+    Pint ar_id
+    );
+
 #endif /* _ar_h */
 

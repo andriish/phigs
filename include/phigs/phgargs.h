@@ -93,6 +93,12 @@ typedef enum {
    PHG_ARGS_CONN_DRAWABLE
 } Phg_args_conn_type;
 
+typedef enum {
+   PHG_ARGS_AR_STRUCTS,
+   PHG_ARGS_AR_NETWORKS,
+   PHG_ARGS_AR_ALL
+} Phg_args_ar_op;
+
 typedef struct {
    Pint       el_size;
    Pelem_type el_type;
@@ -210,6 +216,12 @@ typedef struct {
    Pop_mode            mode;
    Pecho_switch        echo;
 } Phg_args_set_mode_data;
+
+typedef struct {
+   char *fname;
+   Pint name_length;
+   Pint arid;
+} Phg_args_ar_open;
 
 #endif
 
