@@ -1110,6 +1110,14 @@ int phg_handle_int(
          elmt->eldata.ptr = data;
       break;
 
+      case CSS_EL_INQ_CONTENT:
+         ARGS_ELMT_DATA(argdata).int_data = PHG_INT(elmt);
+      break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         *((Pint *) argdata) = sizeof(Pint);
+      break;
+
       case CSS_EL_FREE:
          free(ELMT_DATA_PTR(elmt));
       break;
