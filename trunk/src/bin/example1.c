@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>
@@ -66,28 +67,36 @@ Pgcolr green, yellow;
 
 void struct_content(Pint struct_id, Pint elmt_num)
 {
+   Pint i, num_longs;
    Phg_ret ret;
-
-   printf("Struct: %d, Elmt: %d\n", struct_id, elmt_num);
+   caddr_t data;
 
    ret.err = 0;
    phg_css_inq_el_type_size(PHG_CSS, struct_id, elmt_num, &ret);
    if (!ret.err) {
-      printf("Type: %d\n", ret.data.el_type_size.type);
-      printf("Size: %d\n", ret.data.el_type_size.size);
+      num_longs = ret.data.el_type_size.size / 4;
+      css_print_eltype(ret.data.el_type_size.type);
+      printf("\t\t\tSIZE: %d\n", ret.data.el_type_size.size);
    }
    else {
+      num_longs = 0;
       printf("Error %d\n", ret.err);
    }
 
    ret.err = 0;
    phg_css_inq_el_content(PHG_CSS, struct_id, elmt_num, &ret);
    if (!ret.err) {
-      printf("Element content: %d\n", ret.data.el_info.el_data.int_data);
+      data = (caddr_t) &ret.data.el_info.el_data;
+      printf("-------------------------------------------------------------\n");
+      for (i = 0; i < num_longs; i++) {
+         printf("%08x:\tINTEGER: %d\tFLOAT: %f\n",
+                i, *((int *) &data[i]), *((float *) &data[i]));
+      }
    }
    else {
       printf("Error: %d\n", ret.err);
    }
+   printf("\n");
 }
 
 void struct_stat(void)
@@ -107,7 +116,9 @@ void struct_stat(void)
    else
       printf("Label not found\n");
 
+   printf("\n");
    struct_content(1, 1);
+   struct_content(1, 5);
 }
 
 int main(int argc, char *argv[])
