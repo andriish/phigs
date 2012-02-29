@@ -22,22 +22,17 @@
 #define _ar_h
 
 #include <stdint.h>
-#include <endian.h>
 
-#ifdef vax
+#ifdef VAX
 #define PHG_AR_HOST_FLOAT_FORMAT 0x2
-#else /* !vax */
+#else /* !VAX */
 #define PHG_AR_HOST_FLOAT_FORMAT 0x0
-#endif /* vax */
+#endif /* VAX */
 
-#ifdef __BYTE_ORDER
-#if __BYTE_ORDER == __BIG_ENDIAN
-#define PHG_AR_HOST_BYTE_ORDER   0x0
-#elif __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef MSBFIRST
 #define PHG_AR_HOST_BYTE_ORDER   0x1
-#else
-# error "Endian determination failed"
-#endif
+#else /* LSBFIRST */
+#define PHG_AR_HOST_BYTE_ORDER   0x0
 #endif
 
 #ifdef DEBUG

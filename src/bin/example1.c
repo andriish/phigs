@@ -63,6 +63,33 @@ int view_index = 5;
 Pcolr_rep col_rep;
 Pgcolr green, yellow;
 
+
+void struct_content(Pint struct_id, Pint elmt_num)
+{
+   Phg_ret ret;
+
+   printf("Struct: %d, Elmt: %d\n", struct_id, elmt_num);
+
+   ret.err = 0;
+   phg_css_inq_el_type_size(PHG_CSS, struct_id, elmt_num, &ret);
+   if (!ret.err) {
+      printf("Type: %d\n", ret.data.el_type_size.type);
+      printf("Size: %d\n", ret.data.el_type_size.size);
+   }
+   else {
+      printf("Error %d\n", ret.err);
+   }
+
+   ret.err = 0;
+   phg_css_inq_el_content(PHG_CSS, struct_id, elmt_num, &ret);
+   if (!ret.err) {
+      printf("Element content: %d\n", ret.data.el_info.el_data.int_data);
+   }
+   else {
+      printf("Error: %d\n", ret.err);
+   }
+}
+
 void struct_stat(void)
 {
    Pint index, err;
@@ -79,6 +106,8 @@ void struct_stat(void)
       printf("Label found at: %d\n", index);
    else
       printf("Label not found\n");
+
+   struct_content(1, 1);
 }
 
 int main(int argc, char *argv[])
