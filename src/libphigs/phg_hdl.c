@@ -1172,6 +1172,14 @@ int phg_handle_float(
          elmt->eldata.ptr = data;
       break;
 
+      case CSS_EL_INQ_CONTENT:
+         ARGS_ELMT_DATA(argdata).float_data = PHG_FLOAT(elmt);
+      break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         *((Pint *) argdata) = sizeof(Pfloat);
+      break;
+
       case CSS_EL_FREE:
          free(ELMT_DATA_PTR(elmt));
       break;
