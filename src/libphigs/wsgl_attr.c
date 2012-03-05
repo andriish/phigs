@@ -185,14 +185,16 @@ void phg_update_hlhsr_id(
 
 void phg_set_asf(
    Ws_attr_st *ast,
-   Pasf_info *asf_info
+   void *asf_info
    )
 {
-   if (asf_info->source == PASF_INDIV) {
-      phg_nset_name_set(&ast->asf_nameset, asf_info->id);
+   Pasf_info *data = (Pasf_info *) asf_info;
+
+   if (data->source == PASF_INDIV) {
+      phg_nset_name_set(&ast->asf_nameset, data->id);
    }
    else {
-      phg_nset_name_clear(&ast->asf_nameset, asf_info->id);
+      phg_nset_name_clear(&ast->asf_nameset, data->id);
    }
 }
 
@@ -439,26 +441,27 @@ void phg_setup_int_attr(
 }
 
 /*******************************************************************************
- * phg_get_int_colr
+ * phg_get_facet_colr
  *
  * DESCR:	Get facet colour
  * RETURNS:	Facet colour
  */
 
-Pgcolr* phg_get_int_colr(
-   Pfasd3 *fasd3,
+Pgcolr* phg_get_facet_colr(
+   Pint fflag,
+   Pfacet_data3 *fdata,
    Ws_attr_st *ast
    )
 {
    Pgcolr *gcolr;
 
-   switch (fasd3->fflag) {
+   switch (fflag) {
       case PFA_COLOUR:
-         gcolr = &fasd3->fdata.colr;
+         gcolr = &fdata->colr;
          break;
 
       case PFA_COLOUR_NORMAL:
-         gcolr = &fasd3->fdata.conorm.colr;
+         gcolr = &fdata->conorm.colr;
          break;
 
       default:
@@ -555,7 +558,7 @@ void phg_set_edge_ind(
  * RETURNS:	Edge flag
  */
 
-Pint_style phg_get_edge_flag(
+Pedge_flag phg_get_edge_flag(
    Ws_attr_st *ast
    )
 {
@@ -855,14 +858,19 @@ void phg_get_char_text_attr(
 
 void phg_add_names_set(
    Ws *ws,
-   Pint_list *names
+   void *names
    )
 {
+   Pint num_ints;
+   Pint *data = (Pint *) names;
    Wsgl_handle wsgl = ws->render_context;
 
+   num_ints = *data;
+   data++;
+
    phg_nset_names_set(&wsgl->cur_struct.cur_nameset,
-                      names->num_ints,
-                      names->ints);
+                      num_ints,
+                      data);
 }
 
 /*******************************************************************************
@@ -874,13 +882,18 @@ void phg_add_names_set(
 
 void phg_remove_names_set(
    Ws *ws,
-   Pint_list *names
+   void *names
    )
 {
+   Pint num_ints;
+   Pint *data = (Pint *) names;
    Wsgl_handle wsgl = ws->render_context;
 
+   num_ints = *data;
+   data++;
+
    phg_nset_names_clear(&wsgl->cur_struct.cur_nameset,
-                        names->num_ints,
-                        names->ints);
+                        num_ints,
+                        data);
 }
 

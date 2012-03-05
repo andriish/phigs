@@ -68,8 +68,9 @@ void padd_names_set(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_ADD_NAMES_SET;
-      ARGS_ELMT_DATA(&args).names.num_ints = names->num_ints;
-      ARGS_ELMT_DATA(&args).names.ints = names->ints;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint) + sizeof(Pint) * names->num_ints;
+      ARGS_ELMT_DATA(&args).int_list.num_ints = names->num_ints;
+      ARGS_ELMT_DATA(&args).int_list.ints = names->ints;
       phg_add_el(PHG_CSS, &args);
    }
 }
@@ -94,8 +95,9 @@ void premove_names_set(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_REMOVE_NAMES_SET;
-      ARGS_ELMT_DATA(&args).names.num_ints = names->num_ints;
-      ARGS_ELMT_DATA(&args).names.ints = names->ints;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint) + sizeof(Pint) * names->num_ints;
+      ARGS_ELMT_DATA(&args).int_list.num_ints = names->num_ints;
+      ARGS_ELMT_DATA(&args).int_list.ints = names->ints;
       phg_add_el(PHG_CSS, &args);
    }
 }
@@ -121,6 +123,7 @@ void pset_indiv_asf(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_INDIV_ASF;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pasf_info);
       ARGS_ELMT_DATA(&args).asf_info.id = asf_id;
       ARGS_ELMT_DATA(&args).asf_info.source = asf_source;
       phg_add_el(PHG_CSS, &args);
@@ -148,6 +151,7 @@ void pset_local_tran(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LOCAL_MODEL_TRAN;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pcompose_type) + sizeof(Pmatrix);
       ARGS_ELMT_DATA(&args).local_tran.compose_type = compose_type;
       phg_mat_copy_3x3(ARGS_ELMT_DATA(&args).local_tran.matrix, local_tran);
       phg_add_el(PHG_CSS, &args);
@@ -175,6 +179,7 @@ void pset_local_tran3(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LOCAL_MODEL_TRAN3;
+      ARGS_ELMT_SIZE(&args) = sizeof(Plocal_tran3);
       ARGS_ELMT_DATA(&args).local_tran3.compose_type = compose_type;
       phg_mat_copy(ARGS_ELMT_DATA(&args).local_tran3.matrix, local_tran);
       phg_add_el(PHG_CSS, &args);
@@ -201,6 +206,7 @@ void pset_global_tran(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_GLOBAL_MODEL_TRAN;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pmatrix);
       phg_mat_copy_3x3(ARGS_ELMT_DATA(&args).global_tran, global_tran);
       phg_add_el(PHG_CSS, &args);
    }
@@ -226,6 +232,7 @@ void pset_global_tran3(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_GLOBAL_MODEL_TRAN3;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pmatrix3);
       phg_mat_copy(ARGS_ELMT_DATA(&args).global_tran3, global_tran);
       phg_add_el(PHG_CSS, &args);
    }
@@ -254,6 +261,7 @@ void pset_view_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_VIEW_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = view_ind;
       phg_add_el(PHG_CSS, &args);
    }
@@ -280,6 +288,7 @@ void ptext(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_TEXT;
+      ARGS_ELMT_SIZE(&args) = sizeof(Ppoint) + strlen(char_string) + 1;
       memcpy(&ARGS_ELMT_DATA(&args).text.pos, text_pos, sizeof(Ppoint));
       ARGS_ELMT_DATA(&args).text.char_string = char_string;
       phg_add_el(PHG_CSS, &args);
@@ -306,6 +315,8 @@ void ppolyline(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_POLYLINE;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint) +
+          sizeof(Ppoint) * point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list.num_points = point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list.points = point_list->points;
       phg_add_el(PHG_CSS, &args);
@@ -332,6 +343,8 @@ void ppolyline3(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_POLYLINE3;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint) +
+          sizeof(Ppoint3) * point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list3.num_points =
          point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list3.points = point_list->points;
@@ -359,6 +372,8 @@ void ppolymarker(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_POLYMARKER;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint) +
+          sizeof(Ppoint) * point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list.num_points = point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list.points = point_list->points;
       phg_add_el(PHG_CSS, &args);
@@ -385,6 +400,8 @@ void ppolymarker3(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_POLYMARKER3;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint) +
+          sizeof(Ppoint3) * point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list3.num_points =
          point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list3.points = point_list->points;
@@ -412,6 +429,8 @@ void pfill_area(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint) +
+          sizeof(Ppoint) * point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list.num_points = point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list.points = point_list->points;
       phg_add_el(PHG_CSS, &args);
@@ -438,6 +457,8 @@ void pfill_area3(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA3;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint) +
+          sizeof(Ppoint3) * point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list3.num_points =
          point_list->num_points;
       ARGS_ELMT_DATA(&args).point_list3.points = point_list->points;
@@ -456,6 +477,7 @@ void pfill_area_set(
    Ppoint_list_list *point_list_list
    )
 {
+   Pint i, num_points;
    unsigned size;
    Pint num_lists;
    Ppoint_list *point_lists;
@@ -470,6 +492,11 @@ void pfill_area_set(
       ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA_SET;
       num_lists = point_list_list->num_point_lists;
       size = sizeof(Ppoint_list) * num_lists;
+      for (i = 0, num_points = 0; i < num_lists; i++) {
+         num_points += point_list_list->point_lists[i].num_points;
+      }
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint) * num_lists +
+         sizeof(Ppoint) * num_points;
 
       if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size)) {
          ERR_REPORT(PHG_ERH, ERR900);
@@ -495,6 +522,7 @@ void pfill_area_set3(
    Ppoint_list_list3 *point_list_list
    )
 {
+   Pint i, num_points;
    unsigned size;
    Pint num_lists;
    Ppoint_list3 *point_lists;
@@ -509,6 +537,11 @@ void pfill_area_set3(
       ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA_SET3;
       num_lists = point_list_list->num_point_lists;
       size = sizeof(Ppoint_list3) * num_lists;
+      for (i = 0, num_points = 0; i < num_lists; i++) {
+         num_points += point_list_list->point_lists[i].num_points;
+      }
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint) * num_lists +
+         sizeof(Ppoint3) * num_points;
 
       if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size)) {
          ERR_REPORT(PHG_ERH, ERR900);
@@ -538,6 +571,7 @@ void pfill_area3_data(
    Pvertex_data3 *vdata
    )
 {
+   unsigned facet_size, vertex_size;
    Phg_args_add_el args;
 
    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_fill_area3_data);
@@ -546,7 +580,49 @@ void pfill_area3_data(
       ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
+      switch (fflag) {
+         case PFA_COLOUR:
+            facet_size = sizeof(Pgcolr);
+            break;
+
+         case PFA_NORMAL:
+            facet_size = sizeof(Pvec3);
+            break;
+
+         case PFA_COLOUR_NORMAL:
+            facet_size = sizeof(Pptconorm3);
+            break;
+
+         default:
+            facet_size = 0;
+            break;
+      }
+
+      switch (vflag) {
+         case PVERT_POINT:
+            vertex_size = sizeof(Ppoint3);
+            break;
+
+         case PVERT_COLOUR:
+            vertex_size = sizeof(Pptco3);
+            break;
+
+         case PVERT_NORMAL:
+            vertex_size = sizeof(Pptnorm3);
+            break;
+
+         case PVERT_COLOUR_NORMAL:
+            vertex_size = sizeof(Pptconorm3);
+            break;
+
+         default: 
+            vertex_size = 0;
+            break;
+      }
+
       ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA3_DATA;
+      ARGS_ELMT_SIZE(&args) = 3 * sizeof(Pint) +
+         facet_size + vertex_size * num_vertices;
       ARGS_ELMT_DATA(&args).fasd3.fflag = fflag;
       ARGS_ELMT_DATA(&args).fasd3.vflag = vflag;
       memcpy(&ARGS_ELMT_DATA(&args).fasd3.fdata, fdata, sizeof(Pfacet_data3));
@@ -576,6 +652,7 @@ void plabel(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LABEL;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = label_id;
       phg_add_el(PHG_CSS, &args);
    }
@@ -601,6 +678,7 @@ void pset_pick_id(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_PICK_ID;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = pick_id;
       phg_add_el(PHG_CSS, &args);
    }
@@ -626,6 +704,7 @@ void pset_hlhsr_id(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_HLHSR_ID;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = hlhsr_id;
       phg_add_el(PHG_CSS, &args);
    }
@@ -654,6 +733,7 @@ void pset_int_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_INT_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = int_ind;
       phg_add_el(PHG_CSS, &args);
    }
@@ -682,6 +762,7 @@ void pset_int_colr_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_INT_COLR_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = colr_ind;
       phg_add_el(PHG_CSS, &args);
    }
@@ -707,6 +788,7 @@ void pset_int_style(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_INT_STYLE;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint_style);
       ARGS_ELMT_DATA(&args).int_style = int_style;
       phg_add_el(PHG_CSS, &args);
    }
@@ -735,6 +817,7 @@ void pset_int_style_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_INT_STYLE_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = int_style_ind;
       phg_add_el(PHG_CSS, &args);
    }
@@ -763,6 +846,7 @@ void pset_line_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LINE_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = line_ind;
       phg_add_el(PHG_CSS, &args);
    }
@@ -791,6 +875,7 @@ void pset_line_colr_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LINE_COLR_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = colr_ind;
       phg_add_el(PHG_CSS, &args);
    }
@@ -816,6 +901,7 @@ void pset_linewidth(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LINEWIDTH;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pfloat);
       ARGS_ELMT_DATA(&args).float_data = linewidth;
       phg_add_el(PHG_CSS, &args);
    }
@@ -841,6 +927,7 @@ void pset_linetype(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LINETYPE;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = linetype;
       phg_add_el(PHG_CSS, &args);
    }
@@ -869,6 +956,7 @@ void pset_marker_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_MARKER_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = marker_ind;
       phg_add_el(PHG_CSS, &args);
    }
@@ -897,6 +985,7 @@ void pset_marker_colr_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_MARKER_COLR_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = colr_ind;
       phg_add_el(PHG_CSS, &args);
    }
@@ -922,6 +1011,7 @@ void pset_marker_size(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_MARKER_SIZE;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pfloat);
       ARGS_ELMT_DATA(&args).float_data = marker_size;
       phg_add_el(PHG_CSS, &args);
    }
@@ -947,6 +1037,7 @@ void pset_marker_type(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_MARKER_TYPE;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = marker_type;
       phg_add_el(PHG_CSS, &args);
    }
@@ -975,6 +1066,7 @@ void pset_edge_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_EDGE_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = edge_ind;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1003,6 +1095,7 @@ void pset_edge_colr_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_EDGE_COLR_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = colr_ind;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1028,6 +1121,7 @@ void pset_edgetype(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_EDGETYPE;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = edgetype;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1053,6 +1147,7 @@ void pset_edge_flag(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_EDGE_FLAG;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pedge_flag);
       ARGS_ELMT_DATA(&args).edge_flag = edge_flag;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1078,6 +1173,7 @@ void pset_edgewidth(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_EDGEWIDTH;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pfloat);
       ARGS_ELMT_DATA(&args).float_data = edgewidth;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1103,6 +1199,7 @@ void pset_text_font(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_TEXT_FONT;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = font;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1128,6 +1225,7 @@ void pset_text_prec(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_TEXT_PREC;
+      ARGS_ELMT_SIZE(&args) = sizeof(Ptext_prec);
       ARGS_ELMT_DATA(&args).text_prec = prec;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1153,6 +1251,7 @@ void pset_text_path(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_TEXT_PATH;
+      ARGS_ELMT_SIZE(&args) = sizeof(Ptext_path);
       ARGS_ELMT_DATA(&args).text_path = text_path;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1178,6 +1277,7 @@ void pset_text_align(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_TEXT_ALIGN;
+      ARGS_ELMT_SIZE(&args) = sizeof(Ptext_align);
       memcpy(&ARGS_ELMT_DATA(&args).text_path, text_align, sizeof(Ptext_align));
       phg_add_el(PHG_CSS, &args);
    }
@@ -1203,6 +1303,7 @@ void pset_char_ht(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_CHAR_HT;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pfloat);
       ARGS_ELMT_DATA(&args).float_data = char_ht;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1228,6 +1329,7 @@ void pset_char_expan(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_CHAR_EXPAN;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pfloat);
       ARGS_ELMT_DATA(&args).float_data = char_expan;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1253,6 +1355,7 @@ void pset_char_space(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_CHAR_SPACE;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pfloat);
       ARGS_ELMT_DATA(&args).float_data = char_space;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1278,6 +1381,7 @@ void pset_char_up_vec(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_CHAR_UP_VEC;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pvec);
       memcpy(&ARGS_ELMT_DATA(&args).vec, char_up_vec, sizeof(Pvec));
       phg_add_el(PHG_CSS, &args);
    }
@@ -1306,6 +1410,7 @@ void pset_text_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_TEXT_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = text_ind;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1334,6 +1439,7 @@ void pset_text_colr_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_TEXT_COLR_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = colr_ind;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1359,6 +1465,7 @@ void pset_int_colr(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_INT_COLR;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pgcolr);
       memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
       phg_add_el(PHG_CSS, &args);
    }
@@ -1384,6 +1491,7 @@ void pset_line_colr(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LINE_COLR;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pgcolr);
       memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
       phg_add_el(PHG_CSS, &args);
    }
@@ -1409,6 +1517,7 @@ void pset_marker_colr(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_MARKER_COLR;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pgcolr);
       memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
       phg_add_el(PHG_CSS, &args);
    }
@@ -1434,6 +1543,7 @@ void pset_edge_colr(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_EDGE_COLR;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pgcolr);
       memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
       phg_add_el(PHG_CSS, &args);
    }
@@ -1459,6 +1569,7 @@ void pexec_struct(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_EXEC_STRUCT;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = struct_id;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1485,6 +1596,9 @@ void pset_light_src_state(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_LIGHT_SRC_STATE;
+      ARGS_ELMT_SIZE(&args) = 2 * sizeof(Pint) +
+          sizeof(Pint) * activation->num_ints +
+          sizeof(Pint) * deactivation->num_ints;
       memcpy(&ARGS_ELMT_DATA(&args).lss.activation,
              activation,
              sizeof(Plss));
@@ -1515,6 +1629,7 @@ void pset_int_shad_meth(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_INT_SHAD_METH;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = shad_meth;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1540,6 +1655,7 @@ void pset_refl_eqn(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_INT_REFL_EQN;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = refl_equ;
       phg_add_el(PHG_CSS, &args);
    }
@@ -1565,6 +1681,7 @@ void pset_refl_props(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_REFL_PROPS;
+      ARGS_ELMT_SIZE(&args) = sizeof(Prefl_props);
       memcpy(&ARGS_ELMT_DATA(&args).props, refl_props, sizeof(Prefl_props));
       phg_add_el(PHG_CSS, &args);
    }

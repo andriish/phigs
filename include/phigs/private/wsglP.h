@@ -165,7 +165,7 @@ void wsgl_set_hlhsr_mode(
 
 void phg_set_asf(
    Ws_attr_st *ast,
-   Pasf_info *asf_info
+   void *asf_info
    );
 
 /*******************************************************************************
@@ -414,14 +414,15 @@ void phg_setup_int_attr(
    );
 
 /*******************************************************************************
- * phg_get_int_colr
+ * phg_get_facet_colr
  *
  * DESCR:       Get facet colour
  * RETURNS:     Facet colour
  */
 
-Pgcolr* phg_get_int_colr(
-   Pfasd3 *fasd3,
+Pgcolr* phg_get_facet_colr(
+   Pint fflag,
+   Pfacet_data3 *fdata,
    Ws_attr_st *ast
    );
 
@@ -467,7 +468,7 @@ void phg_set_edge_ind(
  * RETURNS:     Edge flag
  */
 
-Pint_style phg_get_edge_flag(
+Pedge_flag phg_get_edge_flag(
    Ws_attr_st *ast
    );
 
@@ -588,7 +589,7 @@ void phg_get_char_text_attr(
 
 void phg_add_names_set(
    Ws *ws,
-   Pint_list *names
+   void *names
    );
 
 /*******************************************************************************
@@ -600,7 +601,7 @@ void phg_add_names_set(
 
 void phg_remove_names_set(
    Ws *ws,
-   Pint_list *names
+   void *names
    );
 
 /*******************************************************************************
@@ -612,7 +613,7 @@ void phg_remove_names_set(
 
 void phg_draw_polymarker(
    Ws *ws,
-   Ppoint_list *point_list,
+   void *pdata,
    Ws_attr_st *ast
    );
 
@@ -625,7 +626,7 @@ void phg_draw_polymarker(
 
 void phg_draw_polymarker3(
    Ws *ws,
-   Ppoint_list3 *point_list,
+   void *pdata,
    Ws_attr_st *ast
    );
 
@@ -638,7 +639,7 @@ void phg_draw_polymarker3(
 
 void phg_draw_polyline(
    Ws *ws,
-   Ppoint_list *point_list,
+   void *pdata,
    Ws_attr_st *ast
    );
 
@@ -651,7 +652,7 @@ void phg_draw_polyline(
 
 void phg_draw_polyline3(
    Ws *ws,
-   Ppoint_list3 *point_list,
+   void *pdata,
    Ws_attr_st *ast
    );
 
@@ -664,7 +665,7 @@ void phg_draw_polyline3(
 
 void phg_draw_fill_area(
    Ws *ws,
-   Ppoint_list *point_list,
+   void *pdata,
    Ws_attr_st *ast
    );
 
@@ -677,7 +678,7 @@ void phg_draw_fill_area(
 
 void phg_draw_fill_area3(
    Ws *ws,
-   Ppoint_list3 *point_list,
+   void *pdata,
    Ws_attr_st *ast
    );
 
@@ -690,7 +691,7 @@ void phg_draw_fill_area3(
 
 void phg_draw_fill_area_set(
    Ws *ws,
-   Ppoint_list_list *point_list_list,
+   void *pdata,
    Ws_attr_st *ast
    );
 
@@ -703,7 +704,7 @@ void phg_draw_fill_area_set(
 
 void phg_draw_fill_area_set3(
    Ws *ws,
-   Ppoint_list_list3 *point_list_list,
+   void *pdata,
    Ws_attr_st *ast
    );
 
@@ -716,7 +717,7 @@ void phg_draw_fill_area_set3(
 
 void phg_draw_fill_area3_data(
    Ws *ws,
-   Pfasd3 *fasd3,
+   void *pdata,
    Ws_attr_st *ast
    );
 
@@ -729,7 +730,7 @@ void phg_draw_fill_area3_data(
 
 void phg_draw_text(
    Ws *ws,
-   Ptext *text,
+   void *tdata,
    Ws_attr_st *ast
    );
 
@@ -742,7 +743,7 @@ void phg_draw_text(
 
 void wsgl_set_light_src_state(
    Ws *ws,
-   Plss *lss
+   void *pdata
    );
 
 /*******************************************************************************

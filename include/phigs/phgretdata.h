@@ -32,8 +32,8 @@ typedef struct {
 } Phg_ret_el_type_size;
 
 typedef struct {
-   Pelem_type op;
-   Pelem_data el_data;
+   Pelem_type    op;
+   Phg_elmt_info *el_head;
 } Phg_ret_q_content;
 
 typedef struct {

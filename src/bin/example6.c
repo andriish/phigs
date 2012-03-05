@@ -49,6 +49,42 @@ Pint_list lights_on_list = {2, lights_on};
 Pint_list lights_off_list = {0, light_off};
 Prefl_props refl_props;
 
+void struct_content(Pint struct_id, Pint elmt_num)
+{
+   Pint i, num_longs;
+   Phg_ret ret;
+   caddr_t data;
+
+   ret.err = 0;
+   phg_css_inq_el_type_size(PHG_CSS, struct_id, elmt_num, &ret);
+   if (!ret.err) {
+      num_longs = ret.data.el_type_size.size / 4;
+      css_print_eltype(ret.data.el_type_size.type);
+      printf("\t\t\tSIZE: %d\n", ret.data.el_type_size.size);
+   }
+   else {
+      num_longs = 0;
+      printf("Error %d\n", ret.err);
+   }
+
+   ret.err = 0;
+   phg_css_inq_el_content(PHG_CSS, struct_id, elmt_num, &ret);
+   if (!ret.err) {
+      data = (caddr_t) ret.data.el_info.el_head + 4;
+      printf("-------------------------------------------------------------\n");
+      for (i = 0; i < num_longs; i++) {
+         printf("%08x:\tINTEGER: %d\n"
+                "\t\t\t\t\tFLOAT: %f\n",
+                i, *((int *) data), *((float *) data));
+         data += 4;
+      }
+   }
+   else {
+      printf("Error: %d\n", ret.err);
+   }
+   printf("\n");
+}
+
 void setup_light(Pint ws_id)
 {
    Plight_src_bundle light;

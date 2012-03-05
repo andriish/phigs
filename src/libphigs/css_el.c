@@ -488,11 +488,12 @@ int phg_css_no_data(Css_handle cssh,
 
     switch (opcode) {
       case CSS_EL_INQ_CONTENT:
-        memset(&ret_data->el_data, 0, sizeof(Phg_ret_q_content));
+        ret_data->op = 0;
+        ret_data->el_head = NULL;
         break;
 
       case CSS_EL_INQ_TYPE_SIZE:
-        ARGS_ELMT_SIZE(argdata) = 0;
+        ARGS_INQ_SIZE(argdata) = 0;
         break;
 
       default:

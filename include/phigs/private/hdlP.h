@@ -27,13 +27,13 @@
 #include <phigs/private/cssP.h>
 
 /*******************************************************************************
- * phg_handle_names_set
+ * phg_handle_int_list
  *
- * DESCR:       Handle nameset
+ * DESCR:       Handle list of integers
  * RETURNS:     TRUE on success, otherwise FALSE
  */
 
-int phg_handle_names_set(
+int phg_handle_int_list(
    Css_handle cssh,
    El_handle elmt,
    caddr_t argdata,
@@ -195,34 +195,6 @@ int phg_handle_fasd3(
    );
 
 /*******************************************************************************
- * phg_handle_text_prec
- *
- * DESCR:       Handle text precition
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int phg_handle_text_prec(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * phg_handle_text_path
- *
- * DESCR:       Handle text path
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int phg_handle_text_path(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
  * phg_handle_text_align
  *
  * DESCR:       Handle text alignment
@@ -279,41 +251,13 @@ int phg_handle_float(
    );
 
 /*******************************************************************************
- * phg_handle_edge_flag
- *
- * DESCR:       Handle edge flag
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int phg_handle_edge_flag(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * phg_handle_int_style
- *
- * DESCR:       Handle interior style
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int phg_handle_int_style(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * phg_handle_colr
+ * phg_handle_gcolr
  *
  * DESCR:       Handle colour
  * RETURNS:     TRUE on success, otherwise FALSE
  */
 
-int phg_handle_colr(
+int phg_handle_gcolr(
    Css_handle cssh,
    El_handle elmt,
    caddr_t argdata,

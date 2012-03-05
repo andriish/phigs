@@ -251,7 +251,7 @@ void init_pick(Pint ws_id, Pint dev_id, Pop_mode mode, Pecho_switch echo)
    Ppick_data3 rec;
    rec.pets.pet_r1.unused = 0;
    pick_filter.incl_set = pick_incl;
-   pick_filter.excl_set = empty_set;
+   pick_filter.excl_set = pick_excl;
 
    pinit_pick3(ws_id, dev_id, PIN_STATUS_OK, &pik, 1, &echo_volume,
                &rec, PORDER_TOP_FIRST);

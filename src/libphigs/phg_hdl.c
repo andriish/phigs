@@ -26,72 +26,140 @@
 #include <phigs/private/hdlP.h>
 
 /*******************************************************************************
- * phg_handle_names_set
+ * phg_handle_create
  *
- * DESCR:	Handle nameset
+ * DESCR:	Create new element handle helper function
+ * RETURNS:	Pointer to element head or NULL
+ */
+
+static Phg_elmt_info* phg_handle_create(
+   void **data,
+   caddr_t argdata
+   )
+{
+   Phg_elmt_info *head;
+
+   head = (Phg_elmt_info *) malloc(ARGS_ELMT_SIZE_FULL(argdata));
+   if (head != NULL) {
+      head->elementType = ARGS_ELMT_TYPE(argdata);
+      head->length = ARGS_ELMT_SIZE(argdata);
+      *data = &head[1];
+   }
+
+   return head;
+}
+
+/*******************************************************************************
+ * phg_handle_resize
+ *
+ * DESCR:	Change size element handle helper function
+ * RETURNS:	Pointer to element head or NULL
+ */
+
+static Phg_elmt_info* phg_handle_resize(
+   void *buf,
+   void **data,
+   caddr_t argdata
+   )
+{
+   Phg_elmt_info *head;
+
+   head = (Phg_elmt_info *) realloc(buf, ARGS_ELMT_SIZE_FULL(argdata));
+   if (head != NULL) {
+      head->elementType = ARGS_ELMT_TYPE(argdata);
+      head->length = ARGS_ELMT_SIZE(argdata);
+      *data = &head[1];
+   }
+
+   return head;
+}
+
+/*******************************************************************************
+ * phg_handle_dup
+ *
+ * DESCR:	Duplicate element handle helper function
+ * RETURNS:	Pointer to element head or NULL
+ */
+
+static Phg_elmt_info* phg_handle_dup(
+   caddr_t argdata
+   )
+{
+   Phg_elmt_info *head;
+
+   head = (Phg_elmt_info *) malloc(ARGS_COPY_DATA_LEN(argdata));
+   if (head != NULL) {
+      memcpy(head,
+             ARGS_COPY_DATA(argdata),
+             ARGS_COPY_DATA_LEN(argdata));
+   }
+
+   return head;
+}
+
+/*******************************************************************************
+ * phg_handle_int_list
+ *
+ * DESCR:	Handle list of integers
  * RETURNS:	TRUE on success, otherwise FALSE
  */
 
-int phg_handle_names_set(
+int phg_handle_int_list(
    Css_handle cssh,
    El_handle elmt,
    caddr_t argdata,
    Css_el_op op
    )
 {
-   int n;
-   Pint_list *data, *names;
+   Pint *data;
 
    switch (op) {
       case CSS_EL_CREATE:
-         names = &ARGS_ELMT_DATA(argdata).names;
-         n = names->num_ints;
-         data = malloc(sizeof(Pint_list) + n * sizeof(Pint));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         data->num_ints = n;
-         data->ints = (Pint *) &data[1];
-         memcpy(data->ints, names->ints, sizeof(Pint) * n);
-         elmt->eldata.ptr = data;
-      break;
+         }
+         *data = ARGS_ELMT_DATA(argdata).int_list.num_ints;
+         memcpy(&data[1],
+                ARGS_ELMT_DATA(argdata).int_list.ints,
+                sizeof(Pint) * ARGS_ELMT_DATA(argdata).int_list.num_ints);
+         break;
 
       case CSS_EL_REPLACE:
-         names = &ARGS_ELMT_DATA(argdata).names;
-         n = names->num_ints;
-         data = realloc(ELMT_DATA_PTR(elmt),
-                        sizeof(Pint_list) + n * sizeof(Pint));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_resize(ELMT_HEAD(elmt),
+                                             (void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         data->num_ints = n;
-         data->ints = (Pint *) &data[1];
-         memcpy(data->ints, names->ints, sizeof(Pint) * n);
-         elmt->eldata.ptr = data;
-      break;
+         }
+         *data = ARGS_ELMT_DATA(argdata).int_list.num_ints;
+         memcpy(&data[1],
+                ARGS_ELMT_DATA(argdata).int_list.ints,
+                sizeof(Pint) * ARGS_ELMT_DATA(argdata).int_list.num_ints);
+         break;
 
       case CSS_EL_COPY:
-         n = PHG_DATA_INT_LIST(argdata)->num_ints;
-         data = malloc(sizeof(Pint_list) + n * sizeof(Pint));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
+         }
+         break;
 
-         data->num_ints = n;
-         data->ints = (Pint *) &data[1];
-         memcpy(data->ints,
-                PHG_DATA_INT_LIST(argdata)->ints,
-                sizeof(Pint) * n);
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -115,39 +183,44 @@ int phg_handle_asf_info(
 
    switch (op) {
       case CSS_EL_CREATE:
-         data = malloc(sizeof(Pasf_info));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         data->id = ARGS_ELMT_DATA(argdata).asf_info.id;
-         data->source = ARGS_ELMT_DATA(argdata).asf_info.source;
-         elmt->eldata.ptr = data;
-      break;
+         }
+         memcpy(data,
+                &ARGS_ELMT_DATA(argdata).asf_info,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_REPLACE:
-         data = (Pasf_info *) elmt->eldata.ptr;
-         data->id = ARGS_ELMT_DATA(argdata).asf_info.id;
-         data->source = ARGS_ELMT_DATA(argdata).asf_info.source;
-      break;
+         memcpy(ELMT_CONTENT(elmt),
+                &ARGS_ELMT_DATA(argdata).asf_info,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_COPY:
-         data = malloc(sizeof(Pasf_info));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
+         }
+         break;
 
-         data->id = PHG_DATA_ASF_INFO(argdata)->id;
-         data->source = PHG_DATA_ASF_INFO(argdata)->source;
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -171,36 +244,44 @@ int phg_handle_vec(
 
    switch (op) {
       case CSS_EL_CREATE:
-         data = malloc(sizeof(Pvec));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         memcpy(data, &ARGS_ELMT_DATA(argdata).vec, sizeof(Pvec));
-         elmt->eldata.ptr = data;
-      break;
+         }
+         memcpy(data,
+                &ARGS_ELMT_DATA(argdata).vec,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_REPLACE:
-         data = (Pvec *) elmt->eldata.ptr;
-         memcpy(data, &ARGS_ELMT_DATA(argdata).vec, sizeof(Pvec));
-      break;
+         memcpy(ELMT_CONTENT(elmt),
+                &ARGS_ELMT_DATA(argdata).vec,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_COPY:
-         data = malloc(sizeof(Pvec));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
+         }
+         break;
 
-         memcpy(data, PHG_DATA_VEC(argdata), sizeof(Pvec));
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -224,41 +305,43 @@ int phg_handle_local_tran(
 
    switch (op) {
       case CSS_EL_CREATE:
-         data = malloc(sizeof(Plocal_tran));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
+         }
          data->compose_type = ARGS_ELMT_DATA(argdata).local_tran.compose_type;
          phg_mat_copy_3x3(data->matrix,
                           ARGS_ELMT_DATA(argdata).local_tran.matrix);
-         elmt->eldata.ptr = data;
-      break;
+         break;
 
       case CSS_EL_REPLACE:
-         data = (Plocal_tran *) elmt->eldata.ptr;
+         data = (Plocal_tran *) ELMT_CONTENT(elmt);
          data->compose_type = ARGS_ELMT_DATA(argdata).local_tran.compose_type;
          phg_mat_copy_3x3(data->matrix,
                           ARGS_ELMT_DATA(argdata).local_tran.matrix);
-      break;
+         break;
 
       case CSS_EL_COPY:
-         data = malloc(sizeof(Plocal_tran));
-         if (data == NULL)
-            return (FALSE);
+         /* TODO */
+         return (FALSE);
+         break;
 
-         data->compose_type = PHG_DATA_LOCAL_TRAN(argdata)->compose_type;
-         phg_mat_copy_3x3(data->matrix, PHG_DATA_LOCAL_TRAN(argdata)->matrix);
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -282,39 +365,44 @@ int phg_handle_local_tran3(
 
    switch (op) {
       case CSS_EL_CREATE:
-         data = malloc(sizeof(Plocal_tran3));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         data->compose_type = ARGS_ELMT_DATA(argdata).local_tran3.compose_type;
-         phg_mat_copy(data->matrix, ARGS_ELMT_DATA(argdata).local_tran3.matrix);
-         elmt->eldata.ptr = data;
-      break;
+         }
+         memcpy(data,
+                &ARGS_ELMT_DATA(argdata).local_tran3,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_REPLACE:
-         data = (Plocal_tran3 *) elmt->eldata.ptr;
-         data->compose_type = ARGS_ELMT_DATA(argdata).local_tran3.compose_type;
-         phg_mat_copy(data->matrix, ARGS_ELMT_DATA(argdata).local_tran3.matrix);
-      break;
+         memcpy(ELMT_CONTENT(elmt),
+                &ARGS_ELMT_DATA(argdata).local_tran3,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_COPY:
-         data = malloc(sizeof(Plocal_tran3));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
+         }
+         break;
 
-         data->compose_type = PHG_DATA_LOCAL_TRAN3(argdata)->compose_type;
-         phg_mat_copy(data->matrix, PHG_DATA_LOCAL_TRAN3(argdata)->matrix);
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -338,36 +426,39 @@ int phg_handle_matrix(
 
    switch (op) {
       case CSS_EL_CREATE:
-         data = malloc(sizeof(Pmatrix));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
+         }
          phg_mat_copy_3x3(*data, ARGS_ELMT_DATA(argdata).global_tran);
-         elmt->eldata.ptr = data;
-      break;
+         break;
 
       case CSS_EL_REPLACE:
-         data = (Pmatrix *) elmt->eldata.ptr;
+         data = (Pmatrix *) ELMT_CONTENT(elmt);
          phg_mat_copy_3x3(*data, ARGS_ELMT_DATA(argdata).global_tran);
-      break;
+         break;
 
       case CSS_EL_COPY:
-         data = malloc(sizeof(Pmatrix));
-         if (data == NULL)
-            return (FALSE);
+         /* TODO */
+         return (FALSE);
+         break;
 
-         phg_mat_copy_3x3(*data, *PHG_DATA_MATRIX(argdata));
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -391,36 +482,44 @@ int phg_handle_matrix3(
 
    switch (op) {
       case CSS_EL_CREATE:
-         data = malloc(sizeof(Pmatrix3));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         phg_mat_copy(*data, ARGS_ELMT_DATA(argdata).global_tran3);
-         elmt->eldata.ptr = data;
-      break;
+         }
+         memcpy(data,
+                &ARGS_ELMT_DATA(argdata).global_tran3,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_REPLACE:
-         data = (Pmatrix3 *) elmt->eldata.ptr;
-         phg_mat_copy(*data, ARGS_ELMT_DATA(argdata).global_tran3);
-      break;
+         memcpy(ELMT_CONTENT(elmt),
+                &ARGS_ELMT_DATA(argdata).global_tran3,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_COPY:
-         data = malloc(sizeof(Pmatrix3));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
+         }
+         break;
 
-         phg_mat_copy(*data, *PHG_DATA_MATRIX3(argdata));
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -440,59 +539,57 @@ int phg_handle_point_list(
    Css_el_op op
    )
 {
-   int n;
-   Ppoint_list *data, *point_list;
+   Pint *data;
 
    switch (op) {
       case CSS_EL_CREATE:
-         point_list = &ARGS_ELMT_DATA(argdata).point_list;
-         n = point_list->num_points;
-         data = malloc(sizeof(Ppoint_list) + n * sizeof(Ppoint));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         data->num_points = n;
-         data->points = (Ppoint *) &data[1];
-         memcpy(data->points, point_list->points, sizeof(Ppoint) * n);
-         elmt->eldata.ptr = data;
-      break;
+         }
+         *data = ARGS_ELMT_DATA(argdata).point_list.num_points;
+         memcpy(&data[1],
+                ARGS_ELMT_DATA(argdata).point_list.points,
+                sizeof(Ppoint) *
+                   ARGS_ELMT_DATA(argdata).point_list.num_points);
+         break;
 
       case CSS_EL_REPLACE:
-         point_list = &ARGS_ELMT_DATA(argdata).point_list;
-         n = point_list->num_points;
-         data = realloc(ELMT_DATA_PTR(elmt),
-                        sizeof(Ppoint_list) + n * sizeof(Ppoint));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_resize(ELMT_HEAD(elmt),
+                                             (void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         data->num_points = n;
-         data->points = (Ppoint *) &data[1];
-         memcpy(data->points, point_list->points, sizeof(Ppoint) * n);
-         elmt->eldata.ptr = data;
-      break;
+         }
+         *data = ARGS_ELMT_DATA(argdata).point_list.num_points;
+         memcpy(&data[1],
+                ARGS_ELMT_DATA(argdata).point_list.points,
+                sizeof(Ppoint) *
+                   ARGS_ELMT_DATA(argdata).point_list.num_points);
+         break;
 
       case CSS_EL_COPY:
-         n = PHG_DATA_POINT_LIST(argdata)->num_points;
-         data = malloc(sizeof(Ppoint_list) + n * sizeof(Ppoint));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
+         }
+         break;
 
-         data->num_points = n;
-         data->points = (Ppoint *) &data[1];
-         memcpy(data->points,
-                PHG_DATA_POINT_LIST(argdata)->points,
-                sizeof(Ppoint) * n);
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -512,59 +609,57 @@ int phg_handle_point_list3(
    Css_el_op op
    )
 {
-   int n;
-   Ppoint_list3 *data, *point_list;
+   Pint *data;
 
    switch (op) {
       case CSS_EL_CREATE:
-         point_list = &ARGS_ELMT_DATA(argdata).point_list3;
-         n = point_list->num_points;
-         data = malloc(sizeof(Ppoint_list3) + n * sizeof(Ppoint3));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         data->num_points = n;
-         data->points = (Ppoint3 *) &data[1];
-         memcpy(data->points, point_list->points, sizeof(Ppoint3) * n);
-         elmt->eldata.ptr = data;
-      break;
+         }
+         *data = ARGS_ELMT_DATA(argdata).point_list3.num_points;
+         memcpy(&data[1],
+                ARGS_ELMT_DATA(argdata).point_list3.points,
+                sizeof(Ppoint3) *
+                   ARGS_ELMT_DATA(argdata).point_list3.num_points);
+         break;
 
       case CSS_EL_REPLACE:
-         point_list = &ARGS_ELMT_DATA(argdata).point_list3;
-         n = point_list->num_points;
-         data = realloc(ELMT_DATA_PTR(elmt),
-                        sizeof(Ppoint_list3) + n * sizeof(Ppoint3));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_resize(ELMT_HEAD(elmt),
+                                             (void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         data->num_points = n;
-         data->points = (Ppoint3 *) &data[1];
-         memcpy(data->points, point_list->points, sizeof(Ppoint3) * n);
-         elmt->eldata.ptr = data;
-      break;
+         }
+         *data = ARGS_ELMT_DATA(argdata).point_list3.num_points;
+         memcpy(&data[1],
+                ARGS_ELMT_DATA(argdata).point_list3.points,
+                sizeof(Ppoint3) *
+                   ARGS_ELMT_DATA(argdata).point_list3.num_points);
+         break;
 
       case CSS_EL_COPY:
-         n = PHG_DATA_POINT_LIST3(argdata)->num_points;
-         data = malloc(sizeof(Ppoint_list3) + n * sizeof(Ppoint3));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
+         }
+         break;
 
-         data->num_points = n;
-         data->points = (Ppoint3 *) &data[1];
-         memcpy(data->points,
-                PHG_DATA_POINT_LIST3(argdata)->points,
-                sizeof(Ppoint3) * n);
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -584,60 +679,75 @@ int phg_handle_point_list_list(
    Css_el_op op
    )
 {
-   Pint i, num_lists, num_points;
-   Ppoint *points;
-   Ppoint_list_list *data, *point_list_list;
+   Pint i, num_lists;
+   Ppoint_list point_list;
+   Pint *data;
 
    switch (op) {
       case CSS_EL_CREATE:
-         point_list_list = &ARGS_ELMT_DATA(argdata).point_list_list;
-         num_lists = point_list_list->num_point_lists;
-         data = malloc(sizeof(Ppoint_list_list) +
-                       num_lists * sizeof(Ppoint_list));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         data->num_point_lists = num_lists;
-         data->point_lists = (Ppoint_list *) &data[1];
-         for (i = 0; i < num_lists; i++) {
-            num_points = point_list_list->point_lists[i].num_points;
-            points = malloc(sizeof(Ppoint) * num_points);
-            if (points == NULL) {
-               while(--i >= 0) {
-                  free(data->point_lists[i].points);
-               }
-            }
-            memcpy(points,
-                   point_list_list->point_lists[i].points,
-                   sizeof(Ppoint) * num_points);
-            data->point_lists[i].num_points = num_points;
-            data->point_lists[i].points = points;
          }
-
-         elmt->eldata.ptr = data;
-      break;
+         num_lists = ARGS_ELMT_DATA(argdata).point_list_list.num_point_lists;
+         *data = num_lists;
+         data = &data[1];
+         for (i = 0; i < num_lists; i++) {
+            point_list.num_points =
+             ARGS_ELMT_DATA(argdata).point_list_list.point_lists[i].num_points;
+            *data = point_list.num_points;
+            point_list.points = (Ppoint *) &data[1];
+            memcpy(point_list.points,
+                 ARGS_ELMT_DATA(argdata).point_list_list.point_lists[i].points,
+                   sizeof(Ppoint) * point_list.num_points);
+            data = (Pint *) &point_list.points[point_list.num_points];
+         }
+         break;
 
       case CSS_EL_REPLACE:
-         return (FALSE);
-      break;
+         ELMT_HEAD(elmt) = phg_handle_resize(ELMT_HEAD(elmt),
+                                             (void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
+            return (FALSE);
+         }
+         num_lists = ARGS_ELMT_DATA(argdata).point_list_list.num_point_lists;
+         *data = num_lists;
+         data = &data[1];
+         for (i = 0; i < num_lists; i++) {
+            point_list.num_points =
+             ARGS_ELMT_DATA(argdata).point_list_list.point_lists[i].num_points;
+            *data = point_list.num_points;
+            point_list.points = (Ppoint *) &data[1];
+            memcpy(point_list.points,
+                 ARGS_ELMT_DATA(argdata).point_list_list.point_lists[i].points,
+                   sizeof(Ppoint) * point_list.num_points);
+            data = (Pint *) &point_list.points[point_list.num_points];
+         }
+         break;
 
       case CSS_EL_COPY:
-         return (FALSE);
-      break;
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
+            return (FALSE);
+         }
+         break;
+
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         point_list_list = (Ppoint_list_list *) ELMT_DATA_PTR(elmt);
-         num_lists = point_list_list->num_point_lists;
-         for (i = 0; i < num_lists; i++) {
-            free(point_list_list->point_lists[i].points);
-         }
-         free(point_list_list);
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -657,60 +767,75 @@ int phg_handle_point_list_list3(
    Css_el_op op
    )
 {
-   Pint i, num_lists, num_points;
-   Ppoint3 *points;
-   Ppoint_list_list3 *data, *point_list_list;
+   Pint i, num_lists;
+   Ppoint_list3 point_list;
+   Pint *data;
 
    switch (op) {
       case CSS_EL_CREATE:
-         point_list_list = &ARGS_ELMT_DATA(argdata).point_list_list3;
-         num_lists = point_list_list->num_point_lists;
-         data = malloc(sizeof(Ppoint_list_list3) +
-                       num_lists * sizeof(Ppoint_list3));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         data->num_point_lists = num_lists;
-         data->point_lists = (Ppoint_list3 *) &data[1];
-         for (i = 0; i < num_lists; i++) {
-            num_points = point_list_list->point_lists[i].num_points;
-            points = malloc(sizeof(Ppoint3) * num_points);
-            if (points == NULL) {
-               while(--i >= 0) {
-                  free(data->point_lists[i].points);
-               }
-            }
-            memcpy(points,
-                   point_list_list->point_lists[i].points,
-                   sizeof(Ppoint3) * num_points);
-            data->point_lists[i].num_points = num_points;
-            data->point_lists[i].points = points;
          }
-
-         elmt->eldata.ptr = data;
-      break;
+         num_lists = ARGS_ELMT_DATA(argdata).point_list_list3.num_point_lists;
+         *data = num_lists;
+         data = &data[1];
+         for (i = 0; i < num_lists; i++) {
+            point_list.num_points =
+             ARGS_ELMT_DATA(argdata).point_list_list3.point_lists[i].num_points;
+            *data = point_list.num_points;
+            point_list.points = (Ppoint3 *) &data[1];
+            memcpy(point_list.points,
+                 ARGS_ELMT_DATA(argdata).point_list_list3.point_lists[i].points,
+                   sizeof(Ppoint3) * point_list.num_points);
+            data = (Pint *) &point_list.points[point_list.num_points];
+         }
+         break;
 
       case CSS_EL_REPLACE:
-         return (FALSE);
-      break;
+         ELMT_HEAD(elmt) = phg_handle_resize(ELMT_HEAD(elmt),
+                                             (void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
+            return (FALSE);
+         }
+         num_lists = ARGS_ELMT_DATA(argdata).point_list_list3.num_point_lists;
+         *data = num_lists;
+         data = &data[1];
+         for (i = 0; i < num_lists; i++) {
+            point_list.num_points =
+             ARGS_ELMT_DATA(argdata).point_list_list3.point_lists[i].num_points;
+            *data = point_list.num_points;
+            point_list.points = (Ppoint3 *) &data[1];
+            memcpy(point_list.points,
+                 ARGS_ELMT_DATA(argdata).point_list_list3.point_lists[i].points,
+                   sizeof(Ppoint3) * point_list.num_points);
+            data = (Pint *) &point_list.points[point_list.num_points];
+         }
+         break;
 
       case CSS_EL_COPY:
-         return (FALSE);
-      break;
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
+            return (FALSE);
+         }
+         break;
+
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         point_list_list = (Ppoint_list_list3 *) ELMT_DATA_PTR(elmt);
-         num_lists = point_list_list->num_point_lists;
-         for (i = 0; i < num_lists; i++) {
-            free(point_list_list->point_lists[i].points);
-         }
-         free(point_list_list);
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -730,94 +855,82 @@ int phg_handle_fasd3(
    Css_el_op op
    )
 {
-   Pfasd3 *data, *fasd3;
+   Pfasd3 *fasd3;
+   Pint *data;
+   char *tp;
    Pint num_vertices;
-   Pvertex_data3 *vdata;
 
    switch (op) {
       case CSS_EL_CREATE:
-         fasd3 = &ARGS_ELMT_DATA(argdata).fasd3;
-         data = malloc(sizeof(Pfasd3));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
+         }
+         fasd3 = &ARGS_ELMT_DATA(argdata).fasd3;
+         *data = fasd3->fflag;
+         data = &data[1];
+         *data = fasd3->vflag;
+         tp = (char *) &data[1];
 
          switch(fasd3->fflag) {
             case PFA_COLOUR:
-               memcpy(&data->fdata.colr,
+               memcpy(tp,
                       &fasd3->fdata.colr,
                       sizeof(Pgcolr));
+               tp += sizeof(Pgcolr);
                break;
 
             case PFA_NORMAL:
-               memcpy(&data->fdata.normal,
+               memcpy(tp,
                       &fasd3->fdata.normal,
                       sizeof(Pvec3));
+               tp += sizeof(Pvec3);
                break;
 
             case PFA_COLOUR_NORMAL:
-               memcpy(&data->fdata.conorm,
+               memcpy(tp,
                       &fasd3->fdata.conorm,
                       sizeof(Pptconorm3));
+               tp += sizeof(Pptconorm3);
                break;
 
             default:
                break;
          }
-         data->fflag = fasd3->fflag;
 
+         data = (Pint *) tp;
          num_vertices = fasd3->num_vertices;
+         *data = num_vertices;
+
          switch (fasd3->vflag) {
             case PVERT_POINT:
-               vdata = malloc(sizeof(Pvertex_data3) +
-                              num_vertices * sizeof(Ppoint3));
-               vdata->point = (Ppoint3 *) &vdata[1];
-               memcpy(vdata->point,
+               memcpy(&data[1],
                       fasd3->vdata->point,
                       num_vertices * sizeof(Ppoint3));
-               data->num_vertices = num_vertices;
-               data->vdata = vdata;
                break;
 
             case PVERT_COLOUR:
-               vdata = malloc(sizeof(Pvertex_data3) +
-                              num_vertices * sizeof(Pptco3));
-               vdata->ptco = (Pptco3 *) &vdata[1];
-               memcpy(vdata->ptco,
+               memcpy(&data[1],
                       fasd3->vdata->ptco,
                       num_vertices * sizeof(Pptco3));
-               data->num_vertices = num_vertices;
-               data->vdata = vdata;
                break;
 
             case PVERT_NORMAL:
-               vdata = malloc(sizeof(Pvertex_data3) +
-                              num_vertices * sizeof(Pptnorm3));
-               vdata->ptnorm = (Pptnorm3 *) &vdata[1];
-               memcpy(vdata->ptnorm,
+               memcpy(&data[1],
                       fasd3->vdata->ptnorm,
                       num_vertices * sizeof(Pptnorm3));
-               data->num_vertices = num_vertices;
-               data->vdata = vdata;
                break;
 
             case PVERT_COLOUR_NORMAL:
-               vdata = malloc(sizeof(Pvertex_data3) +
-                              num_vertices * sizeof(Pptconorm3));
-               vdata->ptconorm = (Pptconorm3 *) &vdata[1];
-               memcpy(vdata->ptconorm,
+               memcpy(&data[1],
                       fasd3->vdata->ptconorm,
                       num_vertices * sizeof(Pptconorm3));
-               data->num_vertices = num_vertices;
-               data->vdata = vdata;
                break;
 
             default:
                break;
          }
-         data->vflag = fasd3->vflag;
-
-         elmt->eldata.ptr = data;
-      break;
+         break;
 
       case CSS_EL_REPLACE:
          return (FALSE);
@@ -827,115 +940,15 @@ int phg_handle_fasd3(
          return (FALSE);
       break;
 
-      case CSS_EL_FREE:
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
 
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_text_prec
- *
- * DESCR:	Handle text precition
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_text_prec(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   )
-{
-   Ptext_prec *data;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         data = malloc(sizeof(Ptext_prec));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = ARGS_ELMT_DATA(argdata).text_prec;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         data = (Ptext_prec *) elmt->eldata.ptr;
-         *data = ARGS_ELMT_DATA(argdata).text_prec;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_COPY:
-         data = malloc(sizeof(Ptext_prec));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = PHG_DATA_TEXT_PREC(argdata);
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_text_path
- *
- * DESCR:	Handle text path
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_text_path(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   )
-{
-   Ptext_path *data;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         data = malloc(sizeof(Ptext_path));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = ARGS_ELMT_DATA(argdata).text_path;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         data = (Ptext_path *) elmt->eldata.ptr;
-         *data = ARGS_ELMT_DATA(argdata).text_path;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_COPY:
-         data = malloc(sizeof(Ptext_path));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = PHG_DATA_TEXT_PATH(argdata);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
       break;
 
       default:
@@ -965,37 +978,45 @@ int phg_handle_text_align(
 
    switch (op) {
       case CSS_EL_CREATE:
-         data = malloc(sizeof(Ptext_align));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         memcpy(data, &ARGS_ELMT_DATA(argdata).text_align, sizeof(Ptext_align));
+         }
+         memcpy(data,
+                &ARGS_ELMT_DATA(argdata).text_align,
+                ARGS_ELMT_SIZE(argdata));
          elmt->eldata.ptr = data;
-      break;
+         break;
 
       case CSS_EL_REPLACE:
-         data = (Ptext_align *) elmt->eldata.ptr;
-         memcpy(data, &ARGS_ELMT_DATA(argdata).text_align, sizeof(Ptext_align));
-         elmt->eldata.ptr = data;
-      break;
+         memcpy(ELMT_CONTENT(elmt),
+                &ARGS_ELMT_DATA(argdata).text_align,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_COPY:
-         data = malloc(sizeof(Ptext_align));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
+         }
+         break;
 
-         memcpy(data, PHG_DATA_TEXT_ALIGN(argdata), sizeof(Ptext_align));
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -1015,55 +1036,51 @@ int phg_handle_text(
    Css_el_op op
    )
 {
-   char  *str;
-   Ptext *data;
+   Ppoint *data;
 
    switch (op) {
       case CSS_EL_CREATE:
-         str = ARGS_ELMT_DATA(argdata).text.char_string;
-         data = malloc(sizeof(Ptext) + strlen(str) + 1);
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         memcpy(&data->pos, &ARGS_ELMT_DATA(argdata).text.pos, sizeof(Ppoint));
-         data->char_string = (char *) &data[1];
-         strcpy(data->char_string, str);
-         elmt->eldata.ptr = data;
-      break;
+         }
+         memcpy(data, &ARGS_ELMT_DATA(argdata).text.pos, sizeof(Ppoint));
+         strcpy((char *) &data[1], ARGS_ELMT_DATA(argdata).text.char_string);
+         break;
 
       case CSS_EL_REPLACE:
-         str = ARGS_ELMT_DATA(argdata).text.char_string;
-         data = realloc(ELMT_DATA_PTR(elmt),
-                        sizeof(Ptext) + strlen(str) + 1);
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_resize(ELMT_HEAD(elmt),
+                                             (void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         memcpy(&data->pos, &ARGS_ELMT_DATA(argdata).text.pos, sizeof(Ppoint));
-         data->char_string = (char *) &data[1];
-         strcpy(data->char_string, str);
-         elmt->eldata.ptr = data;
-      break;
+         }
+         memcpy(data, &ARGS_ELMT_DATA(argdata).text.pos, sizeof(Ppoint));
+         strcpy((char *) &data[1], ARGS_ELMT_DATA(argdata).text.char_string);
+         break;
 
       case CSS_EL_COPY:
-         str = PHG_DATA_TEXT(argdata)->char_string;
-         data = malloc(sizeof(Ptext) + strlen(str) + 1);
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
+         }
+         break;
 
-         memcpy(&data->pos, &PHG_DATA_TEXT(argdata)->pos, sizeof(Ppoint));
-         data->char_string = (char *) &data[1];
-         strcpy(data->char_string, str);
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -1087,45 +1104,41 @@ int phg_handle_int(
 
    switch (op) {
       case CSS_EL_CREATE:
-         data = malloc(sizeof(Pint));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
+         }
          *data = ARGS_ELMT_DATA(argdata).int_data;
-         elmt->eldata.ptr = data;
-      break;
+         break;
 
       case CSS_EL_REPLACE:
-         data = (Pint *) elmt->eldata.ptr;
+         data = (Pint *) ELMT_CONTENT(elmt);
          *data = ARGS_ELMT_DATA(argdata).int_data;
-         elmt->eldata.ptr = data;
-      break;
+         break;
 
       case CSS_EL_COPY:
-         data = malloc(sizeof(Pint));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         *data = PHG_DATA_INT(argdata);
-         elmt->eldata.ptr = data;
-      break;
+         }
+         break;
 
       case CSS_EL_INQ_CONTENT:
-         ARGS_ELMT_DATA(argdata).int_data = PHG_INT(elmt);
-      break;
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
 
       case CSS_EL_INQ_TYPE_SIZE:
-         *((Pint *) argdata) = sizeof(Pint);
-      break;
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -1149,166 +1162,54 @@ int phg_handle_float(
 
    switch (op) {
       case CSS_EL_CREATE:
-         data = malloc(sizeof(Pfloat));
-         if (data == NULL)
+         elmt->eldata.ptr = phg_handle_create((void *) &data, argdata);
+         if (elmt->eldata.ptr == NULL) {
             return (FALSE);
-
+         }
          *data = ARGS_ELMT_DATA(argdata).float_data;
-         elmt->eldata.ptr = data;
-      break;
+         break;
 
       case CSS_EL_REPLACE:
-         data = (Pfloat *) elmt->eldata.ptr;
+         data = (Pfloat *) ELMT_CONTENT(elmt);
          *data = ARGS_ELMT_DATA(argdata).float_data;
-         elmt->eldata.ptr = data;
-      break;
+         break;
 
       case CSS_EL_COPY:
-         data = malloc(sizeof(Pfloat));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         *data = PHG_DATA_FLOAT(argdata);
-         elmt->eldata.ptr = data;
-      break;
+         }
+         break;
 
       case CSS_EL_INQ_CONTENT:
-         ARGS_ELMT_DATA(argdata).float_data = PHG_FLOAT(elmt);
-      break;
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
 
       case CSS_EL_INQ_TYPE_SIZE:
-         *((Pint *) argdata) = sizeof(Pfloat);
-      break;
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
 }
 
 /*******************************************************************************
- * phg_handle_edge_flag
- *
- * DESCR:	Handle edge flag
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_edge_flag(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   )
-{
-   Pedge_flag *data;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         data = malloc(sizeof(Pedge_flag));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = ARGS_ELMT_DATA(argdata).edge_flag;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         data = (Pedge_flag *) elmt->eldata.ptr;
-         *data = ARGS_ELMT_DATA(argdata).edge_flag;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_COPY:
-         data = malloc(sizeof(Pedge_flag));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = PHG_DATA_EDGE_FLAG(argdata);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_int_style
- *
- * DESCR:	Handle interior style
- * RETURNS:	TRUE on success, otherwise FALSE
- */
-
-int phg_handle_int_style(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   )
-{
-   Pint_style *data;
-
-   switch (op) {
-      case CSS_EL_CREATE:
-         data = malloc(sizeof(Pint_style));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = ARGS_ELMT_DATA(argdata).int_style;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_REPLACE:
-         data = (Pint_style *) elmt->eldata.ptr;
-         *data = ARGS_ELMT_DATA(argdata).int_style;
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_COPY:
-         data = malloc(sizeof(Pint_style));
-         if (data == NULL)
-            return (FALSE);
-
-         *data = PHG_DATA_INT_STYLE(argdata);
-         elmt->eldata.ptr = data;
-      break;
-
-      case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
-
-      default:
-         /* Default */
-         return (FALSE);
-      break;
-   }
-
-   return (TRUE);
-}
-
-/*******************************************************************************
- * phg_handle_colr
+ * phg_handle_gcolr
  *
  * DESCR:	Handler colour
  * RETURNS:	TRUE on success, otherwise FALSE
  */
 
-int phg_handle_colr(
+int phg_handle_gcolr(
    Css_handle cssh,
    El_handle elmt,
    caddr_t argdata,
@@ -1319,53 +1220,44 @@ int phg_handle_colr(
 
    switch (op) {
       case CSS_EL_CREATE:
-         data = malloc(sizeof(Pgcolr));
-         if (data == NULL)
+         elmt->eldata.ptr = phg_handle_create((void *) &data, argdata);
+         if (elmt->eldata.ptr == NULL) {
             return (FALSE);
-
-         data->type = ARGS_ELMT_DATA(argdata).colr.type;
-         if (data->type == PINDIRECT) {
-            data->val.ind = ARGS_ELMT_DATA(argdata).colr.val.ind;
          }
-         else {
-            data->val.general.x = ARGS_ELMT_DATA(argdata).colr.val.general.x;
-            data->val.general.y = ARGS_ELMT_DATA(argdata).colr.val.general.y;
-            data->val.general.z = ARGS_ELMT_DATA(argdata).colr.val.general.z;
-         }
-         elmt->eldata.ptr = data;
-      break;
+         memcpy(data,
+                &ARGS_ELMT_DATA(argdata).colr,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_REPLACE:
-         data = (Pgcolr *) elmt->eldata.ptr;
-         data->type = ARGS_ELMT_DATA(argdata).colr.type;
-         if (data->type == PINDIRECT) {
-            data->val.ind = ARGS_ELMT_DATA(argdata).colr.val.ind;
-         }
-         else {
-            data->val.general.x = ARGS_ELMT_DATA(argdata).colr.val.general.x;
-            data->val.general.y = ARGS_ELMT_DATA(argdata).colr.val.general.y;
-            data->val.general.z = ARGS_ELMT_DATA(argdata).colr.val.general.z;
-         }
-         elmt->eldata.ptr = data;
-      break;
+         memcpy(data,
+                &ARGS_ELMT_DATA(argdata).colr,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_COPY:
-         data = malloc(sizeof(Pgcolr));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         memcpy(data, PHG_DATA_COLR(argdata), sizeof(Pgcolr));
-         elmt->eldata.ptr = data;
+         }
       break;
+
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -1385,81 +1277,74 @@ int phg_handle_lss(
    Css_el_op op
    )
 {
-   int n1, n2;
-   Plss *data, *lss;
+   Pint *data;
+   Pint n1, n2;
 
    switch (op) {
       case CSS_EL_CREATE:
-         lss = &ARGS_ELMT_DATA(argdata).lss;
-         n1 = lss->activation.num_ints;
-         n2 = lss->deactivation.num_ints;
-         data = malloc(sizeof(Plss) + (n1 + n2) * sizeof(Pint));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         data->activation.num_ints = n1;
-         data->deactivation.num_ints = n2;
-         data->activation.ints = (Pint *) &data[1];
-         data->deactivation.ints = &data->activation.ints[n1];
-         memcpy(data->activation.ints,
-                lss->activation.ints,
+         }
+         n1 = ARGS_ELMT_DATA(argdata).lss.activation.num_ints;
+         n2 = ARGS_ELMT_DATA(argdata).lss.deactivation.num_ints;
+         *data = n1;
+         data = &data[1];
+         memcpy(data,
+                ARGS_ELMT_DATA(argdata).lss.activation.ints,
                 sizeof(Pint) * n1);
-         memcpy(data->deactivation.ints,
-                lss->deactivation.ints,
+         data = &data[n1];
+         *data = n2;
+         data = &data[1];
+         memcpy(data,
+                ARGS_ELMT_DATA(argdata).lss.deactivation.ints,
                 sizeof(Pint) * n2);
-         elmt->eldata.ptr = data;
-      break;
+         break;
 
       case CSS_EL_REPLACE:
-         lss = &ARGS_ELMT_DATA(argdata).lss;
-         n1 = lss->activation.num_ints;
-         n2 = lss->deactivation.num_ints;
-         data = realloc(ELMT_DATA_PTR(elmt),
-                        sizeof(Plss) + (n1 + n2) * sizeof(Pint));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_resize(ELMT_HEAD(elmt),
+                                             (void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         data->activation.num_ints = n1;
-         data->deactivation.num_ints = n2;
-         data->activation.ints = (Pint *) &data[1];
-         data->deactivation.ints = &data->activation.ints[n1];
-         memcpy(data->activation.ints,
-                lss->activation.ints,
+         }
+         n1 = ARGS_ELMT_DATA(argdata).lss.activation.num_ints;
+         n2 = ARGS_ELMT_DATA(argdata).lss.deactivation.num_ints;
+         *data = n1;
+         data = &data[1];
+         memcpy(data,
+                ARGS_ELMT_DATA(argdata).lss.activation.ints,
                 sizeof(Pint) * n1);
-         memcpy(data->deactivation.ints,
-                lss->deactivation.ints,
+         data = &data[n1];
+         *data = n2;
+         data = &data[1];
+         memcpy(data,
+                ARGS_ELMT_DATA(argdata).lss.deactivation.ints,
                 sizeof(Pint) * n2);
-         elmt->eldata.ptr = data;
-      break;
+         break;
 
       case CSS_EL_COPY:
-         n1 = PHG_DATA_LSS(argdata)->activation.num_ints;
-         n2 = PHG_DATA_LSS(argdata)->deactivation.num_ints;
-         data = malloc(sizeof(Plss) + (n1 + n2) * sizeof(Pint));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
+         }
+         break;
 
-         data->activation.num_ints = n1;
-         data->deactivation.num_ints = n2;
-         data->activation.ints = (Pint *) &data[1];
-         data->deactivation.ints = &data->activation.ints[n1];
-         memcpy(data->activation.ints,
-                PHG_DATA_LSS(argdata)->activation.ints,
-                sizeof(Pint) * n1);
-         memcpy(data->deactivation.ints,
-                PHG_DATA_LSS(argdata)->deactivation.ints,
-                sizeof(Pint) * n2);
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
@@ -1479,43 +1364,48 @@ int phg_handle_refl_props(
    Css_el_op op
    )
 {
-   Prefl_props *data, *props;
+   Prefl_props *data;
 
    switch (op) {
       case CSS_EL_CREATE:
-         props = &ARGS_ELMT_DATA(argdata).props;
-         data = malloc(sizeof(Prefl_props));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
-
-         memcpy(data, props, sizeof(Prefl_props));
-         elmt->eldata.ptr = data;
-      break;
+         }
+         memcpy(data,
+                &ARGS_ELMT_DATA(argdata).props,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_REPLACE:
-         props = &ARGS_ELMT_DATA(argdata).props;
-         data = (Prefl_props *) elmt->eldata.ptr;
-         memcpy(data, props, sizeof(Prefl_props));
-         elmt->eldata.ptr = data;
-      break;
+         memcpy(ELMT_CONTENT(elmt),
+                &ARGS_ELMT_DATA(argdata).props,
+                ARGS_ELMT_SIZE(argdata));
+         break;
 
       case CSS_EL_COPY:
-         data = malloc(sizeof(Prefl_props));
-         if (data == NULL)
+         ELMT_HEAD(elmt) = phg_handle_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
             return (FALSE);
+         }
+         break;
 
-         memcpy(data, PHG_DATA_REFL_PROPS(argdata), sizeof(Prefl_props));
-         elmt->eldata.ptr = data;
-      break;
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
 
       case CSS_EL_FREE:
-         free(ELMT_DATA_PTR(elmt));
-      break;
+         free(ELMT_HEAD(elmt));
+         break;
 
       default:
          /* Default */
          return (FALSE);
-      break;
+         break;
    }
 
    return (TRUE);
