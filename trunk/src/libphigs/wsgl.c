@@ -36,6 +36,16 @@
 #include <phigs/private/wsxP.h>
 #include <phigs/private/wsglP.h>
 
+#define LOG_INT(DATA) \
+   css_print_eltype(ELMT_HEAD(DATA)->elementType); \
+   printf(":\tSIZE: %d\t", ELMT_HEAD(DATA)->length); \
+   printf("CONTENT: %d\n", PHG_INT(DATA));
+
+#define LOG_FLOAT(DATA) \
+   css_print_eltype(ELMT_HEAD(DATA)->elementType); \
+   printf(":\tSIZE: %d\t", ELMT_HEAD(DATA)->length); \
+   printf("CONTENT: %f\n", PHG_FLOAT(DATA));
+
 /*******************************************************************************
  * wsgl_init
  *
@@ -548,11 +558,11 @@ void wsgl_render_element(
          break;
 
       case PELEM_ADD_NAMES_SET:
-         phg_add_names_set(ws, PHG_INT_LIST(el));
+         phg_add_names_set(ws, ELMT_CONTENT(el));
          break;
 
       case PELEM_REMOVE_NAMES_SET:
-         phg_remove_names_set(ws, PHG_INT_LIST(el));
+         phg_remove_names_set(ws, ELMT_CONTENT(el));
          break;
 
       case PELEM_HLHSR_ID:
@@ -561,7 +571,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_INDIV_ASF:
-         phg_set_asf(&wsgl->cur_struct.ast, PHG_ASF_INFO(el));
+         phg_set_asf(&wsgl->cur_struct.ast, ELMT_CONTENT(el));
          break;
 
       case PELEM_INT_IND:
@@ -576,12 +586,13 @@ void wsgl_render_element(
 
       case PELEM_INT_COLR:
          memcpy(&wsgl->cur_struct.ast.indiv_group.int_bundle.colr,
-                PHG_COLR(el),
+                ELMT_CONTENT(el),
                 sizeof(Pgcolr));
          break;
 
       case PELEM_INT_STYLE:
-         wsgl->cur_struct.ast.indiv_group.int_bundle.style = PHG_INT_STYLE(el);
+         wsgl->cur_struct.ast.indiv_group.int_bundle.style =
+            (Pint_style) PHG_INT(el);
          break;
 
       case PELEM_INT_STYLE_IND:
@@ -600,7 +611,7 @@ void wsgl_render_element(
 
       case PELEM_EDGE_COLR:
          memcpy(&wsgl->cur_struct.ast.indiv_group.edge_bundle.colr,
-                PHG_COLR(el),
+                ELMT_CONTENT(el),
                 sizeof(Pgcolr));
          break;
 
@@ -613,7 +624,8 @@ void wsgl_render_element(
          break;
 
       case PELEM_EDGE_FLAG:
-         wsgl->cur_struct.ast.indiv_group.edge_bundle.flag = PHG_EDGE_FLAG(el);
+         wsgl->cur_struct.ast.indiv_group.edge_bundle.flag =
+            (Pedge_flag) PHG_INT(el);
          break;
 
       case PELEM_MARKER_IND:
@@ -628,7 +640,7 @@ void wsgl_render_element(
 
       case PELEM_MARKER_COLR:
          memcpy(&wsgl->cur_struct.ast.indiv_group.marker_bundle.colr,
-                PHG_COLR(el),
+                ELMT_CONTENT(el),
                 sizeof(Pgcolr));
          break;
 
@@ -652,7 +664,7 @@ void wsgl_render_element(
 
       case PELEM_TEXT_COLR:
          memcpy(&wsgl->cur_struct.ast.indiv_group.text_bundle.colr,
-                PHG_COLR(el),
+                ELMT_CONTENT(el),
                 sizeof(Pgcolr));
          break;
 
@@ -661,7 +673,8 @@ void wsgl_render_element(
          break;
 
       case PELEM_TEXT_PREC:
-         wsgl->cur_struct.ast.indiv_group.text_bundle.prec = PHG_TEXT_PREC(el);
+         wsgl->cur_struct.ast.indiv_group.text_bundle.prec =
+            (Ptext_prec) PHG_INT(el);
          break;
 
       case PELEM_CHAR_HT:
@@ -679,18 +692,19 @@ void wsgl_render_element(
          break;
 
       case PELEM_TEXT_PATH:
-         wsgl->cur_struct.ast.text_path = PHG_TEXT_PATH(el);
+         wsgl->cur_struct.ast.text_path =
+            (Ptext_path) PHG_INT(el);
          break;
 
       case PELEM_TEXT_ALIGN:
          memcpy(&wsgl->cur_struct.ast.text_align,
-                PHG_TEXT_ALIGN(el),
+                ELMT_CONTENT(el),
                 sizeof(Ptext_align));
          break;
 
       case PELEM_CHAR_UP_VEC:
          memcpy(&wsgl->cur_struct.ast.char_up_vec,
-                PHG_VEC(el),
+                ELMT_CONTENT(el),
                 sizeof(Pvec));
          break;
 
@@ -706,7 +720,7 @@ void wsgl_render_element(
 
       case PELEM_LINE_COLR:
          memcpy(&wsgl->cur_struct.ast.indiv_group.line_bundle.colr,
-                PHG_COLR(el),
+                ELMT_CONTENT(el),
                 sizeof(Pgcolr));
          break;
 
@@ -721,7 +735,7 @@ void wsgl_render_element(
       case PELEM_FILL_AREA:
          if (check_draw_primitive(ws)) {
             phg_draw_fill_area(ws,
-                               PHG_POINT_LIST(el),
+                               ELMT_CONTENT(el),
                                &wsgl->cur_struct.ast);
          }
          break;
@@ -729,7 +743,7 @@ void wsgl_render_element(
       case PELEM_FILL_AREA_SET:
          if (check_draw_primitive(ws)) {
             phg_draw_fill_area_set(ws,
-                                   PHG_POINT_LIST_LIST(el),
+                                   ELMT_CONTENT(el),
                                    &wsgl->cur_struct.ast);
          }
          break;
@@ -737,7 +751,7 @@ void wsgl_render_element(
       case PELEM_POLYLINE:
          if (check_draw_primitive(ws)) {
             phg_draw_polyline(ws,
-                              PHG_POINT_LIST(el),
+                              ELMT_CONTENT(el),
                               &wsgl->cur_struct.ast
                               );
          }
@@ -746,7 +760,7 @@ void wsgl_render_element(
       case PELEM_POLYMARKER:
          if (check_draw_primitive(ws)) {
             phg_draw_polymarker(ws,
-                                PHG_POINT_LIST(el),
+                                ELMT_CONTENT(el),
                                 &wsgl->cur_struct.ast);
          }
          break;
@@ -754,7 +768,7 @@ void wsgl_render_element(
       case PELEM_FILL_AREA3:
          if (check_draw_primitive(ws)) {
             phg_draw_fill_area3(ws,
-                                PHG_POINT_LIST3(el),
+                                ELMT_CONTENT(el),
                                 &wsgl->cur_struct.ast);
          }
          break;
@@ -762,7 +776,7 @@ void wsgl_render_element(
       case PELEM_FILL_AREA_SET3:
          if (check_draw_primitive(ws)) {
             phg_draw_fill_area_set3(ws,
-                                    PHG_POINT_LIST_LIST3(el),
+                                    ELMT_CONTENT(el),
                                     &wsgl->cur_struct.ast);
          }
          break;
@@ -770,7 +784,7 @@ void wsgl_render_element(
       case PELEM_FILL_AREA3_DATA:
          if (check_draw_primitive(ws)) {
             phg_draw_fill_area3_data(ws,
-                                     PHG_FASD3(el),
+                                     ELMT_CONTENT(el),
                                      &wsgl->cur_struct.ast);
          }
          break;
@@ -778,7 +792,7 @@ void wsgl_render_element(
       case PELEM_POLYLINE3:
          if (check_draw_primitive(ws)) {
             phg_draw_polyline3(ws,
-                               PHG_POINT_LIST3(el),
+                               ELMT_CONTENT(el),
                                &wsgl->cur_struct.ast);
          }
          break;
@@ -786,17 +800,18 @@ void wsgl_render_element(
       case PELEM_POLYMARKER3:
          if (check_draw_primitive(ws)) {
             phg_draw_polymarker3(ws,
-                                 PHG_POINT_LIST3(el),
+                                 ELMT_CONTENT(el),
                                  &wsgl->cur_struct.ast);
          }
          break;
 
       case PELEM_TEXT:
-         phg_draw_text(ws, PHG_TEXT(el), &wsgl->cur_struct.ast);
+         phg_draw_text(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
          break;
 
       case PELEM_GLOBAL_MODEL_TRAN3:
-         phg_mat_copy(wsgl->cur_struct.global_tran, *PHG_MATRIX3(el));
+         phg_mat_copy(wsgl->cur_struct.global_tran,
+                      *((Pmatrix3 *) ELMT_CONTENT(el)));
          phg_update_modelview(ws);
          break;
 
@@ -826,7 +841,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_LIGHT_SRC_STATE:
-         wsgl_set_light_src_state(ws, PHG_LSS(el));
+         wsgl_set_light_src_state(ws, ELMT_CONTENT(el));
          break;
 
       case PELEM_INT_SHAD_METH:
@@ -839,7 +854,7 @@ void wsgl_render_element(
 
       case PELEM_REFL_PROPS:
          memcpy(&wsgl->cur_struct.ast.indiv_group.int_bundle.refl_props,
-                PHG_REFL_PROPS(el),
+                ELMT_CONTENT(el),
                 sizeof(Prefl_props));
          break;
 

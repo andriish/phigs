@@ -91,8 +91,8 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
         return(NULL);					/* out of memory */
     fptr = cssh->el_funcs;
     fptr[(int)PELEM_NIL] = phg_css_no_data;
-    fptr[(int)PELEM_ADD_NAMES_SET] = phg_handle_names_set;
-    fptr[(int)PELEM_REMOVE_NAMES_SET] = phg_handle_names_set;
+    fptr[(int)PELEM_ADD_NAMES_SET] = phg_handle_int_list;
+    fptr[(int)PELEM_REMOVE_NAMES_SET] = phg_handle_int_list;
     fptr[(int)PELEM_FILL_AREA] = phg_handle_point_list;
     fptr[(int)PELEM_FILL_AREA3] = phg_handle_point_list3;
     fptr[(int)PELEM_FILL_AREA_SET] = phg_handle_point_list_list;
@@ -105,7 +105,7 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_TEXT] = phg_handle_text;
     fptr[(int)PELEM_INT_IND] = phg_handle_int;
     fptr[(int)PELEM_INT_COLR_IND] = phg_handle_int;
-    fptr[(int)PELEM_INT_STYLE] = phg_handle_int_style;
+    fptr[(int)PELEM_INT_STYLE] = phg_handle_int;
     fptr[(int)PELEM_INT_STYLE_IND] = phg_handle_int;
     fptr[(int)PELEM_LINE_IND] = phg_handle_int;
     fptr[(int)PELEM_LINE_COLR_IND] = phg_handle_int;
@@ -119,11 +119,11 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_EDGE_COLR_IND] = phg_handle_int;
     fptr[(int)PELEM_EDGEWIDTH] = phg_handle_float;
     fptr[(int)PELEM_EDGETYPE] = phg_handle_int;
-    fptr[(int)PELEM_EDGE_FLAG] = phg_handle_edge_flag;
+    fptr[(int)PELEM_EDGE_FLAG] = phg_handle_int;
     fptr[(int)PELEM_TEXT_IND] = phg_handle_int;
     fptr[(int)PELEM_TEXT_FONT] = phg_handle_int;
-    fptr[(int)PELEM_TEXT_PREC] = phg_handle_text_prec;
-    fptr[(int)PELEM_TEXT_PATH] = phg_handle_text_path;
+    fptr[(int)PELEM_TEXT_PREC] = phg_handle_int;
+    fptr[(int)PELEM_TEXT_PATH] = phg_handle_int;
     fptr[(int)PELEM_TEXT_ALIGN] = phg_handle_text_align;
     fptr[(int)PELEM_CHAR_HT] = phg_handle_float;
     fptr[(int)PELEM_CHAR_EXPAN] = phg_handle_float;
@@ -140,11 +140,11 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_LABEL] = phg_handle_int;
     fptr[(int)PELEM_PICK_ID] = phg_handle_int;
     fptr[(int)PELEM_HLHSR_ID] = phg_handle_int;
-    fptr[(int)PELEM_INT_COLR] = phg_handle_colr;
-    fptr[(int)PELEM_LINE_COLR] = phg_handle_colr;
-    fptr[(int)PELEM_MARKER_COLR] = phg_handle_colr;
-    fptr[(int)PELEM_EDGE_COLR] = phg_handle_colr;
-    fptr[(int)PELEM_TEXT_COLR] = phg_handle_colr;
+    fptr[(int)PELEM_INT_COLR] = phg_handle_gcolr;
+    fptr[(int)PELEM_LINE_COLR] = phg_handle_gcolr;
+    fptr[(int)PELEM_MARKER_COLR] = phg_handle_gcolr;
+    fptr[(int)PELEM_EDGE_COLR] = phg_handle_gcolr;
+    fptr[(int)PELEM_TEXT_COLR] = phg_handle_gcolr;
     fptr[(int)PELEM_LIGHT_SRC_STATE] = phg_handle_lss;
     fptr[(int)PELEM_INT_SHAD_METH] = phg_handle_int;
     fptr[(int)PELEM_INT_REFL_EQN] = phg_handle_int;

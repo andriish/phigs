@@ -30,152 +30,48 @@
 #define ARGS_ELMT_SIZE(ARG) \
    ((Phg_args_add_el *) (ARG))->el_size
 
+#define ARGS_ELMT_SIZE_FULL(ARG) \
+   (((Phg_args_add_el *) (ARG))->el_size + sizeof(Phg_elmt_info))
+
 #define ARGS_ELMT_TYPE(ARG) \
    ((Phg_args_add_el *) (ARG))->el_type
 
 #define ARGS_ELMT_DATA(ARG) \
    ((Phg_args_add_el *) (ARG))->el_data
 
-#define ELMT_DATA_PTR(ELMT) \
-   ((Pelem_data *) (ELMT)->eldata.ptr)
+#define ARGS_COPY_DATA(ELMT) \
+   (Phg_elmt_info *) (((Css_eldata *) (ELMT))->ptr)
 
-#define PHG_INT(ELMT) \
-   *((int *) ((ELMT)->eldata.ptr))
+#define ARGS_COPY_DATA_LEN(ELMT) \
+   (((Phg_elmt_info *) (((Css_eldata *) (ELMT))->ptr))->length + \
+      sizeof(Phg_elmt_info))
 
-#define PHG_DATA_INT(ELMT) \
-   *((int *) (((Css_eldata *) (ELMT))->ptr))
+#define ARGS_INQ_HEAD(ARG) \
+   (((Phg_ret_q_content *) argdata)->el_head)
 
-#define PHG_FLOAT(ELMT) \
-   *((float *) ((ELMT)->eldata.ptr))
+#define ARGS_INQ_SIZE(ARG) \
+   *((Pint *) argdata)
 
-#define PHG_DATA_FLOAT(ELMT) \
-   *((float *) (((Css_eldata *) (ELMT))->ptr))
+#define ELMT_HEAD(ELMT) \
+   ((ELMT)->eldata.ptr)
 
-#define PHG_INT_LIST(ELMT) \
-   ((Pint_list *) ((ELMT)->eldata.ptr))
+#define ELMT_INFO(ELMT) \
+   ((Phg_elmt_info *) (ELMT)->eldata.ptr)
 
-#define PHG_DATA_INT_LIST(ELMT) \
-   ((Pint_list *) (((Css_eldata *) (ELMT))->ptr))
+#define ELMT_INFO_LEN(ELMT) \
+   (((Phg_elmt_info *) (ELMT)->eldata.ptr)->length)
 
-#define PHG_POINT_LIST(ELMT) \
-   ((Ppoint_list *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_POINT_LIST(ELMT) \
-   ((Ppoint_list *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_POINT_LIST3(ELMT) \
-   ((Ppoint_list3 *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_POINT_LIST3(ELMT) \
-   ((Ppoint_list3 *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_POINT_LIST_LIST(ELMT) \
-   ((Ppoint_list_list *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_POINT_LIST_LIST(ELMT) \
-   ((Ppoint_list_list *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_POINT_LIST_LIST3(ELMT) \
-   ((Ppoint_list_list3 *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_POINT_LIST_LIST3(ELMT) \
-   ((Ppoint_list_list3 *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_FASD3(ELMT) \
-   ((Pfasd3 *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_FASD3(ELMT) \
-   ((Pfasd3 *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_ASF_INFO(ELMT) \
-   ((Pasf_info *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_ASF_INFO(ELMT) \
-   ((Pasf_info *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_VEC(ELMT) \
-   ((Pvec *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_VEC(ELMT) \
-   ((Pvec *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_LOCAL_TRAN(ELMT) \
-   ((Plocal_tran *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_LOCAL_TRAN(ELMT) \
-   ((Plocal_tran *) (((Css_eldata *) (ELMT))->ptr))
+#define ELMT_CONTENT(ELMT) \
+   (((Phg_elmt_info *) (ELMT)->eldata.ptr) + 1)
 
 #define PHG_LOCAL_TRAN3(ELMT) \
-   ((Plocal_tran3 *) ((ELMT)->eldata.ptr))
+   ((Plocal_tran3 *) ELMT_CONTENT(ELMT))
 
-#define PHG_DATA_LOCAL_TRAN3(ELMT) \
-   ((Plocal_tran3 *) (((Css_eldata *) (ELMT))->ptr))
+#define PHG_INT(ELMT) \
+   *((Pint *) ELMT_CONTENT(ELMT))
 
-#define PHG_MATRIX(ELMT) \
-   ((Pmatrix *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_MATRIX(ELMT) \
-   ((Pmatrix *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_MATRIX3(ELMT) \
-   ((Pmatrix3 *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_MATRIX3(ELMT) \
-   ((Pmatrix3 *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_TEXT_PREC(ELMT) \
-   *((Ptext_prec *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_TEXT_PREC(ELMT) \
-   *((Ptext_prec *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_TEXT_PATH(ELMT) \
-   *((Ptext_path *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_TEXT_PATH(ELMT) \
-   *((Ptext_path *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_TEXT_ALIGN(ELMT) \
-   ((Ptext_align *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_TEXT_ALIGN(ELMT) \
-   ((Ptext_align *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_TEXT(ELMT) \
-   ((Ptext *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_TEXT(ELMT) \
-   ((Ptext *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_EDGE_FLAG(ELMT) \
-   *((Pedge_flag *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_EDGE_FLAG(ELMT) \
-   *((Pedge_flag *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_INT_STYLE(ELMT) \
-   *((Pint_style *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_INT_STYLE(ELMT) \
-   *((Pint_style *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_COLR(ELMT) \
-   ((Pgcolr *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_COLR(ELMT) \
-   ((Pgcolr *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_LSS(ELMT) \
-   ((Plss *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_LSS(ELMT) \
-   ((Plss *) (((Css_eldata *) (ELMT))->ptr))
-
-#define PHG_REFL_PROPS(ELMT) \
-   ((Prefl_props *) ((ELMT)->eldata.ptr))
-
-#define PHG_DATA_REFL_PROPS(ELMT) \
-   ((Prefl_props *) (((Css_eldata *) (ELMT))->ptr))
+#define PHG_FLOAT(ELMT) \
+   *((Pfloat *) ELMT_CONTENT(ELMT))
 
 #define PHG_IN_RANGE( low, high, val) \
    ((val) >= (low) && (val) <= (high))

@@ -64,7 +64,6 @@ int view_index = 5;
 Pcolr_rep col_rep;
 Pgcolr green, yellow;
 
-
 void struct_content(Pint struct_id, Pint elmt_num)
 {
    Pint i, num_longs;
@@ -86,11 +85,13 @@ void struct_content(Pint struct_id, Pint elmt_num)
    ret.err = 0;
    phg_css_inq_el_content(PHG_CSS, struct_id, elmt_num, &ret);
    if (!ret.err) {
-      data = (caddr_t) &ret.data.el_info.el_data;
+      data = (caddr_t) ret.data.el_info.el_head + 4;
       printf("-------------------------------------------------------------\n");
       for (i = 0; i < num_longs; i++) {
-         printf("%08x:\tINTEGER: %d\tFLOAT: %f\n",
-                i, *((int *) &data[i]), *((float *) &data[i]));
+         printf("%08x:\tINTEGER: %d\n"
+                "\t\t\t\t\tFLOAT: %f\n",
+                i, *((int *) data), *((float *) data));
+         data += 4;
       }
    }
    else {
@@ -116,9 +117,13 @@ void struct_stat(void)
    else
       printf("Label not found\n");
 
+#if 0
    printf("\n");
+   struct_content(0, 1);
    struct_content(1, 1);
    struct_content(1, 5);
+   struct_content(1, 13);
+#endif
 }
 
 int main(int argc, char *argv[])
@@ -272,7 +277,6 @@ int main(int argc, char *argv[])
                pset_local_tran3(tran3, PTYPE_POSTCONCAT);
                poffset_elem_ptr(1);
                pset_int_colr_ind(4);
-
 #if 0
                pset_elem_ptr(0);
                //pdel_elem_range(19, 20);

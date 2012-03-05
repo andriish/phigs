@@ -769,7 +769,7 @@ typedef union {
    Plocal_tran3      local_tran3;
    Pmatrix           global_tran;
    Pmatrix3          global_tran3;
-   Pint_list         names;
+   Pint_list         int_list;
    Pedge_flag        edge_flag;
    Pint_style        int_style;
    Pgcolr            colr;

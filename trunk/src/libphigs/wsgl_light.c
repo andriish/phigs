@@ -38,20 +38,26 @@
 
 void wsgl_set_light_src_state(
    Ws *ws,
-   Plss *lss
+   void *pdata
    )
 {
-   Pint i;
+   Pint i, num_ints;
+   Pint *data;
+   data = (Pint *) pdata;
    Wsgl *wsgl = ws->render_context;
 
-   for (i = 0; i < lss->activation.num_ints; i++) {
-      phg_nset_name_set(&wsgl->cur_struct.lightstat,
-                        lss->activation.ints[i]);
+   num_ints = *data;
+   data++;
+   for (i = 0; i < num_ints; i++) {
+      phg_nset_name_set(&wsgl->cur_struct.lightstat, *data);
+      data++;
    }
 
-   for (i = 0; i < lss->deactivation.num_ints; i++) {
-      phg_nset_name_clear(&wsgl->cur_struct.lightstat,
-                          lss->deactivation.ints[i]);
+   num_ints = *data;
+   data++;
+   for (i = 0; i < num_ints; i++) {
+      phg_nset_name_clear(&wsgl->cur_struct.lightstat, *data);
+      data++;
    }
 
 #ifdef DEBUG
