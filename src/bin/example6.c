@@ -22,6 +22,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <X11/Xlib.h>
+#include <X11/keysym.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>

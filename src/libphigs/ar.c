@@ -67,14 +67,24 @@ SOFTWARE.
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/file.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <phigs/phg.h>
 #include <errno.h>
 #include <phigs/private/arP.h>
+
+/* parameters for LSEEK */
+#ifndef L_SET
+#define L_SET       0  /* absolute offset */
+#endif
+#ifndef L_INCR
+#define L_INCR      1  /* relative to current offset */
+#endif
+#ifndef L_XTND
+#define L_XTND      2  /* relative to end of file */
+#endif
 
 #define GET_ARH(id, arh) \
     for (arh = PHG_AR_LIST; \
