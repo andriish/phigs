@@ -73,6 +73,7 @@ SOFTWARE.
 #include <phigs/ws_type.h>
 #include <phigs/sin.h>
 #include <phigs/private/sinP.h>
+#ifdef REMOVED
 #include <X11/StringDefs.h>
 #include <X11/Shell.h>
 #include <X11/Xaw/Viewport.h>
@@ -289,6 +290,7 @@ static void destroy_string(
     if ( device->item_handle.string.shell )
 	XtDestroyWidget( device->item_handle.string.shell );
 }
+#endif
 
 /*******************************************************************************
  * phg_sin_dev_boot_string
@@ -301,6 +303,7 @@ void phg_sin_dev_boot_string(
     Sin_input_device *dev
     )
 {
+#ifdef REMOVED
     switch ( dev->data.string.type ) {
 	case WST_STRING_TYPE_WINDOW:
 	    dev->item_handle.string.shell = (Widget)NULL;
@@ -317,5 +320,6 @@ void phg_sin_dev_boot_string(
 	    dev->dev_ops.disable = disable_string;
 	    break;
     }
+#endif
 }
 
