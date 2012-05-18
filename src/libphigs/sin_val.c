@@ -73,6 +73,7 @@ SOFTWARE.
 #include <phigs/ws_type.h>
 #include <phigs/sin.h>
 #include <phigs/private/sinP.h>
+#ifdef REMOVED
 #include <X11/StringDefs.h>
 #include <X11/Shell.h>
 #include <X11/Xaw/Paned.h>
@@ -254,6 +255,7 @@ static void disable_valuator(
 #endif
     XtDestroyWidget( device->item_handle.valuator.shell );
 }
+#endif
 
 /*******************************************************************************
  * phg_sin_dev_boot_valuator
@@ -266,6 +268,7 @@ void phg_sin_dev_boot_valuator(
     Sin_input_device *dev
     )
 {
+#ifdef REMOVED
     switch ( dev->data.valuator.type ) {
 	case WST_VAL_TYPE_SLIDER:
 	    dev->dev_ops.reset = NULL;
@@ -279,5 +282,6 @@ void phg_sin_dev_boot_valuator(
 	    dev->dev_ops.disable = disable_valuator;
 	    break;
     }
+#endif
 }
 

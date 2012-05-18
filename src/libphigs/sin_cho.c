@@ -73,6 +73,7 @@ SOFTWARE.
 #include <phigs/ws_type.h>
 #include <phigs/sin.h>
 #include <phigs/private/sinP.h>
+#ifdef REMOVED
 #include <X11/StringDefs.h>
 #include <X11/Shell.h>
 #include <X11/Xaw/Viewport.h>
@@ -171,6 +172,7 @@ static void disable_choice(
 {
     XtDestroyWidget( device->item_handle.choice.shell );
 }
+#endif
 
 /*******************************************************************************
  * phg_sin_dev_boot_choice
@@ -183,6 +185,7 @@ void phg_sin_dev_boot_choice(
     Sin_input_device *dev
     )
 {
+#ifdef REMOVED
     switch ( dev->data.choice.type ) {
 	case WST_CHOICE_TYPE_LIST:
 	    dev->dev_ops.reset = NULL;
@@ -196,5 +199,6 @@ void phg_sin_dev_boot_choice(
 	    dev->dev_ops.disable = disable_choice;
 	    break;
     }
+#endif
 }
 
