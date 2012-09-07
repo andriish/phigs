@@ -220,10 +220,10 @@ void phg_wsx_pixel_colour(
    color.pixel = pixel;
    XQueryColor(ws->display, cmap, &color);
 
-   gcolr->type = PMODEL_RGB;
-   gcolr->val.general.x = (float) color.red / 65535.0;
-   gcolr->val.general.y = (float) color.green / 65535.0;
-   gcolr->val.general.z = (float) color.blue / 65535.0;
+   gcolr->colr_type = PMODEL_RGB;
+   gcolr->colr_value.colr_rep.rgb.red = (Pfloat) color.red / 65535.0;
+   gcolr->colr_value.colr_rep.rgb.green = (Pfloat) color.green / 65535.0;
+   gcolr->colr_value.colr_rep.rgb.blue = (Pfloat) color.blue / 65535.0;
 }
 
 /*******************************************************************************

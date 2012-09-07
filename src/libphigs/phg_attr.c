@@ -95,10 +95,10 @@ void phg_attr_group_set_line_bundle(
    )
 {
    memcpy(&attr_group->line_bundle, line_bundle, sizeof(Pline_bundle_plus));
-   if (attr_group->line_bundle.colr.type == PINDIRECT) {
+   if (attr_group->line_bundle.colr.colr_type == PINDIRECT) {
       phg_get_colr_ind(ws,
                        &attr_group->line_bundle.colr,
-                       attr_group->line_bundle.colr.val.ind);
+                       attr_group->line_bundle.colr.colr_value.colr_ind);
    }
 }
 
@@ -118,10 +118,10 @@ void phg_attr_group_set_marker_bundle(
    memcpy(&attr_group->marker_bundle,
           marker_bundle,
           sizeof(Pmarker_bundle_plus));
-   if (attr_group->marker_bundle.colr.type == PINDIRECT) {
+   if (attr_group->marker_bundle.colr.colr_type == PINDIRECT) {
       phg_get_colr_ind(ws,
                        &attr_group->marker_bundle.colr,
-                       attr_group->marker_bundle.colr.val.ind);
+                       attr_group->marker_bundle.colr.colr_value.colr_ind);
    }
 }
 
@@ -139,10 +139,10 @@ void phg_attr_group_set_text_bundle(
    )
 {
    memcpy(&attr_group->text_bundle, text_bundle, sizeof(Ptext_bundle_plus));
-   if (attr_group->text_bundle.colr.type == PINDIRECT) {
+   if (attr_group->text_bundle.colr.colr_type == PINDIRECT) {
       phg_get_colr_ind(ws,
                        &attr_group->text_bundle.colr,
-                       attr_group->text_bundle.colr.val.ind);
+                       attr_group->text_bundle.colr.colr_value.colr_ind);
    }
 }
 
@@ -160,10 +160,10 @@ void phg_attr_group_set_edge_bundle(
    )
 {
    memcpy(&attr_group->edge_bundle, edge_bundle, sizeof(Pedge_bundle_plus));
-   if (attr_group->edge_bundle.colr.type == PINDIRECT) {
+   if (attr_group->edge_bundle.colr.colr_type == PINDIRECT) {
       phg_get_colr_ind(ws,
                        &attr_group->edge_bundle.colr,
-                       attr_group->edge_bundle.colr.val.ind);
+                       attr_group->edge_bundle.colr.colr_value.colr_ind);
    }
 }
 
@@ -181,10 +181,10 @@ void phg_attr_group_set_int_bundle(
    )
 {
    memcpy(&attr_group->int_bundle, int_bundle, sizeof(Pint_bundle_plus));
-   if (attr_group->int_bundle.colr.type == PINDIRECT) {
+   if (attr_group->int_bundle.colr.colr_type == PINDIRECT) {
       phg_get_colr_ind(ws,
                        &attr_group->int_bundle.colr,
-                       attr_group->int_bundle.colr.val.ind);
+                       attr_group->int_bundle.colr.colr_value.colr_ind);
    }
 }
 

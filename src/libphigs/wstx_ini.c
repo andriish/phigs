@@ -70,10 +70,10 @@ static void init_output_ws_dt(
    }
 
    /* Set foreground colour */
-   fg.type = PMODEL_RGB;
-   fg.val.general.x = 1.0;
-   fg.val.general.y = 1.0;
-   fg.val.general.z = 1.0;
+   fg.colr_type = PMODEL_RGB;
+   fg.colr_value.colr_rep.rgb.red = 1.0;
+   fg.colr_value.colr_rep.rgb.green = 1.0;
+   fg.colr_value.colr_rep.rgb.blue = 1.0;
 
    /* Setup default attribute bundles */
    wsdt->num_predefined_polyline_indices = WST_MIN_PREDEF_LINE_REPS;

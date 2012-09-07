@@ -105,32 +105,24 @@ Pint_list pick_incl = {4, view_list};
 Pint_list pick_excl = {1, view_list_1};
 Pint_list empty_set = {0, NULL};
 
+void set_colr_rgb(Pgcolr *pgcolr,
+   Pfloat red,
+   Pfloat green,
+   Pfloat blue)
+{
+    pgcolr->colr_type = PMODEL_RGB;
+    pgcolr->colr_value.colr_rep.rgb.red = red;
+    pgcolr->colr_value.colr_rep.rgb.green = green;
+    pgcolr->colr_value.colr_rep.rgb.blue = blue;
+}
+
 void init_scene(void)
 {
-   dark.type = PMODEL_RGB;
-   dark.val.general.x = 0.0;
-   dark.val.general.y = 0.25;
-   dark.val.general.z = 0.25;
-
-   medium.type = PMODEL_RGB;
-   medium.val.general.x = 0.0;
-   medium.val.general.y = 0.5;
-   medium.val.general.z = 0.5;
-
-   light.type = PMODEL_RGB;
-   light.val.general.x = 0.0;
-   light.val.general.y = 0.5;
-   light.val.general.z = 0.5;
-
-   white.type = PMODEL_RGB;
-   white.val.general.x = 1.0;
-   white.val.general.y = 1.0;
-   white.val.general.z = 1.0;
-
-   red.type = PMODEL_RGB;
-   red.val.general.x = 1.0;
-   red.val.general.y = 0.0;
-   red.val.general.z = 0.0;
+   set_colr_rgb(&dark, 0.0, 0.25, 0.25);
+   set_colr_rgb(&medium, 0.0, 0.5, 0.5);
+   set_colr_rgb(&light, 0.0, 0.75, 0.75);
+   set_colr_rgb(&white, 1.0, 1.0, 1.0);
+   set_colr_rgb(&red, 1.0, 0.0, 0.0);
 
    popen_struct(STRUCT_OBJECT);
    pfill_area3(&plist_quad);

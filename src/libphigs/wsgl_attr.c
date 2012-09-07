@@ -209,15 +209,15 @@ void phg_set_gcolr(
    Pgcolr *gcolr
    )
 {
-   switch(gcolr->type) {
+   switch(gcolr->colr_type) {
       case PINDIRECT:
-         glIndexi(gcolr->val.ind);
+         glIndexi(gcolr->colr_value.colr_ind);
          break;
 
       case PMODEL_RGB:
-         glColor3f(gcolr->val.general.x,
-                   gcolr->val.general.y,
-                   gcolr->val.general.z);
+         glColor3f(gcolr->colr_value.colr_rep.rgb.red,
+                   gcolr->colr_value.colr_rep.rgb.green,
+                   gcolr->colr_value.colr_rep.rgb.blue);
          break;
 
       default:
@@ -728,9 +728,9 @@ void phg_setup_background(
 {
    Wsgl_handle wsgl = ws->render_context;
 
-   glColor3f(wsgl->background.val.general.x,
-             wsgl->background.val.general.y,
-             wsgl->background.val.general.z);
+   glColor3f(wsgl->background.colr_value.colr_rep.rgb.red,
+             wsgl->background.colr_value.colr_rep.rgb.green,
+             wsgl->background.colr_value.colr_rep.rgb.blue);
 }
 
 /*******************************************************************************
