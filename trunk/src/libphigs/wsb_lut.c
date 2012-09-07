@@ -181,8 +181,8 @@ void phg_wsb_set_LUT_entry(
                 memset(data, 0, sizeof(Pline_bundle_plus));
                 ((Pline_bundle_plus *) data)->type = rep->bundl.lnrep.type;
                 ((Pline_bundle_plus *) data)->width = rep->bundl.lnrep.width;
-                ((Pline_bundle_plus *) data)->colr.type = PINDIRECT;
-                ((Pline_bundle_plus *) data)->colr.val.ind =
+                ((Pline_bundle_plus *) data)->colr.colr_type = PINDIRECT;
+                ((Pline_bundle_plus *) data)->colr.colr_value.colr_ind =
                     rep->bundl.lnrep.colr_ind;
                 if (!phg_htab_add_entry(ows->htab.line, rep->index, data)) {
                     ERR_BUF(ws->erh, ERR900);
@@ -218,8 +218,8 @@ void phg_wsb_set_LUT_entry(
                 memset(data, 0, sizeof(Pmarker_bundle_plus));
                 ((Pmarker_bundle_plus *) data)->type = rep->bundl.mkrep.type;
                 ((Pmarker_bundle_plus *) data)->size = rep->bundl.mkrep.size;
-                ((Pmarker_bundle_plus *) data)->colr.type = PINDIRECT;
-                ((Pmarker_bundle_plus *) data)->colr.val.ind =
+                ((Pmarker_bundle_plus *) data)->colr.colr_type = PINDIRECT;
+                ((Pmarker_bundle_plus *) data)->colr.colr_value.colr_ind =
                     rep->bundl.mkrep.colr_ind;
                 if (!phg_htab_add_entry(ows->htab.marker, rep->index, data)) {
                     ERR_BUF(ws->erh, ERR900);
@@ -254,8 +254,8 @@ void phg_wsb_set_LUT_entry(
             if (data != NULL) {
                 memset(data, 0, sizeof(Ptext_bundle_plus));
                 ((Ptext_bundle_plus *) data)->font = rep->bundl.txrep.font;
-                ((Ptext_bundle_plus *) data)->colr.type = PINDIRECT;
-                ((Ptext_bundle_plus *) data)->colr.val.ind =
+                ((Ptext_bundle_plus *) data)->colr.colr_type = PINDIRECT;
+                ((Ptext_bundle_plus *) data)->colr.colr_value.colr_ind =
                     rep->bundl.txrep.colr_ind;
                 if (!phg_htab_add_entry(ows->htab.text, rep->index, data)) {
                     ERR_BUF(ws->erh, ERR900);
@@ -292,8 +292,8 @@ void phg_wsb_set_LUT_entry(
                 ((Pint_bundle_plus *) data)->style = rep->bundl.interrep.style;
                 ((Pint_bundle_plus *) data)->style_ind =
                     rep->bundl.interrep.style_ind;
-                ((Pint_bundle_plus *) data)->colr.type = PINDIRECT;
-                ((Pint_bundle_plus *) data)->colr.val.ind =
+                ((Pint_bundle_plus *) data)->colr.colr_type = PINDIRECT;
+                ((Pint_bundle_plus *) data)->colr.colr_value.colr_ind =
                     rep->bundl.interrep.colr_ind;
                 if (!phg_htab_add_entry(ows->htab.interior,
                                         rep->index,
@@ -336,8 +336,8 @@ void phg_wsb_set_LUT_entry(
                 ((Pedge_bundle_plus *) data)->flag = rep->bundl.edgerep.flag;
                 ((Pedge_bundle_plus *) data)->type = rep->bundl.edgerep.type;
                 ((Pedge_bundle_plus *) data)->width = rep->bundl.edgerep.width;
-                ((Pedge_bundle_plus *) data)->colr.type = PINDIRECT;
-                ((Pedge_bundle_plus *) data)->colr.val.ind =
+                ((Pedge_bundle_plus *) data)->colr.colr_type = PINDIRECT;
+                ((Pedge_bundle_plus *) data)->colr.colr_value.colr_ind =
                     rep->bundl.edgerep.colr_ind;
                 if (!phg_htab_add_entry(ows->htab.edge, rep->index, data)) {
                     ERR_BUF(ws->erh, ERR900);

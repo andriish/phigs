@@ -1517,10 +1517,10 @@ void phg_wsb_set_rep(
 
 	case PHG_ARGS_COREP:
 	    /* Store in current colour model. */
-	    gcolr.type = ws->current_colour_model;
-	    gcolr.val.general.x = rep->bundl.corep.rgb.red;
-	    gcolr.val.general.y = rep->bundl.corep.rgb.green;
-	    gcolr.val.general.z = rep->bundl.corep.rgb.blue;
+	    gcolr.colr_type = ws->current_colour_model;
+            memcpy(&gcolr.colr_value.colr_rep.rgb,
+                   &rep->bundl.corep.rgb,
+                   sizeof(Prgb));
             phg_wsb_set_LUT_entry(ws, type, rep, &gcolr);
 	    break;
 
@@ -1711,9 +1711,9 @@ void phg_wsb_inq_rep(
              * Convert to correct colour model here if needed
              */
 
-	    cb->rgb.red = gcolr.val.general.x;
-	    cb->rgb.green = gcolr.val.general.y;
-	    cb->rgb.blue = gcolr.val.general.z;
+            memcpy(&cb->rgb,
+                   &gcolr.colr_value.colr_rep.rgb,
+                   sizeof(Prgb));
 	    break;
 
         case PHG_ARGS_VIEWREP:

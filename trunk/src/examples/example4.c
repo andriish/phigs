@@ -92,6 +92,17 @@ Pfloat angle_x = 0.0;
 Pfloat angle_y = 0.0;
 Pgcolr blue;
 
+void set_colr_rgb(Pgcolr *pgcolr,
+   Pfloat red,
+   Pfloat green,
+   Pfloat blue)
+{
+    pgcolr->colr_type = PMODEL_RGB;
+    pgcolr->colr_value.colr_rep.rgb.red = red;
+    pgcolr->colr_value.colr_rep.rgb.green = green;
+    pgcolr->colr_value.colr_rep.rgb.blue = blue;
+}
+
 void struct_content(Pint struct_id, Pint elmt_num)
 {
    Pint i, num_longs;
@@ -138,10 +149,7 @@ int main(int argc, char *argv[])
       printf("Use view: %d\n", view_ind);
    }
 
-   blue.type = PMODEL_RGB;
-   blue.val.general.x = 0.0;
-   blue.val.general.y = 0.0;
-   blue.val.general.z = 1.0;
+   set_colr_rgb(&blue, 0.0, 0.0, 1.0);
 
    popen_phigs(NULL, 0);
    phg_mat_identity(rot3);

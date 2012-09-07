@@ -82,12 +82,12 @@ static void add_amb_light(
    )
 {
    if (refl_eqn >= PREFL_AMBIENT) {
-      result->val.general.x += props->ambient_coef *
-                          rec->colr.val.general.x;
-      result->val.general.y += props->ambient_coef *
-                          rec->colr.val.general.y;
-      result->val.general.z += props->ambient_coef *
-                          rec->colr.val.general.z;
+      result->colr_value.colr_rep.rgb.red += props->ambient_coef *
+                          rec->colr.colr_value.colr_rep.rgb.red;
+      result->colr_value.colr_rep.rgb.green += props->ambient_coef *
+                          rec->colr.colr_value.colr_rep.rgb.green;
+      result->colr_value.colr_rep.rgb.blue += props->ambient_coef *
+                          rec->colr.colr_value.colr_rep.rgb.blue;
    }
 }
 
@@ -111,12 +111,12 @@ static void add_dir_light(
                rec->dir.delta_z * normal->delta_z;
 
    if (refl_eqn >= PREFL_AMB_DIFF) {
-      result->val.general.x += dp * props->diffuse_coef *
-                          rec->colr.val.general.x;
-      result->val.general.y += dp * props->diffuse_coef *
-                          rec->colr.val.general.y;
-      result->val.general.z += dp * props->diffuse_coef *
-                          rec->colr.val.general.z;
+      result->colr_value.colr_rep.rgb.red += dp * props->diffuse_coef *
+                          rec->colr.colr_value.colr_rep.rgb.red;
+      result->colr_value.colr_rep.rgb.green += dp * props->diffuse_coef *
+                          rec->colr.colr_value.colr_rep.rgb.green;
+      result->colr_value.colr_rep.rgb.blue += dp * props->diffuse_coef *
+                          rec->colr.colr_value.colr_rep.rgb.blue;
    }
 }
 
@@ -152,10 +152,10 @@ void wsgl_light_colr(
    norm.delta_y = pn.y;
    norm.delta_z = pn.z;
 
-   result->type = PMODEL_RGB;
-   result->val.general.x = 0.0;
-   result->val.general.y = 0.0;
-   result->val.general.z = 0.0;
+   result->colr_type = PMODEL_RGB;
+   result->colr_value.colr_rep.rgb.red = 0.0;
+   result->colr_value.colr_rep.rgb.green = 0.0;
+   result->colr_value.colr_rep.rgb.blue = 0.0;
 
    /* Process light sources */
    for (i = 0; i < WS_MAX_LIGHT_SRC; i++) {
@@ -181,18 +181,21 @@ void wsgl_light_colr(
       }
    }
 
-   result->val.general.x *= gcolr->val.general.x;
-   result->val.general.y *= gcolr->val.general.y;
-   result->val.general.z *= gcolr->val.general.z;
+   result->colr_value.colr_rep.rgb.red *=
+      gcolr->colr_value.colr_rep.rgb.red;
+   if (result->colr_value.colr_rep.rgb.red > 1.0) {
+      result->colr_value.colr_rep.rgb.red = 1.0;
+   }
+   result->colr_value.colr_rep.rgb.green *=
+      gcolr->colr_value.colr_rep.rgb.green;
+   if (result->colr_value.colr_rep.rgb.green > 1.0) {
+      result->colr_value.colr_rep.rgb.green = 1.0;
+   }
 
-   if (result->val.general.x > 1.0) {
-      result->val.general.x = 1.0;
-   }
-   if (result->val.general.y > 1.0) {
-      result->val.general.y = 1.0;
-   }
-   if (result->val.general.z > 1.0) {
-      result->val.general.z = 1.0;
+   result->colr_value.colr_rep.rgb.blue *=
+      gcolr->colr_value.colr_rep.rgb.blue;
+   if (result->colr_value.colr_rep.rgb.blue > 1.0) {
+      result->colr_value.colr_rep.rgb.blue = 1.0;
    }
 }
 

@@ -41,6 +41,17 @@ Pfloat angle_x = 0.0;
 Pfloat angle_y = 0.0;
 Pgcolr edge_colr;
 
+void set_colr_rgb(Pgcolr *pgcolr,
+   Pfloat red,
+   Pfloat green,
+   Pfloat blue)
+{
+    pgcolr->colr_type = PMODEL_RGB;
+    pgcolr->colr_value.colr_rep.rgb.red = red;
+    pgcolr->colr_value.colr_rep.rgb.green = green;
+    pgcolr->colr_value.colr_rep.rgb.blue = blue;
+}
+
 void init_shape(void)
 {
    Pptco3 vertex_data[5];
@@ -51,34 +62,22 @@ void init_shape(void)
    vertex_data[0].point.x = 0.0;
    vertex_data[0].point.y = 0.0;
    vertex_data[0].point.z = 0.0;
-   vertex_data[0].colr.type = PMODEL_RGB;
-   vertex_data[0].colr.val.general.x = 1.0;
-   vertex_data[0].colr.val.general.y = 0.0;
-   vertex_data[0].colr.val.general.z = 0.0;
+   set_colr_rgb(&vertex_data[0].colr, 1.0, 0.0, 0.0);
 
    vertex_data[1].point.x = WIDTH;
    vertex_data[1].point.y = 0.0;
    vertex_data[1].point.z = 0.0;
-   vertex_data[1].colr.type = PMODEL_RGB;
-   vertex_data[1].colr.val.general.x = 1.0;
-   vertex_data[1].colr.val.general.y = 1.0;
-   vertex_data[1].colr.val.general.z = 0.0;
+   set_colr_rgb(&vertex_data[1].colr, 1.0, 1.0, 0.0);
 
    vertex_data[2].point.x = WIDTH;
    vertex_data[2].point.y = HEIGHT;
    vertex_data[2].point.z = 0.0;
-   vertex_data[2].colr.type = PMODEL_RGB;
-   vertex_data[2].colr.val.general.x = 0.0;
-   vertex_data[2].colr.val.general.y = 1.0;
-   vertex_data[2].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[2].colr, 0.0, 1.0, 1.0);
 
    vertex_data[3].point.x = 0.0;
    vertex_data[3].point.y = HEIGHT;
    vertex_data[3].point.z = 0.0;
-   vertex_data[3].colr.type = PMODEL_RGB;
-   vertex_data[3].colr.val.general.x = 1.0;
-   vertex_data[3].colr.val.general.y = 0.0;
-   vertex_data[3].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[3].colr, 1.0, 0.0, 1.0);
 
    vdata.ptco = vertex_data;
    pfill_area3_data(PFA_NONE, PVERT_COLOUR, &fdata, 4, &vdata);
@@ -87,34 +86,22 @@ void init_shape(void)
    vertex_data[0].point.x = 0.0;
    vertex_data[0].point.y = 0.0;
    vertex_data[0].point.z = DEPTH;
-   vertex_data[0].colr.type = PMODEL_RGB;
-   vertex_data[0].colr.val.general.x = 1.0;
-   vertex_data[0].colr.val.general.y = 0.0;
-   vertex_data[0].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[0].colr, 1.0, 0.0, 1.0);
 
    vertex_data[1].point.x = WIDTH;
    vertex_data[1].point.y = 0.0;
    vertex_data[1].point.z = DEPTH;
-   vertex_data[1].colr.type = PMODEL_RGB;
-   vertex_data[1].colr.val.general.x = 0.0;
-   vertex_data[1].colr.val.general.y = 1.0;
-   vertex_data[1].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[1].colr, 0.0, 1.0, 1.0);
 
    vertex_data[2].point.x = WIDTH;
    vertex_data[2].point.y = HEIGHT;
    vertex_data[2].point.z = DEPTH;
-   vertex_data[2].colr.type = PMODEL_RGB;
-   vertex_data[2].colr.val.general.x = 1.0;
-   vertex_data[2].colr.val.general.y = 1.0;
-   vertex_data[2].colr.val.general.z = 0.0;
+   set_colr_rgb(&vertex_data[2].colr, 1.0, 1.0, 0.0);
 
    vertex_data[3].point.x = 0.0;
    vertex_data[3].point.y = HEIGHT;
    vertex_data[3].point.z = DEPTH;
-   vertex_data[3].colr.type = PMODEL_RGB;
-   vertex_data[3].colr.val.general.x = 0.0;
-   vertex_data[3].colr.val.general.y = 1.0;
-   vertex_data[3].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[3].colr, 0.0, 1.0, 1.0);
 
    vdata.ptco = vertex_data;
    pfill_area3_data(PFA_NONE, PVERT_COLOUR, &fdata, 4, &vdata);
@@ -123,34 +110,22 @@ void init_shape(void)
    vertex_data[0].point.x = 0.0;
    vertex_data[0].point.y = 0.0;
    vertex_data[0].point.z = 0.0;
-   vertex_data[0].colr.type = PMODEL_RGB;
-   vertex_data[0].colr.val.general.x = 1.0;
-   vertex_data[0].colr.val.general.y = 0.0;
-   vertex_data[0].colr.val.general.z = 0.0;
+   set_colr_rgb(&vertex_data[0].colr, 1.0, 0.0, 0.0);
 
    vertex_data[1].point.x = WIDTH;
    vertex_data[1].point.y = 0.0;
    vertex_data[1].point.z = 0.0;
-   vertex_data[1].colr.type = PMODEL_RGB;
-   vertex_data[1].colr.val.general.x = 1.0;
-   vertex_data[1].colr.val.general.y = 1.0;
-   vertex_data[1].colr.val.general.z = 0.0;
+   set_colr_rgb(&vertex_data[1].colr, 1.0, 1.0, 0.0);
 
    vertex_data[2].point.x = WIDTH;
    vertex_data[2].point.y = 0.0;
    vertex_data[2].point.z = DEPTH;
-   vertex_data[2].colr.type = PMODEL_RGB;
-   vertex_data[2].colr.val.general.x = 0.0;
-   vertex_data[2].colr.val.general.y = 1.0;
-   vertex_data[2].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[2].colr, 0.0, 1.0, 1.0);
 
    vertex_data[3].point.x = 0.0;
    vertex_data[3].point.y = 0.0;
    vertex_data[3].point.z = DEPTH;
-   vertex_data[3].colr.type = PMODEL_RGB;
-   vertex_data[3].colr.val.general.x = 1.0;
-   vertex_data[3].colr.val.general.y = 0.0;
-   vertex_data[3].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[3].colr, 1.0, 0.0, 1.0);
 
    vdata.ptco = vertex_data;
    pfill_area3_data(PFA_NONE, PVERT_COLOUR, &fdata, 4, &vdata);
@@ -159,34 +134,22 @@ void init_shape(void)
    vertex_data[0].point.x = 0.0;
    vertex_data[0].point.y = HEIGHT;
    vertex_data[0].point.z = 0.0;
-   vertex_data[0].colr.type = PMODEL_RGB;
-   vertex_data[0].colr.val.general.x = 1.0;
-   vertex_data[0].colr.val.general.y = 0.0;
-   vertex_data[0].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[0].colr, 1.0, 0.0, 1.0);
 
    vertex_data[1].point.x = WIDTH;
    vertex_data[1].point.y = HEIGHT;
    vertex_data[1].point.z = 0.0;
-   vertex_data[1].colr.type = PMODEL_RGB;
-   vertex_data[1].colr.val.general.x = 0.0;
-   vertex_data[1].colr.val.general.y = 1.0;
-   vertex_data[1].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[1].colr, 0.0, 1.0, 1.0);
 
    vertex_data[2].point.x = WIDTH;
    vertex_data[2].point.y = HEIGHT;
    vertex_data[2].point.z = DEPTH;
-   vertex_data[2].colr.type = PMODEL_RGB;
-   vertex_data[2].colr.val.general.x = 1.0;
-   vertex_data[2].colr.val.general.y = 1.0;
-   vertex_data[2].colr.val.general.z = 0.0;
+   set_colr_rgb(&vertex_data[2].colr, 1.0, 1.0, 0.0);
 
    vertex_data[3].point.x = 0.0;
    vertex_data[3].point.y = HEIGHT;
    vertex_data[3].point.z = DEPTH;
-   vertex_data[3].colr.type = PMODEL_RGB;
-   vertex_data[3].colr.val.general.x = 0.0;
-   vertex_data[3].colr.val.general.y = 1.0;
-   vertex_data[3].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[3].colr, 0.0, 1.0, 1.0);
 
    vdata.ptco = vertex_data;
    pfill_area3_data(PFA_NONE, PVERT_COLOUR, &fdata, 4, &vdata);
@@ -195,34 +158,22 @@ void init_shape(void)
    vertex_data[0].point.x = 0.0;
    vertex_data[0].point.y = 0.0;
    vertex_data[0].point.z = 0.0;
-   vertex_data[0].colr.type = PMODEL_RGB;
-   vertex_data[0].colr.val.general.x = 1.0;
-   vertex_data[0].colr.val.general.y = 0.0;
-   vertex_data[0].colr.val.general.z = 0.0;
+   set_colr_rgb(&vertex_data[0].colr, 1.0, 0.0, 0.0);
 
    vertex_data[1].point.x = 0.0;
    vertex_data[1].point.y = 0.0;
    vertex_data[1].point.z = DEPTH;
-   vertex_data[1].colr.type = PMODEL_RGB;
-   vertex_data[1].colr.val.general.x = 1.0;
-   vertex_data[1].colr.val.general.y = 0.0;
-   vertex_data[1].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[1].colr, 1.0, 0.0, 1.0);
 
    vertex_data[2].point.x = 0.0;
    vertex_data[2].point.y = HEIGHT;
    vertex_data[2].point.z = DEPTH;
-   vertex_data[2].colr.type = PMODEL_RGB;
-   vertex_data[2].colr.val.general.x = 0.0;
-   vertex_data[2].colr.val.general.y = 1.0;
-   vertex_data[2].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[2].colr, 0.0, 1.0, 1.0);
 
    vertex_data[3].point.x = 0.0;
    vertex_data[3].point.y = HEIGHT;
    vertex_data[3].point.z = 0.0;
-   vertex_data[3].colr.type = PMODEL_RGB;
-   vertex_data[3].colr.val.general.x = 1.0;
-   vertex_data[3].colr.val.general.y = 0.0;
-   vertex_data[3].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[3].colr, 1.0, 0.0, 1.0);
 
    vdata.ptco = vertex_data;
    pfill_area3_data(PFA_NONE, PVERT_COLOUR, &fdata, 4, &vdata);
@@ -231,34 +182,22 @@ void init_shape(void)
    vertex_data[0].point.x = WIDTH;
    vertex_data[0].point.y = 0.0;
    vertex_data[0].point.z = 0.0;
-   vertex_data[0].colr.type = PMODEL_RGB;
-   vertex_data[0].colr.val.general.x = 1.0;
-   vertex_data[0].colr.val.general.y = 1.0;
-   vertex_data[0].colr.val.general.z = 0.0;
+   set_colr_rgb(&vertex_data[0].colr, 1.0, 1.0, 0.0);
 
    vertex_data[1].point.x = WIDTH;
    vertex_data[1].point.y = 0.0;
    vertex_data[1].point.z = DEPTH;
-   vertex_data[1].colr.type = PMODEL_RGB;
-   vertex_data[1].colr.val.general.x = 0.0;
-   vertex_data[1].colr.val.general.y = 1.0;
-   vertex_data[1].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[1].colr, 0.0, 1.0, 1.0);
 
    vertex_data[2].point.x = WIDTH;
    vertex_data[2].point.y = HEIGHT;
    vertex_data[2].point.z = DEPTH;
-   vertex_data[2].colr.type = PMODEL_RGB;
-   vertex_data[2].colr.val.general.x = 1.0;
-   vertex_data[2].colr.val.general.y = 1.0;
-   vertex_data[2].colr.val.general.z = 0.0;
+   set_colr_rgb(&vertex_data[2].colr, 1.0, 1.0, 0.0);
 
    vertex_data[3].point.x = WIDTH;
    vertex_data[3].point.y = HEIGHT;
    vertex_data[3].point.z = 0.0;
-   vertex_data[3].colr.type = PMODEL_RGB;
-   vertex_data[3].colr.val.general.x = 0.0;
-   vertex_data[3].colr.val.general.y = 1.0;
-   vertex_data[3].colr.val.general.z = 1.0;
+   set_colr_rgb(&vertex_data[3].colr, 0.0, 1.0, 1.0);
 
    vdata.ptco = vertex_data;
    pfill_area3_data(PFA_NONE, PVERT_COLOUR, &fdata, 4, &vdata);
@@ -274,10 +213,7 @@ int main(int argc, char *argv[])
       printf("Use view: %d\n", view_ind);
    }
 
-   edge_colr.type = PMODEL_RGB;
-   edge_colr.val.general.x = 0.0;
-   edge_colr.val.general.y = 0.0;
-   edge_colr.val.general.z = 1.0;
+   set_colr_rgb(&edge_colr, 0.0, 0.0, 1.0);
 
    popen_phigs(NULL, 0);
    phg_mat_identity(rot3);

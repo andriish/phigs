@@ -35,27 +35,27 @@
 void phg_get_colr_ind(
    Ws *ws,
    Pgcolr *gcolr,
-   Pint ind
+   Pint colr_ind
    )
 {
    Phg_ret ret;
 
-   gcolr->type = ws->current_colour_model;
+   gcolr->colr_type = ws->current_colour_model;
 
    if (ws->current_colour_model == PINDIRECT) {
-      gcolr->val.ind = ind;
+      gcolr->colr_value.colr_ind = colr_ind;
    }
    else {
       (*ws->inq_representation)(ws,
-                                ind,
+                                colr_ind,
                                 PINQ_REALIZED,
                                 PHG_ARGS_COREP,
                                 &ret);
       if (ret.err == 0) {
 
-            gcolr->val.general.x = ret.data.rep.corep.rgb.red;
-            gcolr->val.general.y = ret.data.rep.corep.rgb.green;
-            gcolr->val.general.z = ret.data.rep.corep.rgb.blue;
+            memcpy(&gcolr->colr_value.colr_rep.rgb,
+                   &ret.data.rep.corep.rgb,
+                   sizeof(Prgb));
       }
    }
 }
