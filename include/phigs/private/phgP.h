@@ -113,7 +113,7 @@
 void phg_get_colr_ind(
    Ws *ws,
    Pgcolr *gcolr,
-   Pint ind
+   Pint colr_ind
    );
 
 /*******************************************************************************
