@@ -420,15 +420,30 @@ typedef struct {
 } Pelem_ref_list;
 
 typedef struct {
-   Pint         type;
-   union {
-      Pint      ind;
-      struct {
-         Pfloat x;
-         Pfloat y;
-         Pfloat z;
-      }         general;
-   }            val;
+   Pfloat red;
+   Pfloat green;
+   Pfloat blue;
+} Prgb;
+
+typedef struct {
+   Pfloat hue;
+   Pfloat satur;
+   Pfloat value;
+} Phsv;
+
+typedef union {
+   Prgb rgb;
+   Phsv hsv;
+} Pcolr_rep;
+
+typedef union {
+   Pint      colr_ind;
+   Pcolr_rep colr_rep;
+} Pcolrv;
+
+typedef struct {
+   Pint colr_type;
+   Pcolrv colr_value;
 } Pgcolr;
 
 typedef struct {
@@ -611,23 +626,6 @@ typedef struct {
    Pclip_ind back_clip;
    Pclip_ind front_clip;
 } Pview_rep3;
-
-typedef struct {
-   Pfloat red;
-   Pfloat green;
-   Pfloat blue;
-} Prgb;
-
-typedef struct {
-   Pfloat hue;
-   Pfloat satur;
-   Pfloat value;
-} Phsv;
-
-typedef union {
-   Prgb rgb;
-   Phsv hsv;
-} Pcolr_rep;
 
 typedef struct {
    Ppoint3 point;
