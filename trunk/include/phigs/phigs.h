@@ -437,9 +437,19 @@ typedef union {
 } Pcolr_rep;
 
 typedef union {
+   Prgb *rgb;
+   Phsv *hsv;
+} Pcolr_rep_ptr;
+
+typedef union {
    Pint      colr_ind;
    Pcolr_rep colr_rep;
 } Pcolrv;
+
+typedef union {
+   Pint          *colr_inds;
+   Pcolr_rep_ptr colr_reps;
+} Pcolrv_ptr;
 
 typedef struct {
    Pint colr_type;
@@ -626,6 +636,37 @@ typedef struct {
    Pclip_ind back_clip;
    Pclip_ind front_clip;
 } Pview_rep3;
+
+typedef struct {
+   Pint   num_data_per_facet;
+   Pcolrv *facet_colrv;
+   Pvec3  *facet_norm;
+   Pfloat *facet_data;
+} Pfacet;
+
+typedef struct {
+   Pint       num_edges;
+   Pedge_flag *edge_flags;
+} Pedge_flag_list;
+
+typedef struct {
+   Pint            num_lists;
+   Pedge_flag_list *edge_flags;
+} Pedge_flag_set;
+
+typedef struct {
+   Pint       num_vertices;
+   Pint       num_data_per_vertex;
+   Ppoint3    *vertex_points;
+   Pcolrv_ptr vertex_colrvs;
+   Pvec3      *vertex_norms;
+   Pfloat     *vertex_data;
+} Pvertex3_list;
+
+typedef struct {
+   Pint          num_lists;
+   Pvertex3_list *vertices;
+} Pvertex3_set;
 
 typedef struct {
    Ppoint3 point;
