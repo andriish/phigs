@@ -420,40 +420,15 @@ typedef struct {
 } Pelem_ref_list;
 
 typedef struct {
-   Pfloat red;
-   Pfloat green;
-   Pfloat blue;
-} Prgb;
-
-typedef struct {
-   Pfloat hue;
-   Pfloat satur;
-   Pfloat value;
-} Phsv;
-
-typedef union {
-   Prgb rgb;
-   Phsv hsv;
-} Pcolr_rep;
-
-typedef union {
-   Prgb *rgb;
-   Phsv *hsv;
-} Pcolr_rep_ptr;
-
-typedef union {
-   Pint      colr_ind;
-   Pcolr_rep colr_rep;
-} Pcolrv;
-
-typedef union {
-   Pint          *colr_inds;
-   Pcolr_rep_ptr colr_reps;
-} Pcolrv_ptr;
-
-typedef struct {
-   Pint colr_type;
-   Pcolrv colr_value;
+   Pint         type;
+   union {
+      Pint      ind;
+      struct {
+         Pfloat x;
+         Pfloat y;
+         Pfloat z;
+      }         general;
+   }            val;
 } Pgcolr;
 
 typedef struct {
@@ -638,35 +613,21 @@ typedef struct {
 } Pview_rep3;
 
 typedef struct {
-   Pint   num_data_per_facet;
-   Pcolrv *facet_colrv;
-   Pvec3  *facet_norm;
-   Pfloat *facet_data;
-} Pfacet;
+   Pfloat red;
+   Pfloat green;
+   Pfloat blue;
+} Prgb;
 
 typedef struct {
-   Pint       num_edges;
-   Pedge_flag *edge_flags;
-} Pedge_flag_list;
+   Pfloat hue;
+   Pfloat satur;
+   Pfloat value;
+} Phsv;
 
-typedef struct {
-   Pint            num_lists;
-   Pedge_flag_list *edge_flags;
-} Pedge_flag_set;
-
-typedef struct {
-   Pint       num_vertices;
-   Pint       num_data_per_vertex;
-   Ppoint3    *vertex_points;
-   Pcolrv_ptr vertex_colrvs;
-   Pvec3      *vertex_norms;
-   Pfloat     *vertex_data;
-} Pvertex3_list;
-
-typedef struct {
-   Pint          num_lists;
-   Pvertex3_list *vertices;
-} Pvertex3_set;
+typedef union {
+   Prgb rgb;
+   Phsv hsv;
+} Pcolr_rep;
 
 typedef struct {
    Ppoint3 point;

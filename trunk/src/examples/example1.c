@@ -66,17 +66,6 @@ int view_index = 5;
 Pcolr_rep col_rep;
 Pgcolr green, yellow;
 
-void set_colr_rgb(Pgcolr *pgcolr,
-   Pfloat red,
-   Pfloat green,
-   Pfloat blue)
-{
-    pgcolr->colr_type = PMODEL_RGB;
-    pgcolr->colr_value.colr_rep.rgb.red = red;
-    pgcolr->colr_value.colr_rep.rgb.green = green;
-    pgcolr->colr_value.colr_rep.rgb.blue = blue;
-}
-
 void struct_content(Pint struct_id, Pint elmt_num)
 {
    Pint i, num_longs;
@@ -150,8 +139,15 @@ int main(int argc, char *argv[])
       printf("Use view: %d\n", view_index);
    }
 
-   set_colr_rgb(&green, 0.0, 1.0, 0.0);
-   set_colr_rgb(&yellow, 1.0, 1.0, 0.0);
+   green.type = PMODEL_RGB;
+   green.val.general.x = 0.0;
+   green.val.general.y = 1.0;
+   green.val.general.z = 0.0;
+
+   yellow.type = PMODEL_RGB;
+   yellow.val.general.x = 1.0;
+   yellow.val.general.y = 1.0;
+   yellow.val.general.z = 0.0;
 
    popen_phigs(NULL, 0);
 

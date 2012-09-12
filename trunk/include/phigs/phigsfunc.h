@@ -209,12 +209,11 @@
 #define         Pfn_set_int_colr                (316)
 #define         Pfn_set_edge_colr               (327)
 #define         Pfn_fill_area3_data             (328)
-#define         Pfn_fill_area_set3_data         (329)
-#define         Pfn_set_light_src_rep           (330)
-#define         Pfn_set_light_src_state         (331)
-#define         Pfn_set_int_shad_meth           (332)
-#define         Pfn_set_refl_eqn                (333)
-#define         Pfn_set_refl_props              (334)
+#define         Pfn_set_light_src_rep           (329)
+#define         Pfn_set_light_src_state         (330)
+#define         Pfn_set_int_shad_meth           (331)
+#define         Pfn_set_refl_eqn                (332)
+#define         Pfn_set_refl_props              (333)
 
 #define         Pfn_INQUIRY                     (1000)
 

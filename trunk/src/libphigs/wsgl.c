@@ -271,9 +271,9 @@ void wsgl_flush(
       wsgl->hlhsr_changed = 0;
    }
 
-   glClearColor(wsgl->background.colr_value.colr_rep.rgb.red,
-                wsgl->background.colr_value.colr_rep.rgb.green,
-                wsgl->background.colr_value.colr_rep.rgb.blue,
+   glClearColor(wsgl->background.val.general.x,
+                wsgl->background.val.general.y,
+                wsgl->background.val.general.z,
                 0.0);
 
    if (clear_flag) {
