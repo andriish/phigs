@@ -113,7 +113,7 @@ void init_shape_normal_per_facet(void)
 {
    Ppoint3 vertex_data[5];
    Pfacet_data3 fdata;
-   Pvertex_data3 vdata;
+   Pfacet_vdata_arr3 vdata;
 
    fdata.conorm.colr.type = PMODEL_RGB;
    fdata.conorm.colr.val.general.x = 0.75;
@@ -269,7 +269,7 @@ void init_shape_normal_per_vertex(void)
 {
    Pptnorm3 vertex_data[5];
    Pfacet_data3 fdata;
-   Pvertex_data3 vdata;
+   Pfacet_vdata_arr3 vdata;
 
    fdata.colr.type = PMODEL_RGB;
    fdata.colr.val.general.x = 0.75;
@@ -472,7 +472,7 @@ void init_colour_shape_normal_per_facet(void)
 {
    Pptco3 vertex_data[5];
    Pfacet_data3 fdata;
-   Pvertex_data3 vdata;
+   Pfacet_vdata_arr3 vdata;
 
    /* Back */
    fdata.normal.delta_x = 0.0;
@@ -719,7 +719,7 @@ void init_colour_shape_normal_per_vertex(void)
 {
    Pptconorm3 vertex_data[5];
    Pfacet_data3 fdata;
-   Pvertex_data3 vdata;
+   Pfacet_vdata_arr3 vdata;
 
    /* Back */
    vertex_data[0].point.x = 0.0;

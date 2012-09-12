@@ -45,7 +45,7 @@ void init_shape(void)
 {
    Pptco3 vertex_data[5];
    Pfacet_data3 fdata;
-   Pvertex_data3 vdata;
+   Pfacet_vdata_arr3 vdata;
 
    /* Front */
    vertex_data[0].point.x = 0.0;

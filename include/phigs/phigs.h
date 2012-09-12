@@ -656,7 +656,12 @@ typedef union {
    Pptco3     *ptco;
    Pptnorm3   *ptnorm;
    Pptconorm3 *ptconorm;
-} Pvertex_data3;
+} Pfacet_vdata_arr3;
+
+typedef struct {
+   Pint              num_vertices;
+   Pfacet_vdata_arr3 vertex_data;
+} Pfacet_vdata_list3;
 
 typedef struct {
    Pgcolr colr;
@@ -739,11 +744,11 @@ typedef struct {
 } Pposted_struct_list;
 
 typedef struct {
-   Pint          fflag;
-   Pint          vflag;
-   Pfacet_data3  fdata;
-   Pint          num_vertices;
-   Pvertex_data3 *vdata;
+   Pint              fflag;
+   Pint              vflag;
+   Pfacet_data3      fdata;
+   Pint              num_vertices;
+   Pfacet_vdata_arr3 *vdata;
 } Pfasd3;
 
 typedef struct {
