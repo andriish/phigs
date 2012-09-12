@@ -27,10 +27,6 @@
 #include <phigs/phg.h>
 #include <phigs/private/cssP.h>
 
-#define PHG_COLR_FLAG          0x01
-#define PHG_NORM_FLAG          0x02
-#define PHG_DATA_FLAG          0x04
-
 #define ARGS_ELMT_SIZE(ARG) \
    ((Phg_args_add_el *) (ARG))->el_size
 
@@ -117,7 +113,7 @@
 void phg_get_colr_ind(
    Ws *ws,
    Pgcolr *gcolr,
-   Pint colr_ind
+   Pint ind
    );
 
 /*******************************************************************************
