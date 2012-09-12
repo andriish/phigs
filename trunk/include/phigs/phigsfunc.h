@@ -852,7 +852,7 @@ void pfill_area3_data(
    Pint vflag,
    Pfacet_data3 *fdata,
    Pint num_vertices,
-   Pvertex_data3 *vdata
+   Pfacet_vdata_arr3 *vdata
    );
 
 /*******************************************************************************

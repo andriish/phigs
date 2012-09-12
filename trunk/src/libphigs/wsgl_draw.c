@@ -573,7 +573,7 @@ static void phg_facet_head(
    Pint *vflag,
    Pfacet_data3 **fdata,
    Pint *num_vertices,
-   Pvertex_data3 *vdata,
+   Pfacet_vdata_arr3 *vdata,
    void *pdata
    )
 {
@@ -1326,7 +1326,7 @@ void phg_draw_fill_area3_data(
    Pint vflag;
    Pfacet_data3 *fdata;
    Pint num_vertices;
-   Pvertex_data3 vdata;
+   Pfacet_vdata_arr3 vdata;
 
    phg_facet_head(&fflag, &vflag, &fdata, &num_vertices, &vdata, pdata);
 
