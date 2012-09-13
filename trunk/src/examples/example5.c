@@ -45,7 +45,7 @@ void init_shape(void)
 {
    Pptco3 vertex_data[5];
    Pfacet_data3 fdata;
-   Pfacet_vdata_arr3 vdata;
+   Pfacet_vdata_list3 vdata;
 
    /* Front */
    vertex_data[0].point.x = 0.0;
@@ -80,8 +80,16 @@ void init_shape(void)
    vertex_data[3].colr.val.general.y = 0.0;
    vertex_data[3].colr.val.general.z = 1.0;
 
-   vdata.ptco = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_COLOUR, &fdata, 4, &vdata);
+   vdata.num_vertices = 4;
+   vdata.vertex_data.ptcolrs = vertex_data;
+   pfill_area_set3_data(PFA_NONE,
+                        PVERT_COLOUR,
+                        0,
+                        PMODEL_RGB,
+                        &fdata,
+                        1,
+                        NULL,
+                        &vdata);
 
    /* Back */
    vertex_data[0].point.x = 0.0;
@@ -116,8 +124,16 @@ void init_shape(void)
    vertex_data[3].colr.val.general.y = 1.0;
    vertex_data[3].colr.val.general.z = 1.0;
 
-   vdata.ptco = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_COLOUR, &fdata, 4, &vdata);
+   vdata.num_vertices = 4;
+   vdata.vertex_data.ptcolrs = vertex_data;
+   pfill_area_set3_data(PFA_NONE,
+                        PVERT_COLOUR,
+                        0,
+                        PMODEL_RGB,
+                        &fdata,
+                        1,
+                        NULL,
+                        &vdata);
 
    /* Bottom */
    vertex_data[0].point.x = 0.0;
@@ -152,8 +168,16 @@ void init_shape(void)
    vertex_data[3].colr.val.general.y = 0.0;
    vertex_data[3].colr.val.general.z = 1.0;
 
-   vdata.ptco = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_COLOUR, &fdata, 4, &vdata);
+   vdata.num_vertices = 4;
+   vdata.vertex_data.ptcolrs = vertex_data;
+   pfill_area_set3_data(PFA_NONE,
+                        PVERT_COLOUR,
+                        0,
+                        PMODEL_RGB,
+                        &fdata,
+                        1,
+                        NULL,
+                        &vdata);
 
    /* Top */
    vertex_data[0].point.x = 0.0;
@@ -188,8 +212,16 @@ void init_shape(void)
    vertex_data[3].colr.val.general.y = 1.0;
    vertex_data[3].colr.val.general.z = 1.0;
 
-   vdata.ptco = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_COLOUR, &fdata, 4, &vdata);
+   vdata.num_vertices = 4;
+   vdata.vertex_data.ptcolrs = vertex_data;
+   pfill_area_set3_data(PFA_NONE,
+                        PVERT_COLOUR,
+                        0,
+                        PMODEL_RGB,
+                        &fdata,
+                        1,
+                        NULL,
+                        &vdata);
 
    /* Left */
    vertex_data[0].point.x = 0.0;
@@ -224,8 +256,16 @@ void init_shape(void)
    vertex_data[3].colr.val.general.y = 0.0;
    vertex_data[3].colr.val.general.z = 1.0;
 
-   vdata.ptco = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_COLOUR, &fdata, 4, &vdata);
+   vdata.num_vertices = 4;
+   vdata.vertex_data.ptcolrs = vertex_data;
+   pfill_area_set3_data(PFA_NONE,
+                        PVERT_COLOUR,
+                        0,
+                        PMODEL_RGB,
+                        &fdata,
+                        1,
+                        NULL,
+                        &vdata);
 
    /* Right */
    vertex_data[0].point.x = WIDTH;
@@ -260,8 +300,16 @@ void init_shape(void)
    vertex_data[3].colr.val.general.y = 1.0;
    vertex_data[3].colr.val.general.z = 1.0;
 
-   vdata.ptco = vertex_data;
-   pfill_area3_data(PFA_NONE, PVERT_COLOUR, &fdata, 4, &vdata);
+   vdata.num_vertices = 4;
+   vdata.vertex_data.ptcolrs = vertex_data;
+   pfill_area_set3_data(PFA_NONE,
+                        PVERT_COLOUR,
+                        0,
+                        PMODEL_RGB,
+                        &fdata,
+                        1,
+                        NULL,
+                        &vdata);
 }
 
 int main(int argc, char *argv[])
