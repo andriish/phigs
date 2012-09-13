@@ -83,8 +83,8 @@ void init_shape(void)
    vdata.num_vertices = 4;
    vdata.vertex_data.ptcolrs = vertex_data;
    pfill_area_set3_data(PFA_NONE,
-                        PVERT_COLOUR,
                         0,
+                        PVERT_COLOUR,
                         PMODEL_RGB,
                         &fdata,
                         1,
@@ -127,8 +127,8 @@ void init_shape(void)
    vdata.num_vertices = 4;
    vdata.vertex_data.ptcolrs = vertex_data;
    pfill_area_set3_data(PFA_NONE,
-                        PVERT_COLOUR,
                         0,
+                        PVERT_COLOUR,
                         PMODEL_RGB,
                         &fdata,
                         1,
@@ -171,8 +171,8 @@ void init_shape(void)
    vdata.num_vertices = 4;
    vdata.vertex_data.ptcolrs = vertex_data;
    pfill_area_set3_data(PFA_NONE,
-                        PVERT_COLOUR,
                         0,
+                        PVERT_COLOUR,
                         PMODEL_RGB,
                         &fdata,
                         1,
@@ -215,8 +215,8 @@ void init_shape(void)
    vdata.num_vertices = 4;
    vdata.vertex_data.ptcolrs = vertex_data;
    pfill_area_set3_data(PFA_NONE,
-                        PVERT_COLOUR,
                         0,
+                        PVERT_COLOUR,
                         PMODEL_RGB,
                         &fdata,
                         1,
@@ -259,8 +259,8 @@ void init_shape(void)
    vdata.num_vertices = 4;
    vdata.vertex_data.ptcolrs = vertex_data;
    pfill_area_set3_data(PFA_NONE,
-                        PVERT_COLOUR,
                         0,
+                        PVERT_COLOUR,
                         PMODEL_RGB,
                         &fdata,
                         1,
@@ -303,8 +303,8 @@ void init_shape(void)
    vdata.num_vertices = 4;
    vdata.vertex_data.ptcolrs = vertex_data;
    pfill_area_set3_data(PFA_NONE,
-                        PVERT_COLOUR,
                         0,
+                        PVERT_COLOUR,
                         PMODEL_RGB,
                         &fdata,
                         1,
