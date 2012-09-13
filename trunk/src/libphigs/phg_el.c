@@ -626,10 +626,12 @@ void pfill_area_set3_data(
 
       ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA3_DATA;
       ARGS_ELMT_SIZE(&args) = 5 * sizeof(Pint) + facet_size;
+#if 0
       for (i = 0; i < nfa; i++) {
          ARGS_ELMT_SIZE(&args) += 1;   /* Pint num_edges */
          ARGS_ELMT_SIZE(&args) += edata[i].num_edges * sizeof(Pedge_flag);
       }
+#endif
       for (i = 0; i < nfa; i++) {
          ARGS_ELMT_SIZE(&args) += 1;   /* Pint num_vertices */
          ARGS_ELMT_SIZE(&args) += vdata[i].num_vertices * vertex_size;
@@ -638,7 +640,7 @@ void pfill_area_set3_data(
       ARGS_ELMT_DATA(&args).fasd3.fflag = fflag;
       ARGS_ELMT_DATA(&args).fasd3.eflag = eflag;
       ARGS_ELMT_DATA(&args).fasd3.vflag = vflag;
-      ARGS_ELMT_DATA(&args).fasd3.vflag = colr_type;
+      ARGS_ELMT_DATA(&args).fasd3.colr_type = colr_type;
       memcpy(&ARGS_ELMT_DATA(&args).fasd3.fdata, fdata, sizeof(Pfacet_data3));
       ARGS_ELMT_DATA(&args).fasd3.nfa = nfa;
       ARGS_ELMT_DATA(&args).fasd3.edata = edata;

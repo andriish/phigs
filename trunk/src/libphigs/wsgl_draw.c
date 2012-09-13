@@ -562,6 +562,46 @@ void phg_draw_fill_area_set3(
 }
 
 /*******************************************************************************
+ * phg_print_fasd3
+ *
+ * DESCR:       Print fasd3
+ * RETURNS:	N/A
+ */
+
+static void phg_print_fasd3(
+    Pfasd3 *fasd3
+    )
+{
+   printf("fflag: %d\n", fasd3->fflag);
+   printf("eflag: %d\n", fasd3->eflag);
+   printf("vflag: %d\n", fasd3->vflag);
+   printf("colr_type: %d\n", fasd3->colr_type);
+   switch (fasd3->fflag) {
+      case PFA_COLOUR:
+         printf("Colour: %f %f %f\n",
+                fasd3->fdata.colr.val.general.x,
+                fasd3->fdata.colr.val.general.y,
+                fasd3->fdata.colr.val.general.z);
+         break;
+
+      case PFA_NORMAL:
+         printf("Normal: %f %f %f\n",
+                fasd3->fdata.normal.delta_x,
+                fasd3->fdata.normal.delta_y,
+                fasd3->fdata.normal.delta_z);
+         break;
+
+      case PFA_COLOUR_NORMAL:
+         break;
+
+      default:
+         break;
+   }
+
+   printf("nfa: %d\n", fasd3->nfa);
+}
+
+/*******************************************************************************
  * phg_facet_head3
  *
  * DESCR:	Get facet head information helper function
@@ -579,9 +619,8 @@ static void* phg_facet_head3(
    fasd3->fflag = data[0];
    fasd3->eflag = data[1];
    fasd3->vflag = data[2];
-   fasd3->vflag = data[3];
-   fasd3->colr_type = data[4];
-   tp = (char *) &data[5];
+   fasd3->colr_type = data[3];
+   tp = (char *) &data[4];
 
    switch (fasd3->fflag) {
       case PFA_COLOUR:
