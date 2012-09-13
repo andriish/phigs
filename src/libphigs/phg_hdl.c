@@ -858,6 +858,8 @@ int phg_handle_fasd3(
    Pfasd3 *fasd3;
    Pint *data;
    char *tp;
+   Pint i;
+   Pint nfa;
    Pint num_vertices;
 
    switch (op) {
@@ -869,7 +871,11 @@ int phg_handle_fasd3(
          fasd3 = &ARGS_ELMT_DATA(argdata).fasd3;
          *data = fasd3->fflag;
          data = &data[1];
+         *data = fasd3->eflag;
+         data = &data[1];
          *data = fasd3->vflag;
+         data = &data[1];
+         *data = fasd3->colr_type;
          tp = (char *) &data[1];
 
          switch(fasd3->fflag) {
@@ -899,36 +905,49 @@ int phg_handle_fasd3(
          }
 
          data = (Pint *) tp;
-         num_vertices = fasd3->num_vertices;
-         *data = num_vertices;
+         nfa = fasd3->nfa;
+         *data = nfa;
+         tp = (char *) &data[1];
 
-         switch (fasd3->vflag) {
-            case PVERT_POINT:
-               memcpy(&data[1],
-                      fasd3->vdata->point,
-                      num_vertices * sizeof(Ppoint3));
-               break;
+         for (i = 0; i < nfa; i++) {
+            num_vertices = fasd3->vdata[i].num_vertices;
 
-            case PVERT_COLOUR:
-               memcpy(&data[1],
-                      fasd3->vdata->ptco,
-                      num_vertices * sizeof(Pptco3));
-               break;
+            data = (Pint *) tp;
+            *data = num_vertices;
+            tp = (char *) &data[1];
 
-            case PVERT_NORMAL:
-               memcpy(&data[1],
-                      fasd3->vdata->ptnorm,
-                      num_vertices * sizeof(Pptnorm3));
-               break;
+            switch (fasd3->vflag) {
+               case PVERT_POINT:
+                  memcpy(tp,
+                         fasd3->vdata[i].vertex_data.points,
+                         num_vertices * sizeof(Ppoint3));
+                  tp += num_vertices * sizeof(Ppoint3);
+                  break;
 
-            case PVERT_COLOUR_NORMAL:
-               memcpy(&data[1],
-                      fasd3->vdata->ptconorm,
-                      num_vertices * sizeof(Pptconorm3));
-               break;
+               case PVERT_COLOUR:
+                  memcpy(tp,
+                         fasd3->vdata[i].vertex_data.ptcolrs,
+                         num_vertices * sizeof(Pptco3));
+                  tp += num_vertices * sizeof(Pptco3);
+                  break;
 
-            default:
-               break;
+               case PVERT_NORMAL:
+                  memcpy(tp,
+                         fasd3->vdata[i].vertex_data.ptnorms,
+                         num_vertices * sizeof(Pptnorm3));
+                  tp += num_vertices * sizeof(Pptnorm3);
+                  break;
+
+               case PVERT_COLOUR_NORMAL:
+                  memcpy(tp,
+                         fasd3->vdata[i].vertex_data.ptconorms,
+                         num_vertices * sizeof(Pptconorm3));
+                  tp += num_vertices * sizeof(Pptconorm3);
+                  break;
+
+               default:
+                  break;
+            }
          }
          break;
 

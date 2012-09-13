@@ -557,24 +557,28 @@ void pfill_area_set3(
 }
 
 /*******************************************************************************
- * pfill_area3_data
+ * pfill_area_set3_data
  *
- * DESCR:	Creates a new element - Fill area with data 3D
+ * DESCR:	Creates a new element - Fill area set with data 3D
  * RETURNS:	N/A
  */
 
-void pfill_area3_data(
+void pfill_area_set3_data(
    Pint fflag,
+   Pint eflag,
    Pint vflag,
+   Pint colr_type,
    Pfacet_data3 *fdata,
-   Pint num_vertices,
-   Pfacet_vdata_arr3 *vdata
+   Pint nfa,
+   Pedge_data_list *edata,
+   Pfacet_vdata_list3 *vdata
    )
 {
+   Pint i;
    unsigned facet_size, vertex_size;
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_fill_area3_data);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_fill_area_set3_data);
 
    if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
       ERR_REPORT(PHG_ERH, ERR5);
@@ -621,12 +625,23 @@ void pfill_area3_data(
       }
 
       ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA3_DATA;
-      ARGS_ELMT_SIZE(&args) = 3 * sizeof(Pint) +
-         facet_size + vertex_size * num_vertices;
+      ARGS_ELMT_SIZE(&args) = 5 * sizeof(Pint) + facet_size;
+      for (i = 0; i < nfa; i++) {
+         ARGS_ELMT_SIZE(&args) += 1;   /* Pint num_edges */
+         ARGS_ELMT_SIZE(&args) += edata[i].num_edges * sizeof(Pedge_flag);
+      }
+      for (i = 0; i < nfa; i++) {
+         ARGS_ELMT_SIZE(&args) += 1;   /* Pint num_vertices */
+         ARGS_ELMT_SIZE(&args) += vdata[i].num_vertices * vertex_size;
+      }
+
       ARGS_ELMT_DATA(&args).fasd3.fflag = fflag;
+      ARGS_ELMT_DATA(&args).fasd3.eflag = eflag;
       ARGS_ELMT_DATA(&args).fasd3.vflag = vflag;
+      ARGS_ELMT_DATA(&args).fasd3.vflag = colr_type;
       memcpy(&ARGS_ELMT_DATA(&args).fasd3.fdata, fdata, sizeof(Pfacet_data3));
-      ARGS_ELMT_DATA(&args).fasd3.num_vertices = num_vertices;
+      ARGS_ELMT_DATA(&args).fasd3.nfa = nfa;
+      ARGS_ELMT_DATA(&args).fasd3.edata = edata;
       ARGS_ELMT_DATA(&args).fasd3.vdata = vdata;
       phg_add_el(PHG_CSS, &args);
    }

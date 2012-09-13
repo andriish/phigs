@@ -562,38 +562,40 @@ void phg_draw_fill_area_set3(
 }
 
 /*******************************************************************************
- * phg_facet_head
+ * phg_facet_head3
  *
  * DESCR:	Get facet head information helper function
- * RETURNS:	N/A
+ * RETURNS:	Pointer to after header
  */
 
-static void phg_facet_head(
-   Pint *fflag,
-   Pint *vflag,
-   Pfacet_data3 **fdata,
-   Pint *num_vertices,
-   Pfacet_vdata_arr3 *vdata,
+static void* phg_facet_head3(
+   Pfasd3 *fasd3,
    void *pdata
    )
 {
    char *tp;
    Pint *data = (Pint *) pdata;
 
-   *fflag = data[0];
-   *vflag = data[1];
-   tp = (char *) &data[2];
-   *fdata = (Pfacet_data3 *) tp;
-   switch (*fflag) {
+   fasd3->fflag = data[0];
+   fasd3->eflag = data[1];
+   fasd3->vflag = data[2];
+   fasd3->vflag = data[3];
+   fasd3->colr_type = data[4];
+   tp = (char *) &data[5];
+
+   switch (fasd3->fflag) {
       case PFA_COLOUR:
+         memcpy(&fasd3->fdata.colr, tp, sizeof(Pgcolr));
          tp += sizeof(Pgcolr);
          break;
 
       case PFA_NORMAL:
+         memcpy(&fasd3->fdata.normal, tp, sizeof(Pvec3));
          tp += sizeof(Pvec3);
          break;
 
       case PFA_COLOUR_NORMAL:
+         memcpy(&fasd3->fdata.conorm, tp, sizeof(Pptconorm3));
          tp += sizeof(Pptconorm3);
          break;
 
@@ -602,27 +604,57 @@ static void phg_facet_head(
    }
 
    data = (Pint *) tp;
-   *num_vertices = data[0];
-   switch (*vflag) {
+   fasd3->nfa = data[0];
+
+   return (&data[1]);
+}
+
+/*******************************************************************************
+ * phg_next_facet_vdata3
+ *
+ * DESCR:	Get facet vertex data helper function
+ * NOTE:        Remember to set up Pfasd3->vdata to point to a valid
+ *              Pfacet_vdata_list3 structure
+ * RETURNS:	Pointer to next vertex array
+ */
+
+static void* phg_next_facet_vdata3(
+   Pfasd3 *fasd3,
+   void *pdata
+   )
+{
+   Pint *data = (Pint *) pdata;
+   char *tp;
+
+   fasd3->vdata->num_vertices = data[0];
+   tp = (char *) &data[1];
+
+   switch (fasd3->vflag) {
       case PVERT_POINT:
-         vdata->point = (Ppoint3 *) &data[1];
+         fasd3->vdata->vertex_data.points = (Ppoint3 *) tp;
+         tp += fasd3->vdata->num_vertices * sizeof(Ppoint3);
          break;
 
       case PVERT_COLOUR:
-         vdata->ptco = (Pptco3 *) &data[1];
+         fasd3->vdata->vertex_data.ptcolrs = (Pptco3 *) tp;
+         tp += fasd3->vdata->num_vertices * sizeof(Pptco3);
          break;
 
       case PVERT_NORMAL:
-         vdata->ptnorm = (Pptnorm3 *) &data[1];
+         fasd3->vdata->vertex_data.ptnorms = (Pptnorm3 *) tp;
+         tp += fasd3->vdata->num_vertices * sizeof(Pptnorm3);
          break;
 
       case PVERT_COLOUR_NORMAL:
-         vdata->ptconorm = (Pptconorm3 *) &data[1];
+         fasd3->vdata->vertex_data.ptconorms = (Pptconorm3 *) tp;
+         tp += fasd3->vdata->num_vertices * sizeof(Pptconorm3);
          break;
 
       default:
          break;
-    }
+   }
+
+   return tp;
 }
 
 /*******************************************************************************
@@ -1322,36 +1354,51 @@ void phg_draw_fill_area3_data(
    Ws_attr_st *ast
    )
 {
-   Pint fflag;
-   Pint vflag;
-   Pfacet_data3 *fdata;
-   Pint num_vertices;
-   Pfacet_vdata_arr3 vdata;
+   Pfasd3 fasd3;
+   Pfacet_vdata_list3 vdata;
 
-   phg_facet_head(&fflag, &vflag, &fdata, &num_vertices, &vdata, pdata);
+   fasd3.vdata = &vdata;
+   pdata = phg_facet_head3(&fasd3, pdata);
+   pdata = phg_next_facet_vdata3(&fasd3, pdata);
 
-   switch (vflag) {
+   switch (fasd3.vflag) {
       case PVERT_POINT:
-         phg_draw_fill_area3_point_data(ws, fflag, vflag, fdata,
-                                        num_vertices, vdata.point,
+         phg_draw_fill_area3_point_data(ws,
+                                        fasd3.fflag,
+                                        fasd3.vflag,
+                                        &fasd3.fdata,
+                                        fasd3.vdata->num_vertices,
+                                        fasd3.vdata->vertex_data.points,
                                         ast);
          break;
 
       case PVERT_COLOUR:
-         phg_draw_fill_area3_ptco_data(ws, fflag, vflag, fdata,
-                                       num_vertices, vdata.ptco,
+         phg_draw_fill_area3_ptco_data(ws,
+                                       fasd3.fflag,
+                                       fasd3.vflag,
+                                       &fasd3.fdata,
+                                       fasd3.vdata->num_vertices,
+                                       fasd3.vdata->vertex_data.ptcolrs,
                                        ast);
          break;
 
       case PVERT_NORMAL:
-         phg_draw_fill_area3_ptnorm_data(ws, fflag, vflag, fdata,
-                                         num_vertices, vdata.ptnorm,
+         phg_draw_fill_area3_ptnorm_data(ws,
+                                         fasd3.fflag,
+                                         fasd3.vflag,
+                                         &fasd3.fdata,
+                                         fasd3.vdata->num_vertices,
+                                         fasd3.vdata->vertex_data.ptnorms,
                                          ast);
          break;
 
       case PVERT_COLOUR_NORMAL:
-         phg_draw_fill_area3_ptconorm_data(ws, fflag, vflag, fdata,
-                                           num_vertices, vdata.ptconorm,
+         phg_draw_fill_area3_ptconorm_data(ws,
+                                           fasd3.fflag,
+                                           fasd3.vflag,
+                                           &fasd3.fdata,
+                                           fasd3.vdata->num_vertices,
+                                           fasd3.vdata->vertex_data.ptconorms,
                                            ast);
          break;
 

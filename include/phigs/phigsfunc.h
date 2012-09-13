@@ -208,7 +208,7 @@
 #define         Pfn_set_text_colr               (313)
 #define         Pfn_set_int_colr                (316)
 #define         Pfn_set_edge_colr               (327)
-#define         Pfn_fill_area3_data             (328)
+#define         Pfn_fill_area_set3_data         (328)
 #define         Pfn_set_light_src_rep           (329)
 #define         Pfn_set_light_src_state         (330)
 #define         Pfn_set_int_shad_meth           (331)
@@ -841,18 +841,21 @@ void pfill_area_set3(
    );
 
 /*******************************************************************************
- * pfill_area3_data
+ * pfill_area_set3_data
  *
- * DESCR:       Creates a new element - Fill area with data 3D
+ * DESCR:       Creates a new element - Fill area set with data 3D
  * RETURNS:     N/A
  */
 
-void pfill_area3_data(
+void pfill_area_set3_data(
    Pint fflag,
+   Pint eflag,
    Pint vflag,
+   Pint colr_type,
    Pfacet_data3 *fdata,
-   Pint num_vertices,
-   Pfacet_vdata_arr3 *vdata
+   Pint nfa,
+   Pedge_data_list *edata,
+   Pfacet_vdata_list3 *vdata
    );
 
 /*******************************************************************************
