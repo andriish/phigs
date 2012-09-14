@@ -49,16 +49,16 @@
 #define PHIGS_HLHSR_ID_ON         1
 
 /* Facet data flags */
-#define PFA_NONE                  0
-#define PFA_COLOUR                1
-#define PFA_NORMAL                2
-#define PFA_COLOUR_NORMAL         3
+#define PFACET_NONE               0
+#define PFACET_COLOUR             1
+#define PFACET_NORMAL             2
+#define PFACET_COLOUR_NORMAL      3
 
 /* Vertex data flags */
-#define PVERT_POINT               0
-#define PVERT_COLOUR              1
-#define PVERT_NORMAL              2
-#define PVERT_COLOUR_NORMAL       3
+#define PVERT_COORD               0
+#define PVERT_COORD_COLOUR        1
+#define PVERT_COORD_NORMAL        2
+#define PVERT_COORD_COLOUR_NORMAL 3
 
 /* Shading methods */
 #define PSD_NONE                  1
