@@ -585,15 +585,15 @@ void pfill_area_set3_data(
    }
    else {
       switch (fflag) {
-         case PFA_COLOUR:
+         case PFACET_COLOUR:
             facet_size = sizeof(Pgcolr);
             break;
 
-         case PFA_NORMAL:
+         case PFACET_NORMAL:
             facet_size = sizeof(Pvec3);
             break;
 
-         case PFA_COLOUR_NORMAL:
+         case PFACET_COLOUR_NORMAL:
             facet_size = sizeof(Pptconorm3);
             break;
 
@@ -603,19 +603,19 @@ void pfill_area_set3_data(
       }
 
       switch (vflag) {
-         case PVERT_POINT:
+         case PVERT_COORD:
             vertex_size = sizeof(Ppoint3);
             break;
 
-         case PVERT_COLOUR:
+         case PVERT_COORD_COLOUR:
             vertex_size = sizeof(Pptco3);
             break;
 
-         case PVERT_NORMAL:
+         case PVERT_COORD_NORMAL:
             vertex_size = sizeof(Pptnorm3);
             break;
 
-         case PVERT_COLOUR_NORMAL:
+         case PVERT_COORD_COLOUR_NORMAL:
             vertex_size = sizeof(Pptconorm3);
             break;
 

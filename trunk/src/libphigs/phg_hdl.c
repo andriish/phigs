@@ -879,21 +879,21 @@ int phg_handle_fasd3(
          tp = (char *) &data[1];
 
          switch(fasd3->fflag) {
-            case PFA_COLOUR:
+            case PFACET_COLOUR:
                memcpy(tp,
                       &fasd3->fdata.colr,
                       sizeof(Pgcolr));
                tp += sizeof(Pgcolr);
                break;
 
-            case PFA_NORMAL:
+            case PFACET_NORMAL:
                memcpy(tp,
                       &fasd3->fdata.normal,
                       sizeof(Pvec3));
                tp += sizeof(Pvec3);
                break;
 
-            case PFA_COLOUR_NORMAL:
+            case PFACET_COLOUR_NORMAL:
                memcpy(tp,
                       &fasd3->fdata.conorm,
                       sizeof(Pptconorm3));
@@ -917,28 +917,28 @@ int phg_handle_fasd3(
             tp = (char *) &data[1];
 
             switch (fasd3->vflag) {
-               case PVERT_POINT:
+               case PVERT_COORD:
                   memcpy(tp,
                          fasd3->vdata[i].vertex_data.points,
                          num_vertices * sizeof(Ppoint3));
                   tp += num_vertices * sizeof(Ppoint3);
                   break;
 
-               case PVERT_COLOUR:
+               case PVERT_COORD_COLOUR:
                   memcpy(tp,
                          fasd3->vdata[i].vertex_data.ptcolrs,
                          num_vertices * sizeof(Pptco3));
                   tp += num_vertices * sizeof(Pptco3);
                   break;
 
-               case PVERT_NORMAL:
+               case PVERT_COORD_NORMAL:
                   memcpy(tp,
                          fasd3->vdata[i].vertex_data.ptnorms,
                          num_vertices * sizeof(Pptnorm3));
                   tp += num_vertices * sizeof(Pptnorm3);
                   break;
 
-               case PVERT_COLOUR_NORMAL:
+               case PVERT_COORD_COLOUR_NORMAL:
                   memcpy(tp,
                          fasd3->vdata[i].vertex_data.ptconorms,
                          num_vertices * sizeof(Pptconorm3));

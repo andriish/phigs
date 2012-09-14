@@ -456,11 +456,11 @@ Pgcolr* phg_get_facet_colr(
    Pgcolr *gcolr;
 
    switch (fflag) {
-      case PFA_COLOUR:
+      case PFACET_COLOUR:
          gcolr = &fdata->colr;
          break;
 
-      case PFA_COLOUR_NORMAL:
+      case PFACET_COLOUR_NORMAL:
          gcolr = &fdata->conorm.colr;
          break;
 
