@@ -561,6 +561,7 @@ void phg_draw_fill_area_set3(
    }
 }
 
+#ifdef DEBUG
 /*******************************************************************************
  * phg_print_fasd3
  *
@@ -600,6 +601,7 @@ static void phg_print_fasd3(
 
    printf("nfa: %d\n", fasd3->nfa);
 }
+#endif
 
 /*******************************************************************************
  * phg_facet_head3
@@ -1393,6 +1395,7 @@ void phg_draw_fill_area3_data(
    Ws_attr_st *ast
    )
 {
+   Pint i;
    Pfasd3 fasd3;
    Pfacet_vdata_list3 vdata;
 
@@ -1400,49 +1403,55 @@ void phg_draw_fill_area3_data(
    pdata = phg_facet_head3(&fasd3, pdata);
    pdata = phg_next_facet_vdata3(&fasd3, pdata);
 
-   switch (fasd3.vflag) {
-      case PVERT_COORD:
-         phg_draw_fill_area3_point_data(ws,
-                                        fasd3.fflag,
-                                        fasd3.vflag,
-                                        &fasd3.fdata,
-                                        fasd3.vdata->num_vertices,
-                                        fasd3.vdata->vertex_data.points,
-                                        ast);
-         break;
+   for (i = 0; i < fasd3.nfa; i++) {
 
-      case PVERT_COORD_COLOUR:
-         phg_draw_fill_area3_ptco_data(ws,
-                                       fasd3.fflag,
-                                       fasd3.vflag,
-                                       &fasd3.fdata,
-                                       fasd3.vdata->num_vertices,
-                                       fasd3.vdata->vertex_data.ptcolrs,
-                                       ast);
-         break;
-
-      case PVERT_COORD_NORMAL:
-         phg_draw_fill_area3_ptnorm_data(ws,
-                                         fasd3.fflag,
-                                         fasd3.vflag,
-                                         &fasd3.fdata,
-                                         fasd3.vdata->num_vertices,
-                                         fasd3.vdata->vertex_data.ptnorms,
-                                         ast);
-         break;
-
-      case PVERT_COORD_COLOUR_NORMAL:
-         phg_draw_fill_area3_ptconorm_data(ws,
+      switch (fasd3.vflag) {
+         case PVERT_COORD:
+            phg_draw_fill_area3_point_data(ws,
                                            fasd3.fflag,
                                            fasd3.vflag,
                                            &fasd3.fdata,
                                            fasd3.vdata->num_vertices,
-                                           fasd3.vdata->vertex_data.ptconorms,
+                                           fasd3.vdata->vertex_data.points,
                                            ast);
-         break;
+            break;
 
-      default:
-         break;
+         case PVERT_COORD_COLOUR:
+            phg_draw_fill_area3_ptco_data(ws,
+                                          fasd3.fflag,
+                                          fasd3.vflag,
+                                          &fasd3.fdata,
+                                          fasd3.vdata->num_vertices,
+                                          fasd3.vdata->vertex_data.ptcolrs,
+                                          ast);
+            break;
+
+         case PVERT_COORD_NORMAL:
+            phg_draw_fill_area3_ptnorm_data(ws,
+                                            fasd3.fflag,
+                                            fasd3.vflag,
+                                            &fasd3.fdata,
+                                            fasd3.vdata->num_vertices,
+                                            fasd3.vdata->vertex_data.ptnorms,
+                                            ast);
+            break;
+
+         case PVERT_COORD_COLOUR_NORMAL:
+            phg_draw_fill_area3_ptconorm_data(ws,
+                                              fasd3.fflag,
+                                              fasd3.vflag,
+                                              &fasd3.fdata,
+                                              fasd3.vdata->num_vertices,
+                                              fasd3.vdata->vertex_data.
+                                                 ptconorms,
+                                              ast);
+            break;
+
+         default:
+            break;
+      }
+
+      pdata = phg_next_facet_vdata3(&fasd3, pdata);
    }
 }
 
