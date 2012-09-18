@@ -628,12 +628,12 @@ void pfill_area_set3_data(
       ARGS_ELMT_SIZE(&args) = 5 * sizeof(Pint) + facet_size;
 #if 0
       for (i = 0; i < nfa; i++) {
-         ARGS_ELMT_SIZE(&args) += 1;   /* Pint num_edges */
+         ARGS_ELMT_SIZE(&args) += sizeof(Pint);   /* Pint num_edges */
          ARGS_ELMT_SIZE(&args) += edata[i].num_edges * sizeof(Pedge_flag);
       }
 #endif
       for (i = 0; i < nfa; i++) {
-         ARGS_ELMT_SIZE(&args) += 1;   /* Pint num_vertices */
+         ARGS_ELMT_SIZE(&args) += sizeof(Pint);   /* Pint num_vertices */
          ARGS_ELMT_SIZE(&args) += vdata[i].num_vertices * vertex_size;
       }
 
