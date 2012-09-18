@@ -84,7 +84,7 @@ void init_checker(int num)
 
       x += dx;
       y += dy;
-      p += 4;
+      p = &p[4];
    }
 
    pfill_area_set3_data(PFACET_COLOUR,
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 
    popen_struct(0);
    pset_view_ind(view_index);
-   init_checker(2);
+   init_checker(6);
    pclose_struct();
 
    popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);
