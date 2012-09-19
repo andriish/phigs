@@ -909,6 +909,22 @@ int phg_handle_fasd3(
          *data = nfa;
          tp = (char *) &data[1];
 
+#if 0
+         if (fasd3->eflag == PEDGE_VISIBILITY) {
+
+            for (i = 0; i < nfa; i++) {
+               num_vertices = fasd3->edata[i].num_edges;
+               data = (Pint *) tp;
+               *data = num_vertices;
+               tp = (char *) &data[1];
+               memcpy(tp,
+                      fasd3->edata[i].edgedata.edges,
+                      sizeof(Pedge_flag) * num_vertices);
+               tp += sizeof(Pedge_flag) * num_vertices;
+            }
+         }
+#endif
+
          for (i = 0; i < nfa; i++) {
             num_vertices = fasd3->vdata[i].num_vertices;
 

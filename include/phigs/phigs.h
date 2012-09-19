@@ -54,6 +54,10 @@
 #define PFACET_NORMAL             2
 #define PFACET_COLOUR_NORMAL      3
 
+/* Edge data flags */
+#define PEDGE_NONE                0
+#define PEDGE_VISIBILITY          1
+
 /* Vertex data flags */
 #define PVERT_COORD               0
 #define PVERT_COORD_COLOUR        1
