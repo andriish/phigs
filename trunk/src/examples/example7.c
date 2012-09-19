@@ -53,6 +53,8 @@ void init_checker(int num)
    Ppoint3 *points = (Ppoint3 *) malloc(sizeof(Ppoint3) * 4 * num);
    Pfacet_vdata_list3 *vdata = (Pfacet_vdata_list3 *) malloc(
       sizeof(Pfacet_vdata_list3) * num);
+   Pedge_flag *edges = (Pedge_flag *) malloc(sizeof(Pedge_flag) * 4 * num);
+   Pedge_data_list *edata = malloc(sizeof(Pedge_data_list) * num);
    Ppoint3 *p;
 
    fdata.colr.type = PMODEL_RGB;
@@ -61,6 +63,7 @@ void init_checker(int num)
    fdata.colr.val.general.z = 0.0;
 
    p = points;
+   memset(edges, 1, sizeof(Pedge_flag) * 4 * num);
 
    for (i = 0; i < num; i++) {
       p[0].x = x;
@@ -82,18 +85,21 @@ void init_checker(int num)
       vdata[i].num_vertices = 4;
       vdata[i].vertex_data.points = p;
 
+      edata[i].num_edges = 4;
+      edata[i].edgedata.edges = &edges[i * 4];
+
       x += dx;
       y += dy;
       p = &p[4];
    }
 
    pfill_area_set3_data(PFACET_COLOUR,
-                        0,
+                        PEDGE_NONE,
                         PVERT_COORD,
                         PMODEL_RGB,
                         &fdata,
                         num,
-                        NULL,
+                        edata,
                         vdata);
 
    free(vdata);
@@ -115,7 +121,7 @@ int main(int argc, char *argv[])
 
    popen_struct(0);
    pset_view_ind(view_index);
-   init_checker(6);
+   init_checker(8);
    pclose_struct();
 
    popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);

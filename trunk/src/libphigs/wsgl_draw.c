@@ -607,10 +607,10 @@ static void phg_print_fasd3(
  * phg_facet_head3
  *
  * DESCR:	Get facet head information helper function
- * RETURNS:	Pointer to after header
+ * RETURNS:	N/A
  */
 
-static void* phg_facet_head3(
+static void phg_facet_head3(
    Pfasd3 *fasd3,
    void *pdata
    )
@@ -646,9 +646,37 @@ static void* phg_facet_head3(
 
    data = (Pint *) tp;
    fasd3->nfa = data[0];
-
-   return (&data[1]);
+   fasd3->vdata->num_vertices = data[1];
+   fasd3->vdata->vertex_data.points = (Ppoint3 *) &data[2];
 }
+
+#if 0
+/*******************************************************************************
+ * phg_next_facet_edata
+ *
+ * DESCR:	Get facet edge data helper function
+ * NOTE:        Remember to set up Pfasd3->edata to point to a valid
+ *              Pedge_data_list structure
+ * RETURNS:	N/A
+ */
+
+static void phg_next_facet_edata(
+   Pfasd3 *fasd3,
+   void *pdata
+   )
+{
+   Pint *data;
+   char *tp = (char *) pdata;
+
+   if (fasd3->eflag == PEDGE_VISIBILITY) {
+      data = (Pint *) tp;
+      fasd3->edata->num_edges = data[0];
+      tp = (char *) &data[1];
+      fasd3->edata->edgedata.edges = (Pedge_flag *) tp;
+      tp += sizeof(Pedge_flag) * fasd3->edata->num_edges;
+   }
+}
+#endif
 
 /*******************************************************************************
  * phg_next_facet_vdata3
@@ -656,46 +684,57 @@ static void* phg_facet_head3(
  * DESCR:	Get facet vertex data helper function
  * NOTE:        Remember to set up Pfasd3->vdata to point to a valid
  *              Pfacet_vdata_list3 structure
- * RETURNS:	Pointer to next vertex array
+ * RETURNS:	N/A
  */
 
-static void* phg_next_facet_vdata3(
-   Pfasd3 *fasd3,
-   void *pdata
+static void phg_next_facet_vdata3(
+   Pfasd3 *fasd3
    )
 {
-   Pint *data = (Pint *) pdata;
+   Pint *data;
    char *tp;
-
-   fasd3->vdata->num_vertices = data[0];
-   tp = (char *) &data[1];
+   Pint num_vertices = fasd3->vdata->num_vertices;
 
    switch (fasd3->vflag) {
       case PVERT_COORD:
-         fasd3->vdata->vertex_data.points = (Ppoint3 *) tp;
-         tp += fasd3->vdata->num_vertices * sizeof(Ppoint3);
+         data = (Pint *) fasd3->vdata->vertex_data.points;
+         tp = (char *) data;
+         tp += sizeof(Ppoint3) * num_vertices;
+         data = (Pint *) tp;
+         fasd3->vdata->num_vertices = data[0];
+         fasd3->vdata->vertex_data.points = (Ppoint3 *) &data[1];
          break;
 
       case PVERT_COORD_COLOUR:
-         fasd3->vdata->vertex_data.ptcolrs = (Pptco3 *) tp;
-         tp += fasd3->vdata->num_vertices * sizeof(Pptco3);
+         data = (Pint *) fasd3->vdata->vertex_data.ptcolrs;
+         tp = (char *) data;
+         tp += sizeof(Pptco3) * num_vertices;
+         data = (Pint *) tp;
+         fasd3->vdata->num_vertices = data[0];
+         fasd3->vdata->vertex_data.ptcolrs = (Pptco3 *) &data[1];
          break;
 
       case PVERT_COORD_NORMAL:
-         fasd3->vdata->vertex_data.ptnorms = (Pptnorm3 *) tp;
-         tp += fasd3->vdata->num_vertices * sizeof(Pptnorm3);
+         data = (Pint *) fasd3->vdata->vertex_data.ptnorms;
+         tp = (char *) data;
+         tp += sizeof(Pptnorm3);
+         data = (Pint *) tp;
+         fasd3->vdata->num_vertices = data[0];
+         fasd3->vdata->vertex_data.ptnorms = (Pptnorm3 *) &data[1];
          break;
 
       case PVERT_COORD_COLOUR_NORMAL:
-         fasd3->vdata->vertex_data.ptconorms = (Pptconorm3 *) tp;
-         tp += fasd3->vdata->num_vertices * sizeof(Pptconorm3);
+         data = (Pint *) fasd3->vdata->vertex_data.ptconorms;
+         tp = (char *) data;
+         tp += sizeof(Pptconorm3) * num_vertices;
+         data = (Pint *) tp;
+         fasd3->vdata->num_vertices = data[0];
+         fasd3->vdata->vertex_data.ptconorms = (Pptconorm3 *) &data[1];
          break;
 
       default:
          break;
    }
-
-   return tp;
 }
 
 /*******************************************************************************
@@ -1397,11 +1436,12 @@ void phg_draw_fill_area3_data(
 {
    Pint i;
    Pfasd3 fasd3;
+   Pedge_data_list edata;
    Pfacet_vdata_list3 vdata;
 
+   fasd3.edata = &edata;
    fasd3.vdata = &vdata;
-   pdata = phg_facet_head3(&fasd3, pdata);
-   pdata = phg_next_facet_vdata3(&fasd3, pdata);
+   phg_facet_head3(&fasd3, pdata);
 
    for (i = 0; i < fasd3.nfa; i++) {
 
@@ -1451,7 +1491,7 @@ void phg_draw_fill_area3_data(
             break;
       }
 
-      pdata = phg_next_facet_vdata3(&fasd3, pdata);
+      phg_next_facet_vdata3(&fasd3);
    }
 }
 
