@@ -647,7 +647,26 @@ static void phg_facet_head3(
    data = (Pint *) tp;
    fasd3->nfa = data[0];
    fasd3->vdata->num_vertices = data[1];
-   fasd3->vdata->vertex_data.points = (Ppoint3 *) &data[2];
+   switch (fasd3->vflag) {
+      case PVERT_COORD:
+         fasd3->vdata->vertex_data.points = (Ppoint3 *) &data[2];
+         break;
+
+      case PVERT_COORD_COLOUR:
+         fasd3->vdata->vertex_data.ptcolrs = (Pptco3 *) &data[2];
+         break;
+
+      case PVERT_COORD_NORMAL:
+         fasd3->vdata->vertex_data.ptnorms = (Pptnorm3 *) &data[2];
+         break;
+
+      case PVERT_COORD_COLOUR_NORMAL:
+         fasd3->vdata->vertex_data.ptconorms = (Pptconorm3 *) &data[2];
+         break;
+
+      default:
+         break;
+   }
 }
 
 #if 0
@@ -697,8 +716,7 @@ static void phg_next_facet_vdata3(
 
    switch (fasd3->vflag) {
       case PVERT_COORD:
-         data = (Pint *) fasd3->vdata->vertex_data.points;
-         tp = (char *) data;
+         tp = (char *) fasd3->vdata->vertex_data.points;
          tp += sizeof(Ppoint3) * num_vertices;
          data = (Pint *) tp;
          fasd3->vdata->num_vertices = data[0];
@@ -706,8 +724,7 @@ static void phg_next_facet_vdata3(
          break;
 
       case PVERT_COORD_COLOUR:
-         data = (Pint *) fasd3->vdata->vertex_data.ptcolrs;
-         tp = (char *) data;
+         tp = (char *) fasd3->vdata->vertex_data.ptcolrs;
          tp += sizeof(Pptco3) * num_vertices;
          data = (Pint *) tp;
          fasd3->vdata->num_vertices = data[0];
@@ -715,8 +732,7 @@ static void phg_next_facet_vdata3(
          break;
 
       case PVERT_COORD_NORMAL:
-         data = (Pint *) fasd3->vdata->vertex_data.ptnorms;
-         tp = (char *) data;
+         tp = (char *) fasd3->vdata->vertex_data.ptnorms;
          tp += sizeof(Pptnorm3);
          data = (Pint *) tp;
          fasd3->vdata->num_vertices = data[0];
@@ -724,8 +740,7 @@ static void phg_next_facet_vdata3(
          break;
 
       case PVERT_COORD_COLOUR_NORMAL:
-         data = (Pint *) fasd3->vdata->vertex_data.ptconorms;
-         tp = (char *) data;
+         tp = (char *) fasd3->vdata->vertex_data.ptconorms;
          tp += sizeof(Pptconorm3) * num_vertices;
          data = (Pint *) tp;
          fasd3->vdata->num_vertices = data[0];
