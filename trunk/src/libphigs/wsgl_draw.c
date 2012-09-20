@@ -615,6 +615,7 @@ static void phg_facet_head3(
    void *pdata
    )
 {
+   Pint i, num_edges;
    char *tp;
    Pint *data = (Pint *) pdata;
 
@@ -646,22 +647,37 @@ static void phg_facet_head3(
 
    data = (Pint *) tp;
    fasd3->nfa = data[0];
-   fasd3->vdata->num_vertices = data[1];
+   tp = (char *) &data[1];
+
+   if (fasd3->eflag == PEDGE_VISIBILITY) {
+      data = (Pint *) tp;
+      fasd3->edata->num_edges = data[0];
+      fasd3->edata->edgedata.edges = (Pedge_flag *) &data[1];
+
+      for (i = 0; i < fasd3->nfa; i++) {
+         data = (Pint *) tp;
+         num_edges = data[0];
+         tp += sizeof(Pedge_flag) * num_edges + sizeof(Pint);
+      }
+   }
+
+   data = (Pint *) tp;
+   fasd3->vdata->num_vertices = data[0];
    switch (fasd3->vflag) {
       case PVERT_COORD:
-         fasd3->vdata->vertex_data.points = (Ppoint3 *) &data[2];
+         fasd3->vdata->vertex_data.points = (Ppoint3 *) &data[1];
          break;
 
       case PVERT_COORD_COLOUR:
-         fasd3->vdata->vertex_data.ptcolrs = (Pptco3 *) &data[2];
+         fasd3->vdata->vertex_data.ptcolrs = (Pptco3 *) &data[1];
          break;
 
       case PVERT_COORD_NORMAL:
-         fasd3->vdata->vertex_data.ptnorms = (Pptnorm3 *) &data[2];
+         fasd3->vdata->vertex_data.ptnorms = (Pptnorm3 *) &data[1];
          break;
 
       case PVERT_COORD_COLOUR_NORMAL:
-         fasd3->vdata->vertex_data.ptconorms = (Pptconorm3 *) &data[2];
+         fasd3->vdata->vertex_data.ptconorms = (Pptconorm3 *) &data[1];
          break;
 
       default:
@@ -669,7 +685,6 @@ static void phg_facet_head3(
    }
 }
 
-#if 0
 /*******************************************************************************
  * phg_next_facet_edata
  *
@@ -680,22 +695,20 @@ static void phg_facet_head3(
  */
 
 static void phg_next_facet_edata(
-   Pfasd3 *fasd3,
-   void *pdata
+   Pfasd3 *fasd3
    )
 {
    Pint *data;
-   char *tp = (char *) pdata;
+   char *tp;
+   Pint num_edges;
 
-   if (fasd3->eflag == PEDGE_VISIBILITY) {
-      data = (Pint *) tp;
-      fasd3->edata->num_edges = data[0];
-      tp = (char *) &data[1];
-      fasd3->edata->edgedata.edges = (Pedge_flag *) tp;
-      tp += sizeof(Pedge_flag) * fasd3->edata->num_edges;
-   }
+   num_edges = fasd3->edata->num_edges;
+   tp = (char *) fasd3->edata->edgedata.edges;
+   tp += sizeof(Pedge_flag) * num_edges;
+   data = (Pint *) tp;
+   fasd3->edata->num_edges = data[0];
+   fasd3->edata->edgedata.edges = (Pedge_flag *) &data[1];
 }
-#endif
 
 /*******************************************************************************
  * phg_next_facet_vdata3
@@ -1507,6 +1520,19 @@ void phg_draw_fill_area3_data(
       }
 
       phg_next_facet_vdata3(&fasd3);
+      if (fasd3.eflag == PEDGE_VISIBILITY) {
+#ifdef DEBUG
+         Pint j;
+         printf("\n#%d: num_edges = %d@%lx",
+            i,
+            fasd3.edata->num_edges,
+            (unsigned long) fasd3.edata->edgedata.edges);
+         for (j = 0; j < fasd3.edata->num_edges; j++) {
+            printf("\t%1d", (int) fasd3.edata->edgedata.edges[j]);
+         }
+#endif
+         phg_next_facet_edata(&fasd3);
+      }
    }
 }
 
