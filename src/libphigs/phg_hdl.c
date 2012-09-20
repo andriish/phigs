@@ -909,7 +909,6 @@ int phg_handle_fasd3(
          *data = nfa;
          tp = (char *) &data[1];
 
-#if 0
          if (fasd3->eflag == PEDGE_VISIBILITY) {
 
             for (i = 0; i < nfa; i++) {
@@ -923,7 +922,6 @@ int phg_handle_fasd3(
                tp += sizeof(Pedge_flag) * num_vertices;
             }
          }
-#endif
 
          for (i = 0; i < nfa; i++) {
             num_vertices = fasd3->vdata[i].num_vertices;

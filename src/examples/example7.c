@@ -63,7 +63,9 @@ void init_checker(int num)
    fdata.colr.val.general.z = 0.0;
 
    p = points;
-   memset(edges, 1, sizeof(Pedge_flag) * 4 * num);
+   for (i = 0; i < 4 * num; i++) {
+      edges[i] = PEDGE_ON;
+   }
 
    for (i = 0; i < num; i++) {
       p[0].x = x;
@@ -94,7 +96,7 @@ void init_checker(int num)
    }
 
    pfill_area_set3_data(PFACET_COLOUR,
-                        PEDGE_NONE,
+                        PEDGE_VISIBILITY,
                         PVERT_COORD,
                         PMODEL_RGB,
                         &fdata,
