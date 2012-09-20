@@ -728,6 +728,7 @@ void phg_setup_background(
 {
    Wsgl_handle wsgl = ws->render_context;
 
+   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
    glColor3f(wsgl->background.val.general.x,
              wsgl->background.val.general.y,
              wsgl->background.val.general.z);
