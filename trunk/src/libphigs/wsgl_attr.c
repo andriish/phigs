@@ -441,6 +441,20 @@ void phg_setup_int_attr(
 }
 
 /*******************************************************************************
+ * phg_set_polygon_offset
+ *
+ * DESCR:       Setup polygon offset helper function
+ * RETURNS:     N/A
+ */
+
+void phg_set_polygon_offset(
+   float w
+   )
+{
+   glPolygonOffset(w, w);
+}
+
+/*******************************************************************************
  * phg_get_facet_colr
  *
  * DESCR:	Get facet colour
