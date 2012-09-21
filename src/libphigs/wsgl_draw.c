@@ -385,21 +385,47 @@ void phg_draw_fill_area(
 
 static void phg_draw_edges3_point_data(
    Ws *ws,
+   Pint eflag,
    Pint num_vertices,
-   Ppoint3 *point,
+   Ppoint3 *points,
+   Pedge_data_list *edata,
    Ws_attr_st *ast
    )
 {
    Pint i;
 
    phg_setup_edge_attr(ast);
-   glBegin(GL_LINE_LOOP);
-   for (i = 0; i < num_vertices; i++) {
-      glVertex3f(point[i].x,
-                 point[i].y,
-                 point[i].z);
+   if (eflag == PEDGE_VISIBILITY) {
+      glBegin(GL_LINES);
+      for (i = 0; i < num_vertices - 1; i++) {
+         if (edata->edgedata.edges[i] == PEDGE_ON) {
+            glVertex3f(points[i].x,
+                       points[i].y,
+                       points[i].z);
+            glVertex3f(points[i + 1].x,
+                       points[i + 1].y,
+                       points[i + 1].z);
+         }
+      }
+      if (edata->edgedata.edges[i] == PEDGE_ON) {
+         glVertex3f(points[i].x,
+                    points[i].y,
+                    points[i].z);
+         glVertex3f(points[0].x,
+                    points[0].y,
+                    points[0].z);
+      }
+      glEnd();
    }
-   glEnd();
+   else {
+      glBegin(GL_LINE_LOOP);
+      for (i = 0; i < num_vertices; i++) {
+         glVertex3f(points[i].x,
+                    points[i].y,
+                    points[i].z);
+      }
+      glEnd();
+   }
 }
 
 /*******************************************************************************
@@ -470,8 +496,10 @@ void phg_draw_fill_area3(
 
    if (flag == PEDGE_ON) {
       phg_draw_edges3_point_data(ws,
+                                 PEDGE_NONE,
                                  point_list.num_points,
                                  point_list.points,
+                                 NULL,
                                  ast);
    }
 
@@ -738,6 +766,48 @@ static void phg_next_facet_vdata3(
 }
 
 /*******************************************************************************
+ * phg_shade_fill_area3
+ *
+ * DESCR:	Shade fill area with point data 3D helper function
+ * RETURNS:	N/A
+ */
+
+static void phg_shade_fill_area3(
+   Ws *ws,
+   Pgcolr *result,
+   Pint fflag,
+   Pfacet_data3 *fdata,
+   Ws_attr_st *ast
+   )
+{
+   Pint refl_eqn;
+   Prefl_props *refl_props;
+
+   refl_eqn = phg_get_int_refl_eqn(ast);
+   refl_props = phg_get_refl_props(ast);
+
+   if (fflag == PFACET_NORMAL) {
+      wsgl_light_colr(ws,
+                      result,
+                      refl_eqn,
+                      refl_props,
+                      phg_get_facet_colr(fflag, fdata, ast),
+                      &fdata->normal);
+   }
+   else if (fflag == PFACET_COLOUR_NORMAL) {
+      wsgl_light_colr(ws,
+                      result,
+                      refl_eqn,
+                      refl_props,
+                      phg_get_facet_colr(fflag, fdata, ast),
+                      &fdata->conorm.normal);
+   }
+   else {
+      memcpy(result, phg_get_facet_colr(fflag, fdata, ast), sizeof(Pgcolr));
+   }
+}
+
+/*******************************************************************************
  * phg_draw_fill_area3_point_data
  *
  * DESCR:	Draw fill area with point data 3D helper function
@@ -745,6 +815,66 @@ static void phg_next_facet_vdata3(
  */
 
 static void phg_draw_fill_area3_point_data(
+   Ws *ws,
+   Pint_style style,
+   Pedge_flag flag,
+   Pgcolr *gcolr,
+   Pint num_vertices,
+   Ppoint3 *points,
+   Ws_attr_st *ast
+   )
+{
+   Pint i;
+   Wsgl_handle wsgl = ws->render_context;
+
+   if ((style == PSTYLE_EMPTY) || (style == PSTYLE_HOLLOW)) {
+
+      /* If hidden surface removal, clear interiour to background colour */
+      if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_ON) {
+         phg_setup_background(ws);
+         glBegin(GL_POLYGON);
+         for (i = 0; i < num_vertices; i++) {
+            glVertex3f(points[i].x,
+                       points[i].y,
+                       points[i].z);
+         }
+         glEnd();
+      }
+
+      if (style == PSTYLE_HOLLOW) {
+         phg_setup_int_attr(ast);
+         phg_set_gcolr(gcolr);
+         glBegin(GL_POLYGON);
+         for (i = 0; i < num_vertices; i++) {
+            glVertex3f(points[i].x,
+                       points[i].y,
+                       points[i].z);
+         }
+         glEnd();
+      }
+   }
+
+   else {
+      phg_setup_int_attr_nocol(ast);
+      phg_set_gcolr(gcolr);
+      glBegin(GL_POLYGON);
+      for (i = 0; i < num_vertices; i++) {
+         glVertex3f(points[i].x,
+                    points[i].y,
+                    points[i].z);
+      }
+      glEnd();
+   }
+}
+
+/*******************************************************************************
+ * phg_draw_fill_area3_point_data
+ *
+ * DESCR:	Draw fill area with point data 3D helper function
+ * RETURNS:	N/A
+ */
+
+static void phg_draw_fill_area3_point_data_old(
    Ws *ws,
    Pint fflag,
    Pint vflag,
@@ -1367,6 +1497,10 @@ void phg_draw_fill_area3_data(
    Pfasd3 fasd3;
    Pedge_data_list edata;
    Pfacet_vdata_list3 vdata;
+
+   Pgcolr result;
+
+   Pint_style style = phg_get_int_style(ast);
    Pedge_flag flag = phg_get_edge_flag(ast);
 
    fasd3.edata = &edata;
@@ -1377,21 +1511,36 @@ void phg_draw_fill_area3_data(
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
 
+   switch (fasd3.vflag) {
+      case PVERT_COORD:
+         phg_shade_fill_area3(ws,
+                              &result,
+                              fasd3.fflag,
+                              &fasd3.fdata,
+                              ast);
+         break;
+
+         default:
+            break;
+   }
+
    for (i = 0; i < fasd3.nfa; i++) {
 
       switch (fasd3.vflag) {
          case PVERT_COORD:
             phg_draw_fill_area3_point_data(ws,
-                                           fasd3.fflag,
-                                           fasd3.vflag,
-                                           &fasd3.fdata,
+                                           style,
+                                           flag,
+                                           &result,
                                            fasd3.vdata->num_vertices,
                                            fasd3.vdata->vertex_data.points,
                                            ast);
             if (flag == PEDGE_ON) {
                phg_draw_edges3_point_data(ws,
+                                          fasd3.eflag,
                                           fasd3.vdata->num_vertices,
                                           fasd3.vdata->vertex_data.points,
+                                          fasd3.edata,
                                           ast);
             }
             break;

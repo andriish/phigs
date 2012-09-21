@@ -64,7 +64,7 @@ void init_checker(int num)
 
    p = points;
    for (i = 0; i < 4 * num; i++) {
-      edges[i] = PEDGE_ON;
+      edges[i] = (i % 2) ? PEDGE_OFF : PEDGE_ON;
    }
 
    for (i = 0; i < num; i++) {
@@ -95,6 +95,8 @@ void init_checker(int num)
       p = &p[4];
    }
 
+   pset_edge_flag(PEDGE_ON);
+   pset_edgewidth(2.0);
    pfill_area_set3_data(PFACET_COLOUR,
                         PEDGE_VISIBILITY,
                         PVERT_COORD,
