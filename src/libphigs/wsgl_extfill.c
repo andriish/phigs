@@ -573,37 +573,43 @@ static void phg_draw_fill_area3_ptnorms(
 }
 
 /*******************************************************************************
- * phg_draw_fill_area3_ptconorm_data
+ * phg_draw_fill_area3_ptconorms
  *
- * DESCR:	Draw fill area with colour and normal data 3D helper function
+ * DESCR:	Draw fill area with point, colour and normal data 3D
+ *              helper function
  * RETURNS:	N/A
  */
 
-static void phg_draw_fill_area3_ptconorm_data(
+static void phg_draw_fill_area3_ptconorms(
    Ws *ws,
-   Pint fflag,
-   Pint vflag,
-   Pfacet_data3 *fdata,
+   Pint_style style,
+   Pedge_flag flag,
+   Pint refl_eqn,
+   Prefl_props *refl_props,
    Pint num_vertices,
-   Pptconorm3 *ptconorm,
+   Pptconorm3 *ptconorms,
    Ws_attr_st *ast
    )
 {
    Pint i;
-   Pint_style style;
-   Pedge_flag flag;
-   Pint refl_eqn;
-   Prefl_props *refl_props;
    Pgcolr result;
    Wsgl_handle wsgl = ws->render_context;
 
-   style = phg_get_int_style(ast);
-   flag = phg_get_edge_flag(ast);
-   refl_eqn = phg_get_int_refl_eqn(ast);
-   refl_props = phg_get_refl_props(ast);
+   if ((style == PSTYLE_EMPTY) || (style == PSTYLE_HOLLOW)) {
 
-   if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_OFF) {
-      if (style != PSTYLE_EMPTY) {
+      /* If hidden surface removal, clear interiour to background colour */
+      if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_ON) {
+         phg_setup_background(ws);
+         glBegin(GL_POLYGON);
+         for (i = 0; i < num_vertices; i++) {
+            glVertex3f(ptconorms[i].point.x,
+                       ptconorms[i].point.y,
+                       ptconorms[i].point.z);
+         }
+         glEnd();
+      }
+
+      if (style == PSTYLE_HOLLOW) {
          phg_setup_int_attr_nocol(ast);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
@@ -611,123 +617,33 @@ static void phg_draw_fill_area3_ptconorm_data(
                             &result,
                             refl_eqn,
                             refl_props,
-                            &ptconorm[i].colr,
-                            &ptconorm[i].normal);
+                            &ptconorms[i].colr,
+                            &ptconorms[i].normal);
             phg_set_gcolr(&result);
-            glVertex3f(ptconorm[i].point.x,
-                       ptconorm[i].point.y,
-                       ptconorm[i].point.z);
-         }
-         glEnd();
-      }
-
-      if (flag == PEDGE_ON) {
-         phg_setup_edge_attr(ast);
-         glBegin(GL_LINE_LOOP);
-         for (i = 0; i < num_vertices; i++) {
-            glVertex3f(ptconorm[i].point.x,
-                       ptconorm[i].point.y,
-                       ptconorm[i].point.z);
+            glVertex3f(ptconorms[i].point.x,
+                       ptconorms[i].point.y,
+                       ptconorms[i].point.z);
          }
          glEnd();
       }
    }
+
    else {
-      if ((flag == PEDGE_ON) &&
-          ((style == PSTYLE_EMPTY) || (style == PSTYLE_HOLLOW))) {
-         phg_set_polygon_offset(phg_get_edge_width(ast));
-         glEnable(GL_POLYGON_OFFSET_FILL);
-         phg_setup_background(ws);
-         glBegin(GL_POLYGON);
-         for (i = 0; i < num_vertices; i++) {
-            glVertex3f(ptconorm[i].point.x,
-                       ptconorm[i].point.y,
-                       ptconorm[i].point.z);
-         }
-         glEnd();
-         glDisable(GL_POLYGON_OFFSET_FILL);
-
-         if (flag == PEDGE_ON) {
-            phg_setup_edge_attr(ast);
-         }
-         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-         glBegin(GL_POLYGON);
-         for (i = 0; i < num_vertices; i++) {
-            glVertex3f(ptconorm[i].point.x,
-                       ptconorm[i].point.y,
-                       ptconorm[i].point.z);
-         }
-         glEnd();
-         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      phg_setup_int_attr_nocol(ast);
+      glBegin(GL_POLYGON);
+      for (i = 0; i < num_vertices; i++) {
+         wsgl_light_colr(ws,
+                         &result,
+                         refl_eqn,
+                         refl_props,
+                         &ptconorms[i].colr,
+                         &ptconorms[i].normal);
+         phg_set_gcolr(&result);
+         glVertex3f(ptconorms[i].point.x,
+                    ptconorms[i].point.y,
+                    ptconorms[i].point.z);
       }
-      else if ((flag == PEDGE_OFF) &&
-               (style == PSTYLE_HOLLOW)) {
-         phg_set_polygon_offset(phg_get_edge_width(ast));
-         glEnable(GL_POLYGON_OFFSET_FILL);
-         phg_setup_background(ws);
-         glBegin(GL_POLYGON);
-         for (i = 0; i < num_vertices; i++) {
-            glVertex3f(ptconorm[i].point.x,
-                       ptconorm[i].point.y,
-                       ptconorm[i].point.z);
-         }
-         glEnd();
-         glDisable(GL_POLYGON_OFFSET_FILL);
-
-         phg_setup_int_attr_nocol(ast);
-         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-         glBegin(GL_POLYGON);
-         for (i = 0; i < num_vertices; i++) {
-            wsgl_light_colr(ws,
-                            &result,
-                            refl_eqn,
-                            refl_props,
-                            &ptconorm[i].colr,
-                            &ptconorm[i].normal);
-            phg_set_gcolr(&result);
-            glVertex3f(ptconorm[i].point.x,
-                       ptconorm[i].point.y,
-                       ptconorm[i].point.z);
-         }
-         glEnd();
-         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      }
-      else {
-         if (style != PSTYLE_EMPTY) {
-            phg_setup_int_attr_nocol(ast);
-            glEnable(GL_POLYGON_OFFSET_FILL);
-            phg_set_polygon_offset(phg_get_edge_width(ast));
-            glBegin(GL_POLYGON);
-            for (i = 0; i < num_vertices; i++) {
-               wsgl_light_colr(ws,
-                               &result,
-                               refl_eqn,
-                               refl_props,
-                               &ptconorm[i].colr,
-                               &ptconorm[i].normal);
-               phg_set_gcolr(&result);
-               glVertex3f(ptconorm[i].point.x,
-                          ptconorm[i].point.y,
-                          ptconorm[i].point.z);
-            }
-            glEnd();
-            glDisable(GL_POLYGON_OFFSET_FILL);
-         }
-
-         if (flag == PEDGE_ON) {
-            phg_setup_edge_attr(ast);
-            glDisable(GL_POLYGON_STIPPLE);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            glBegin(GL_POLYGON);
-            for (i = 0; i < num_vertices; i++) {
-               glVertex3f(ptconorm[i].point.x,
-                          ptconorm[i].point.y,
-                          ptconorm[i].point.z);
-            }
-            glEnd();
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-         }
-      }
+      glEnd();
    }
 }
 
@@ -888,6 +804,58 @@ static void phg_draw_edges3_ptnorms(
 }
 
 /*******************************************************************************
+ * phg_draw_edges3_ptconorms
+ *
+ * DESCR:	Draw edges for fill area 3D with point, colour and normal data
+ * RETURNS:	N/A
+ */
+
+static void phg_draw_edges3_ptconorms(
+   Ws *ws,
+   Pint eflag,
+   Pint num_vertices,
+   Pptconorm3 *ptconorms,
+   Pedge_data_list *edata,
+   Ws_attr_st *ast
+   )
+{
+   Pint i;
+
+   phg_setup_edge_attr(ast);
+   if (eflag == PEDGE_VISIBILITY) {
+      glBegin(GL_LINES);
+      for (i = 0; i < num_vertices - 1; i++) {
+         if (edata->edgedata.edges[i] == PEDGE_ON) {
+            glVertex3f(ptconorms[i].point.x,
+                       ptconorms[i].point.y,
+                       ptconorms[i].point.z);
+            glVertex3f(ptconorms[i + 1].point.x,
+                       ptconorms[i + 1].point.y,
+                       ptconorms[i + 1].point.z);
+         }
+      }
+      if (edata->edgedata.edges[i] == PEDGE_ON) {
+         glVertex3f(ptconorms[i].point.x,
+                    ptconorms[i].point.y,
+                    ptconorms[i].point.z);
+         glVertex3f(ptconorms[0].point.x,
+                    ptconorms[0].point.y,
+                    ptconorms[0].point.z);
+      }
+      glEnd();
+   }
+   else {
+      glBegin(GL_LINE_LOOP);
+      for (i = 0; i < num_vertices; i++) {
+         glVertex3f(ptconorms[i].point.x,
+                    ptconorms[i].point.y,
+                    ptconorms[i].point.z);
+      }
+      glEnd();
+   }
+}
+
+/*******************************************************************************
  * phg_draw_fill_area3_data
  *
  * DESCR:	Draw fill area width data 3D
@@ -1017,16 +985,16 @@ void phg_draw_fill_area3_data(
          refl_eqn = phg_get_int_refl_eqn(ast);
          refl_props = phg_get_refl_props(ast);
          for (i = 0; i < fasd3.nfa; i++) {
-               phg_draw_fill_area3_ptnorms(ws,
-                                           style,
-                                           flag,
-                                           gcolr,
-                                           refl_eqn,
-                                           refl_props,
-                                           fasd3.vdata->num_vertices,
-                                           fasd3.vdata->vertex_data.
-                                              ptnorms,
-                                           ast);
+            phg_draw_fill_area3_ptnorms(ws,
+                                        style,
+                                        flag,
+                                        gcolr,
+                                        refl_eqn,
+                                        refl_props,
+                                        fasd3.vdata->num_vertices,
+                                        fasd3.vdata->vertex_data.
+                                           ptnorms,
+                                        ast);
             if (flag == PEDGE_ON) {
                phg_draw_edges3_ptnorms(ws,
                                        fasd3.eflag,
@@ -1045,15 +1013,26 @@ void phg_draw_fill_area3_data(
          break;
 
       case PVERT_COORD_COLOUR_NORMAL:
+         refl_eqn = phg_get_int_refl_eqn(ast);
+         refl_props = phg_get_refl_props(ast);
          for (i = 0; i < fasd3.nfa; i++) {
-            phg_draw_fill_area3_ptconorm_data(ws,
-                                              fasd3.fflag,
-                                              fasd3.vflag,
-                                              &fasd3.fdata,
-                                              fasd3.vdata->num_vertices,
-                                              fasd3.vdata->vertex_data.
-                                                 ptconorms,
-                                              ast);
+            phg_draw_fill_area3_ptconorms(ws,
+                                          style,
+                                          flag,
+                                          refl_eqn,
+                                          refl_props,
+                                          fasd3.vdata->num_vertices,
+                                          fasd3.vdata->vertex_data.
+                                             ptconorms,
+                                           ast);
+            if (flag == PEDGE_ON) {
+               phg_draw_edges3_ptconorms(ws,
+                                         fasd3.eflag,
+                                         fasd3.vdata->num_vertices,
+                                         fasd3.vdata->vertex_data.ptconorms,
+                                         fasd3.edata,
+                                         ast);
+            }
 
             /* Advance to next set of data */
             phg_next_facet_vdata3(&fasd3);
