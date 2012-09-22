@@ -58,9 +58,9 @@ void init_checker(int num)
    Ppoint3 *p;
 
    fdata.colr.type = PMODEL_RGB;
-   fdata.colr.val.general.x = 1.0;
-   fdata.colr.val.general.y = 1.0;
-   fdata.colr.val.general.z = 0.0;
+   fdata.colr.val.general.x = 0.0;
+   fdata.colr.val.general.y = 0.5;
+   fdata.colr.val.general.z = 0.5;
 
    p = points;
    for (i = 0; i < 4 * num; i++) {
