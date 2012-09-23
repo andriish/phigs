@@ -469,6 +469,11 @@ Ws* phg_wsb_open_ws(
         }
     }
     else if (args->conn_type == PHG_ARGS_CONN_DRAWABLE) {
+
+        /* Store workstation type parameters */
+        dt = &args->type->desc_tbl.phigs_dt;
+        xdt = &args->type->desc_tbl.xwin_dt;
+
         ws->display     = args->conn_info.display;
         ws->drawable_id = args->conn_info.drawable_id;
         ws->glx_context = args->conn_info.glx_context;
@@ -482,6 +487,7 @@ Ws* phg_wsb_open_ws(
         }
     }
 
+#if 1
     if (dt->ws_category == PCAT_OUTIN) {
 
         ws->input_overlay_window = phg_wsx_create_overlay(ws);
@@ -496,6 +502,7 @@ Ws* phg_wsb_open_ws(
             goto abort;
         }
     }
+#endif
 
     (void)XGetWindowAttributes( ws->display, ws->drawable_id, &wattr );
     WS_SET_WS_RECT( ws, &wattr )
