@@ -657,9 +657,10 @@ static void phg_draw_fill_area3_ptconorms(
 static void phg_draw_edges3_points(
    Ws *ws,
    Pint eflag,
+   Pint num_edges,
+   Pedge_data_list *edata,
    Pint num_vertices,
    Ppoint3 *points,
-   Pedge_data_list *edata,
    Ws_attr_st *ast
    )
 {
@@ -668,7 +669,7 @@ static void phg_draw_edges3_points(
    phg_setup_edge_attr(ast);
    if (eflag == PEDGE_VISIBILITY) {
       glBegin(GL_LINES);
-      for (i = 0; i < num_vertices - 1; i++) {
+      for (i = 0; i < num_edges - 1; i++) {
          if (edata->edgedata.edges[i] == PEDGE_ON) {
             glVertex3f(points[i].x,
                        points[i].y,
@@ -678,13 +679,25 @@ static void phg_draw_edges3_points(
                        points[i + 1].z);
          }
       }
-      if (edata->edgedata.edges[i] == PEDGE_ON) {
-         glVertex3f(points[i].x,
-                    points[i].y,
-                    points[i].z);
-         glVertex3f(points[0].x,
-                    points[0].y,
-                    points[0].z);
+      if (num_edges < num_vertices) {
+         if (edata->edgedata.edges[i] == PEDGE_ON) {
+            glVertex3f(points[i].x,
+                       points[i].y,
+                       points[i].z);
+            glVertex3f(points[i + 1].x,
+                       points[i + 1].y,
+                       points[i + 1].z);
+         }
+      }
+      else {
+         if (edata->edgedata.edges[i] == PEDGE_ON) {
+            glVertex3f(points[i].x,
+                       points[i].y,
+                       points[i].z);
+            glVertex3f(points[0].x,
+                       points[0].y,
+                       points[0].z);
+         }
       }
       glEnd();
    }
@@ -709,9 +722,10 @@ static void phg_draw_edges3_points(
 static void phg_draw_edges3_ptcolrs(
    Ws *ws,
    Pint eflag,
+   Pint num_edges,
+   Pedge_data_list *edata,
    Pint num_vertices,
    Pptco3 *ptcolrs,
-   Pedge_data_list *edata,
    Ws_attr_st *ast
    )
 {
@@ -720,7 +734,7 @@ static void phg_draw_edges3_ptcolrs(
    phg_setup_edge_attr(ast);
    if (eflag == PEDGE_VISIBILITY) {
       glBegin(GL_LINES);
-      for (i = 0; i < num_vertices - 1; i++) {
+      for (i = 0; i < num_edges - 1; i++) {
          if (edata->edgedata.edges[i] == PEDGE_ON) {
             glVertex3f(ptcolrs[i].point.x,
                        ptcolrs[i].point.y,
@@ -730,13 +744,25 @@ static void phg_draw_edges3_ptcolrs(
                        ptcolrs[i + 1].point.z);
          }
       }
-      if (edata->edgedata.edges[i] == PEDGE_ON) {
-         glVertex3f(ptcolrs[i].point.x,
-                    ptcolrs[i].point.y,
-                    ptcolrs[i].point.z);
-         glVertex3f(ptcolrs[0].point.x,
-                    ptcolrs[0].point.y,
-                    ptcolrs[0].point.z);
+      if (num_edges < num_vertices) {
+         if (edata->edgedata.edges[i] == PEDGE_ON) {
+            glVertex3f(ptcolrs[i].point.x,
+                       ptcolrs[i].point.y,
+                       ptcolrs[i].point.z);
+            glVertex3f(ptcolrs[i + 1].point.x,
+                       ptcolrs[i + 1].point.y,
+                       ptcolrs[i + 1].point.z);
+         }
+      }
+      else {
+         if (edata->edgedata.edges[i] == PEDGE_ON) {
+            glVertex3f(ptcolrs[i].point.x,
+                       ptcolrs[i].point.y,
+                       ptcolrs[i].point.z);
+            glVertex3f(ptcolrs[0].point.x,
+                       ptcolrs[0].point.y,
+                       ptcolrs[0].point.z);
+         }
       }
       glEnd();
    }
@@ -761,9 +787,10 @@ static void phg_draw_edges3_ptcolrs(
 static void phg_draw_edges3_ptnorms(
    Ws *ws,
    Pint eflag,
+   Pint num_edges,
+   Pedge_data_list *edata,
    Pint num_vertices,
    Pptnorm3 *ptnorms,
-   Pedge_data_list *edata,
    Ws_attr_st *ast
    )
 {
@@ -772,7 +799,7 @@ static void phg_draw_edges3_ptnorms(
    phg_setup_edge_attr(ast);
    if (eflag == PEDGE_VISIBILITY) {
       glBegin(GL_LINES);
-      for (i = 0; i < num_vertices - 1; i++) {
+      for (i = 0; i < num_edges - 1; i++) {
          if (edata->edgedata.edges[i] == PEDGE_ON) {
             glVertex3f(ptnorms[i].point.x,
                        ptnorms[i].point.y,
@@ -782,13 +809,25 @@ static void phg_draw_edges3_ptnorms(
                        ptnorms[i + 1].point.z);
          }
       }
-      if (edata->edgedata.edges[i] == PEDGE_ON) {
-         glVertex3f(ptnorms[i].point.x,
-                    ptnorms[i].point.y,
-                    ptnorms[i].point.z);
-         glVertex3f(ptnorms[0].point.x,
-                    ptnorms[0].point.y,
-                    ptnorms[0].point.z);
+      if (num_edges < num_vertices) {
+         if (edata->edgedata.edges[i] == PEDGE_ON) {
+            glVertex3f(ptnorms[i].point.x,
+                       ptnorms[i].point.y,
+                       ptnorms[i].point.z);
+            glVertex3f(ptnorms[i + 1].point.x,
+                       ptnorms[i + 1].point.y,
+                       ptnorms[i + 1].point.z);
+         }
+      }
+      else {
+         if (edata->edgedata.edges[i] == PEDGE_ON) {
+            glVertex3f(ptnorms[i].point.x,
+                       ptnorms[i].point.y,
+                       ptnorms[i].point.z);
+            glVertex3f(ptnorms[0].point.x,
+                       ptnorms[0].point.y,
+                       ptnorms[0].point.z);
+         }
       }
       glEnd();
    }
@@ -813,9 +852,10 @@ static void phg_draw_edges3_ptnorms(
 static void phg_draw_edges3_ptconorms(
    Ws *ws,
    Pint eflag,
+   Pint num_edges,
+   Pedge_data_list *edata,
    Pint num_vertices,
    Pptconorm3 *ptconorms,
-   Pedge_data_list *edata,
    Ws_attr_st *ast
    )
 {
@@ -824,7 +864,7 @@ static void phg_draw_edges3_ptconorms(
    phg_setup_edge_attr(ast);
    if (eflag == PEDGE_VISIBILITY) {
       glBegin(GL_LINES);
-      for (i = 0; i < num_vertices - 1; i++) {
+      for (i = 0; i < num_edges - 1; i++) {
          if (edata->edgedata.edges[i] == PEDGE_ON) {
             glVertex3f(ptconorms[i].point.x,
                        ptconorms[i].point.y,
@@ -834,13 +874,25 @@ static void phg_draw_edges3_ptconorms(
                        ptconorms[i + 1].point.z);
          }
       }
-      if (edata->edgedata.edges[i] == PEDGE_ON) {
-         glVertex3f(ptconorms[i].point.x,
-                    ptconorms[i].point.y,
-                    ptconorms[i].point.z);
-         glVertex3f(ptconorms[0].point.x,
-                    ptconorms[0].point.y,
-                    ptconorms[0].point.z);
+      if (num_edges < num_vertices) {
+         if (edata->edgedata.edges[i] == PEDGE_ON) {
+            glVertex3f(ptconorms[i].point.x,
+                       ptconorms[i].point.y,
+                       ptconorms[i].point.z);
+            glVertex3f(ptconorms[i + 1].point.x,
+                       ptconorms[i + 1].point.y,
+                       ptconorms[i + 1].point.z);
+         }
+      }
+      else {
+         if (edata->edgedata.edges[i] == PEDGE_ON) {
+            glVertex3f(ptconorms[i].point.x,
+                       ptconorms[i].point.y,
+                       ptconorms[i].point.z);
+            glVertex3f(ptconorms[0].point.x,
+                       ptconorms[0].point.y,
+                       ptconorms[0].point.z);
+         }
       }
       glEnd();
    }
@@ -908,9 +960,10 @@ void phg_draw_fill_area3_data(
             if (flag == PEDGE_ON) {
                phg_draw_edges3_points(ws,
                                       fasd3.eflag,
+                                      fasd3.edata->num_edges,
+                                      fasd3.edata,
                                       fasd3.vdata->num_vertices,
                                       fasd3.vdata->vertex_data.points,
-                                      fasd3.edata,
                                       ast);
             }
 
@@ -941,9 +994,10 @@ void phg_draw_fill_area3_data(
                if (flag == PEDGE_ON) {
                   phg_draw_edges3_ptcolrs(ws,
                                           fasd3.eflag,
+                                          fasd3.edata->num_edges,
+                                          fasd3.edata,
                                           fasd3.vdata->num_vertices,
                                           fasd3.vdata->vertex_data.ptcolrs,
-                                          fasd3.edata,
                                           ast);
                }
 
@@ -951,6 +1005,9 @@ void phg_draw_fill_area3_data(
                phg_next_facet_vdata3(&fasd3);
                if (fasd3.eflag == PEDGE_VISIBILITY) {
                   phg_next_facet_edata(&fasd3);
+               }
+               else {
+                  fasd3.edata->num_edges = fasd3.vdata->num_vertices;
                }
             }
          }
@@ -965,9 +1022,10 @@ void phg_draw_fill_area3_data(
                if (flag == PEDGE_ON) {
                   phg_draw_edges3_ptcolrs(ws,
                                           fasd3.eflag,
+                                          fasd3.edata->num_edges,
+                                          fasd3.edata,
                                           fasd3.vdata->num_vertices,
                                           fasd3.vdata->vertex_data.ptcolrs,
-                                          fasd3.edata,
                                           ast);
                }
 
@@ -998,9 +1056,10 @@ void phg_draw_fill_area3_data(
             if (flag == PEDGE_ON) {
                phg_draw_edges3_ptnorms(ws,
                                        fasd3.eflag,
+                                       fasd3.edata->num_edges,
+                                       fasd3.edata,
                                        fasd3.vdata->num_vertices,
                                        fasd3.vdata->vertex_data.ptnorms,
-                                       fasd3.edata,
                                        ast);
             }
 
@@ -1028,9 +1087,10 @@ void phg_draw_fill_area3_data(
             if (flag == PEDGE_ON) {
                phg_draw_edges3_ptconorms(ws,
                                          fasd3.eflag,
+                                         fasd3.edata->num_edges,
+                                         fasd3.edata,
                                          fasd3.vdata->num_vertices,
                                          fasd3.vdata->vertex_data.ptconorms,
-                                         fasd3.edata,
                                          ast);
             }
 
