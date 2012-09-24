@@ -199,6 +199,34 @@ void phg_set_asf(
 }
 
 /*******************************************************************************
+ * phg_set_colr
+ *
+ * DESCR:	Set colour value
+ * RETURNS:	N/A
+ */
+
+void phg_set_colr(
+   Pint colr_type,
+   Pcoval *colr
+   )
+{
+   switch(colr_type) {
+      case PINDIRECT:
+         glIndexi(colr->ind);
+         break;
+
+      case PMODEL_RGB:
+         glColor3f(colr->direct.rgb.red,
+                   colr->direct.rgb.green,
+                   colr->direct.rgb.blue);
+         break;
+
+      default:
+         break;
+   }
+}
+
+/*******************************************************************************
  * phg_set_gcolr
  *
  * DESCR:	Set colour
@@ -218,6 +246,34 @@ void phg_set_gcolr(
          glColor3f(gcolr->val.general.x,
                    gcolr->val.general.y,
                    gcolr->val.general.z);
+         break;
+
+      default:
+         break;
+   }
+}
+
+/*******************************************************************************
+ * phg_colr_from_gcolr
+ *
+ * DESCR:	Get colour value from Pgcolr
+ * RETURNS:	N/A
+ */
+
+void phg_colr_from_gcolr(
+   Pcoval *colr,
+   Pgcolr *gcolr
+   )
+{
+   switch(gcolr->type) {
+      case PINDIRECT:
+         colr->ind = gcolr->val.ind;
+         break;
+
+      case PMODEL_RGB:
+         colr->direct.rgb.red = gcolr->val.general.x;
+         colr->direct.rgb.green = gcolr->val.general.y;
+         colr->direct.rgb.blue = gcolr->val.general.z;
          break;
 
       default:
@@ -458,38 +514,35 @@ void phg_set_polygon_offset(
  * phg_get_facet_colr
  *
  * DESCR:	Get facet colour
- * RETURNS:	Facet colour
+ * RETURNS:	N/A
  */
 
-Pgcolr* phg_get_facet_colr(
+void phg_get_facet_colr(
+   Pcoval *colr,
    Pint fflag,
    Pfacet_data3 *fdata,
    Ws_attr_st *ast
    )
 {
-   Pgcolr *gcolr;
-
    switch (fflag) {
       case PFACET_COLOUR:
-         gcolr = &fdata->colr;
+         memcpy(colr, &fdata->colr, sizeof(Pcoval));
          break;
 
       case PFACET_COLOUR_NORMAL:
-         gcolr = &fdata->conorm.colr;
+         memcpy(colr, &fdata->conorm.colr, sizeof(Pcoval));
          break;
 
       default:
          if (phg_nset_name_is_set(&ast->asf_nameset,
                                   (Pint) PASPECT_INT_COLR_IND)) {
-            gcolr = &ast->indiv_group.int_bundle.colr;
+            phg_colr_from_gcolr(colr, &ast->indiv_group.int_bundle.colr);
          }
          else {
-            gcolr = &ast->bundl_group.int_bundle.colr;
+            phg_colr_from_gcolr(colr, &ast->bundl_group.int_bundle.colr);
          }
          break;
    }
-
-   return gcolr;
 }
 
 /*******************************************************************************

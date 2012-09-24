@@ -57,10 +57,9 @@ void init_checker(int num)
    Pedge_data_list *edata = malloc(sizeof(Pedge_data_list) * num);
    Ppoint3 *p;
 
-   fdata.colr.type = PMODEL_RGB;
-   fdata.colr.val.general.x = 0.0;
-   fdata.colr.val.general.y = 0.5;
-   fdata.colr.val.general.z = 0.5;
+   fdata.colr.direct.rgb.red = 0.0;
+   fdata.colr.direct.rgb.green = 0.5;
+   fdata.colr.direct.rgb.blue = 0.5;
 
    p = points;
    for (i = 0; i < 4 * num; i++) {

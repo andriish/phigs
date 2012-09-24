@@ -633,25 +633,30 @@ typedef union {
    Phsv hsv;
 } Pcolr_rep;
 
+typedef union {
+   Pint      ind;
+   Pcolr_rep direct;
+} Pcoval;
+
 typedef struct {
    Ppoint3 point;
-   Pgcolr  colr;
+   Pcoval  colr;
 } Pptco3;
 
 typedef struct {
    Ppoint3 point;
-   Pvec3   normal;
+   Pvec3   norm;
 } Pptnorm3;
 
 typedef struct {
    Ppoint3 point;
-   Pgcolr  colr;
-   Pvec3   normal;
+   Pcoval  colr;
+   Pvec3   norm;
 } Pptconorm3;
 
 typedef union {
-   Pgcolr     colr;
-   Pvec3      normal;
+   Pcoval     colr;
+   Pvec3      norm;
    Pptconorm3 conorm;
 } Pfacet_data3;
 
