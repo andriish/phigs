@@ -882,13 +882,13 @@ int phg_handle_fasd3(
             case PFACET_COLOUR:
                memcpy(tp,
                       &fasd3->fdata.colr,
-                      sizeof(Pgcolr));
-               tp += sizeof(Pgcolr);
+                      sizeof(Pcoval));
+               tp += sizeof(Pcoval);
                break;
 
             case PFACET_NORMAL:
                memcpy(tp,
-                      &fasd3->fdata.normal,
+                      &fasd3->fdata.norm,
                       sizeof(Pvec3));
                tp += sizeof(Pvec3);
                break;

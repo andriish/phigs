@@ -586,7 +586,7 @@ void pfill_area_set3_data(
    else {
       switch (fflag) {
          case PFACET_COLOUR:
-            facet_size = sizeof(Pgcolr);
+            facet_size = sizeof(Pcoval);
             break;
 
          case PFACET_NORMAL:

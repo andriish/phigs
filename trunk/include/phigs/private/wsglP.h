@@ -169,6 +169,18 @@ void phg_set_asf(
    );
 
 /*******************************************************************************
+ * phg_set_colr
+ *
+ * DESCR:       Set colour value
+ * RETURNS:     N/A
+ */
+
+void phg_set_colr(
+   Pint colr_type,
+   Pcoval *colr
+   );
+
+/*******************************************************************************
  * phg_set_gcolr
  *
  * DESCR:       Set colour
@@ -176,6 +188,18 @@ void phg_set_asf(
  */
 
 void phg_set_gcolr(
+   Pgcolr *gcolr
+   );
+
+/*******************************************************************************
+ * phg_colr_from_gcolr
+ *
+ * DESCR:       Get colour value from Pgcolr
+ * RETURNS:     N/A
+ */
+
+void phg_colr_from_gcolr(
+   Pcoval *pcoval,
    Pgcolr *gcolr
    );
 
@@ -428,10 +452,11 @@ void phg_set_polygon_offset(
  * phg_get_facet_colr
  *
  * DESCR:       Get facet colour
- * RETURNS:     Facet colour
+ * RETURNS:     N/A
  */
 
-Pgcolr* phg_get_facet_colr(
+void phg_get_facet_colr(
+   Pcoval *colr,
    Pint fflag,
    Pfacet_data3 *fdata,
    Ws_attr_st *ast
@@ -766,10 +791,11 @@ void wsgl_set_light_src_state(
 
 void wsgl_light_colr(
    Ws *ws,
-   Pgcolr *result,
+   Pcoval *result,
    Pint refl_eqn,
    Prefl_props *refl_props,
-   Pgcolr *coval,
+   Pint colr_type,
+   Pcoval *coval,
    Pvec3 *normal
    );
 
