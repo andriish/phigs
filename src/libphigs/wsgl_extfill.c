@@ -270,6 +270,7 @@ static void phg_shade_facet3(
    Ws *ws,
    Pcoval *result,
    Pint fflag,
+   Pint colr_type,
    Pfacet_data3 *fdata,
    Ws_attr_st *ast
    )
@@ -290,7 +291,7 @@ static void phg_shade_facet3(
                       result,
                       refl_eqn,
                       refl_props,
-                      PMODEL_RGB,
+                      colr_type,
                       &colr,
                       normal);
    }
@@ -299,7 +300,7 @@ static void phg_shade_facet3(
                       result,
                       refl_eqn,
                       refl_props,
-                      PMODEL_RGB,
+                      colr_type,
                       &colr,
                       normal);
    }
@@ -319,6 +320,7 @@ static void phg_draw_fill_area3_points(
    Ws *ws,
    Pint_style style,
    Pedge_flag flag,
+   Pint colr_type,
    Pcoval *colr,
    Pint num_vertices,
    Ppoint3 *points,
@@ -344,7 +346,7 @@ static void phg_draw_fill_area3_points(
 
       if (style == PSTYLE_HOLLOW) {
          phg_setup_int_attr_nocol(ast);
-         phg_set_colr(PMODEL_RGB, colr);
+         phg_set_colr(colr_type, colr);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
             glVertex3f(points[i].x,
@@ -357,7 +359,7 @@ static void phg_draw_fill_area3_points(
 
    else {
       phg_setup_int_attr_nocol(ast);
-      phg_set_colr(PMODEL_RGB, colr);
+      phg_set_colr(colr_type, colr);
       glBegin(GL_POLYGON);
       for (i = 0; i < num_vertices; i++) {
          glVertex3f(points[i].x,
@@ -379,6 +381,7 @@ static void phg_draw_fill_area3_ptcolrs(
    Ws *ws,
    Pint_style style,
    Pedge_flag flag,
+   Pint colr_type,
    Pint num_vertices,
    Pptco3 *ptcolrs,
    Ws_attr_st *ast
@@ -405,7 +408,7 @@ static void phg_draw_fill_area3_ptcolrs(
          phg_setup_int_attr(ast);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
-            phg_set_colr(PMODEL_RGB, &ptcolrs[i].colr);
+            phg_set_colr(colr_type, &ptcolrs[i].colr);
             glVertex3f(ptcolrs[i].point.x,
                        ptcolrs[i].point.y,
                        ptcolrs[i].point.z);
@@ -418,7 +421,7 @@ static void phg_draw_fill_area3_ptcolrs(
       phg_setup_int_attr_nocol(ast);
       glBegin(GL_POLYGON);
       for (i = 0; i < num_vertices; i++) {
-         phg_set_colr(PMODEL_RGB, &ptcolrs[i].colr);
+         phg_set_colr(colr_type, &ptcolrs[i].colr);
          glVertex3f(ptcolrs[i].point.x,
                     ptcolrs[i].point.y,
                     ptcolrs[i].point.z);
@@ -438,6 +441,7 @@ static void phg_draw_fill_area3_ptcolrs_norm(
    Ws *ws,
    Pint_style style,
    Pedge_flag flag,
+   Pint colr_type,
    Pvec3 *normal,
    Pint refl_eqn,
    Prefl_props *refl_props,
@@ -472,10 +476,10 @@ static void phg_draw_fill_area3_ptcolrs_norm(
                             &result,
                             refl_eqn,
                             refl_props,
-                            PMODEL_RGB,
+                            colr_type,
                             &ptcolrs[i].colr,
                             normal);
-            phg_set_colr(PMODEL_RGB, &result);
+            phg_set_colr(colr_type, &result);
             glVertex3f(ptcolrs[i].point.x,
                        ptcolrs[i].point.y,
                        ptcolrs[i].point.z);
@@ -492,10 +496,10 @@ static void phg_draw_fill_area3_ptcolrs_norm(
                          &result,
                          refl_eqn,
                          refl_props,
-                         PMODEL_RGB,
+                         colr_type,
                          &ptcolrs[i].colr,
                          normal);
-         phg_set_colr(PMODEL_RGB, &result);
+         phg_set_colr(colr_type, &result);
          glVertex3f(ptcolrs[i].point.x,
                     ptcolrs[i].point.y,
                     ptcolrs[i].point.z);
@@ -515,6 +519,7 @@ static void phg_draw_fill_area3_ptnorms(
    Ws *ws,
    Pint_style style,
    Pedge_flag flag,
+   Pint colr_type,
    Pcoval *colr,
    Pint refl_eqn,
    Prefl_props *refl_props,
@@ -549,10 +554,10 @@ static void phg_draw_fill_area3_ptnorms(
                             &result,
                             refl_eqn,
                             refl_props,
-                            PMODEL_RGB,
+                            colr_type,
                             colr,
                             &ptnorms[i].norm);
-            phg_set_colr(PMODEL_RGB, &result);
+            phg_set_colr(colr_type, &result);
             glVertex3f(ptnorms[i].point.x,
                        ptnorms[i].point.y,
                        ptnorms[i].point.z);
@@ -569,10 +574,10 @@ static void phg_draw_fill_area3_ptnorms(
                          &result,
                          refl_eqn,
                          refl_props,
-                         PMODEL_RGB,
+                         colr_type,
                          colr,
                          &ptnorms[i].norm);
-         phg_set_colr(PMODEL_RGB, &result);
+         phg_set_colr(colr_type, &result);
          glVertex3f(ptnorms[i].point.x,
                     ptnorms[i].point.y,
                     ptnorms[i].point.z);
@@ -593,6 +598,7 @@ static void phg_draw_fill_area3_ptconorms(
    Ws *ws,
    Pint_style style,
    Pedge_flag flag,
+   Pint colr_type,
    Pint refl_eqn,
    Prefl_props *refl_props,
    Pint num_vertices,
@@ -626,10 +632,10 @@ static void phg_draw_fill_area3_ptconorms(
                             &result,
                             refl_eqn,
                             refl_props,
-                            PMODEL_RGB,
+                            colr_type,
                             &ptconorms[i].colr,
                             &ptconorms[i].norm);
-            phg_set_colr(PMODEL_RGB, &result);
+            phg_set_colr(colr_type, &result);
             glVertex3f(ptconorms[i].point.x,
                        ptconorms[i].point.y,
                        ptconorms[i].point.z);
@@ -646,10 +652,10 @@ static void phg_draw_fill_area3_ptconorms(
                          &result,
                          refl_eqn,
                          refl_props,
-                         PMODEL_RGB,
+                         colr_type,
                          &ptconorms[i].colr,
                          &ptconorms[i].norm);
-         phg_set_colr(PMODEL_RGB, &result);
+         phg_set_colr(colr_type, &result);
          glVertex3f(ptconorms[i].point.x,
                     ptconorms[i].point.y,
                     ptconorms[i].point.z);
@@ -957,12 +963,14 @@ void phg_draw_fill_area3_data(
          phg_shade_facet3(ws,
                           &colr,
                           fasd3.fflag,
+                          fasd3.colr_type,
                           &fasd3.fdata,
                           ast);
          for (i = 0; i < fasd3.nfa; i++) {
             phg_draw_fill_area3_points(ws,
                                        style,
                                        flag,
+                                       fasd3.colr_type,
                                        &colr,
                                        fasd3.vdata->num_vertices,
                                        fasd3.vdata->vertex_data.points,
@@ -994,6 +1002,7 @@ void phg_draw_fill_area3_data(
                phg_draw_fill_area3_ptcolrs_norm(ws,
                                                 style,
                                                 flag,
+                                                fasd3.colr_type,
                                                 normal,
                                                 refl_eqn,
                                                 refl_props,
@@ -1026,6 +1035,7 @@ void phg_draw_fill_area3_data(
                phg_draw_fill_area3_ptcolrs(ws,
                                            style,
                                            flag,
+                                           fasd3.colr_type,
                                            fasd3.vdata->num_vertices,
                                            fasd3.vdata->vertex_data.ptcolrs,
                                            ast);
@@ -1056,6 +1066,7 @@ void phg_draw_fill_area3_data(
             phg_draw_fill_area3_ptnorms(ws,
                                         style,
                                         flag,
+                                        fasd3.colr_type,
                                         &colr,
                                         refl_eqn,
                                         refl_props,
@@ -1088,6 +1099,7 @@ void phg_draw_fill_area3_data(
             phg_draw_fill_area3_ptconorms(ws,
                                           style,
                                           flag,
+                                          fasd3.colr_type,
                                           refl_eqn,
                                           refl_props,
                                           fasd3.vdata->num_vertices,
