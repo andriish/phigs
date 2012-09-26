@@ -91,6 +91,47 @@ public:
 
 protected:
 
+    ///////////////////////////////////////////////////////////////////////////
+    // installDestroyHandler
+    //
+    // DESCR:       Install the destroy handler callback
+    //              Should be called after baseWidget widget has been created
+    // RETURNS:     N/A
+    //
+    void installDestroyHandler();
+
+    ///////////////////////////////////////////////////////////////////////////
+    // widgetDestroyed
+    //
+    // DESCR:       Callback by installed callback when widget is destroyed
+    //              Should be overriden by the subclass if needed
+    // RETURNS:     N/A
+    //
+    virtual void widgetDestroyed();
+
+    ///////////////////////////////////////////////////////////////////////////
+    // setDefaultResources
+    //
+    // DESCR:       Set default resources that can be overriden
+    // RETURNS:     N/A
+    //
+    void setDefaultResources(
+        const Widget w,
+        const String *resourceSpec
+        );
+
+    ///////////////////////////////////////////////////////////////////////////
+    // getResources
+    //
+    // DESCR:       Retrive object specific resources relative to
+    //              to the parent of the base widget
+    // RETURNS:     N/A
+    //
+    void getResources(
+        const XtResourceList resources,
+        const int numResources
+        );
+
     // Name of the instance
     char *_name;
 
@@ -104,7 +145,23 @@ protected:
     //              Should be called by subclass constructor
     // RETURNS:     N/A
     //
-    VkComponent(const char *name);
+    VkComponent(
+        const char *name
+        );
+
+private:
+
+    ///////////////////////////////////////////////////////////////////////////
+    // widgetDestroyedCallback
+    //
+    // DESCR:       Callback called by toolkit when widget is destroyed
+    // RETURNS:     N/A
+    //
+    static void widgetDestroyedCallback(
+        Widget w,
+        XtPointer clientData,
+        XtPointer callData
+        );
 };
 
 #endif
