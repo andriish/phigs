@@ -164,6 +164,19 @@ VkComponent::VkComponent(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// VkComponent
+//
+// DESCR:       Default constructor
+//              Should not be called directly but may be used from subclass
+// RETURNS:     N/A
+//
+VkComponent::VkComponent()
+{
+    _baseWidget = NULL;
+    _name = XtNewString("");
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // widgetDestroyedCallback
 //
 // DESCR:       Callback called by toolkit when widget is destroyed

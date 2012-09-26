@@ -74,11 +74,12 @@ public:
     const char* name() const { return _name; }
 
     ///////////////////////////////////////////////////////////////////////////
-    // getClassName
+    // className
     //
     // DESCR:       Get class name for the object
-    //              This member function should be overriden by the sbuclass
+    //              This member function should be implemented by subclass
     // RETURNS:     Class name
+    //
     virtual const char* className() = 0;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -147,6 +148,15 @@ protected:
     VkComponent(
         const char *name
         );
+
+    ///////////////////////////////////////////////////////////////////////////
+    // VkComponent
+    //
+    // DESCR:       Default constructor
+    //              Should not be called directly but may be used from subclass
+    // RETURNS:     N/A
+    //
+    VkComponent();
 
 private:
 
