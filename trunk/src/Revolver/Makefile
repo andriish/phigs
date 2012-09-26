@@ -1,18 +1,18 @@
 CXX=g++
 RM=rm
 DFLAGS=
-CFLAGS= -Wall
+CXXFLAGS= -Wall
 INCFLAGS=-I../../include -I/usr/X11R6/include
 LDFLAGS=-L../../lib -L/usr/X11R6/lib
-LIBS= -lGL -lGLU -lGLw -lXm -lXaw -lXt -lX11 -lXmu -lm -lphigs
+LIBS= -lGL -lGLU -lGLw -lXm -lXaw -lXt -lX11 -lXmu -lm -lphigs -lvk
 OUTPATH=../../bin
 
 .SUFFIXES: .o .c
 
 .C.o:
-	$(CXX) $(DFLAGS) $(CFLAGS) $(INCFLAGS) -c $*.C
+	$(CXX) $(DFLAGS) $(CXXFLAGS) $(INCFLAGS) -c $*.C
 
-OBJS = DrawingArea.o Main.o
+OBJS = Workstation.o Main.o
 
 all: Revolver
 
