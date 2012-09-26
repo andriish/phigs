@@ -18,6 +18,7 @@
 //  along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <stdio.h>
 #include <assert.h>
 #include <Vk/VkComponent.h>
 
@@ -63,17 +64,123 @@ void VkComponent::hide()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// installDestroyHandler
+//
+// DESCR:       Install the destroy handler callback
+//              Should be called after baseWidget widget has been created
+// RETURNS:     N/A
+//
+void VkComponent::installDestroyHandler()
+{
+    assert(_baseWidget != NULL);
+    XtAddCallback(_baseWidget,
+                  XmNdestroyCallback,
+                  VkComponent::widgetDestroyedCallback,
+                  (XtPointer) this);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// widgetDestroyed
+//
+// DESCR:       Callback by installed callback when widget is destroyed
+//              Should be overriden by the subclass if needed
+// RETURNS:     N/A
+//
+void VkComponent::widgetDestroyed()
+{
+    _baseWidget = NULL;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// setDefaultResources
+//
+// DESCR:       Set default resources that can be overriden
+// RETURNS:     N/A
+//
+void VkComponent::setDefaultResources(
+    const Widget w,
+    const String *resourceSpec
+    )
+{
+    static char buf[1000];
+    int i;
+    Display *dpy = XtDisplay(_baseWidget);
+    XrmDatabase rdb = NULL;
+
+    // Create empty resource database
+    rdb = XrmGetStringDatabase("");
+
+    // Add component resources, prepending the name of the component
+    i = 0;
+    while (resourceSpec[i] != NULL) {
+        sprintf(buf, "*%s%s", _name, resourceSpec[i++]);
+        XrmPutLineResource(&rdb, buf);
+    }
+
+    // Merge resources into resource database with lowest precedence
+    if (rdb != NULL) {
+        XrmDatabase db = XtDatabase(dpy);
+        XrmCombineDatabase(rdb, &db, FALSE);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// getResources
+//
+// DESCR:       Retrive object specific resources relative to
+//              to the parent of the base widget
+// RETURNS:     N/A
+//
+void VkComponent::getResources(
+    const XtResourceList resources,
+    const int numResources
+    )
+{
+    assert(_baseWidget != NULL);
+    assert(resources != NULL);
+
+    // Retreive the requested resources relative to the parent
+    // of the object base widget
+    XtGetSubresources(XtParent(_baseWidget),
+                      (XtPointer) this,
+                      _name,
+                      className(),
+                      resources,
+                      numResources,
+                      NULL,
+                      0);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // VkComponent
 //
 // DESCR:       Initialize baseWidget to NULL and set instance name
 //              Should be called by subclass constructor
 // RETURNS:     N/A
 //
-VkComponent::VkComponent(const char *name)
+VkComponent::VkComponent(
+    const char *name
+    )
 {
     _baseWidget = NULL;
     assert(name != NULL);
     _name = XtNewString(name);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// widgetDestroyedCallback
+//
+// DESCR:       Callback called by toolkit when widget is destroyed
+// RETURNS:     N/A
+//
+void VkComponent::widgetDestroyedCallback(
+    Widget w,
+    XtPointer clientData,
+    XtPointer callData
+    )
+{
+    VkComponent *obj = (VkComponent *) clientData;
+    obj->widgetDestroyed();
 }
 
 #ifdef TEST
