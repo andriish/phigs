@@ -19,7 +19,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _VkComponent_H
-#define _VkComponent_h
+#define _VkComponent_H
 
 #include <Xm/Xm.h>
 

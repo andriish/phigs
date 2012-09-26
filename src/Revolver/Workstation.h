@@ -19,7 +19,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _Workstation_H
-#define _Workstation_h
+#define _Workstation_H
 
 #include <Vk/VkComponent.h>
 
