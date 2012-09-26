@@ -73,14 +73,13 @@ public:
     // RETURNS:     Instance name
     const char* name() const { return _name; }
 
-    // Get class name of instance. Derived classes should override
     ///////////////////////////////////////////////////////////////////////////
-    // baseWidget
+    // getClassName
     //
     // DESCR:       Get class name for the object
     //              This member function should be overriden by the sbuclass
     // RETURNS:     Class name
-    virtual const char* className();
+    virtual const char* className() = 0;
 
     ///////////////////////////////////////////////////////////////////////////
     // baseWidget

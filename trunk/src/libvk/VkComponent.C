@@ -141,14 +141,10 @@ void VkComponent::getResources(
 
     // Retreive the requested resources relative to the parent
     // of the object base widget
-    XtGetSubresources(XtParent(_baseWidget),
-                      (XtPointer) this,
-                      _name,
-                      className(),
-                      resources,
-                      numResources,
-                      NULL,
-                      0);
+    XtGetSubresources(XtParent(_baseWidget), (XtPointer) this,
+                      _name, className(),
+                      resources, numResources,
+                      NULL, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -182,15 +178,4 @@ void VkComponent::widgetDestroyedCallback(
     VkComponent *obj = (VkComponent *) clientData;
     obj->widgetDestroyed();
 }
-
-#ifdef TEST
-const char* VkComponent::className()
-{
-    return "VkComponent";
-}
-
-int main(void)
-{
-}
-#endif
 
