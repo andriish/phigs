@@ -18,58 +18,43 @@
 //  along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _VkApp_H
-#define _VkApp_H
+#ifndef _VkSimpleWindow_H
+#define _VkSimpleWindow_H
 
-#include <X11/Xlib.h>
 #include <Vk/VkComponent.h>
-#include <Vk/VkComponentList.h>
 
 class VkApp;
-class VkSimpleWindow;
 
-extern VkApp *theApplication;
+class VkSimpleWindow : public VkComponent {
 
-class VkApp : public VkComponent {
-
-    friend class VkSimpleWindow;
+    friend class VkApp;
 
 public:
 
     ///////////////////////////////////////////////////////////////////////////
-    // VkApp
+    // VkSimpleWindow
     //
-    // DESCR:       Normal constructor -- most apps should use this one
+    // DESCR:       Create simple window
     // RETURNS:     N/A
     //
-    VkApp(
-        char *appClassName,
-        int *arg_c,
-        char **arg_v,
-        XrmOptionDescRec *optionList = NULL,
-        int sizeOfOptionList = 0
+    VkSimpleWindow(
+        const char *name,
+        ArgList argList = NULL,
+        Cardinal argCount = 0
         );
 
     ///////////////////////////////////////////////////////////////////////////
-    // ~VkApp
+    // ~VkSimpleWindow
     //
     // DESCR:       Clear up resources
     // RETURNS:     N/A
     //
-    virtual ~VkApp();
-
-    ///////////////////////////////////////////////////////////////////////////
-    // run
-    //
-    // DESCR:       Run application by entering event loop
-    // RETURNS:     N/A
-    //
-    virtual void run();
+    virtual ~VkSimpleWindow();
 
     ///////////////////////////////////////////////////////////////////////////
     // iconify
     //
-    // DESCR:       Iconify all the application windows
+    // DESCR:       Iconify window
     // RETURNS:     N/A
     //
     virtual void iconify();
@@ -77,7 +62,7 @@ public:
     ///////////////////////////////////////////////////////////////////////////
     // show
     //
-    // DESCR:       Show all the application windows
+    // DESCR:       Show window
     // RETURNS:     N/A
     //
     virtual void show();
@@ -85,61 +70,34 @@ public:
     ///////////////////////////////////////////////////////////////////////////
     // hide
     //
-    // DESCR:       Hide all the application windows
+    // DESCR:       Hide window
     // RETURNS:     N/A
     //
     virtual void hide();
 
-protected:
-
-    // List of application windows
-    VkComponentList _winList;
+    ///////////////////////////////////////////////////////////////////////////
+    // className
+    //
+    // DESCR:       Get class name
+    // RETURNS:     Class name
+    //
+    virtual const char* className();
 
 private:
 
     ///////////////////////////////////////////////////////////////////////////
-    // VkAppInitialize
+    // VkSimpleWindowInitialize
     //
-    // DESCR:       Constructor's real initialization function
+    // DESCR:       The window's real initialization code
     // RETURNS:     N/A
     //
-    void VkAppInitialize(
-        char *appClassName,
-        int *arg_c,
-        char **arg_v,
+    void VkSimpleWindowInitialize(
+        const char *name,
         ArgList argList,
-        Cardinal argCount,
-        void (*preRealizeFunction)(Widget w),
-        XrmOptionDescRec *optionList,
-        int sizeOfOptionList
-        );
+        Cardinal argCount
+    );
 
-    // Various data fields needed by an application
-    char          **_argv;
-    int             _argc;
-    Display        *_dpy;
-    XtAppContext    _appContext;
-    char           *_applicationClassName;
-
-    ///////////////////////////////////////////////////////////////////////////
-    // addWindow
-    //
-    // DESCR:       Add window to the application
-    // RETURNS:     N/A
-    //
-    void addWindow(
-        VkSimpleWindow *window
-        );
-
-    ///////////////////////////////////////////////////////////////////////////
-    // removeWindow
-    //
-    // DESCR:       Remove window from the application
-    // RETURNS:     N/A
-    //
-    void removeWindow(
-        VkSimpleWindow *window
-        );
+    Widget _viewWidget;
 };
 
 #endif
