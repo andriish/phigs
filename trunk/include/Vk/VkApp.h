@@ -90,6 +90,22 @@ public:
     //
     virtual void hide();
 
+    ///////////////////////////////////////////////////////////////////////////
+    // display
+    //
+    // DESCR:       Get display connection for application
+    // RETURNS:     Display connection
+    //
+    virtual Display* display() { return _dpy; }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // className
+    //
+    // DESCR:       Get class name
+    // RETURNS:     Class name
+    //
+    virtual const char* className();
+
 protected:
 
     // List of application windows

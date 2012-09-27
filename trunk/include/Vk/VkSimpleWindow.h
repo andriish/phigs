@@ -52,6 +52,16 @@ public:
     virtual ~VkSimpleWindow();
 
     ///////////////////////////////////////////////////////////////////////////
+    // addView
+    //
+    // DESCR:       Add view area widget to window
+    // RETURNS:     N/A
+    //
+    void addView(
+        Widget w
+        );
+
+    ///////////////////////////////////////////////////////////////////////////
     // iconify
     //
     // DESCR:       Iconify window
@@ -82,6 +92,19 @@ public:
     // RETURNS:     Class name
     //
     virtual const char* className();
+
+    ///////////////////////////////////////////////////////////////////////////
+    // mainWindowWidget
+    //
+    // DESCR:       Get main window widget
+    // RETURNS:     Main window widget
+    //
+    virtual Widget mainWindowWidget();
+
+protected:
+
+    // Widget for main window container
+    Widget _mainWindowWidget;
 
 private:
 

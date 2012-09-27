@@ -48,44 +48,36 @@ void initStructs()
 
 int main(int argc, char *argv[])
 {
-    Widget toplevel;
-    XtAppContext app;
-
     popen_phigs(NULL, 0);
     initStructs();
 
-    toplevel = XtVaAppInitialize(
-        &app,                  /* Application context */
-        "Revolver",            /* Application name */
-        NULL, 0,               /* Command line options list */
-        &argc, argv,           /* Command line args */
-        NULL,                  /* Fallback resources */
-        NULL);
-
-    Workstation *ws = new Workstation("ws", toplevel, 0);
-
-    std::cout << "Class name: " << ws->className() << std::endl;
-    std::cout << "Object name: " << ws->name() << std::endl;
-    std::cout << "Workstation id: " << ws->id() << std::endl;
-
-    ws->show();
-
-    XtRealizeWidget(toplevel);
-    XtAppMainLoop(app);
-
-#ifdef NOT_YET
+    // Create application
     VkApp *app = new VkApp("Revolver", &argc, argv);
     std::cout << "Application class name: " << app->className() << std::endl;
     std::cout << "Application instance name: " << app->name() << std::endl;
+    std::cout << std::endl;
 
-    VkSimpleWindow *mainWindow = new VkSimpleWindow("revolver");
+    // Create main window
+    VkSimpleWindow *mainWindow = new VkSimpleWindow("Revolver");
     std::cout << "Window class name: " << mainWindow->className() << std::endl;
     std::cout << "Window instance name: " << mainWindow->name() << std::endl;
+    std::cout << std::endl;
 
+    // Create workstation
+    Workstation *ws = new Workstation("ws", mainWindow->mainWindowWidget(), 0);
+    std::cout << "Workstation class name: " << ws->className() << std::endl;
+    std::cout << "Workstation instance name: " << ws->name() << std::endl;
+    std::cout << "Workstation id: " << ws->id() << std::endl;
+    std::cout << std::endl;
+
+    // Add workstation to main window
+    mainWindow->addView(ws->baseWidget());
+
+    // Show all windows
     app->show();
 
+    // Run application
     app->run();
-#endif
 
     return 0;
 }
