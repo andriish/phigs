@@ -107,15 +107,3 @@ VkComponent* VkComponentList::operator[](
     return _components[index];
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// className
-//
-// DESCR:       Get class name for the object
-//              This member function should be overriden by the sbuclass
-// RETURNS:     Class name
-//
-const char* className()
-{
-    return "VkComponentList";
-}
-
