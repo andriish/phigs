@@ -18,8 +18,8 @@
 //  along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <iostream>
 #include <assert.h>
+#include <Xm/MainW.h>
 #include <Vk/VkApp.h>
 #include <Vk/VkSimpleWindow.h>
 
@@ -36,8 +36,13 @@ VkSimpleWindow::VkSimpleWindow(
     ) :
     VkComponent(name)
 {
+    _viewWidget = NULL;
+
     // The application must exists first
     assert(theApplication != NULL);
+
+    // Initialize window
+    VkSimpleWindowInitialize(name, argList, argCount);
 
     // Add this window to the application
     theApplication->addWindow(this);
@@ -55,6 +60,29 @@ VkSimpleWindow::~VkSimpleWindow()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// addView
+//
+// DESCR:       Add view area widget to window
+// RETURNS:     N/A
+//
+void VkSimpleWindow::addView(
+    Widget w
+    )
+{
+    _viewWidget = w;
+
+    // Set as main window
+    XtVaSetValues(_mainWindowWidget,
+                  XmNworkWindow, _viewWidget,
+                  NULL);
+
+    // Manage the view if not done before
+    if (!XtIsManaged(_viewWidget)) {
+        XtManageChild(_viewWidget);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // iconify
 //
 // DESCR:       Iconify window
@@ -62,6 +90,18 @@ VkSimpleWindow::~VkSimpleWindow()
 //
 void VkSimpleWindow::iconify()
 {
+    assert(_baseWidget != NULL);
+
+    // Set widget to have an initial iconic state
+    // in case it has not been realized already
+    XtVaSetValues(_baseWidget,
+                  XmNiconic, TRUE,
+                  NULL);
+
+    // If the widget alredy has been realized, iconify it
+    if (XtIsRealized(_baseWidget)) {
+        XIconifyWindow(theApplication->display(), XtWindow(_baseWidget), 0);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,7 +112,13 @@ void VkSimpleWindow::iconify()
 //
 void VkSimpleWindow::show()
 {
-    std::cout << "Show window: " << name() << std::endl;
+    assert(_baseWidget != NULL);
+    XtPopup(_baseWidget, XtGrabNone);
+
+    // Map the window, in case if it is iconified
+    if (XtIsRealized(_baseWidget)) {
+        XMapRaised(theApplication->display(), XtWindow(_baseWidget));
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -83,6 +129,8 @@ void VkSimpleWindow::show()
 //
 void VkSimpleWindow::hide()
 {
+    assert(_baseWidget != NULL);
+    XtPopdown(_baseWidget);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -94,6 +142,17 @@ void VkSimpleWindow::hide()
 const char* VkSimpleWindow::className()
 {
     return "VkSimpleWindow";
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// mainWindowWidget
+//
+// DESCR:       Get main window widget
+// RETURNS:     Main window widget
+//
+Widget VkSimpleWindow::mainWindowWidget()
+{
+    return _mainWindowWidget;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -116,5 +175,11 @@ void VkSimpleWindow::VkSimpleWindowInitialize(
                                      argList, argCount);
 
     installDestroyHandler();
+
+    // Create a main window container
+    _mainWindowWidget = XtCreateManagedWidget("mainWindow",
+                                              xmMainWindowWidgetClass,
+                                              _baseWidget,
+                                              argList, argCount);
 }
 

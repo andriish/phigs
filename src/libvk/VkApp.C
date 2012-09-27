@@ -114,6 +114,17 @@ void VkApp::hide()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// className
+//
+// DESCR:       Get class name
+// RETURNS:     Class name
+//
+const char* VkApp::className()
+{
+    return "VkApp";
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // VkAppInitialize
 //
 // DESCR:       Constructor's real initialization function
