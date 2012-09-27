@@ -12,7 +12,7 @@ OUTPATH=../../lib
 .C.o:
 	$(CXX) $(DFLAGS) $(CXXFLAGS) $(INCFLAGS) -c $*.C
 
-OBJS= VkComponent.o VkComponentList.o VkApp.o
+OBJS= VkComponent.o VkComponentList.o VkApp.o VkSimpleWindow.o
 
 all: libvk
 

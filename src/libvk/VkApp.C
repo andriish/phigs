@@ -18,8 +18,8 @@
 //  along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <assert.h>
 #include <Vk/VkApp.h>
+#include <Vk/VkSimpleWindow.h>
 
 VkApp *theApplication = NULL;
 
@@ -54,6 +54,63 @@ VkApp::VkApp(
 VkApp::~VkApp()
 {
     XtFree(_applicationClassName);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// run
+//
+// DESCR:       Run application by entering event loop
+// RETURNS:     N/A
+//
+void VkApp::run()
+{
+    // Enter toolkit main loop
+    XtAppMainLoop(_appContext);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// iconify
+//
+// DESCR:       Iconify all the application windows
+// RETURNS:     N/A
+//
+void VkApp::iconify()
+{
+    VkSimpleWindow *window;
+
+    // Iconify all windows
+    for (int i = 0; i < _winList.size(); i++) {
+        window = (VkSimpleWindow *) _winList[i];
+        window->iconify();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// show
+//
+// DESCR:       Show all the application windows
+// RETURNS:     N/A
+//
+void VkApp::show()
+{
+    // Manage all windows
+    for (int i = 0; i < _winList.size(); i++) {
+        _winList[i]->show();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// hide
+//
+// DESCR:       Hide all the application windows
+// RETURNS:     N/A
+//
+void VkApp::hide()
+{
+    // Unmanage all windows
+    for (int i = 0; i < _winList.size(); i++) {
+        _winList[i]->hide();
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -106,5 +163,34 @@ void VkApp::VkAppInitialize(
                   XmNwidth, 1,
                   XmNheight, 1,
                   NULL);
+
+    // Realize toplevel widget
+    XtRealizeWidget(_baseWidget);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// addWindow
+//
+// DESCR:       Add window to the application
+// RETURNS:     N/A
+//
+void VkApp::addWindow(
+    VkSimpleWindow *window
+    )
+{
+    _winList.add((VkComponent *) window);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// removeWindow
+//
+// DESCR:       Remove window from the application
+// RETURNS:     N/A
+//
+void VkApp::removeWindow(
+    VkSimpleWindow *window
+    )
+{
+    _winList.remove((VkComponent *) window);
 }
 
