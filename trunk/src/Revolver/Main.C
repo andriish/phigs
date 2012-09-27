@@ -20,6 +20,8 @@
 
 #include <iostream>
 #include <phigs/phg.h>
+#include <Vk/VkApp.h>
+#include <Vk/VkSimpleWindow.h>
 #include "Workstation.h"
 
 void initStructs()
@@ -70,6 +72,20 @@ int main(int argc, char *argv[])
 
     XtRealizeWidget(toplevel);
     XtAppMainLoop(app);
+
+#ifdef NOT_YET
+    VkApp *app = new VkApp("Revolver", &argc, argv);
+    std::cout << "Application class name: " << app->className() << std::endl;
+    std::cout << "Application instance name: " << app->name() << std::endl;
+
+    VkSimpleWindow *mainWindow = new VkSimpleWindow("revolver");
+    std::cout << "Window class name: " << mainWindow->className() << std::endl;
+    std::cout << "Window instance name: " << mainWindow->name() << std::endl;
+
+    app->show();
+
+    app->run();
+#endif
 
     return 0;
 }
