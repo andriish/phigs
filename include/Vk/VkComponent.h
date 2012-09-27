@@ -77,10 +77,10 @@ public:
     // className
     //
     // DESCR:       Get class name for the object
-    //              This member function should be implemented by subclass
+    //              This member function should be overriden by subclass
     // RETURNS:     Class name
     //
-    virtual const char* className() = 0;
+    virtual const char* className();
 
     ///////////////////////////////////////////////////////////////////////////
     // baseWidget

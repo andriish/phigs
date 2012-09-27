@@ -80,15 +80,6 @@ public:
         int index
         ) const;
 
-    ///////////////////////////////////////////////////////////////////////////
-    // className
-    //
-    // DESCR:       Get class name for the object
-    // RETURNS:     Class name
-    //
-    virtual const char* className();
-
-
 private:
 
     // Array of pointers to components
