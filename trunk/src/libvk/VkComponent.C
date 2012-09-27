@@ -64,6 +64,18 @@ void VkComponent::hide()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// className
+//
+// DESCR:       Get class name for the object
+//              This member function should be overriden by subclass
+// RETURNS:     Class name
+//
+const char* VkComponent::className()
+{
+    return "VkComponent";
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // installDestroyHandler
 //
 // DESCR:       Install the destroy handler callback
