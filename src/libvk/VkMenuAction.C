@@ -18,6 +18,7 @@
 //  along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <Xm/PushB.h>
 #include <Vk/VkMenuItem.h>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -29,10 +30,12 @@
 VkMenuAction::VkMenuAction(
     const char *name,
     XtCallbackProc func,
-    XtPointer data
+    XtPointer clientData
     ) :
     VkMenuItem(name)
 {
+    _func = func;
+    _data = clientData;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,6 +46,9 @@ VkMenuAction::VkMenuAction(
 //
 VkMenuAction::~VkMenuAction()
 {
+    if (_isBuilt) {
+        XtRemoveAllCallbacks(_baseWidget, XmNactivateCallback);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -53,6 +59,9 @@ VkMenuAction::~VkMenuAction()
 //
 void VkMenuAction::undo()
 {
+    if (_undoCallback != NULL) {
+        (*_undoCallback)(_baseWidget, _data, 0);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -87,5 +96,30 @@ void VkMenuAction::build(
     Widget parent
     )
 {
+    // Create push button widget
+    _baseWidget = XtCreateWidget(_name,
+                                 xmPushButtonWidgetClass,
+                                 parent,
+                                 NULL, 0);
+    // Determine position
+    short pos = (_position == -1) ? XmLAST_POSITION : _position;
+
+    // Set position
+    XtVaSetValues(_baseWidget,
+                  XmNpositionIndex, pos,
+                  NULL);
+
+
+    installDestroyHandler();
+
+    XtAddCallback(_baseWidget,
+                  XmNactivateCallback,
+                  _func,
+                  (XtPointer) this);
+
+    // Set sensitivity
+    XtSetSensitive(_baseWidget, _sensitive);
+
+    VkMenuItem::build(parent);
 }
 
