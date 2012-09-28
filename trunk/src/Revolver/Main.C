@@ -22,6 +22,7 @@
 #include <phigs/phg.h>
 #include <Vk/VkApp.h>
 #include <Vk/VkSimpleWindow.h>
+#include <Vk/VkMenuItem.h>
 #include "Workstation.h"
 
 void initStructs()
@@ -69,6 +70,13 @@ int main(int argc, char *argv[])
     std::cout << "Workstation instance name: " << ws->name() << std::endl;
     std::cout << "Workstation id: " << ws->id() << std::endl;
     std::cout << std::endl;
+
+#if 0
+    VkMenuAction *act = new VkMenuAction("action");
+    std::cout << "Menu action class name: " << act->className() << std::endl;
+    std::cout << "Menu action instance name: " << act->name() << std::endl;
+    std::cout << std::endl;
+#endif
 
     // Add workstation to main window
     mainWindow->addView(ws->baseWidget());
