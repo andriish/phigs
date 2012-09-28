@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     std::cout << "Workstation id: " << ws->id() << std::endl;
     std::cout << std::endl;
 
-#if 0
+#if 1
     VkMenuAction *act = new VkMenuAction("action");
     std::cout << "Menu action class name: " << act->className() << std::endl;
     std::cout << "Menu action instance name: " << act->name() << std::endl;

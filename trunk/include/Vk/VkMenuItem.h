@@ -23,6 +23,8 @@
 
 #include <Vk/VkComponent.h>
 
+class VkMenu;
+
 enum VkMenuItemType {
     END,                // Mark the end of a static menu structure
     ACTION              // Ordinary menu item
@@ -146,6 +148,7 @@ protected:
     int     _position;
     Boolean _isBuilt;
     int     _sensitive;
+    VkMenu *_parentMenu;
     char   *_label;
     Boolean _isHidden;
 
@@ -183,7 +186,7 @@ public:
     VkMenuAction(
         const char *name,
         XtCallbackProc func = NULL,
-        XtPointer data = NULL
+        XtPointer clientData = NULL
         );
 
     ///////////////////////////////////////////////////////////////////////////
@@ -231,7 +234,7 @@ protected:
     // Various fields
     XtCallbackProc _undoCallback;
     XtCallbackProc _func;
-    void           *_data;
+    void          *_data;
  
     ///////////////////////////////////////////////////////////////////////////
     // build

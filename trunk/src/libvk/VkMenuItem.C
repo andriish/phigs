@@ -28,6 +28,9 @@
 //
 VkMenuItem::~VkMenuItem()
 {
+    if (_label != NULL) {
+        XtFree(_label);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,6 +66,7 @@ void VkMenuItem::setPosition(
     int position
     )
 {
+    _position = position;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -73,6 +77,10 @@ void VkMenuItem::setPosition(
 //
 void VkMenuItem::activate()
 {
+    _sensitive = True;
+    if (_isBuilt) {
+        XtSetSensitive(_baseWidget, True);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -83,6 +91,10 @@ void VkMenuItem::activate()
 //
 void VkMenuItem::deactivate()
 {
+    _sensitive = False;
+    if (_isBuilt) {
+        XtSetSensitive(_baseWidget, False);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -149,6 +161,12 @@ VkMenuItem::VkMenuItem(
     ) :
     VkComponent(name)
 {
+    _position = -1;
+    _isBuilt = FALSE;
+    _isHidden = FALSE;
+    _sensitive = True;
+    _parentMenu = NULL;
+    _label = NULL;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -162,5 +180,6 @@ void VkMenuItem::build(
     Widget parent
     )
 {
+    _isBuilt = TRUE;
 }
 
