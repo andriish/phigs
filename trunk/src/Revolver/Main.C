@@ -21,8 +21,9 @@
 #include <iostream>
 #include <phigs/phg.h>
 #include <Vk/VkApp.h>
-#include <Vk/VkSimpleWindow.h>
-#include <Vk/VkMenuItem.h>
+#include <Vk/VkWindow.h>
+#include <Vk/VkMenuBar.h>
+#include <Vk/VkSubMenu.h>
 #include "Workstation.h"
 
 void initStructs()
@@ -59,7 +60,7 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
 
     // Create main window
-    VkSimpleWindow *mainWindow = new VkSimpleWindow("Revolver");
+    VkWindow *mainWindow = new VkWindow("Revolver");
     std::cout << "Window class name: " << mainWindow->className() << std::endl;
     std::cout << "Window instance name: " << mainWindow->name() << std::endl;
     std::cout << std::endl;
@@ -72,10 +73,14 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
 
 #if 1
-    VkMenuAction *act = new VkMenuAction("action");
-    std::cout << "Menu action class name: " << act->className() << std::endl;
-    std::cout << "Menu action instance name: " << act->name() << std::endl;
+    VkMenuBar *bar = new VkMenuBar("menubar");
+    std::cout << "Menu bar class name: " << bar->className() << std::endl;
+    std::cout << "Menu bar instance name: " << bar->name() << std::endl;
     std::cout << std::endl;
+    mainWindow->setMenuBar(bar);
+
+    bar->addSubmenu("file");
+    bar->build(mainWindow->mainWindowWidget());
 #endif
 
     // Add workstation to main window

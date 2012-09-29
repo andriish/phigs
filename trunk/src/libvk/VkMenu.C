@@ -68,8 +68,17 @@ void VkMenu::add(
     item->_parentMenu = this;
 
     if (_isBuilt) {
-        //TODO: Different for submenu and option
-        item->build(baseWidget());
+
+        switch(menuType()) {
+            case SUBMENU:
+                item->build(((VkSubMenu *) this)->pulldown());
+                break;
+
+            default:
+                item->build(baseWidget());
+                break;
+        }
+
     }
 }
 
@@ -105,7 +114,6 @@ VkSubMenu* VkMenu::addSubmenu(
 {
     VkSubMenu *submenu = new VkSubMenu(name);
     add(submenu, pos);
-    //TODO: Add menu contents from desc
 
     return submenu;
 }
