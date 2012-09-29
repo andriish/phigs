@@ -18,62 +18,52 @@
 //  along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _VkSubMenu_H
-#define _VkSubMenu_H
+#ifndef _VkWindow_H
+#define _VkWindow_H
 
-#include <Vk/VkMenu.h>
+#include <Vk/VkSimpleWindow.h>
+#include <Vk/VkMenuBar.h>
 
-class VkSubMenu : public VkMenu {
-
-    friend class VkMenuItem;
-
+class VkWindow : public VkSimpleWindow {
 public:
 
     ///////////////////////////////////////////////////////////////////////////
-    // VkSubMenu
+    // VkWindow
     //
-    // DESCR:       Create new sub menu
+    // DESCR:       Create window
     // RETURNS:     N/A
     //
-    VkSubMenu(
+    VkWindow(
         const char *name,
-        VkMenuDesc *desc = NULL,
-        XtPointer defaultClientData = NULL
+        ArgList argList = NULL,
+        Cardinal argCount = 0
         );
 
     ///////////////////////////////////////////////////////////////////////////
-    // ~VkSubMenu
+    // ~VkWindow
     //
-    // DESCR:       Free resources
+    // DESCR:       Clear up resources
     // RETURNS:     N/A
     //
-    virtual ~VkSubMenu();
+    virtual ~VkWindow();
 
     ///////////////////////////////////////////////////////////////////////////
-    // showTearOff
+    // show
     //
-    // DESCR:       Set tear off flag
+    // DESCR:       Show window
     // RETURNS:     N/A
     //
-    void showTearOff(
-        Boolean showit
+    virtual void show();
+
+    ///////////////////////////////////////////////////////////////////////////
+    // setMenuBar
+    //
+    // DESCR:       Set menu bar for window
+    // RETURNS:     N/A
+    //
+    void setMenuBar(
+        VkMenuBar *menuObj
         );
-
-    ///////////////////////////////////////////////////////////////////////////
-    // pulldown
-    //
-    // DESCR:       Get pulldown menu widget
-    // RETURNS:     Pulldown widget
-    //
-    Widget pulldown() { return _pulldown; }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // menuType
-    //
-    // DESCR:       Get menu item type
-    // RETURNS:     Menu item type
-    //
-    virtual VkMenuItemType menuType();
 
     ///////////////////////////////////////////////////////////////////////////
     // className
@@ -83,22 +73,9 @@ public:
     //
     virtual const char* className();
 
-protected:
+private:
 
-    // Various fields
-    Widget _pulldown;
-    int _showTearOff;
-
-    ///////////////////////////////////////////////////////////////////////////
-    // build
-    //
-    // DESCR:       Build sub menu
-    // RETURNS:     N/A
-    //
-    virtual void build(
-        Widget parent
-        );
-
+    VkMenuBar *_menu;
 };
 
 #endif
