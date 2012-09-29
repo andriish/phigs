@@ -24,6 +24,8 @@
 #include <Vk/VkComponentList.h>
 #include <Vk/VkMenuItem.h>
 
+class VkSubMenu;
+
 struct VkMenuDesc {
     VkMenuItemType  menuType;
     char           *name;
@@ -73,6 +75,17 @@ public:
     //
     VkSubMenu* addSubmenu(
         const char *name,
+        int pos = -1
+        );
+
+    ///////////////////////////////////////////////////////////////////////////
+    // addSubmenu
+    //
+    // DESCR:       Add a submenu entry on the menu
+    // RETURNS:     Pointer to submenu
+    //
+    VkSubMenu* addSubmenu(
+        VkSubMenu *submenu,
         int pos = -1
         );
 

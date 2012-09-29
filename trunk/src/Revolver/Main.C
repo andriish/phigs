@@ -19,9 +19,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <iostream>
+#include <stdlib.h>
 #include <phigs/phg.h>
 #include <Vk/VkApp.h>
 #include <Vk/VkWindow.h>
+#include <Vk/VkSubMenu.h>
 #include <Vk/VkMenuBar.h>
 #include <Vk/VkSubMenu.h>
 #include "Workstation.h"
@@ -48,6 +50,11 @@ void initStructs()
    pclose_struct();
 }
 
+void quitCallback(Widget w, XtPointer callData, XtPointer clientData)
+{
+   exit(0);
+}
+
 int main(int argc, char *argv[])
 {
     popen_phigs(NULL, 0);
@@ -72,16 +79,23 @@ int main(int argc, char *argv[])
     std::cout << "Workstation id: " << ws->id() << std::endl;
     std::cout << std::endl;
 
-#if 1
     VkMenuBar *bar = new VkMenuBar("menubar");
     std::cout << "Menu bar class name: " << bar->className() << std::endl;
     std::cout << "Menu bar instance name: " << bar->name() << std::endl;
     std::cout << std::endl;
     mainWindow->setMenuBar(bar);
 
-    bar->addSubmenu("file");
+    VkSubMenu *sub = new VkSubMenu("file");
+    std::cout << "Sub menu class name: " << sub->className() << std::endl;
+    std::cout << "Sub menu instance name: " << sub->name() << std::endl;
+    std::cout << std::endl;
+
+    sub->addAction("open");
+    sub->addAction("close");
+    sub->addAction("quit", quitCallback);
+
+    bar->addSubmenu(sub);
     bar->build(mainWindow->mainWindowWidget());
-#endif
 
     // Add workstation to main window
     mainWindow->addView(ws->baseWidget());

@@ -119,6 +119,22 @@ VkSubMenu* VkMenu::addSubmenu(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// addSubmenu
+//
+// DESCR:       Add a submenu entry on the menu
+// RETURNS:     Pointer to submenu
+//
+VkSubMenu* VkMenu::addSubmenu(
+    VkSubMenu *submenu,
+    int pos
+    )
+{
+    add(submenu, pos);
+
+    return submenu;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // VkMenu
 //
 // DESCR:       Create new menu

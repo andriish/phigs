@@ -18,7 +18,7 @@
 //  along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <Xm/PushB.h>
+#include <Xm/PushBG.h>
 #include <Vk/VkMenuItem.h>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -103,16 +103,20 @@ void VkMenuAction::build(
              _position == -1 ? XmLAST_POSITION : _position); n++;
 
     // Create push button widget
-    _baseWidget = XmCreatePushButton(parent,
-                                     _name,
-                                     args, n);
+    _baseWidget = XmCreatePushButtonGadget(parent,
+                                           _name,
+                                           args, n);
 
     installDestroyHandler();
 
-    XtAddCallback(_baseWidget,
-                  XmNactivateCallback,
-                  _func,
-                  (XtPointer) this);
+    if (_func != NULL) {
+        XtAddCallback(_baseWidget,
+                      XmNactivateCallback,
+                      _func,
+                      (XtPointer) this);
+    }
+
+    XtManageChild(_baseWidget);
 
     // Set sensitivity
     XtSetSensitive(_baseWidget, _sensitive);
