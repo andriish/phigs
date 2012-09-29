@@ -18,50 +18,58 @@
 //  along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <Xm/PushB.h>
-#include <Vk/VkMenuItem.h>
+#include <Xm/RowColumn.h>
+#include <Vk/VkMenuBar.h>
 
 ///////////////////////////////////////////////////////////////////////////////
-// VkMenuAction
+// VkMenuBar
 //
-// DESCR:       Create menu action item
+// DESCR:       Create new menu bar
 // RETURNS:     N/A
 //
-VkMenuAction::VkMenuAction(
+VkMenuBar::VkMenuBar(
     const char *name,
-    XtCallbackProc func,
-    XtPointer clientData
+    Boolean showHelpPane
     ) :
-    VkMenuItem(name)
+    VkMenu(name)
 {
-    _func = func;
-    _data = clientData;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ~VkMenuAction
+// ~VkMenuBar
 //
 // DESCR:       Free resources
 // RETURNS:     N/A
 //
-VkMenuAction::~VkMenuAction()
+VkMenuBar::~VkMenuBar()
 {
-    if (_isBuilt) {
-        XtRemoveAllCallbacks(_baseWidget, XmNactivateCallback);
-    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// undo
+// build
 //
-// DESCR:       Undo action
+// DESCR:       Build menu bar
 // RETURNS:     N/A
 //
-void VkMenuAction::undo()
+void VkMenuBar::build(
+    Widget parent
+    )
 {
-    if (_undoCallback != NULL) {
-        (*_undoCallback)(_baseWidget, _data, 0);
+    _baseWidget = XmCreateMenuBar(parent, _name, NULL, 0);
+
+    installDestroyHandler();
+
+    XtManageChild(_baseWidget);
+
+    for (int i = 0; i < _contents.size(); i++) {
+        ((VkMenuItem *) _contents[i])->build(_baseWidget);
     }
+
+    // TODO: Set help pane
+
+    XtSetSensitive(_baseWidget, _sensitive);
+
+    _isBuilt = TRUE;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -70,9 +78,9 @@ void VkMenuAction::undo()
 // DESCR:       Get menu item type
 // RETURNS:     Menu item type
 //
-VkMenuItemType VkMenuAction::menuType()
+VkMenuItemType VkMenuBar::menuType()
 {
-    return ACTION;
+    return BAR;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -81,42 +89,8 @@ VkMenuItemType VkMenuAction::menuType()
 // DESCR:       Get class name
 // RETURNS:     Class name
 //
-const char* VkMenuAction::className()
+const char* VkMenuBar::className()
 {
-    return "VkMenuAction";
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// build
-//
-// DESCR:       Build menu item
-// RETURNS:     N/A
-//
-void VkMenuAction::build(
-    Widget parent
-    )
-{
-    Arg args[2];
-    Cardinal n = 0;
-
-    XtSetArg(args[n], XmNpositionIndex,
-             _position == -1 ? XmLAST_POSITION : _position); n++;
-
-    // Create push button widget
-    _baseWidget = XmCreatePushButton(parent,
-                                     _name,
-                                     args, n);
-
-    installDestroyHandler();
-
-    XtAddCallback(_baseWidget,
-                  XmNactivateCallback,
-                  _func,
-                  (XtPointer) this);
-
-    // Set sensitivity
-    XtSetSensitive(_baseWidget, _sensitive);
-
-    VkMenuItem::build(parent);
+    return "VkMenuBar";
 }
 

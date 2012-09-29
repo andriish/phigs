@@ -18,50 +18,53 @@
 //  along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <Xm/PushB.h>
-#include <Vk/VkMenuItem.h>
+#include <Xm/RowColumn.h>
+#include <Xm/CascadeBG.h>
+#include <Vk/VkSubMenu.h>
 
 ///////////////////////////////////////////////////////////////////////////////
-// VkMenuAction
+// VkSubMenu
 //
-// DESCR:       Create menu action item
+// DESCR:       Create new sub menu
 // RETURNS:     N/A
 //
-VkMenuAction::VkMenuAction(
+VkSubMenu::VkSubMenu(
     const char *name,
-    XtCallbackProc func,
-    XtPointer clientData
+    VkMenuDesc *desc,
+    XtPointer defaultClientData
     ) :
-    VkMenuItem(name)
+    VkMenu(name)
 {
-    _func = func;
-    _data = clientData;
+    _showTearOff = FALSE;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ~VkMenuAction
+// ~VkSubMenu
 //
 // DESCR:       Free resources
 // RETURNS:     N/A
 //
-VkMenuAction::~VkMenuAction()
+VkSubMenu::~VkSubMenu()
 {
-    if (_isBuilt) {
-        XtRemoveAllCallbacks(_baseWidget, XmNactivateCallback);
-    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// undo
+// showTearOff
 //
-// DESCR:       Undo action
+// DESCR:       Set tear off flag
 // RETURNS:     N/A
 //
-void VkMenuAction::undo()
+void VkSubMenu::showTearOff(
+    Boolean showit
+    )
 {
-    if (_undoCallback != NULL) {
-        (*_undoCallback)(_baseWidget, _data, 0);
+    if (_isBuilt) {
+        XtVaSetValues(_pulldown,
+                      XmNtearOffModel,
+                      showit ? XmTEAR_OFF_ENABLED : XmTEAR_OFF_DISABLED,
+                      NULL);
     }
+    _showTearOff = showit;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -70,9 +73,9 @@ void VkMenuAction::undo()
 // DESCR:       Get menu item type
 // RETURNS:     Menu item type
 //
-VkMenuItemType VkMenuAction::menuType()
+VkMenuItemType VkSubMenu::menuType()
 {
-    return ACTION;
+    return SUBMENU;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -81,42 +84,52 @@ VkMenuItemType VkMenuAction::menuType()
 // DESCR:       Get class name
 // RETURNS:     Class name
 //
-const char* VkMenuAction::className()
+const char* VkSubMenu::className()
 {
-    return "VkMenuAction";
+    return "VkSubMenu";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // build
 //
-// DESCR:       Build menu item
+// DESCR:       Build sub menu
 // RETURNS:     N/A
 //
-void VkMenuAction::build(
+void VkSubMenu::build(
     Widget parent
     )
 {
-    Arg args[2];
+    Arg args[4];
     Cardinal n = 0;
 
+    XtSetArg(args[n], XmNtearOffModel,
+             _showTearOff ? XmTEAR_OFF_ENABLED : XmTEAR_OFF_DISABLED); n++;
     XtSetArg(args[n], XmNpositionIndex,
              _position == -1 ? XmLAST_POSITION : _position); n++;
 
-    // Create push button widget
-    _baseWidget = XmCreatePushButton(parent,
+    // Create pulldown pane
+    _pulldown = XmCreatePulldownMenu(parent,
                                      _name,
                                      args, n);
 
+    n = 0;
+    XtSetArg(args[n], XmNsubMenuId, _pulldown); n++;
+
+    // Create cascade button gadget
+    _baseWidget = XmCreateCascadeButtonGadget(parent,
+                                              _name,
+                                              args, n);
+
     installDestroyHandler();
 
-    XtAddCallback(_baseWidget,
-                  XmNactivateCallback,
-                  _func,
-                  (XtPointer) this);
+    XtManageChild(_baseWidget);
 
-    // Set sensitivity
+    for (int i = 0; i < _contents.size(); i++) {
+        ((VkMenuItem *) _contents[i])->build(_pulldown);
+    }
+
     XtSetSensitive(_baseWidget, _sensitive);
 
-    VkMenuItem::build(parent);
+   _isBuilt = TRUE;
 }
 
