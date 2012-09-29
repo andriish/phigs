@@ -24,13 +24,22 @@
 #include <Vk/VkComponent.h>
 
 class VkMenu;
+class VkSubMenu;
+class VkMenuBar;
 
 enum VkMenuItemType {
     END,                // Mark the end of a static menu structure
-    ACTION              // Ordinary menu item
+    ACTION,             // Ordinary menu item
+    SUBMENU,            // A cascading submenu
+    BAR                 // Menu bar
 };
 
 class VkMenuItem : public VkComponent {
+
+    friend class VkMenu;
+    friend class VkSubMenu;
+    friend class VkMenuBar;
+
 public:
 
     ///////////////////////////////////////////////////////////////////////////

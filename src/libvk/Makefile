@@ -13,7 +13,7 @@ OUTPATH=../../lib
 	$(CXX) $(DFLAGS) $(CXXFLAGS) $(INCFLAGS) -c $*.C
 
 OBJS= VkComponent.o VkComponentList.o VkApp.o VkSimpleWindow.o VkMenuItem.o    \
-      VkMenuAction.o
+      VkMenuAction.o VkMenu.o VkSubMenu.o VkMenuBar.o
 
 all: libvk
 

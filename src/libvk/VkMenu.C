@@ -18,105 +18,108 @@
 //  along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <Xm/PushB.h>
-#include <Vk/VkMenuItem.h>
+#include <Vk/VkMenu.h>
+#include <Vk/VkSubMenu.h>
 
 ///////////////////////////////////////////////////////////////////////////////
-// VkMenuAction
-//
-// DESCR:       Create menu action item
-// RETURNS:     N/A
-//
-VkMenuAction::VkMenuAction(
-    const char *name,
-    XtCallbackProc func,
-    XtPointer clientData
-    ) :
-    VkMenuItem(name)
-{
-    _func = func;
-    _data = clientData;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// ~VkMenuAction
+// ~VkMenu
 //
 // DESCR:       Free resources
 // RETURNS:     N/A
 //
-VkMenuAction::~VkMenuAction()
+VkMenu::~VkMenu()
 {
-    if (_isBuilt) {
-        XtRemoveAllCallbacks(_baseWidget, XmNactivateCallback);
+    for (int i = 0; i < _contents.size(); i++) {
+        delete _contents[i];
     }
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// undo
-//
-// DESCR:       Undo action
-// RETURNS:     N/A
-//
-void VkMenuAction::undo()
-{
-    if (_undoCallback != NULL) {
-        (*_undoCallback)(_baseWidget, _data, 0);
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// menuType
-//
-// DESCR:       Get menu item type
-// RETURNS:     Menu item type
-//
-VkMenuItemType VkMenuAction::menuType()
-{
-    return ACTION;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// className
-//
-// DESCR:       Get class name
-// RETURNS:     Class name
-//
-const char* VkMenuAction::className()
-{
-    return "VkMenuAction";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // build
 //
-// DESCR:       Build menu item
+// DESCR:       Build menu
 // RETURNS:     N/A
 //
-void VkMenuAction::build(
+void VkMenu::build(
     Widget parent
     )
 {
-    Arg args[2];
-    Cardinal n = 0;
-
-    XtSetArg(args[n], XmNpositionIndex,
-             _position == -1 ? XmLAST_POSITION : _position); n++;
-
-    // Create push button widget
-    _baseWidget = XmCreatePushButton(parent,
-                                     _name,
-                                     args, n);
-
-    installDestroyHandler();
-
-    XtAddCallback(_baseWidget,
-                  XmNactivateCallback,
-                  _func,
-                  (XtPointer) this);
-
-    // Set sensitivity
-    XtSetSensitive(_baseWidget, _sensitive);
-
     VkMenuItem::build(parent);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// add
+//
+// DESCR:       Add entry to the menu
+// RETURNS:     N/A
+//
+void VkMenu::add(
+    VkMenuItem *item,
+    int pos
+    )
+{
+    if (pos == -1) {
+        // Place the item at the end of the array
+        _contents.add(item);
+    }
+    // TODO: Other position
+
+    item->_position = pos;
+    item->_parentMenu = this;
+
+    if (_isBuilt) {
+        //TODO: Different for submenu and option
+        item->build(baseWidget());
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// addAction
+//
+// DESCR:       Create an action entry on the menu
+// RETURNS:     Pointer to action entry
+//
+VkMenuAction* VkMenu::addAction(
+    const char *name,
+    XtCallbackProc func,
+    XtPointer data,
+    int pos
+    )
+{
+    VkMenuAction *action = new VkMenuAction(name, func, data);
+    add(action, pos);
+
+    return action;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// addSubmenu
+//
+// DESCR:       Create a submenu entry on the menu
+// RETURNS:     Pointer to submenu
+//
+VkSubMenu* VkMenu::addSubmenu(
+    const char *name,
+    int pos
+    )
+{
+    VkSubMenu *submenu = new VkSubMenu(name);
+    add(submenu, pos);
+    //TODO: Add menu contents from desc
+
+    return submenu;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// VkMenu
+//
+// DESCR:       Create new menu
+// RETURNS:     N/A
+//
+VkMenu::VkMenu(
+    const char *name
+    ) :
+    VkMenuItem(name)
+{
 }
 
