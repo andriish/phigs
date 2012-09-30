@@ -32,7 +32,6 @@ struct VkMenuDesc {
     XtCallbackProc  callback;
     VkMenuDesc     *submenu;
     XtPointer       clientData;
-    XtCallbackProc  undoCallback;
 };
 
 class VkMenu : public VkMenuItem {
@@ -90,6 +89,19 @@ public:
         );
 
     ///////////////////////////////////////////////////////////////////////////
+    // addSubmenu
+    //
+    // DESCR:       Create a submenu entry on the menu
+    // RETURNS:     Pointer to submenu
+    //
+    VkSubMenu* addSubmenu(
+        const char *name,
+        VkMenuDesc *menuDesc,
+        XtPointer defaultClientData = NULL,
+        int pos = -1
+        );
+
+    ///////////////////////////////////////////////////////////////////////////
     // addAction
     //
     // DESCR:       Create an action entry on the menu
@@ -115,6 +127,19 @@ protected:
     //
     VkMenu(
         const char *name
+        );
+
+private:
+
+    ///////////////////////////////////////////////////////////////////////////
+    // handleMenuDescriptor
+    //
+    // DESCR:       Handle menu descriptor record, used for static definition
+    // RETURNS:     N/A
+    //
+    void handleMenuDescriptor(
+        VkMenuDesc *menuDesc,
+        XtPointer defaultClientData
         );
 };
 

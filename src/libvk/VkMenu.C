@@ -18,6 +18,7 @@
 //  along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <assert.h>
 #include <Vk/VkMenu.h>
 #include <Vk/VkSubMenu.h>
 
@@ -135,6 +136,26 @@ VkSubMenu* VkMenu::addSubmenu(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// addSubmenu
+//
+// DESCR:       Create a submenu entry on the menu
+// RETURNS:     Pointer to submenu
+//
+VkSubMenu* VkMenu::addSubmenu(
+    const char *name,
+    VkMenuDesc *menuDesc,
+    XtPointer defaultClientData,
+    int pos
+    )
+{
+    VkSubMenu *submenu = new VkSubMenu(name);
+    add(submenu, pos);
+    submenu->handleMenuDescriptor(menuDesc, defaultClientData);
+
+    return submenu;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // VkMenu
 //
 // DESCR:       Create new menu
@@ -145,5 +166,44 @@ VkMenu::VkMenu(
     ) :
     VkMenuItem(name)
 {
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// handleMenuDescriptor
+//
+// DESCR:       Handle menu descriptor record, used for static definition 
+// RETURNS:     N/A
+//
+void VkMenu::handleMenuDescriptor(
+    VkMenuDesc *menuDesc,
+    XtPointer defaultClientData
+    )
+{
+    VkMenuDesc *curr;
+
+    assert(menuDesc != NULL);
+
+    for (curr = menuDesc; curr->menuType != END; curr++) {
+
+        switch(curr->menuType) {
+            case ACTION:
+                addAction(curr->name,
+                          curr->callback,
+                          curr->clientData == NULL ?
+                              curr->clientData : defaultClientData);
+                break;
+
+            case SUBMENU:
+                addSubmenu(curr->name,
+                           curr->submenu,
+                          curr->clientData == NULL ?
+                              curr->clientData : defaultClientData);
+                break;
+
+            default:
+                break;
+        }
+
+    }
 }
 

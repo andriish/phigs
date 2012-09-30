@@ -85,16 +85,42 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
     mainWindow->setMenuBar(bar);
 
-    VkSubMenu *sub = new VkSubMenu("file");
-    std::cout << "Sub menu class name: " << sub->className() << std::endl;
-    std::cout << "Sub menu instance name: " << sub->name() << std::endl;
+    VkSubMenu *subFile = new VkSubMenu("file");
+    std::cout << "Sub menu class name: " << subFile->className() << std::endl;
+    std::cout << "Sub menu instance name: " << subFile->name() << std::endl;
     std::cout << std::endl;
 
-    sub->addAction("open");
-    sub->addAction("close");
-    sub->addAction("quit", quitCallback);
+    subFile->addAction("open");
+    subFile->addAction("close");
+    subFile->addAction("quit", quitCallback);
 
-    bar->addSubmenu(sub);
+    bar->addSubmenu(subFile);
+
+    VkSubMenu *subView = new VkSubMenu("view");
+    VkSubMenu *subZoom = new VkSubMenu("zoom");
+    subZoom->addAction("100");
+    subZoom->addAction("200");
+    subZoom->addAction("400");
+
+    subView->addAction("restore");
+    subView->addSubmenu(subZoom);
+    bar->addSubmenu(subView);
+
+static VkMenuDesc subMenuDesc[] = {
+    {ACTION, "subaction1", NULL, NULL, NULL},
+    {ACTION, "subaction2", NULL, NULL, NULL},
+    {END,    NULL,         NULL, NULL, NULL}
+};
+
+static VkMenuDesc menuDesc[] = {
+    {ACTION,  "action1", NULL, NULL, NULL},
+    {SUBMENU, "submenu1", NULL, subMenuDesc, NULL},
+    {ACTION,  "action2", NULL, NULL, NULL},
+    {END,    NULL,         NULL, NULL, NULL}
+};
+
+    bar->addSubmenu("submenudesc", menuDesc);
+
     bar->build(mainWindow->mainWindowWidget());
 
     // Add workstation to main window
