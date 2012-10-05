@@ -28,7 +28,7 @@
 //
 VkComponentList::VkComponentList()
 {
-    _numComponents = NULL;
+    _numComponents = 0;
     _components = NULL;
 }
 
