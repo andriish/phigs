@@ -202,6 +202,8 @@ void wsgl_flush(
    )
 {
    Ws_xform ws_xform;
+   GLint x, y;
+   GLsizei w, h;
    int clear_flag = 0;
    Wsgl_handle wsgl = ws->render_context;
 
@@ -209,6 +211,10 @@ void wsgl_flush(
 
    if (wsgl->vp_changed || wsgl->win_changed) {
       phg_wsx_compute_ws_transform(&wsgl->cur_win, &wsgl->cur_vp, &ws_xform);
+      x = (GLint)   (ws_xform.offset.x - ws_xform.scale.x);
+      y = (GLint)   (ws_xform.offset.y - ws_xform.scale.y);
+      w = (GLsizei) (ws_xform.scale.x * 2.0);
+      h = (GLsizei) (ws_xform.scale.y * 2.0);
 
 #ifdef DEBUG
       printf("View: %f %f %f\n"
@@ -219,18 +225,16 @@ void wsgl_flush(
              ws_xform.scale.x,
              ws_xform.scale.y,
              ws_xform.scale.z);
+      printf("%d %d %d %d\n", x, y, w, h);
 #endif
 
-      glViewport((GLint)   (ws_xform.offset.x - ws_xform.scale.x),
-                 (GLint)   (ws_xform.offset.y - ws_xform.scale.y),
-                 (GLsizei) (ws_xform.scale.x * 2.0),
-                 (GLsizei) (ws_xform.scale.y * 2.0));
-
+      glViewport(x, y, w, h);
       glDepthRange(ws_xform.scale.z, ws_xform.offset.z);
 
       if (wsgl->vp_changed) {
          wsgl->vp_changed = 0;
 
+#ifndef REMOVE
          ws->ws_rect.x      = (int) wsgl->cur_vp.x_min;
          ws->ws_rect.y      = (int) wsgl->cur_vp.y_min;
          ws->ws_rect.width  = (int) wsgl->cur_vp.x_max - wsgl->cur_vp.x_min;
@@ -246,6 +250,7 @@ void wsgl_flush(
                        ws->drawable_id,
                        wsgl->cur_vp.x_max,
                        wsgl->cur_vp.y_max);
+#endif /* REMOVE */
       }
 
       if (wsgl->win_changed) {
