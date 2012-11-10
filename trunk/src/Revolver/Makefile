@@ -4,7 +4,7 @@ DFLAGS=
 CXXFLAGS= -Wall
 INCFLAGS=-I../../include -I/usr/X11R6/include
 LDFLAGS=-L../../lib -L/usr/X11R6/lib
-LIBS= -lGL -lGLU -lGLw -lXm -lXaw -lXt -lX11 -lXmu -lm -lphigs -lvk
+LIBS= -lGL -lGLU -lGLw -lXm -lXt -lX11 -lXmu -lm -lphigs -lvk
 OUTPATH=../../bin
 
 .SUFFIXES: .o .c
