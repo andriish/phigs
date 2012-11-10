@@ -18,11 +18,12 @@
 //  along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <stdlib.h>
 #include <iostream>
 #include <Xm/Xm.h>
 #include <X11/Xmu/StdCmap.h>
 #include <GL/glx.h>
-#include <X11/GLw/GLwMDrawA.h>
+#include <GL/GLwMDrawA.h>
 #include <phigs/phg.h>
 #include "Workstation.h"
 

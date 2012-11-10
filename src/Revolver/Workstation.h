@@ -83,7 +83,7 @@ private:
     // DESCR:       Get a colourmap that is sharable between windows
     // RETURNS:     Colour map
     //
-    Colormap Workstation::getSharableCmap(
+    Colormap getSharableCmap(
         XVisualInfo *vi
         );
 
