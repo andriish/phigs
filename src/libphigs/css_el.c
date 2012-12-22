@@ -562,7 +562,7 @@ static int css_add_to_refer_sets(Css_handle cssh, Struct_handle exec_struct)
 	count = 0;    
     count++;
     if ( !phg_css_set_add(exec_struct->refer_to_me, (caddr_t)open_struct,
-	    (caddr_t)count) )
+	    (caddr_t)((long)count)) )
 	return(FALSE);	                               /* out of memory */
 
     return(TRUE);
@@ -609,7 +609,7 @@ static void css_rm_from_refer_sets(Struct_handle edit_struct,
 		(caddr_t)edit_struct);
 	else
 	    (void)phg_css_set_add(exec_struct->refer_to_me,
-		(caddr_t)edit_struct, (caddr_t)count);
+		(caddr_t)((long)edit_struct), (caddr_t)((long)count));
     }
 }
 

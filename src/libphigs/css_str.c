@@ -763,7 +763,7 @@ static int css_change_ref_structp(Struct_handle oldref,
 		(caddr_t)ref->key, (caddr_t*)&count) )
 	    count = 0;
 	if ( !phg_css_set_add(newref->refer_to_me, ref->key,
-	      (caddr_t)(count + old_el->num_elements)) )
+	      (caddr_t)((long)count + (long)old_el->num_elements)) )
 	    return(FALSE);				/* out of memory */
 	free((char *)old_el);
 	ref = ref->next;

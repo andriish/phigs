@@ -591,7 +591,7 @@ static int css_inq_ancestors(Css_handle ssh,
 	parentp = (Struct_handle)el->key;
 	elptr = parentp->first_el->next;
 	elnum = 1;
-	nrefs = (int)el->data;
+	nrefs = (int)((long)el->data);
 	while (nrefs--) {
 	    if (ssh->ssh_type != SSH_AR)
 		while ( !(elptr->eltype==PELEM_EXEC_STRUCT &&
