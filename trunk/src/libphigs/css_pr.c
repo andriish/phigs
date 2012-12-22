@@ -242,7 +242,7 @@ static void css_print_refer_to_me(Css_set_ptr s)
     else {
 	while (el) {
 	    fprintf(stderr, "%d(x%d) ", 
-		    ((Struct_handle)el->key)->struct_id, (unsigned) el->data);
+		    ((Struct_handle)el->key)->struct_id, (unsigned)((long)el->data));
 	    el = el->next;
 	}
     }
