@@ -248,6 +248,17 @@ void wsgl_end_rendering(
    );
 
 /*******************************************************************************
+ * check_draw_primitive
+ *
+ * DESCR:       Check if the primitive is a draw primitive
+ * RETURNS:     TRUE or FALSE
+ */
+
+int check_draw_primitive(
+   Ws *ws
+   );
+
+/*******************************************************************************
  * wsgl_begin_structure
  *
  * DESCR:       Mark the beginning of a new structure element
