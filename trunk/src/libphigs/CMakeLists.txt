@@ -8,5 +8,6 @@ ADD_LIBRARY(phigs
      sinq.c sin_evt.c sin_ws.c sin_cvs.c sin_val.c sin_cho.c sin_str.c
      sin_dev.c phg_mroman.c phg_roman.c ar.c ar_conv.c ar_ops.c
      wsgl_extfill.c
+     wsgl_fill.c
     )
 

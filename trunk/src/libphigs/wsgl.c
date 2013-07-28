@@ -36,6 +36,14 @@
 #include <phigs/private/wsxP.h>
 #include <phigs/private/wsglP.h>
 
+#ifdef SEPARATE_FILL
+void wsgl_render_fill(
+   Ws *ws,
+   Ws_attr_st *ast,
+   El_handle el
+   );
+#endif
+
 #define LOG_INT(DATA) \
    css_print_eltype(ELMT_HEAD(DATA)->elementType); \
    printf(":\tSIZE: %d\t", ELMT_HEAD(DATA)->length); \
@@ -410,7 +418,14 @@ static void update_cur_struct(
    wsgl->cur_struct.offset++;
 }
 
-static int check_draw_primitive(
+/*******************************************************************************
+ * check_draw_primitive
+ *
+ * DESCR:	Check if the primitive is a draw primitive
+ * RETURNS:	TRUE or FALSE
+ */
+
+int check_draw_primitive(
    Ws *ws
    )
 {
@@ -737,6 +752,7 @@ void wsgl_render_element(
          wsgl->cur_struct.ast.indiv_group.line_bundle.type = PHG_INT(el);
          break;
 
+#ifndef SEPARATE_FILL
       case PELEM_FILL_AREA:
          if (check_draw_primitive(ws)) {
             phg_draw_fill_area(ws,
@@ -752,6 +768,7 @@ void wsgl_render_element(
                                    &wsgl->cur_struct.ast);
          }
          break;
+#endif
 
       case PELEM_POLYLINE:
          if (check_draw_primitive(ws)) {
@@ -770,6 +787,7 @@ void wsgl_render_element(
          }
          break;
 
+#ifndef SEPARATE_FILL
       case PELEM_FILL_AREA3:
          if (check_draw_primitive(ws)) {
             phg_draw_fill_area3(ws,
@@ -793,6 +811,7 @@ void wsgl_render_element(
                                      &wsgl->cur_struct.ast);
          }
          break;
+#endif
 
       case PELEM_POLYLINE3:
          if (check_draw_primitive(ws)) {
@@ -864,10 +883,15 @@ void wsgl_render_element(
          break;
 
       default:
+#ifndef SEPARATE_FILL
          css_print_eltype(el->eltype);
          printf(" not processed\n");
+#endif
          break;
    }
+#ifdef SEPARATE_FILL
+   wsgl_render_fill(ws, &wsgl->cur_struct.ast, el);
+#endif
 }
 
 /*******************************************************************************
