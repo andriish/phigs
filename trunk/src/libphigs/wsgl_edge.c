@@ -88,7 +88,7 @@ static void wsgl_edge_area(
    point_list.num_points = *data;
    point_list.points = (Ppoint *) &data[1];
 
-   glBegin(GL_LINE_LOOP);
+   glBegin(GL_POLYGON);
    for (i = 0; i < point_list.num_points; i++) {
       glVertex2f(point_list.points[i].x,
                  point_list.points[i].y);
@@ -114,7 +114,7 @@ static void wsgl_edge_area3(
    point_list.num_points = *data;
    point_list.points = (Ppoint3 *) &data[1];
 
-   glBegin(GL_LINE_LOOP);
+   glBegin(GL_POLYGON);
    for (i = 0; i < point_list.num_points; i++) {
       glVertex3f(point_list.points[i].x,
                  point_list.points[i].y,
@@ -134,8 +134,9 @@ void wsgl_begin_edge(
     void
     )
 {
-   glPolygonOffset(1, 1);
+   glPolygonOffset(-1, 1);
    glEnable(GL_POLYGON_OFFSET_LINE);
+   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 /*******************************************************************************
@@ -150,6 +151,7 @@ void wsgl_end_edge(
     )
 {
    glDisable(GL_POLYGON_OFFSET_LINE);
+   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 /*******************************************************************************
