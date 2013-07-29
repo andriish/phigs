@@ -28,6 +28,11 @@
 #include <phigs/util.h>
 #include <GL/gl.h>
 
+#define WS_RENDER_MARKER       0x01
+#define WS_RENDER_LINE         0x02
+#define WS_RENDER_FILL         0x04
+#define WS_RENDER_EDGE         0x08
+
 typedef struct {
    Pint x, y;
    Pfloat distance;
@@ -248,9 +253,33 @@ void wsgl_end_rendering(
    );
 
 /*******************************************************************************
+ * wsgl_begin_pass
+ *
+ * DESCR:       Start a rendiering pass for workstation
+ * RETURNS:     N/A
+ */
+
+void wsgl_begin_pass(
+   Ws *ws,
+   int flags
+   );
+
+/*******************************************************************************
+ * wsgl_end_pass
+ *
+ * DESCR:       End a rendiering pass for workstation
+ * RETURNS:     N/A
+ */
+
+void wsgl_begin_pass(
+   Ws *ws,
+   int flags
+   );
+
+/*******************************************************************************
  * check_draw_primitive
  *
- * DESCR:       Check if the primitive is a draw primitive
+ * DESCR:       Check if the primitive shall be drawn
  * RETURNS:     TRUE or FALSE
  */
 
@@ -278,7 +307,8 @@ void wsgl_begin_structure(
  */
 
 void wsgl_end_structure(
-   Ws *ws
+   Ws *ws,
+   int flags
    );
 
 /*******************************************************************************
@@ -290,7 +320,8 @@ void wsgl_end_structure(
 
 void wsgl_render_element(
    Ws *ws,
-   El_handle el
+   El_handle el,
+   int flags
    );
 
 /*******************************************************************************
@@ -808,6 +839,74 @@ void wsgl_light_colr(
    Pint colr_type,
    Pcoval *coval,
    Pvec3 *normal
+   );
+
+/*******************************************************************************
+ * wsgl_state_fill
+ *
+ * DESCR:       Update states for fill render pass
+ * RETURNS:     N/A
+ */
+
+void wsgl_state_fill(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_render_fill
+ *
+ * DESCR:       Render fill element to current workstation rendering window
+ * RETURNS:     N/A
+ */
+
+void wsgl_render_fill(
+   Ws_attr_st *ast,
+   El_handle el
+   );
+
+/*******************************************************************************
+ * wsgl_begin_edge
+ *
+ * DESCR:       Start rendering for edge pass
+ * RETURNS:     N/A
+ */
+
+void wsgl_begin_edge(
+    void
+    );
+
+/*******************************************************************************
+ * wsgl_end_edge
+ *
+ * DESCR:       Start rendering for edge pass
+ * RETURNS:     N/A
+ */
+
+void wsgl_end_edge(
+    void
+    );
+
+/*******************************************************************************
+ * wsgl_state_edge
+ *
+ * DESCR:       Update states for fill render pass
+ * RETURNS:     N/A
+ */
+
+void wsgl_state_edge(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_render_edge
+ *
+ * DESCR:       Render fill element to current workstation rendering window
+ * RETURNS:     N/A
+ */
+
+void wsgl_render_edge(
+   Ws_attr_st *ast,
+   El_handle el
    );
 
 extern unsigned char *wsgl_hatch_tbl[];

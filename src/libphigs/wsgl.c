@@ -36,14 +36,6 @@
 #include <phigs/private/wsxP.h>
 #include <phigs/private/wsglP.h>
 
-#ifdef SEPARATE_FILL
-void wsgl_render_fill(
-   Ws *ws,
-   Ws_attr_st *ast,
-   El_handle el
-   );
-#endif
-
 #define LOG_INT(DATA) \
    css_print_eltype(ELMT_HEAD(DATA)->elementType); \
    printf(":\tSIZE: %d\t", ELMT_HEAD(DATA)->length); \
@@ -354,6 +346,40 @@ void wsgl_begin_rendering(
 }
 
 /*******************************************************************************
+ * wsgl_begin_pass
+ *
+ * DESCR:	Start a rendiering pass for workstation
+ * RETURNS:	N/A
+ */
+
+void wsgl_begin_pass(
+   Ws *ws,
+   int flags
+   )
+{
+    if (flags & WS_RENDER_EDGE) {
+        wsgl_begin_edge();
+    }
+}
+
+/*******************************************************************************
+ * wsgl_end_pass
+ *
+ * DESCR:	End a rendiering pass for workstation
+ * RETURNS:	N/A
+ */
+
+void wsgl_end_pass(
+   Ws *ws,
+   int flags
+   )
+{
+    if (flags & WS_RENDER_EDGE) {
+        wsgl_end_edge();
+    }
+}
+
+/*******************************************************************************
  * wsgl_end_rendering
  *
  * DESCR:	End a rendiering session
@@ -421,7 +447,7 @@ static void update_cur_struct(
 /*******************************************************************************
  * check_draw_primitive
  *
- * DESCR:	Check if the primitive is a draw primitive
+ * DESCR:	Check if the primitive shall be drawn
  * RETURNS:	TRUE or FALSE
  */
 
@@ -521,7 +547,8 @@ void wsgl_begin_structure(
  */
 
 void wsgl_end_structure(
-   Ws *ws
+   Ws *ws,
+   int flags
    )
 {
    Wsgl_handle wsgl = ws->render_context;
@@ -531,6 +558,12 @@ void wsgl_end_structure(
 #endif
 
    stack_pop(wsgl->struct_stack, (caddr_t) &wsgl->cur_struct);
+   if (flags & WS_RENDER_FILL) {
+      wsgl_state_fill(&wsgl->cur_struct.ast);
+   }
+   if (flags & WS_RENDER_EDGE) {
+      wsgl_state_edge(&wsgl->cur_struct.ast);
+   }
    phg_update_hlhsr_id(ws);
    phg_update_projection(ws);
    phg_update_modelview(ws);
@@ -562,7 +595,8 @@ void wsgl_end_structure(
 
 void wsgl_render_element(
    Ws *ws,
-   El_handle el
+   El_handle el,
+   int flags
    )
 {
    Wsgl_handle wsgl = ws->render_context;
@@ -592,60 +626,99 @@ void wsgl_render_element(
 
       case PELEM_INDIV_ASF:
          phg_set_asf(&wsgl->cur_struct.ast, ELMT_CONTENT(el));
+         if (flags & WS_RENDER_FILL) {
+             wsgl_render_fill(&wsgl->cur_struct.ast, el);
+         }
+         if (flags & WS_RENDER_EDGE) {
+             wsgl_render_edge(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_INT_IND:
          phg_set_int_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
+         if (flags & WS_RENDER_FILL) {
+             wsgl_render_fill(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_INT_COLR_IND:
          phg_get_colr_ind(ws,
                           &wsgl->cur_struct.ast.indiv_group.int_bundle.colr,
                           PHG_INT(el));
+         if (flags & WS_RENDER_FILL) {
+             wsgl_render_fill(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_INT_COLR:
          memcpy(&wsgl->cur_struct.ast.indiv_group.int_bundle.colr,
                 ELMT_CONTENT(el),
                 sizeof(Pgcolr));
+         if (flags & WS_RENDER_FILL) {
+             wsgl_render_fill(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_INT_STYLE:
          wsgl->cur_struct.ast.indiv_group.int_bundle.style =
             (Pint_style) PHG_INT(el);
+         if (flags & WS_RENDER_FILL) {
+             wsgl_render_fill(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_INT_STYLE_IND:
          wsgl->cur_struct.ast.indiv_group.int_bundle.style_ind = PHG_INT(el);
+         if (flags & WS_RENDER_FILL) {
+             wsgl_render_fill(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_EDGE_IND:
          phg_set_edge_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
+         if (flags & WS_RENDER_EDGE) {
+             wsgl_render_edge(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_EDGE_COLR_IND:
          phg_get_colr_ind(ws,
                           &wsgl->cur_struct.ast.indiv_group.edge_bundle.colr,
                           PHG_INT(el));
+         if (flags & WS_RENDER_EDGE) {
+             wsgl_render_edge(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_EDGE_COLR:
          memcpy(&wsgl->cur_struct.ast.indiv_group.edge_bundle.colr,
                 ELMT_CONTENT(el),
                 sizeof(Pgcolr));
+         if (flags & WS_RENDER_EDGE) {
+             wsgl_render_edge(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_EDGEWIDTH:
          wsgl->cur_struct.ast.indiv_group.edge_bundle.width = PHG_FLOAT(el);
+         if (flags & WS_RENDER_EDGE) {
+             wsgl_render_edge(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_EDGETYPE:
          wsgl->cur_struct.ast.indiv_group.edge_bundle.type = PHG_INT(el);
+         if (flags & WS_RENDER_EDGE) {
+             wsgl_render_edge(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_EDGE_FLAG:
          wsgl->cur_struct.ast.indiv_group.edge_bundle.flag =
             (Pedge_flag) PHG_INT(el);
+         if (flags & WS_RENDER_EDGE) {
+             wsgl_render_edge(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_MARKER_IND:
@@ -752,23 +825,27 @@ void wsgl_render_element(
          wsgl->cur_struct.ast.indiv_group.line_bundle.type = PHG_INT(el);
          break;
 
-#ifndef SEPARATE_FILL
       case PELEM_FILL_AREA:
          if (check_draw_primitive(ws)) {
-            phg_draw_fill_area(ws,
-                               ELMT_CONTENT(el),
-                               &wsgl->cur_struct.ast);
+            if (flags & WS_RENDER_FILL) {
+               wsgl_render_fill(&wsgl->cur_struct.ast, el);
+            }
+            if (flags & WS_RENDER_EDGE) {
+               wsgl_render_edge(&wsgl->cur_struct.ast, el);
+            }
          }
          break;
 
       case PELEM_FILL_AREA_SET:
          if (check_draw_primitive(ws)) {
-            phg_draw_fill_area_set(ws,
-                                   ELMT_CONTENT(el),
-                                   &wsgl->cur_struct.ast);
+            if (flags & WS_RENDER_FILL) {
+               wsgl_render_fill(&wsgl->cur_struct.ast, el);
+            }
+            if (flags & WS_RENDER_EDGE) {
+               wsgl_render_edge(&wsgl->cur_struct.ast, el);
+            }
          }
          break;
-#endif
 
       case PELEM_POLYLINE:
          if (check_draw_primitive(ws)) {
@@ -787,31 +864,38 @@ void wsgl_render_element(
          }
          break;
 
-#ifndef SEPARATE_FILL
       case PELEM_FILL_AREA3:
          if (check_draw_primitive(ws)) {
-            phg_draw_fill_area3(ws,
-                                ELMT_CONTENT(el),
-                                &wsgl->cur_struct.ast);
+            if (flags & WS_RENDER_FILL) {
+               wsgl_render_fill(&wsgl->cur_struct.ast, el);
+            }
+            if (flags & WS_RENDER_EDGE) {
+               wsgl_render_edge(&wsgl->cur_struct.ast, el);
+            }
          }
          break;
 
       case PELEM_FILL_AREA_SET3:
          if (check_draw_primitive(ws)) {
-            phg_draw_fill_area_set3(ws,
-                                    ELMT_CONTENT(el),
-                                    &wsgl->cur_struct.ast);
+            if (flags & WS_RENDER_FILL) {
+               wsgl_render_fill(&wsgl->cur_struct.ast, el);
+            }
+            if (flags & WS_RENDER_EDGE) {
+               wsgl_render_edge(&wsgl->cur_struct.ast, el);
+            }
          }
          break;
 
       case PELEM_FILL_AREA3_DATA:
          if (check_draw_primitive(ws)) {
-            phg_draw_fill_area3_data(ws,
-                                     ELMT_CONTENT(el),
-                                     &wsgl->cur_struct.ast);
+            if (flags & WS_RENDER_FILL) {
+               wsgl_render_fill(&wsgl->cur_struct.ast, el);
+            }
+            if (flags & WS_RENDER_EDGE) {
+               wsgl_render_edge(&wsgl->cur_struct.ast, el);
+            }
          }
          break;
-#endif
 
       case PELEM_POLYLINE3:
          if (check_draw_primitive(ws)) {
@@ -883,15 +967,12 @@ void wsgl_render_element(
          break;
 
       default:
-#ifndef SEPARATE_FILL
+#ifdef DEBUG
          css_print_eltype(el->eltype);
          printf(" not processed\n");
 #endif
          break;
    }
-#ifdef SEPARATE_FILL
-   wsgl_render_fill(ws, &wsgl->cur_struct.ast, el);
-#endif
 }
 
 /*******************************************************************************
