@@ -28,6 +28,7 @@
 #include <phigs/ws.h>
 #include <phigs/private/wsglP.h>
 
+#if 0
 /*******************************************************************************
  * phg_draw_marker_dot
  *
@@ -259,6 +260,7 @@ void phg_draw_polymarker3(
       ERR_REPORT(ws->erh, ERR900);
    }
 }
+#endif
 
 /*******************************************************************************
  * phg_draw_polyline

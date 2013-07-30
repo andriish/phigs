@@ -25,10 +25,6 @@
 #include <math.h>
 #include <stdint.h>
 #include <GL/gl.h>
-#include <GL/glx.h>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xmu/StdCmap.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>

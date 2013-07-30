@@ -33,13 +33,13 @@
 #include <phigs/private/wsglP.h>
 
 /*******************************************************************************
- * wsgl_fill_area
+ * wsgl_polyline
  *
- * DESCR:       Draw fill area
+ * DESCR:       Draw lines
  * RETURNS:     N/A
  */
 
-static void wsgl_fill_area(
+static void wsgl_polyline(
    void *pdata
    )
 {
@@ -50,7 +50,7 @@ static void wsgl_fill_area(
    point_list.num_points = *data;
    point_list.points = (Ppoint *) &data[1];
 
-   glBegin(GL_POLYGON);
+   glBegin(GL_LINES);
    for (i = 0; i < point_list.num_points; i++) {
       glVertex2f(point_list.points[i].x,
                  point_list.points[i].y);
@@ -59,13 +59,13 @@ static void wsgl_fill_area(
 }
 
 /*******************************************************************************
- * wsgl_fill_area3
+ * wsgl_polyline3
  *
- * DESCR:       Draw fill area 3D
+ * DESCR:       Draw lines 3D
  * RETURNS:     N/A
  */
 
-static void wsgl_fill_area3(
+static void wsgl_polyline3(
    void *pdata
    )
 {
@@ -76,7 +76,7 @@ static void wsgl_fill_area3(
    point_list.num_points = *data;
    point_list.points = (Ppoint3 *) &data[1];
 
-   glBegin(GL_POLYGON);
+   glBegin(GL_LINES);
    for (i = 0; i < point_list.num_points; i++) {
       glVertex3f(point_list.points[i].x,
                  point_list.points[i].y,
@@ -86,68 +86,60 @@ static void wsgl_fill_area3(
 }
 
 /*******************************************************************************
- * wsgl_render_fill
+ * wsgl_render_line
  *
- * DESCR:	Render fill element to current workstation rendering window
+ * DESCR:	Render line element to current workstation rendering window
  * RETURNS:	N/A
  */
 
-void wsgl_render_fill(
+void wsgl_render_line(
    Ws_attr_st *ast,
    El_handle el
    )
 {
    switch (el->eltype) {
       case PELEM_INDIV_ASF:
-         wsgl_setup_int_attr(ast);
+         wsgl_setup_line_attr(ast);
          break;
 
-      case PELEM_INT_IND:
-         wsgl_setup_int_attr(ast);
+      case PELEM_LINE_IND:
+         wsgl_setup_line_attr(ast);
          break;
 
-      case PELEM_INT_COLR_IND:
+      case PELEM_LINE_COLR_IND:
          if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_INT_COLR_IND)) {
-             wsgl_set_gcolr(&ast->indiv_group.int_bundle.colr);
+                                  (Pint) PASPECT_LINE_COLR_IND)) {
+             wsgl_set_gcolr(&ast->indiv_group.line_bundle.colr);
          }
          break;
 
-      case PELEM_INT_COLR:
+      case PELEM_LINE_COLR:
          if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_INT_COLR_IND)) {
-             wsgl_set_gcolr(&ast->indiv_group.int_bundle.colr);
+                                  (Pint) PASPECT_LINE_COLR_IND)) {
+             wsgl_set_gcolr(&ast->indiv_group.line_bundle.colr);
          }
          break;
 
-      case PELEM_INT_STYLE:
-         /* TODO: In this case we really done need to setup all attributes */
-         wsgl_setup_int_attr(ast);
+      case PELEM_LINEWIDTH:
+         if (phg_nset_name_is_set(&ast->asf_nameset,
+                                  (Pint) PASPECT_LINEWIDTH)) {
+            glLineWidth(ast->indiv_group.line_bundle.width);
+         }
          break;
 
-      case PELEM_INT_STYLE_IND:
-         /* TODO: In this case we really done need to setup all attributes */
-         wsgl_setup_int_attr(ast);
+      case PELEM_LINETYPE:
+         if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINETYPE)) {
+            /* TODO: In this case we really done need to setup all attributes */
+            wsgl_setup_line_attr(ast);
+         }
          break;
 
-      case PELEM_FILL_AREA:
-         wsgl_fill_area(ELMT_CONTENT(el));
+      case PELEM_POLYLINE:
+         wsgl_polyline(ELMT_CONTENT(el));
          break;
 
-      case PELEM_FILL_AREA_SET:
-         /* TODO */
-         break;
-
-      case PELEM_FILL_AREA3:
-         wsgl_fill_area3(ELMT_CONTENT(el));
-         break;
-
-      case PELEM_FILL_AREA_SET3:
-         /* TODO */
-         break;
-
-      case PELEM_FILL_AREA3_DATA:
-         /* TODO */
+      case PELEM_POLYLINE3: 
+         wsgl_polyline3(ELMT_CONTENT(el));
          break;
 
       default:

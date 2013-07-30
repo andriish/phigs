@@ -747,6 +747,52 @@ void wsgl_set_marker_ind(
 }
 
 /*******************************************************************************
+ * wsgl_get_marker_type
+ *
+ * DESCR:	Get marker type
+ * RETURNS:	Marker type
+ */
+
+Pint wsgl_get_marker_type(
+   Ws_attr_st *ast
+   )
+{
+   Pint type;
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_MARKER_TYPE)) {
+      type = ast->indiv_group.marker_bundle.type;
+   }
+   else {
+      type = ast->bundl_group.marker_bundle.type;
+   }
+
+   return type;
+}
+
+/*******************************************************************************
+ * wsgl_get_marker_size
+ *
+ * DESCR:	Get marker size
+ * RETURNS:	Marker size
+ */
+
+Pfloat wsgl_get_marker_size(
+   Ws_attr_st *ast
+   )
+{
+   Pfloat size;
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_MARKER_SIZE)) {
+      size = ast->indiv_group.marker_bundle.size;
+   }
+   else {
+      size = ast->bundl_group.marker_bundle.size;
+   }
+
+   return size;
+}
+
+/*******************************************************************************
  * wsgl_setup_marker_attr
  *
  * DESCR:	Setup marker attributes
@@ -754,9 +800,7 @@ void wsgl_set_marker_ind(
  */
 
 void wsgl_setup_marker_attr(
-   Ws_attr_st *ast,
-   Pint *type,
-   Pfloat *size
+   Ws_attr_st *ast
    )
 {
    if (phg_nset_name_is_set(&ast->asf_nameset,
@@ -765,20 +809,6 @@ void wsgl_setup_marker_attr(
    }
    else {
       wsgl_set_gcolr(&ast->bundl_group.marker_bundle.colr);
-   }
-
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_MARKER_TYPE)) {
-      *type = ast->indiv_group.marker_bundle.type;
-   }
-   else {
-      *type = ast->bundl_group.marker_bundle.type;
-   }
-
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_MARKER_SIZE)) {
-      *size = ast->indiv_group.marker_bundle.size;
-   }
-   else {
-      *size = ast->bundl_group.marker_bundle.size;
    }
 }
 
