@@ -882,28 +882,18 @@ Ptext_prec wsgl_get_text_prec(
 }
 
 /*******************************************************************************
- * wsgl_setup_text_attr
+ * wsgl_get_text_fnt
  *
- * DESCR:	Setup text attributes
- * RETURNS:	N/A
+ * DESCR:	Get text font
+ * RETURNS:	Text font
  */
 
-void wsgl_setup_text_attr(
-   Ws_attr_st *ast,
-   Phg_font **fnt,
-   Pfloat *char_expan
+Phg_font* wsgl_get_text_fnt(
+   Ws_attr_st *ast
    )
 {
    Pint font;
-
-   glLineWidth(2.0);
-
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_TEXT_COLR_IND)) {
-      wsgl_set_gcolr(&ast->indiv_group.text_bundle.colr);
-   }
-   else {
-      wsgl_set_gcolr(&ast->bundl_group.text_bundle.colr);
-   }
+   Phg_font *fnt;
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_TEXT_FONT)) {
       font = ast->indiv_group.text_bundle.font;
@@ -913,37 +903,79 @@ void wsgl_setup_text_attr(
    }
 
    if (font < 1) {
-      *fnt = fonts[1];
+      fnt = fonts[1];
    }
    else {
-      *fnt = fonts[font - 1];
+      fnt = fonts[font - 1];
    }
 
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_CHAR_EXPAN)) {
-      *char_expan = ast->indiv_group.text_bundle.char_expan;
-   }
-   else {
-      *char_expan = ast->bundl_group.text_bundle.char_expan;
-   }
+   return fnt;
 }
 
 /*******************************************************************************
- * wsgl_get_char_text_attr
+ * wsgl_get_text_char_expan
  *
- * DESCR:	Get text attributes
+ * DESCR:	Get text character expansion
+ * RETURNS:	Text font
+ */
+
+Pfloat wsgl_get_text_char_expan(
+   Ws_attr_st *ast
+   )
+{
+   Pfloat char_expan;
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_CHAR_EXPAN)) {
+      char_expan = ast->indiv_group.text_bundle.char_expan;
+   }
+   else {
+      char_expan = ast->bundl_group.text_bundle.char_expan;
+   }
+
+   return char_expan;
+}
+
+/*******************************************************************************
+ * wsgl_get_text_char_space
+ *
+ * DESCR:	Get text character spacing
+ * RETURNS:	Character spacing
+ */
+
+Pfloat wsgl_get_text_char_space(
+   Ws_attr_st *ast
+   )
+{
+   Pfloat char_space;
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_CHAR_SPACE)) {
+      char_space = ast->indiv_group.text_bundle.char_space;
+   }
+   else {
+      char_space = ast->bundl_group.text_bundle.char_space;
+   }
+
+   return char_space;
+}
+
+/*******************************************************************************
+ * wsgl_setup_text_attr
+ *
+ * DESCR:	Setup text attributes
  * RETURNS:	N/A
  */
 
-void wsgl_get_char_text_attr(
-   Ws_attr_st *ast,
-   Pfloat *char_space
+void wsgl_setup_text_attr(
+   Ws_attr_st *ast
    )
 {
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_CHAR_SPACE)) {
-      *char_space = ast->indiv_group.text_bundle.char_space;
+   glLineWidth(2.0);
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_TEXT_COLR_IND)) {
+      wsgl_set_gcolr(&ast->indiv_group.text_bundle.colr);
    }
    else {
-      *char_space = ast->bundl_group.text_bundle.char_space;
+      wsgl_set_gcolr(&ast->bundl_group.text_bundle.colr);
    }
 }
 

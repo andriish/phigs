@@ -25,10 +25,6 @@
 #include <math.h>
 #include <stdint.h>
 #include <GL/gl.h>
-#include <GL/glx.h>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xmu/StdCmap.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
@@ -350,12 +346,14 @@ void wsgl_begin_pass(
       wsgl_set_marker_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
       wsgl_set_marker_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
    }
-   wsgl_set_text_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   wsgl_set_text_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   wsgl->cur_struct.ast.char_ht = 0.01;
-   wsgl->cur_struct.ast.text_path = PPATH_RIGHT;
-   wsgl->cur_struct.ast.char_up_vec.delta_x = 0.0;
-   wsgl->cur_struct.ast.char_up_vec.delta_y = 1.0;
+   if (flags & WS_RENDER_TEXT) {
+      wsgl_set_text_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
+      wsgl_set_text_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
+      wsgl->cur_struct.ast.char_ht = 0.01;
+      wsgl->cur_struct.ast.text_path = PPATH_RIGHT;
+      wsgl->cur_struct.ast.char_up_vec.delta_x = 0.0;
+      wsgl->cur_struct.ast.char_up_vec.delta_y = 1.0;
+   }
 }
 
 /*******************************************************************************
@@ -758,18 +756,27 @@ void wsgl_render_element(
 
       case PELEM_TEXT_IND:
          wsgl_set_text_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
+         if (flags & WS_RENDER_TEXT) {
+             wsgl_render_text(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_TEXT_COLR_IND:
          phg_get_colr_ind(ws,
                           &wsgl->cur_struct.ast.indiv_group.text_bundle.colr,
                           PHG_INT(el));
+         if (flags & WS_RENDER_TEXT) {
+             wsgl_render_text(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_TEXT_COLR:
          memcpy(&wsgl->cur_struct.ast.indiv_group.text_bundle.colr,
                 ELMT_CONTENT(el),
                 sizeof(Pgcolr));
+         if (flags & WS_RENDER_TEXT) {
+             wsgl_render_text(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_TEXT_FONT:
@@ -939,7 +946,9 @@ void wsgl_render_element(
          break;
 
       case PELEM_TEXT:
-         phg_draw_text(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
+         if (flags & WS_RENDER_TEXT) {
+            wsgl_render_text(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_GLOBAL_MODEL_TRAN3:

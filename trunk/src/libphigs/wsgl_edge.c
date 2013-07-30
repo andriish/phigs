@@ -120,6 +120,56 @@ static void wsgl_edge_area3(
 }
 
 /*******************************************************************************
+ * wsgl_edge_area_set
+ *
+ * DESCR:	Draw edge for fill area set
+ * RETURNS:	N/A
+ */
+
+void wsgl_edge_area_set(
+   void *pdata
+   )
+{
+   Pint i, num_lists;
+   Ppoint_list point_list;
+   Pint *data = (Pint *) pdata;
+
+   num_lists = *data;
+   data = &data[1];
+   for (i = 0; i < num_lists; i++) {
+      point_list.num_points = *data;
+      point_list.points = (Ppoint *) &data[1];
+      wsgl_edge_area(data);
+      data = (Pint *) &point_list.points[point_list.num_points];
+   }
+}
+
+/*******************************************************************************
+ * wsgl_fill_area_set3
+ *
+ * DESCR:	Draw edge for fill area set 3D
+ * RETURNS:	N/A
+ */
+
+static void wsgl_edge_area_set3(
+   void *pdata
+   )
+{
+   Pint i, num_lists;
+   Ppoint_list3 point_list;
+   Pint *data = (Pint *) pdata;
+
+   num_lists = *data;
+   data = &data[1];
+   for (i = 0; i < num_lists; i++) {
+      point_list.num_points = *data;
+      point_list.points = (Ppoint3 *) &data[1];
+      wsgl_edge_area3(data);
+      data = (Pint *) &point_list.points[point_list.num_points];
+   }
+}
+
+/*******************************************************************************
  * wsgl_begin_edge
  *
  * DESCR:	Start rendering for edge pass
@@ -205,7 +255,9 @@ void wsgl_render_edge(
          break;
 
       case PELEM_FILL_AREA_SET:
-         /* TODO */
+         if (wsgl_get_edge_flag(ast) == PEDGE_ON) {
+            wsgl_edge_area_set(ELMT_CONTENT(el));
+         }
          break;
 
       case PELEM_FILL_AREA3:
@@ -215,7 +267,9 @@ void wsgl_render_edge(
          break;
 
       case PELEM_FILL_AREA_SET3:
-         /* TODO */
+         if (wsgl_get_edge_flag(ast) == PEDGE_ON) {
+            wsgl_edge_area_set3(ELMT_CONTENT(el));
+         }
          break;
 
       case PELEM_FILL_AREA3_DATA:

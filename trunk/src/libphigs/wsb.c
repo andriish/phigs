@@ -802,6 +802,15 @@ void phg_wsb_traverse_all_postings(
 	}
         wsgl_end_pass(ws, WS_RENDER_MARKER);
 
+	post_str = owsb->posted.lowest.higher;
+	end = &(owsb->posted.highest);
+        wsgl_begin_pass(ws, WS_RENDER_TEXT);
+	while ( post_str != end ) {
+	    phg_wsb_traverse_net(ws, post_str->structh, WS_RENDER_TEXT);
+	    post_str = post_str->higher;
+	}
+        wsgl_end_pass(ws, WS_RENDER_TEXT);
+
         wsgl_end_rendering(ws);
 	owsb->surf_state = PSURF_NOT_EMPTY;
     }
