@@ -79,7 +79,7 @@ int view_index = 0;
 Pline_bundle   lnrep = { PLINE_DASH_DOT, 2.0,  0 };
 Pmarker_bundle mkrep = { PMARKER_ASTERISK, 0.1, 0 };
 Pedge_bundle   edgerep = { PEDGE_ON, PLINE_SOLID, 2.0, 1 };
-Pint_bundle    interrep = { PSTYLE_SOLID, 1, 0 };
+Pint_bundle    interrep = { PSTYLE_SOLID, HATCH_IND, 0 };
 
 int main(int argc, char *argv[])
 {
@@ -113,6 +113,8 @@ int main(int argc, char *argv[])
    pset_indiv_asf(PASPECT_EDGE_COLR_IND, PASF_BUNDLED);
    pset_edge_ind(ATTR_NO);
    pset_indiv_asf(PASPECT_INT_COLR_IND, PASF_BUNDLED);
+   pset_indiv_asf(PASPECT_INT_STYLE, PASF_BUNDLED);
+   pset_indiv_asf(PASPECT_INT_STYLE_IND, PASF_BUNDLED);
    pset_int_ind(ATTR_NO);
    pfill_area(&plist_quad);
    pclose_struct();

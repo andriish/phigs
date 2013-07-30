@@ -574,6 +574,28 @@ void wsgl_set_marker_ind(
    );
 
 /*******************************************************************************
+ * wsgl_get_marker_type
+ *
+ * DESCR:       Get marker type
+ * RETURNS:     Marker type
+ */
+
+Pint wsgl_get_marker_type(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_get_marker_size
+ *
+ * DESCR:       Get marker size
+ * RETURNS:     Marker size
+ */
+
+Pfloat wsgl_get_marker_size(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * wsgl_setup_marker_attr
  *
  * DESCR:       Setup marker attributes 
@@ -581,9 +603,7 @@ void wsgl_set_marker_ind(
  */
 
 void wsgl_setup_marker_attr(
-   Ws_attr_st *ast,
-   Pint *type,
-   Pfloat *size
+   Ws_attr_st *ast
    );
 
 /*******************************************************************************
@@ -871,6 +891,30 @@ void wsgl_end_edge(
  */
 
 void wsgl_render_edge(
+   Ws_attr_st *ast,
+   El_handle el
+   );
+
+/*******************************************************************************
+ * wsgl_render_line
+ *
+ * DESCR:       Render line element to current workstation rendering window
+ * RETURNS:     N/A
+ */
+
+void wsgl_render_line(
+   Ws_attr_st *ast,
+   El_handle el
+   );
+
+/*******************************************************************************
+ * wsgl_render_marker
+ *
+ * DESCR:       Render marker element to current workstation rendering window
+ * RETURNS:     N/A
+ */
+
+void wsgl_render_marker(
    Ws_attr_st *ast,
    El_handle el
    );

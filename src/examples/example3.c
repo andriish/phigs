@@ -205,6 +205,7 @@ void init_scene(void)
 
    popen_struct(STRUCT_BORDER);
    pexec_struct(STRUCT_MAIN);
+   pset_line_colr(&white);
    ppolyline(&plist_vline);
    ppolyline(&plist_hline);
    pclose_struct();

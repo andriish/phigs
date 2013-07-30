@@ -287,45 +287,6 @@ void wsgl_flush(
 }
 
 /*******************************************************************************
- * init_rendering_state
- *
- * DESCR:	Initialize rendering state helper function
- * RETURNS:	N/A
- */
-
-static void init_rendering_state(
-   Ws *ws
-   )
-{
-   Wsgl_handle wsgl = ws->render_context;
-
-   wsgl->cur_struct.hlhsr_id = PHIGS_HLHSR_ID_OFF;
-   wsgl_update_hlhsr_id(ws);
-   phg_mat_identity(wsgl->composite_tran);
-   phg_mat_identity(wsgl->cur_struct.global_tran);
-   phg_mat_identity(wsgl->cur_struct.local_tran);
-   wsgl_set_line_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   wsgl_set_line_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   wsgl_set_marker_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   wsgl_set_marker_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   wsgl_set_text_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   wsgl_set_text_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   wsgl->cur_struct.ast.char_ht = 0.01;
-   wsgl->cur_struct.ast.text_path = PPATH_RIGHT;
-   wsgl->cur_struct.ast.char_up_vec.delta_x = 0.0;
-   wsgl->cur_struct.ast.char_up_vec.delta_y = 1.0;
-   wsgl_set_edge_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   wsgl_set_edge_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   wsgl_set_int_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   wsgl_set_int_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   phg_nset_names_set_all(&wsgl->cur_struct.ast.asf_nameset);
-   wsgl_set_view_ind(ws, 0);
-   phg_nset_names_clear_all(&wsgl->cur_struct.cur_nameset);
-   phg_nset_names_clear_all(&wsgl->cur_struct.lightstat);
-   wsgl->cur_struct.pick_id = 0;
-}
-
-/*******************************************************************************
  * wsgl_begin_rendering
  *
  * DESCR:	Start a rendiering session for workstation
@@ -342,7 +303,6 @@ void wsgl_begin_rendering(
 
    glXMakeCurrent(ws->display, ws->drawable_id, ws->glx_context);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   init_rendering_state(ws);
 }
 
 /*******************************************************************************
@@ -357,9 +317,45 @@ void wsgl_begin_pass(
    int flags
    )
 {
-    if (flags & WS_RENDER_EDGE) {
-        wsgl_begin_edge();
-    }
+   Wsgl_handle wsgl = ws->render_context;
+
+   wsgl_set_view_ind(ws, 0);
+   wsgl->cur_struct.hlhsr_id = PHIGS_HLHSR_ID_OFF;
+   wsgl_update_hlhsr_id(ws);
+
+   phg_mat_identity(wsgl->composite_tran);
+   phg_mat_identity(wsgl->cur_struct.global_tran);
+   phg_mat_identity(wsgl->cur_struct.local_tran);
+
+   phg_nset_names_set_all(&wsgl->cur_struct.ast.asf_nameset);
+   phg_nset_names_clear_all(&wsgl->cur_struct.cur_nameset);
+
+   wsgl->cur_struct.pick_id = 0;
+
+   if (flags & WS_RENDER_FILL) {
+      wsgl_set_int_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
+      wsgl_set_int_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
+      phg_nset_names_clear_all(&wsgl->cur_struct.lightstat);
+   }
+   if (flags & WS_RENDER_EDGE) {
+      wsgl_set_edge_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
+      wsgl_set_edge_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
+      wsgl_begin_edge();
+   }
+   if (flags & WS_RENDER_LINE) {
+      wsgl_set_line_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
+      wsgl_set_line_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
+   }
+   if (flags & WS_RENDER_MARKER) {
+      wsgl_set_marker_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
+      wsgl_set_marker_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
+   }
+   wsgl_set_text_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
+   wsgl_set_text_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
+   wsgl->cur_struct.ast.char_ht = 0.01;
+   wsgl->cur_struct.ast.text_path = PPATH_RIGHT;
+   wsgl->cur_struct.ast.char_up_vec.delta_x = 0.0;
+   wsgl->cur_struct.ast.char_up_vec.delta_y = 1.0;
 }
 
 /*******************************************************************************
@@ -374,9 +370,9 @@ void wsgl_end_pass(
    int flags
    )
 {
-    if (flags & WS_RENDER_EDGE) {
-        wsgl_end_edge();
-    }
+   if (flags & WS_RENDER_EDGE) {
+      wsgl_end_edge();
+   }
 }
 
 /*******************************************************************************
@@ -723,26 +719,41 @@ void wsgl_render_element(
 
       case PELEM_MARKER_IND:
          wsgl_set_marker_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
+         if (flags & WS_RENDER_MARKER) {
+             wsgl_render_marker(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_MARKER_COLR_IND:
          phg_get_colr_ind(ws,
                           &wsgl->cur_struct.ast.indiv_group.marker_bundle.colr,
                           PHG_INT(el));
+         if (flags & WS_RENDER_MARKER) {
+             wsgl_render_marker(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_MARKER_COLR:
          memcpy(&wsgl->cur_struct.ast.indiv_group.marker_bundle.colr,
                 ELMT_CONTENT(el),
                 sizeof(Pgcolr));
+         if (flags & WS_RENDER_MARKER) {
+             wsgl_render_marker(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_MARKER_SIZE:
          wsgl->cur_struct.ast.indiv_group.marker_bundle.size = PHG_FLOAT(el);
+         if (flags & WS_RENDER_MARKER) {
+             wsgl_render_marker(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_MARKER_TYPE:
          wsgl->cur_struct.ast.indiv_group.marker_bundle.type = PHG_INT(el);
+         if (flags & WS_RENDER_MARKER) {
+             wsgl_render_marker(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_TEXT_IND:
@@ -803,26 +814,41 @@ void wsgl_render_element(
 
       case PELEM_LINE_IND:
          wsgl_set_line_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
+         if (flags & WS_RENDER_LINE) {
+            wsgl_render_line(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_LINE_COLR_IND:
          phg_get_colr_ind(ws,
                           &wsgl->cur_struct.ast.indiv_group.line_bundle.colr,
                           PHG_INT(el));
+         if (flags & WS_RENDER_LINE) {
+            wsgl_render_line(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_LINE_COLR:
          memcpy(&wsgl->cur_struct.ast.indiv_group.line_bundle.colr,
                 ELMT_CONTENT(el),
                 sizeof(Pgcolr));
+         if (flags & WS_RENDER_LINE) {
+            wsgl_render_line(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_LINEWIDTH:
          wsgl->cur_struct.ast.indiv_group.line_bundle.width = PHG_FLOAT(el);
+         if (flags & WS_RENDER_LINE) {
+            wsgl_render_line(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_LINETYPE:
          wsgl->cur_struct.ast.indiv_group.line_bundle.type = PHG_INT(el);
+         if (flags & WS_RENDER_LINE) {
+            wsgl_render_line(&wsgl->cur_struct.ast, el);
+         }
          break;
 
       case PELEM_FILL_AREA:
@@ -849,18 +875,17 @@ void wsgl_render_element(
 
       case PELEM_POLYLINE:
          if (check_draw_primitive(ws)) {
-            phg_draw_polyline(ws,
-                              ELMT_CONTENT(el),
-                              &wsgl->cur_struct.ast
-                              );
+            if (flags & WS_RENDER_LINE) {
+               wsgl_render_line(&wsgl->cur_struct.ast, el);
+            }
          }
          break;
 
       case PELEM_POLYMARKER:
          if (check_draw_primitive(ws)) {
-            phg_draw_polymarker(ws,
-                                ELMT_CONTENT(el),
-                                &wsgl->cur_struct.ast);
+            if (flags & WS_RENDER_MARKER) {
+               wsgl_render_marker(&wsgl->cur_struct.ast, el);
+            }
          }
          break;
 
@@ -899,17 +924,17 @@ void wsgl_render_element(
 
       case PELEM_POLYLINE3:
          if (check_draw_primitive(ws)) {
-            phg_draw_polyline3(ws,
-                               ELMT_CONTENT(el),
-                               &wsgl->cur_struct.ast);
+            if (flags & WS_RENDER_LINE) {
+               wsgl_render_line(&wsgl->cur_struct.ast, el);
+            }
          }
          break;
 
       case PELEM_POLYMARKER3:
          if (check_draw_primitive(ws)) {
-            phg_draw_polymarker3(ws,
-                                 ELMT_CONTENT(el),
-                                 &wsgl->cur_struct.ast);
+            if (flags & WS_RENDER_MARKER) {
+               wsgl_render_marker(&wsgl->cur_struct.ast, el);
+            }
          }
          break;
 
@@ -1064,7 +1089,8 @@ void wsgl_begin_pick(
    printf("\n");
 #endif
 
-   init_rendering_state(ws);
+   wsgl_begin_pass(ws, WS_RENDER_FILL | WS_RENDER_EDGE |
+                       WS_RENDER_LINE | WS_RENDER_MARKER);
    glSelectBuffer(wsgl->select_size, wsgl->select_buf);
    glRenderMode(GL_SELECT);
    glInitNames();
