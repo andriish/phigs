@@ -28,10 +28,11 @@
 #include <phigs/util.h>
 #include <GL/gl.h>
 
-#define WS_RENDER_MARKER       0x01
-#define WS_RENDER_LINE         0x02
-#define WS_RENDER_FILL         0x04
-#define WS_RENDER_EDGE         0x08
+#define WS_RENDER_FILL         0x01
+#define WS_RENDER_EDGE         0x02
+#define WS_RENDER_LINE         0x04
+#define WS_RENDER_MARKER       0x08
+#define WS_RENDER_TEXT         0x10
 
 typedef struct {
    Pint x, y;
@@ -642,6 +643,39 @@ Ptext_prec wsgl_get_text_prec(
    );
 
 /*******************************************************************************
+ * wsgl_get_text_fnt
+ *
+ * DESCR:       Get text font
+ * RETURNS:     Text font
+ */
+
+Phg_font* wsgl_get_text_fnt(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_get_text_char_expan
+ *
+ * DESCR:       Get text character expansion
+ * RETURNS:     Text font
+ */
+
+Pfloat wsgl_get_text_char_expan(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_get_text_char_space
+ *
+ * DESCR:       Get text character spacing
+ * RETURNS:     Character spacing
+ */
+
+Pfloat wsgl_get_text_char_space(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * wsgl_setup_text_attr
  *
  * DESCR:       Setup text attributes
@@ -649,21 +683,7 @@ Ptext_prec wsgl_get_text_prec(
  */
 
 void wsgl_setup_text_attr(
-   Ws_attr_st *ast,
-   Phg_font **fnt,
-   Pfloat *char_expan
-   );
-
-/*******************************************************************************
- * wsgl_get_char_text_attr
- *
- * DESCR:       Get text attributes
- * RETURNS:     N/A
- */
-
-void wsgl_get_char_text_attr(
-   Ws_attr_st *ast,
-   Pfloat *char_space
+   Ws_attr_st *ast
    );
 
 /*******************************************************************************
@@ -691,110 +711,6 @@ void wsgl_remove_names_set(
    );
 
 /*******************************************************************************
- * phg_draw_polymarker
- *
- * DESCR:       Draw markers
- * RETURNS:     N/A
- */
-
-void phg_draw_polymarker(
-   Ws *ws,
-   void *pdata,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
- * phg_draw_polymarker3
- *
- * DESCR:       Draw markers 3D
- * RETURNS:     N/A
- */
-
-void phg_draw_polymarker3(
-   Ws *ws,
-   void *pdata,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
- * phg_draw_polyline
- *
- * DESCR:       Draw lines
- * RETURNS:     N/A
- */
-
-void phg_draw_polyline(
-   Ws *ws,
-   void *pdata,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
- * phg_draw_polyline3
- *
- * DESCR:       Draw lines 3D
- * RETURNS:     N/A
- */
-
-void phg_draw_polyline3(
-   Ws *ws,
-   void *pdata,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
- * phg_draw_fill_area
- *
- * DESCR:       Draw fill area
- * RETURNS:     N/A
- */
-
-void phg_draw_fill_area(
-   Ws *ws,
-   void *pdata,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
- * phg_draw_fill_area3
- *
- * DESCR:       Draw fill area 3D
- * RETURNS:     N/A
- */
-
-void phg_draw_fill_area3(
-   Ws *ws,
-   void *pdata,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
- * phg_draw_fill_area_set
- *
- * DESCR:       Draw fill area set
- * RETURNS:     N/A
- */
-
-void phg_draw_fill_area_set(
-   Ws *ws,
-   void *pdata,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
- * phg_draw_fill_area_set3
- *
- * DESCR:       Draw fill area set 3D
- * RETURNS:     N/A
- */
-
-void phg_draw_fill_area_set3(
-   Ws *ws,
-   void *pdata,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
  * phg_draw_fill_area3_data
  *
  * DESCR:       Draw fill area width data 3D
@@ -804,19 +720,6 @@ void phg_draw_fill_area_set3(
 void phg_draw_fill_area3_data(
    Ws *ws,
    void *pdata,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
- * phg_draw_text
- *
- * DESCR:       Draw text
- * RETURNS:     N/A
- */
-
-void phg_draw_text(
-   Ws *ws,
-   void *tdata,
    Ws_attr_st *ast
    );
 
@@ -915,6 +818,18 @@ void wsgl_render_line(
  */
 
 void wsgl_render_marker(
+   Ws_attr_st *ast,
+   El_handle el
+   );
+
+/*******************************************************************************
+ * wsgl_render_text
+ *
+ * DESCR:       Render text element to current workstation rendering window
+ * RETURNS:     N/A
+ */
+
+void wsgl_render_text(
    Ws_attr_st *ast,
    El_handle el
    );
