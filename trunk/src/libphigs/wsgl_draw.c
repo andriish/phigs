@@ -181,7 +181,7 @@ void phg_draw_polymarker(
    point_list.num_points = *data;
    point_list.points = (Ppoint *) &data[1];
 
-   phg_setup_marker_attr(ast, &type, &size);
+   wsgl_setup_marker_attr(ast, &type, &size);
    switch (type) {
       case PMARKER_DOT:
          phg_draw_marker_dot(&point_list, size);
@@ -224,7 +224,7 @@ void phg_draw_polymarker3(
    point_list.num_points = *data;
    point_list.points = (Ppoint3 *) &data[1];
 
-   phg_setup_line_attr(ast);
+   wsgl_setup_line_attr(ast);
 
    if (PHG_SCRATCH_SPACE(&ws->scratch,
                          point_list.num_points * sizeof(Ppoint))) {
@@ -236,7 +236,7 @@ void phg_draw_polymarker3(
          plist.points[i].y = point_list.points[i].y;
       }
 
-      phg_setup_marker_attr(ast, &type, &size);
+      wsgl_setup_marker_attr(ast, &type, &size);
       switch (type) {
          case PMARKER_DOT:
             phg_draw_marker_dot(&plist, size);
@@ -280,7 +280,7 @@ void phg_draw_polyline(
    point_list.num_points = *data;
    point_list.points = (Ppoint *) &data[1];
 
-   phg_setup_line_attr(ast);
+   wsgl_setup_line_attr(ast);
    glBegin(GL_LINES);
    for (i = 0; i < point_list.num_points; i++) {
       glVertex2f(point_list.points[i].x,
@@ -309,7 +309,7 @@ void phg_draw_polyline3(
    point_list.num_points = *data;
    point_list.points = (Ppoint3 *) &data[1];
 
-   phg_setup_line_attr(ast);
+   wsgl_setup_line_attr(ast);
    glBegin(GL_LINES);
    for (i = 0; i < point_list.num_points; i++) {
       glVertex3f(point_list.points[i].x,
@@ -340,9 +340,9 @@ void phg_draw_fill_area(
    point_list.num_points = *data;
    point_list.points = (Ppoint *) &data[1];
 
-   style = phg_get_int_style(ast);
+   style = wsgl_get_int_style(ast);
    if (style != PSTYLE_EMPTY) {
-      phg_setup_int_attr(ast);
+      wsgl_setup_int_attr(ast);
       glBegin(GL_POLYGON);
       for (i = 0; i < point_list.num_points; i++) {
          glVertex2f(point_list.points[i].x,
@@ -351,8 +351,8 @@ void phg_draw_fill_area(
       glEnd();
    }
 
-   if (phg_get_edge_flag(ast) == PEDGE_ON) {
-      phg_setup_edge_attr(ast);
+   if (wsgl_get_edge_flag(ast) == PEDGE_ON) {
+      wsgl_setup_edge_attr(ast);
       glBegin(GL_LINE_LOOP);
       for (i = 0; i < point_list.num_points; i++) {
          glVertex2f(point_list.points[i].x,
@@ -385,10 +385,10 @@ void phg_draw_fill_area3(
    point_list.num_points = *data;
    point_list.points = (Ppoint3 *) &data[1];
 
-   style = phg_get_int_style(ast);
-   flag = phg_get_edge_flag(ast);
+   style = wsgl_get_int_style(ast);
+   flag = wsgl_get_edge_flag(ast);
 
-   phg_set_polygon_offset(phg_get_edge_width(ast));
+   wsgl_set_polygon_offset(wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
 
@@ -396,7 +396,7 @@ void phg_draw_fill_area3(
 
       /* If hidden surface removal, clear interiour to background colour */
       if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_ON) {
-         phg_setup_background(ws);
+         wsgl_setup_background(ws);
          glBegin(GL_POLYGON);
          for (i = 0; i < point_list.num_points; i++) {
             glVertex3f(point_list.points[i].x,
@@ -407,7 +407,7 @@ void phg_draw_fill_area3(
       }
 
       if (style == PSTYLE_HOLLOW) {
-         phg_setup_int_attr(ast);
+         wsgl_setup_int_attr(ast);
          glBegin(GL_POLYGON);
          for (i = 0; i < point_list.num_points; i++) {
             glVertex3f(point_list.points[i].x,
@@ -418,7 +418,7 @@ void phg_draw_fill_area3(
       }
    }
    else {
-      phg_setup_int_attr(ast);
+      wsgl_setup_int_attr(ast);
       glBegin(GL_POLYGON);
       for (i = 0; i < point_list.num_points; i++) {
          glVertex3f(point_list.points[i].x,
@@ -429,7 +429,7 @@ void phg_draw_fill_area3(
    }
 
    if (flag == PEDGE_ON) {
-      phg_setup_edge_attr(ast);
+      wsgl_setup_edge_attr(ast);
       glBegin(GL_LINE_LOOP);
       for (i = 0; i < point_list.num_points; i++) {
          glVertex3f(point_list.points[i].x,
@@ -520,7 +520,7 @@ static void draw_text_string(
    Ppoint pos;
    int j, z;
 
-   phg_setup_text_attr(ast, &fnt, &char_expan);
+   wsgl_setup_text_attr(ast, &fnt, &char_expan);
    char_ht = ast->char_ht;
 
    pos.x = text->pos.x;
@@ -576,9 +576,9 @@ static void draw_text_char(
    Ppoint pos;
    int j, z;
 
-   phg_setup_text_attr(ast, &fnt, &char_expan);
+   wsgl_setup_text_attr(ast, &fnt, &char_expan);
    char_ht = ast->char_ht;
-   phg_get_char_text_attr(ast, &char_space);
+   wsgl_get_char_text_attr(ast, &char_space);
    text_path = ast->text_path;
    height = fnt->top - fnt->bottom;
 
@@ -653,9 +653,9 @@ static void draw_text_stroke(
    Pvec *up;
    Pvec right;
 
-   phg_setup_text_attr(ast, &fnt, &char_expan);
+   wsgl_setup_text_attr(ast, &fnt, &char_expan);
    char_ht = ast->char_ht;
-   phg_get_char_text_attr(ast, &char_space);
+   wsgl_get_char_text_attr(ast, &char_space);
    text_path = ast->text_path;
    height = fnt->top - fnt->bottom;
    up = &ast->char_up_vec, sizeof(Pvec);
@@ -737,7 +737,7 @@ void phg_draw_text(
 
    memcpy(&text.pos, pos, sizeof(Ppoint));
    text.char_string = (char *) &pos[1];
-   prec = phg_get_text_prec(ast);
+   prec = wsgl_get_text_prec(ast);
    switch (prec) {
       case PREC_STRING:
          draw_text_string(ws, &text, ast);

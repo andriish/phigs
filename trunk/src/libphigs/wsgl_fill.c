@@ -90,33 +90,6 @@ static void wsgl_fill_area3(
 }
 
 /*******************************************************************************
- * wsgl_state_fill
- *
- * DESCR:	Update states for fill render pass
- * RETURNS:	N/A
- */
-
-void wsgl_state_fill(
-   Ws_attr_st *ast
-   )
-{
-   /* TODO:
-    * This is not optimal, to flush all the attributes
-    * Rather check which to be flushed depending on if asf was changed
-    * Maybe flags for this can set in wsgl.c and sent as argument here
-    */
-
-   /* TODO: For now only flush colour, all attributes needs to be */
-   if (phg_nset_name_is_set(&ast->asf_nameset,
-                            (Pint) PASPECT_INT_COLR_IND)) {
-       phg_set_gcolr(&ast->indiv_group.int_bundle.colr);
-   }
-   else {
-       phg_set_gcolr(&ast->bundl_group.int_bundle.colr);
-   }
-}
-
-/*******************************************************************************
  * wsgl_render_fill
  *
  * DESCR:	Render fill element to current workstation rendering window
@@ -130,23 +103,24 @@ void wsgl_render_fill(
 {
    switch (el->eltype) {
       case PELEM_INDIV_ASF:
-         wsgl_state_fill(ast);
+         wsgl_setup_int_attr(ast);
          break;
 
       case PELEM_INT_IND:
+         wsgl_setup_int_attr(ast);
          break;
 
       case PELEM_INT_COLR_IND:
          if (phg_nset_name_is_set(&ast->asf_nameset,
                                   (Pint) PASPECT_INT_COLR_IND)) {
-             phg_set_gcolr(&ast->indiv_group.int_bundle.colr);
+             wsgl_set_gcolr(&ast->indiv_group.int_bundle.colr);
          }
          break;
 
       case PELEM_INT_COLR:
          if (phg_nset_name_is_set(&ast->asf_nameset,
                                   (Pint) PASPECT_INT_COLR_IND)) {
-             phg_set_gcolr(&ast->indiv_group.int_bundle.colr);
+             wsgl_set_gcolr(&ast->indiv_group.int_bundle.colr);
          }
          break;
 

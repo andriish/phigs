@@ -155,46 +155,6 @@ void wsgl_end_edge(
 }
 
 /*******************************************************************************
- * wsgl_state_edge
- *
- * DESCR:	Update states for fill render pass
- * RETURNS:	N/A
- */
-
-void wsgl_state_edge(
-   Ws_attr_st *ast
-   )
-{
-   /* TODO:
-    * This is not optimal, to flush all the attributes
-    * Rather check which to be flushed depending on if asf was changed
-    * Maybe flags for this can set in wsgl.c and sent as argument here
-    */
-   if (phg_nset_name_is_set(&ast->asf_nameset,
-                            (Pint) PASPECT_EDGE_COLR_IND)) {
-       phg_set_gcolr(&ast->indiv_group.edge_bundle.colr);
-   }
-   else {
-       phg_set_gcolr(&ast->bundl_group.edge_bundle.colr);
-   }
-
-   if (phg_nset_name_is_set(&ast->asf_nameset,
-                            (Pint) PASPECT_EDGEWIDTH)) {
-       glLineWidth(ast->indiv_group.edge_bundle.width);
-   }
-   else {
-       glLineWidth(ast->bundl_group.edge_bundle.width);
-   }
-
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_EDGETYPE)) {
-      wsgl_edge_type(ast->indiv_group.edge_bundle.type);
-   }
-   else {
-      wsgl_edge_type(ast->bundl_group.edge_bundle.type);
-   }
-}
-
-/*******************************************************************************
  * wsgl_render_edge
  *
  * DESCR:	Render fill element to current workstation rendering window
@@ -208,23 +168,24 @@ void wsgl_render_edge(
 {
    switch (el->eltype) {
       case PELEM_INDIV_ASF:
-         wsgl_state_fill(ast);
+         wsgl_setup_edge_attr(ast);
          break;
 
       case PELEM_EDGE_IND:
+         wsgl_setup_edge_attr(ast);
          break;
 
       case PELEM_EDGE_COLR_IND:
          if (phg_nset_name_is_set(&ast->asf_nameset,
                                   (Pint) PASPECT_EDGE_COLR_IND)) {
-             phg_set_gcolr(&ast->indiv_group.edge_bundle.colr);
+             wsgl_set_gcolr(&ast->indiv_group.edge_bundle.colr);
          }
          break;
 
       case PELEM_EDGE_COLR:
          if (phg_nset_name_is_set(&ast->asf_nameset,
                                   (Pint) PASPECT_EDGE_COLR_IND)) {
-             phg_set_gcolr(&ast->indiv_group.edge_bundle.colr);
+             wsgl_set_gcolr(&ast->indiv_group.edge_bundle.colr);
          }
          break;
 
@@ -242,7 +203,7 @@ void wsgl_render_edge(
          break;
 
       case PELEM_FILL_AREA:
-         if (phg_get_edge_flag(ast) == PEDGE_ON) {
+         if (wsgl_get_edge_flag(ast) == PEDGE_ON) {
             wsgl_edge_area(ELMT_CONTENT(el));
          }
          break;
@@ -252,7 +213,7 @@ void wsgl_render_edge(
          break;
 
       case PELEM_FILL_AREA3:
-         if (phg_get_edge_flag(ast) == PEDGE_ON) {
+         if (wsgl_get_edge_flag(ast) == PEDGE_ON) {
             wsgl_edge_area3(ELMT_CONTENT(el));
          }
          break;

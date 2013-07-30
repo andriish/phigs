@@ -300,26 +300,26 @@ static void init_rendering_state(
    Wsgl_handle wsgl = ws->render_context;
 
    wsgl->cur_struct.hlhsr_id = PHIGS_HLHSR_ID_OFF;
-   phg_update_hlhsr_id(ws);
+   wsgl_update_hlhsr_id(ws);
    phg_mat_identity(wsgl->composite_tran);
    phg_mat_identity(wsgl->cur_struct.global_tran);
    phg_mat_identity(wsgl->cur_struct.local_tran);
-   phg_set_line_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   phg_set_line_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   phg_set_marker_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   phg_set_marker_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   phg_set_text_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   phg_set_text_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
+   wsgl_set_line_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
+   wsgl_set_line_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
+   wsgl_set_marker_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
+   wsgl_set_marker_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
+   wsgl_set_text_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
+   wsgl_set_text_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
    wsgl->cur_struct.ast.char_ht = 0.01;
    wsgl->cur_struct.ast.text_path = PPATH_RIGHT;
    wsgl->cur_struct.ast.char_up_vec.delta_x = 0.0;
    wsgl->cur_struct.ast.char_up_vec.delta_y = 1.0;
-   phg_set_edge_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   phg_set_edge_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
-   phg_set_int_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
-   phg_set_int_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
+   wsgl_set_edge_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
+   wsgl_set_edge_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
+   wsgl_set_int_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
+   wsgl_set_int_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
    phg_nset_names_set_all(&wsgl->cur_struct.ast.asf_nameset);
-   phg_set_view_ind(ws, 0);
+   wsgl_set_view_ind(ws, 0);
    phg_nset_names_clear_all(&wsgl->cur_struct.cur_nameset);
    phg_nset_names_clear_all(&wsgl->cur_struct.lightstat);
    wsgl->cur_struct.pick_id = 0;
@@ -527,7 +527,7 @@ void wsgl_begin_structure(
    wsgl->cur_struct.offset  = 0;
    phg_mat_copy(wsgl->cur_struct.global_tran, wsgl->composite_tran);
    phg_mat_identity(wsgl->cur_struct.local_tran);
-   phg_update_modelview(ws);
+   wsgl_update_modelview(ws);
 
    if (wsgl->render_mode == WS_RENDER_MODE_SELECT) {
 #ifdef DEBUG
@@ -559,14 +559,14 @@ void wsgl_end_structure(
 
    stack_pop(wsgl->struct_stack, (caddr_t) &wsgl->cur_struct);
    if (flags & WS_RENDER_FILL) {
-      wsgl_state_fill(&wsgl->cur_struct.ast);
+      wsgl_setup_int_attr(&wsgl->cur_struct.ast);
    }
    if (flags & WS_RENDER_EDGE) {
-      wsgl_state_edge(&wsgl->cur_struct.ast);
+      wsgl_setup_edge_attr(&wsgl->cur_struct.ast);
    }
-   phg_update_hlhsr_id(ws);
-   phg_update_projection(ws);
-   phg_update_modelview(ws);
+   wsgl_update_hlhsr_id(ws);
+   wsgl_update_projection(ws);
+   wsgl_update_modelview(ws);
 
 #ifdef DEBUG
    printf("Pop: id = %d, offset = %d\n",
@@ -612,20 +612,20 @@ void wsgl_render_element(
          break;
 
       case PELEM_ADD_NAMES_SET:
-         phg_add_names_set(ws, ELMT_CONTENT(el));
+         wsgl_add_names_set(ws, ELMT_CONTENT(el));
          break;
 
       case PELEM_REMOVE_NAMES_SET:
-         phg_remove_names_set(ws, ELMT_CONTENT(el));
+         wsgl_remove_names_set(ws, ELMT_CONTENT(el));
          break;
 
       case PELEM_HLHSR_ID:
          wsgl->cur_struct.hlhsr_id = PHG_INT(el);
-         phg_update_hlhsr_id(ws);
+         wsgl_update_hlhsr_id(ws);
          break;
 
       case PELEM_INDIV_ASF:
-         phg_set_asf(&wsgl->cur_struct.ast, ELMT_CONTENT(el));
+         wsgl_set_asf(&wsgl->cur_struct.ast, ELMT_CONTENT(el));
          if (flags & WS_RENDER_FILL) {
              wsgl_render_fill(&wsgl->cur_struct.ast, el);
          }
@@ -635,7 +635,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_INT_IND:
-         phg_set_int_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
+         wsgl_set_int_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
          if (flags & WS_RENDER_FILL) {
              wsgl_render_fill(&wsgl->cur_struct.ast, el);
          }
@@ -675,7 +675,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_EDGE_IND:
-         phg_set_edge_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
+         wsgl_set_edge_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
          if (flags & WS_RENDER_EDGE) {
              wsgl_render_edge(&wsgl->cur_struct.ast, el);
          }
@@ -722,7 +722,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_MARKER_IND:
-         phg_set_marker_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
+         wsgl_set_marker_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
          break;
 
       case PELEM_MARKER_COLR_IND:
@@ -746,7 +746,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_TEXT_IND:
-         phg_set_text_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
+         wsgl_set_text_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
          break;
 
       case PELEM_TEXT_COLR_IND:
@@ -802,7 +802,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_LINE_IND:
-         phg_set_line_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
+         wsgl_set_line_ind(ws, &wsgl->cur_struct.ast.bundl_group, PHG_INT(el));
          break;
 
       case PELEM_LINE_COLR_IND:
@@ -920,7 +920,7 @@ void wsgl_render_element(
       case PELEM_GLOBAL_MODEL_TRAN3:
          phg_mat_copy(wsgl->cur_struct.global_tran,
                       *((Pmatrix3 *) ELMT_CONTENT(el)));
-         phg_update_modelview(ws);
+         wsgl_update_modelview(ws);
          break;
 
       case PELEM_LOCAL_MODEL_TRAN3:
@@ -941,11 +941,11 @@ void wsgl_render_element(
                             PHG_LOCAL_TRAN3(el)->matrix);
             break;
          }
-         phg_update_modelview(ws);
+         wsgl_update_modelview(ws);
          break;
 
       case PELEM_VIEW_IND:
-         phg_set_view_ind(ws, PHG_INT(el));
+         wsgl_set_view_ind(ws, PHG_INT(el));
          break;
 
       case PELEM_LIGHT_SRC_STATE:

@@ -162,49 +162,37 @@ void wsgl_set_hlhsr_mode(
    );
 
 /*******************************************************************************
- * phg_set_asf
+ * wsgl_set_asf
  *
  * DESCR:       Setup asf
  * RETURNS:     N/A
  */
 
-void phg_set_asf(
+void wsgl_set_asf(
    Ws_attr_st *ast,
    void *asf_info
    );
 
 /*******************************************************************************
- * phg_set_colr
+ * wsgl_set_colr
  *
  * DESCR:       Set colour value
  * RETURNS:     N/A
  */
 
-void phg_set_colr(
+void wsgl_set_colr(
    Pint colr_type,
    Pcoval *colr
    );
 
 /*******************************************************************************
- * phg_set_gcolr
+ * wsgl_set_gcolr
  *
  * DESCR:       Set colour
  * RETURNS:     N/A
  */
 
-void phg_set_gcolr(
-   Pgcolr *gcolr
-   );
-
-/*******************************************************************************
- * phg_colr_from_gcolr
- *
- * DESCR:       Get colour value from Pgcolr
- * RETURNS:     N/A
- */
-
-void phg_colr_from_gcolr(
-   Pcoval *pcoval,
+void wsgl_set_gcolr(
    Pgcolr *gcolr
    );
 
@@ -271,7 +259,7 @@ void wsgl_begin_pass(
  * RETURNS:     N/A
  */
 
-void wsgl_begin_pass(
+void wsgl_end_pass(
    Ws *ws,
    int flags
    );
@@ -365,139 +353,139 @@ void wsgl_end_pick(
    );
 
 /*******************************************************************************
- * phg_update_projection
+ * wsgl_update_projection
  *
  * DESCR:       Update projection matrix
  * RETURNS:     N/A
  */
 
-void phg_update_projection(
+void wsgl_update_projection(
    Ws *ws
    );
 
 /*******************************************************************************
- * phg_update_modelview
+ * wsgl_update_modelview
  *
  * DESCR:       Update modelview matrix
  * RETURNS:     N/A
  */
 
-void phg_update_modelview(
+void wsgl_update_modelview(
    Ws *ws
    );
 
 /*******************************************************************************
- * phg_set_view_ind
+ * wsgl_set_view_ind
  *
  * DESCR:       Setup view
  * RETURNS:     N/A
  */
 
-void phg_set_view_ind(
+void wsgl_set_view_ind(
    Ws *ws,
    Pint ind
    );
 
 /*******************************************************************************
- * phg_update_hlhsr_id
+ * wsgl_update_hlhsr_id
  *
  * DESCR:       Update depth buffer checking flag
  * RETURNS:     N/A
  */
 
-void phg_update_hlhsr_id(
+void wsgl_update_hlhsr_id(
    Ws *ws
    );
 
 /*******************************************************************************
- * phg_set_line_ind
+ * wsgl_set_line_ind
  *
  * DESCR:       Setup line index
  * RETURNS:     N/A
  */
 
-void phg_set_line_ind(
+void wsgl_set_line_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
    );
 
 /*******************************************************************************
- * phg_setup_line_attr
+ * wsgl_setup_line_attr
  *
  * DESCR:       Setup line attributes
  * RETURNS:     N/A
  */
 
-void phg_setup_line_attr(
+void wsgl_setup_line_attr(
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_set_int_ind
+ * wsgl_set_int_ind
  *
  * DESCR:       Setup interior index
  * RETURNS:     N/A
  */
 
-void phg_set_int_ind(
+void wsgl_set_int_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
    );
 
 /*******************************************************************************
- * phg_get_int_style
+ * wsgl_get_int_style
  *
  * DESCR:       Get interior style
  * RETURNS:     Interiour style
  */
 
-Pint_style phg_get_int_style(
+Pint_style wsgl_get_int_style(
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_setup_int_nocol
+ * wsgl_setup_int_nocol
  *
  * DESCR:       Setup interior attributes without color 
  * RETURNS:     N/A
  */
 
-void phg_setup_int_attr_nocol(
+void wsgl_setup_int_attr_nocol(
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_setup_int_attr
+ * wsgl_setup_int_attr
  *
  * DESCR:       Setup interior attributes 
  * RETURNS:     N/A
  */
 
-void phg_setup_int_attr(
+void wsgl_setup_int_attr(
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_set_polygon_offset
+ * wsgl_set_polygon_offset
  *
  * DESCR:       Setup polygon offset helper function
  * RETURNS:     N/A
  */
 
-void phg_set_polygon_offset(
+void wsgl_set_polygon_offset(
    float w
    );
 
 /*******************************************************************************
- * phg_get_facet_colr
+ * wsgl_get_facet_colr
  *
  * DESCR:       Get facet colour
  * RETURNS:     N/A
  */
 
-void phg_get_facet_colr(
+void wsgl_get_facet_colr(
    Pcoval *colr,
    Pint fflag,
    Pfacet_data3 *fdata,
@@ -505,179 +493,179 @@ void phg_get_facet_colr(
    );
 
 /*******************************************************************************
- * phg_get_int_refl_eqn
+ * wsgl_get_int_refl_eqn
  *
  * DESCR:       Get interiour reflection equation
  * RETURNS:     N/A
  */
 
-Pint phg_get_int_refl_eqn(
+Pint wsgl_get_int_refl_eqn(
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_get_refl_props
+ * wsgl_get_refl_props
  *
  * DESCR:       Get surface reflectance properties
  * RETURNS:     Pointer to surface reflectance properties
  */
 
-Prefl_props* phg_get_refl_props(
+Prefl_props* wsgl_get_refl_props(
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_set_edge_ind
+ * wsgl_set_edge_ind
  *
  * DESCR:       Setup edge index
  * RETURNS:     N/A
  */
 
-void phg_set_edge_ind(
+void wsgl_set_edge_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
    );
 
 /*******************************************************************************
- * phg_get_edge_flag
+ * wsgl_get_edge_flag
  *
  * DESCR:       Get edge flag
  * RETURNS:     Edge flag
  */
 
-Pedge_flag phg_get_edge_flag(
+Pedge_flag wsgl_get_edge_flag(
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_get_edge_width
+ * wsgl_get_edge_width
  *
  * DESCR:       Get edge width
  * RETURNS:     Edge width
  */
 
-Pfloat phg_get_edge_width(
+Pfloat wsgl_get_edge_width(
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_setup_edge_attr
+ * wsgl_setup_edge_attr
  *
  * DESCR:       Setup edge attributes 
  * RETURNS:     N/A
  */
 
-void phg_setup_edge_attr(
+void wsgl_setup_edge_attr(
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_set_marker_ind
+ * wsgl_set_marker_ind
  *
  * DESCR:       Setup marker index
  * RETURNS:     N/A
  */
 
-void phg_set_marker_ind(
+void wsgl_set_marker_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
    );
 
 /*******************************************************************************
- * phg_setup_marker_attr
+ * wsgl_setup_marker_attr
  *
  * DESCR:       Setup marker attributes 
  * RETURNS:     N/A
  */
 
-void phg_setup_marker_attr(
+void wsgl_setup_marker_attr(
    Ws_attr_st *ast,
    Pint *type,
    Pfloat *size
    );
 
 /*******************************************************************************
- * phg_setup_background
+ * wsgl_setup_background
  *
  * DESCR:       Setup background colour 
  * RETURNS:     N/A
  */
 
-void phg_setup_background(
+void wsgl_setup_background(
    Ws *ws
    );
 
 /*******************************************************************************
- * phg_set_text_ind
+ * wsgl_set_text_ind
  *
  * DESCR:       Setup text index
  * RETURNS:     N/A
  */
 
-void phg_set_text_ind(
+void wsgl_set_text_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
    );
 
 /*******************************************************************************
- * phg_get_text_prec
+ * wsgl_get_text_prec
  *
  * DESCR:       Get text precision
  * RETURNS:     Text precision
  */
 
-Ptext_prec phg_get_text_prec(
+Ptext_prec wsgl_get_text_prec(
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_setup_text_attr
+ * wsgl_setup_text_attr
  *
  * DESCR:       Setup text attributes
  * RETURNS:     N/A
  */
 
-void phg_setup_text_attr(
+void wsgl_setup_text_attr(
    Ws_attr_st *ast,
    Phg_font **fnt,
    Pfloat *char_expan
    );
 
 /*******************************************************************************
- * phg_get_char_text_attr
+ * wsgl_get_char_text_attr
  *
  * DESCR:       Get text attributes
  * RETURNS:     N/A
  */
 
-void phg_get_char_text_attr(
+void wsgl_get_char_text_attr(
    Ws_attr_st *ast,
    Pfloat *char_space
    );
 
 /*******************************************************************************
- * phg_add_names_set
+ * wsgl_add_names_set
  *
  * DESCR:       Add names to nameset
  * RETURNS:     N/A
  */
 
-void phg_add_names_set(
+void wsgl_add_names_set(
    Ws *ws,
    void *names
    );
 
 /*******************************************************************************
- * phg_remove_names_set
+ * wsgl_remove_names_set
  *
  * DESCR:       Remove names from nameset
  * RETURNS:     N/A
  */
 
-void phg_remove_names_set(
+void wsgl_remove_names_set(
    Ws *ws,
    void *names
    );
@@ -842,17 +830,6 @@ void wsgl_light_colr(
    );
 
 /*******************************************************************************
- * wsgl_state_fill
- *
- * DESCR:       Update states for fill render pass
- * RETURNS:     N/A
- */
-
-void wsgl_state_fill(
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
  * wsgl_render_fill
  *
  * DESCR:       Render fill element to current workstation rendering window
@@ -885,17 +862,6 @@ void wsgl_begin_edge(
 void wsgl_end_edge(
     void
     );
-
-/*******************************************************************************
- * wsgl_state_edge
- *
- * DESCR:       Update states for fill render pass
- * RETURNS:     N/A
- */
-
-void wsgl_state_edge(
-   Ws_attr_st *ast
-   );
 
 /*******************************************************************************
  * wsgl_render_edge
