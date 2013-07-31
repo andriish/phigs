@@ -309,24 +309,17 @@ void wsgl_set_line_ind(
 }
 
 /*******************************************************************************
- * wsgl_setup_line_attr
+ * wsgl_setup_linetype_attr
  *
- * DESCR:	Setup line attributes
+ * DESCR:	Setup line type attribute
  * RETURNS:	N/A
  */
 
-void wsgl_setup_line_attr(
+void wsgl_setup_linetype_attr(
    Ws_attr_st *ast
    )
 {
    Pint type;
-
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINE_COLR_IND)) {
-      wsgl_set_gcolr(&ast->indiv_group.line_bundle.colr);
-   }
-   else {
-      wsgl_set_gcolr(&ast->bundl_group.line_bundle.colr);
-   }
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINETYPE)) {
       type = ast->indiv_group.line_bundle.type;
@@ -355,6 +348,25 @@ void wsgl_setup_line_attr(
          glDisable(GL_LINE_STIPPLE);
       break;
    }
+}
+
+/*******************************************************************************
+ * wsgl_setup_line_attr
+ *
+ * DESCR:	Setup line attributes
+ * RETURNS:	N/A
+ */
+
+void wsgl_setup_line_attr(
+   Ws_attr_st *ast
+   )
+{
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINE_COLR_IND)) {
+      wsgl_set_gcolr(&ast->indiv_group.line_bundle.colr);
+   }
+   else {
+      wsgl_set_gcolr(&ast->bundl_group.line_bundle.colr);
+   }
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINEWIDTH)) {
       glLineWidth(ast->indiv_group.line_bundle.width);
@@ -362,6 +374,8 @@ void wsgl_setup_line_attr(
    else {
       glLineWidth(ast->bundl_group.line_bundle.width);
    }
+
+   wsgl_setup_linetype_attr(ast);
 }
 
 /*******************************************************************************
@@ -415,19 +429,18 @@ Pint_style wsgl_get_int_style(
 }
 
 /*******************************************************************************
- * wsgl_setup_int_nocol
+ * wsgl_setup_int_style_attr
  *
- * DESCR:	Setup interior attributes without color
+ * DESCR:	Setup interior style attribute
  * RETURNS:	N/A
  */
 
-void wsgl_setup_int_attr_nocol(
+void wsgl_setup_int_style_attr(
    Ws_attr_st *ast
    )
 {
    Pint_style style;
    Pint style_ind;
-   Pint shad_meth;
 
    style = wsgl_get_int_style(ast);
    switch (style) {
@@ -459,6 +472,20 @@ void wsgl_setup_int_attr_nocol(
          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
          break;
    }
+
+}
+
+/*******************************************************************************
+ * wsgl_setup_int_shad_meth_attr
+ *
+ * DESCR:	Setup interior shading method attribute
+ * RETURNS:	N/A
+ */
+void wsgl_setup_int_shad_meth_attr(
+   Ws_attr_st *ast
+   )
+{
+   Pint shad_meth;
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_SHAD_METH)) {
       shad_meth = ast->indiv_group.int_bundle.shad_meth;
@@ -493,7 +520,7 @@ void wsgl_setup_int_attr(
       wsgl_set_gcolr(&ast->bundl_group.int_bundle.colr);
    }
 
-   wsgl_setup_int_attr_nocol(ast);
+   wsgl_setup_int_style_attr(ast);
 }
 
 /*******************************************************************************

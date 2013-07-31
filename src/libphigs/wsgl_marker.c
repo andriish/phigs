@@ -302,17 +302,11 @@ void wsgl_render_marker(
          break;
 
       case PELEM_MARKER_SIZE:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_MARKER_SIZE)) {
-            glLineWidth(ast->indiv_group.marker_bundle.size);
-         }
+         /* Nothing to do since the marker size is read when drawing */
          break;
 
       case PELEM_MARKER_TYPE:
-         if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_MARKER_TYPE)) {
-            /* TODO: In this case we really done need to setup all attributes */
-            wsgl_setup_marker_attr(ast);
-         }
+         /* Nothing to do since the marker type is read when drawing */
          break;
 
       case PELEM_POLYMARKER:
