@@ -129,8 +129,7 @@ void wsgl_render_line(
 
       case PELEM_LINETYPE:
          if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINETYPE)) {
-            /* TODO: In this case we really done need to setup all attributes */
-            wsgl_setup_line_attr(ast);
+            wsgl_setup_linetype_attr(ast);
          }
          break;
 

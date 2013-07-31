@@ -171,13 +171,15 @@ void wsgl_render_fill(
          break;
 
       case PELEM_INT_STYLE:
-         /* TODO: In this case we really done need to setup all attributes */
-         wsgl_setup_int_attr(ast);
+         if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_STYLE)) {
+            wsgl_setup_int_style_attr(ast);
+         }
          break;
 
       case PELEM_INT_STYLE_IND:
-         /* TODO: In this case we really done need to setup all attributes */
-         wsgl_setup_int_attr(ast);
+         if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_STYLE)) {
+            wsgl_setup_int_style_attr(ast);
+         }
          break;
 
       case PELEM_FILL_AREA:

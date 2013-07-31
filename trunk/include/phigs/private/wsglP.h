@@ -412,6 +412,17 @@ void wsgl_set_line_ind(
    );
 
 /*******************************************************************************
+ * wsgl_setup_linetype_attr
+ *
+ * DESCR:       Setup line type attribute
+ * RETURNS:     N/A
+ */
+
+void wsgl_setup_linetype_attr(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * wsgl_setup_line_attr
  *
  * DESCR:       Setup line attributes
@@ -447,13 +458,23 @@ Pint_style wsgl_get_int_style(
    );
 
 /*******************************************************************************
- * wsgl_setup_int_nocol
+ * wsgl_setup_int_style_attr
  *
- * DESCR:       Setup interior attributes without color 
+ * DESCR:       Setup interior style attribute
  * RETURNS:     N/A
  */
 
-void wsgl_setup_int_attr_nocol(
+void wsgl_setup_int_style_attr(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_setup_int_shad_meth_attr
+ *
+ * DESCR:       Setup interior shading method attribute
+ * RETURNS:     N/A
+ */
+void wsgl_setup_int_shad_meth_attr(
    Ws_attr_st *ast
    );
 

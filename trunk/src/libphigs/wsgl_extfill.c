@@ -345,7 +345,8 @@ static void phg_draw_fill_area3_points(
       }
 
       if (style == PSTYLE_HOLLOW) {
-         wsgl_setup_int_attr_nocol(ast);
+         wsgl_setup_int_style_attr(ast);
+         wsgl_setup_int_shad_meth_attr(ast);
          wsgl_set_colr(colr_type, colr);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
@@ -358,7 +359,8 @@ static void phg_draw_fill_area3_points(
    }
 
    else {
-      wsgl_setup_int_attr_nocol(ast);
+      wsgl_setup_int_style_attr(ast);
+      wsgl_setup_int_shad_meth_attr(ast);
       wsgl_set_colr(colr_type, colr);
       glBegin(GL_POLYGON);
       for (i = 0; i < num_vertices; i++) {
@@ -418,7 +420,8 @@ static void phg_draw_fill_area3_ptcolrs(
    }
 
    else {
-      wsgl_setup_int_attr_nocol(ast);
+      wsgl_setup_int_style_attr(ast);
+      wsgl_setup_int_shad_meth_attr(ast);
       glBegin(GL_POLYGON);
       for (i = 0; i < num_vertices; i++) {
          wsgl_set_colr(colr_type, &ptcolrs[i].colr);
@@ -489,7 +492,8 @@ static void phg_draw_fill_area3_ptcolrs_norm(
    }
 
    else {
-      wsgl_setup_int_attr_nocol(ast);
+      wsgl_setup_int_style_attr(ast);
+      wsgl_setup_int_shad_meth_attr(ast);
       glBegin(GL_POLYGON);
       for (i = 0; i < num_vertices; i++) {
          wsgl_light_colr(ws,
@@ -547,7 +551,8 @@ static void phg_draw_fill_area3_ptnorms(
       }
 
       if (style == PSTYLE_HOLLOW) {
-         wsgl_setup_int_attr_nocol(ast);
+         wsgl_setup_int_style_attr(ast);
+         wsgl_setup_int_shad_meth_attr(ast);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
             wsgl_light_colr(ws,
@@ -567,7 +572,8 @@ static void phg_draw_fill_area3_ptnorms(
    }
 
    else {
-      wsgl_setup_int_attr_nocol(ast);
+      wsgl_setup_int_style_attr(ast);
+      wsgl_setup_int_shad_meth_attr(ast);
       glBegin(GL_POLYGON);
       for (i = 0; i < num_vertices; i++) {
          wsgl_light_colr(ws,
@@ -625,7 +631,8 @@ static void phg_draw_fill_area3_ptconorms(
       }
 
       if (style == PSTYLE_HOLLOW) {
-         wsgl_setup_int_attr_nocol(ast);
+         wsgl_setup_int_style_attr(ast);
+         wsgl_setup_int_shad_meth_attr(ast);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
             wsgl_light_colr(ws,
@@ -645,7 +652,8 @@ static void phg_draw_fill_area3_ptconorms(
    }
 
    else {
-      wsgl_setup_int_attr_nocol(ast);
+      wsgl_setup_int_style_attr(ast);
+      wsgl_setup_int_shad_meth_attr(ast);
       glBegin(GL_POLYGON);
       for (i = 0; i < num_vertices; i++) {
          wsgl_light_colr(ws,
