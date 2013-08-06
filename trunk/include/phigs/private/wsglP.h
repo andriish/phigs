@@ -640,104 +640,104 @@ void wsgl_remove_names_set(
    );
 
 /*******************************************************************************
- * phg_draw_polymarker
+ * wsgl_polymarker
  *
  * DESCR:       Draw markers
  * RETURNS:     N/A
  */
 
-void phg_draw_polymarker(
+void wsgl_polymarker(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_draw_polymarker3
+ * wsgl_polymarker3
  *
  * DESCR:       Draw markers 3D
  * RETURNS:     N/A
  */
 
-void phg_draw_polymarker3(
+void wsgl_polymarker3(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_draw_polyline
+ * wsgl_polyline
  *
  * DESCR:       Draw lines
  * RETURNS:     N/A
  */
 
-void phg_draw_polyline(
+void wsgl_polyline(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_draw_polyline3
+ * wsgl_polyline3
  *
  * DESCR:       Draw lines 3D
  * RETURNS:     N/A
  */
 
-void phg_draw_polyline3(
+void wsgl_polyline3(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_draw_fill_area
+ * wsgl_fill_area
  *
  * DESCR:       Draw fill area
  * RETURNS:     N/A
  */
 
-void phg_draw_fill_area(
+void wsgl_fill_area(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_draw_fill_area3
+ * wsgl_fill_area3
  *
  * DESCR:       Draw fill area 3D
  * RETURNS:     N/A
  */
 
-void phg_draw_fill_area3(
+void wsgl_fill_area3(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_draw_fill_area_set
+ * wsgl_fill_area_set
  *
  * DESCR:       Draw fill area set
  * RETURNS:     N/A
  */
 
-void phg_draw_fill_area_set(
+void wsgl_fill_area_set(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * phg_draw_fill_area_set3
+ * wsgl_fill_area_set3
  *
  * DESCR:       Draw fill area set 3D
  * RETURNS:     N/A
  */
 
-void phg_draw_fill_area_set3(
+void wsgl_fill_area_set3(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
@@ -757,13 +757,13 @@ void phg_draw_fill_area3_data(
    );
 
 /*******************************************************************************
- * phg_draw_text
+ * wsgl_text
  *
  * DESCR:       Draw text
  * RETURNS:     N/A
  */
 
-void phg_draw_text(
+void wsgl_text(
    Ws *ws,
    void *tdata,
    Ws_attr_st *ast

@@ -21,68 +21,135 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 #include <math.h>
-#include <stdint.h>
 #include <GL/gl.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
-#include <phigs/util.h>
-#include <phigs/private/wsxP.h>
 #include <phigs/private/wsglP.h>
 
 /*******************************************************************************
  * wsgl_fill_area
  *
- * DESCR:       Draw fill area
- * RETURNS:     N/A
+ * DESCR:	Draw fill area
+ * RETURNS:	N/A
  */
 
-static void wsgl_fill_area(
-   void *pdata
+void wsgl_fill_area(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
    )
 {
    int i;
+   Pint_style style;
    Ppoint_list point_list;
    Pint *data = (Pint *) pdata;
 
    point_list.num_points = *data;
    point_list.points = (Ppoint *) &data[1];
 
-   glBegin(GL_POLYGON);
-   for (i = 0; i < point_list.num_points; i++) {
-      glVertex2f(point_list.points[i].x,
-                 point_list.points[i].y);
+   style = wsgl_get_int_style(ast);
+   if (style != PSTYLE_EMPTY) {
+      wsgl_setup_int_attr(ast);
+      glBegin(GL_POLYGON);
+      for (i = 0; i < point_list.num_points; i++) {
+         glVertex2f(point_list.points[i].x,
+                    point_list.points[i].y);
+      }
+      glEnd();
    }
-   glEnd();
+
+   if (wsgl_get_edge_flag(ast) == PEDGE_ON) {
+      wsgl_setup_edge_attr(ast);
+      glBegin(GL_LINE_LOOP);
+      for (i = 0; i < point_list.num_points; i++) {
+         glVertex2f(point_list.points[i].x,
+                    point_list.points[i].y);
+      }
+      glEnd();
+   }
 }
 
 /*******************************************************************************
  * wsgl_fill_area3
  *
- * DESCR:       Draw fill area 3D
- * RETURNS:     N/A
+ * DESCR:	Draw fill area 3D
+ * RETURNS:	N/A
  */
 
-static void wsgl_fill_area3(
-   void *pdata
+void wsgl_fill_area3(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
    )
 {
    int i;
+   Pint_style style;
+   Pedge_flag flag;
    Ppoint_list3 point_list;
+   Wsgl_handle wsgl = ws->render_context;
    Pint *data = (Pint *) pdata;
 
    point_list.num_points = *data;
    point_list.points = (Ppoint3 *) &data[1];
 
-   glBegin(GL_POLYGON);
-   for (i = 0; i < point_list.num_points; i++) {
-      glVertex3f(point_list.points[i].x,
-                 point_list.points[i].y,
-                 point_list.points[i].z);
+   style = wsgl_get_int_style(ast);
+   flag = wsgl_get_edge_flag(ast);
+
+   wsgl_set_polygon_offset(wsgl_get_edge_width(ast));
+   glEnable(GL_POLYGON_OFFSET_FILL);
+   glEnable(GL_POLYGON_OFFSET_LINE);
+
+   if  ((style == PSTYLE_EMPTY) || (style == PSTYLE_HOLLOW)) {
+
+      /* If hidden surface removal, clear interiour to background colour */
+      if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_ON) {
+         wsgl_setup_background(ws);
+         glBegin(GL_POLYGON);
+         for (i = 0; i < point_list.num_points; i++) {
+            glVertex3f(point_list.points[i].x,
+                       point_list.points[i].y,
+                       point_list.points[i].z);
+         }
+         glEnd();
+      }
+
+      if (style == PSTYLE_HOLLOW) {
+         wsgl_setup_int_attr(ast);
+         glBegin(GL_POLYGON);
+         for (i = 0; i < point_list.num_points; i++) {
+            glVertex3f(point_list.points[i].x,
+                       point_list.points[i].y,
+                       point_list.points[i].z);
+         }
+         glEnd();
+      }
    }
-   glEnd();
+   else {
+      wsgl_setup_int_attr(ast);
+      glBegin(GL_POLYGON);
+      for (i = 0; i < point_list.num_points; i++) {
+         glVertex3f(point_list.points[i].x,
+                    point_list.points[i].y,
+                    point_list.points[i].z);
+      }
+      glEnd();
+   }
+
+   if (flag == PEDGE_ON) {
+      wsgl_setup_edge_attr(ast);
+      glBegin(GL_LINE_LOOP);
+      for (i = 0; i < point_list.num_points; i++) {
+         glVertex3f(point_list.points[i].x,
+                    point_list.points[i].y,
+                    point_list.points[i].z);
+      }
+      glEnd();
+   }
+
+   glDisable(GL_POLYGON_OFFSET_LINE);
+   glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 /*******************************************************************************
@@ -92,8 +159,10 @@ static void wsgl_fill_area3(
  * RETURNS:	N/A
  */
 
-static void wsgl_fill_area_set(
-   void *pdata
+void wsgl_fill_area_set(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
    )
 {
    Pint i, num_lists;
@@ -105,7 +174,7 @@ static void wsgl_fill_area_set(
    for (i = 0; i < num_lists; i++) {
       point_list.num_points = *data;
       point_list.points = (Ppoint *) &data[1];
-      wsgl_fill_area(data);
+      wsgl_fill_area(ws, data, ast);
       data = (Pint *) &point_list.points[point_list.num_points];
    }
 }
@@ -117,8 +186,10 @@ static void wsgl_fill_area_set(
  * RETURNS:	N/A
  */
 
-static void wsgl_fill_area_set3(
-   void *pdata
+void wsgl_fill_area_set3(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
    )
 {
    Pint i, num_lists;
@@ -130,80 +201,8 @@ static void wsgl_fill_area_set3(
    for (i = 0; i < num_lists; i++) {
       point_list.num_points = *data;
       point_list.points = (Ppoint3 *) &data[1];
-      wsgl_fill_area3(data);
+      wsgl_fill_area3(ws, data, ast);
       data = (Pint *) &point_list.points[point_list.num_points];
-   }
-}
-
-/*******************************************************************************
- * wsgl_render_fill
- *
- * DESCR:	Render fill element to current workstation rendering window
- * RETURNS:	N/A
- */
-
-void wsgl_render_fill(
-   Ws_attr_st *ast,
-   El_handle el
-   )
-{
-   switch (el->eltype) {
-      case PELEM_INDIV_ASF:
-         wsgl_setup_int_attr(ast);
-         break;
-
-      case PELEM_INT_IND:
-         wsgl_setup_int_attr(ast);
-         break;
-
-      case PELEM_INT_COLR_IND:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_INT_COLR_IND)) {
-             wsgl_set_gcolr(&ast->indiv_group.int_bundle.colr);
-         }
-         break;
-
-      case PELEM_INT_COLR:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_INT_COLR_IND)) {
-             wsgl_set_gcolr(&ast->indiv_group.int_bundle.colr);
-         }
-         break;
-
-      case PELEM_INT_STYLE:
-         if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_STYLE)) {
-            wsgl_setup_int_style_attr(ast);
-         }
-         break;
-
-      case PELEM_INT_STYLE_IND:
-         if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_STYLE)) {
-            wsgl_setup_int_style_attr(ast);
-         }
-         break;
-
-      case PELEM_FILL_AREA:
-         wsgl_fill_area(ELMT_CONTENT(el));
-         break;
-
-      case PELEM_FILL_AREA_SET:
-         wsgl_fill_area_set(ELMT_CONTENT(el));
-         break;
-
-      case PELEM_FILL_AREA3:
-         wsgl_fill_area3(ELMT_CONTENT(el));
-         break;
-
-      case PELEM_FILL_AREA_SET3:
-         wsgl_fill_area_set3(ELMT_CONTENT(el));
-         break;
-
-      case PELEM_FILL_AREA3_DATA:
-         /* TODO */
-         break;
-
-      default:
-         break;
    }
 }
 

@@ -2,7 +2,7 @@
 *   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
 *
 *   This file is part of Open PHIGS
-*   Copyright (C) 2011 - 2012 Surplus Users Ham Society
+*   Copyright (C) 2011 - 2013 Surplus Users Ham Society
 *
 *   Open PHIGS is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU Lesser General Public License as published by
@@ -36,6 +36,7 @@
  */
 
 static void wsgl_text_string(
+   Ws *ws,
    Ptext *text,
    Ws_attr_st *ast
    )
@@ -50,8 +51,7 @@ static void wsgl_text_string(
    Ppoint pos;
    int j, z;
 
-   fnt = wsgl_get_text_fnt(ast);
-   char_expan = wsgl_get_text_char_expan(ast);
+   wsgl_setup_text_attr(ast, &fnt, &char_expan);
    char_ht = ast->char_ht;
 
    pos.x = text->pos.x;
@@ -89,6 +89,7 @@ static void wsgl_text_string(
  */
 
 static void wsgl_text_char(
+   Ws *ws,
    Ptext *text,
    Ws_attr_st *ast
    )
@@ -106,10 +107,9 @@ static void wsgl_text_char(
    Ppoint pos;
    int j, z;
 
-   fnt = wsgl_get_text_fnt(ast);
-   char_expan = wsgl_get_text_char_expan(ast);
-   char_space = wsgl_get_text_char_space(ast);
+   wsgl_setup_text_attr(ast, &fnt, &char_expan);
    char_ht = ast->char_ht;
+   char_space = wsgl_get_char_space(ast);
    text_path = ast->text_path;
    height = fnt->top - fnt->bottom;
 
@@ -164,6 +164,7 @@ static void wsgl_text_char(
  */
 
 static void wsgl_text_stroke(
+   Ws *ws,
    Ptext *text,
    Ws_attr_st *ast
    )
@@ -183,10 +184,9 @@ static void wsgl_text_stroke(
    Pvec *up;
    Pvec right;
 
-   fnt = wsgl_get_text_fnt(ast);
-   char_expan = wsgl_get_text_char_expan(ast);
-   char_space = wsgl_get_text_char_space(ast);
+   wsgl_setup_text_attr(ast, &fnt, &char_expan);
    char_ht = ast->char_ht;
+   char_space = wsgl_get_char_space(ast);
    text_path = ast->text_path;
    height = fnt->top - fnt->bottom;
    up = &ast->char_up_vec, sizeof(Pvec);
@@ -256,7 +256,8 @@ static void wsgl_text_stroke(
  * RETURNS:	N/A
  */
 
-static void wsgl_text(
+void wsgl_text(
+   Ws *ws,
    void *tdata,
    Ws_attr_st *ast
    )
@@ -270,59 +271,15 @@ static void wsgl_text(
    prec = wsgl_get_text_prec(ast);
    switch (prec) {
       case PREC_STRING:
-         wsgl_text_string(&text, ast);
+         wsgl_text_string(ws, &text, ast);
          break;
 
       case PREC_CHAR:
-         wsgl_text_char(&text, ast);
+         wsgl_text_char(ws, &text, ast);
          break;
 
       case PREC_STROKE:
-         wsgl_text_stroke(&text, ast);
-         break;
-   }
-}
-
-/*******************************************************************************
- * wsgl_render_text
- *
- * DESCR:	Render text element to current workstation rendering window
- * RETURNS:	N/A
- */
-
-void wsgl_render_text(
-   Ws_attr_st *ast,
-   El_handle el
-   )
-{
-   switch (el->eltype) {
-      case PELEM_INDIV_ASF:
-         wsgl_setup_int_attr(ast);
-         break;
-
-      case PELEM_TEXT_IND:
-         wsgl_setup_text_attr(ast);
-         break;
-
-      case PELEM_TEXT_COLR_IND:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_TEXT_COLR_IND)) {
-             wsgl_set_gcolr(&ast->indiv_group.text_bundle.colr);
-         }
-         break;
-
-      case PELEM_TEXT_COLR:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_TEXT_COLR_IND)) {
-             wsgl_set_gcolr(&ast->indiv_group.text_bundle.colr);
-         }
-         break;
-
-      case PELEM_TEXT:
-         wsgl_text(ELMT_CONTENT(el), ast);
-         break;
-
-      default:
+         wsgl_text_stroke(ws, &text, ast);
          break;
    }
 }
