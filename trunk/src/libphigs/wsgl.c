@@ -740,12 +740,18 @@ void wsgl_render_element(
       case PELEM_FILL_AREA:
          if (check_draw_primitive(ws)) {
             wsgl_fill_area(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
+            if (wsgl_get_edge_flag(&wsgl->cur_struct.ast) == PEDGE_ON) {
+               wsgl_edge_area(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
+            }
          }
          break;
 
       case PELEM_FILL_AREA_SET:
          if (check_draw_primitive(ws)) {
             wsgl_fill_area_set(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
+            if (wsgl_get_edge_flag(&wsgl->cur_struct.ast) == PEDGE_ON) {
+               wsgl_edge_area_set(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
+            }
          }
          break;
 
@@ -764,12 +770,18 @@ void wsgl_render_element(
       case PELEM_FILL_AREA3:
          if (check_draw_primitive(ws)) {
             wsgl_fill_area3(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
+            if (wsgl_get_edge_flag(&wsgl->cur_struct.ast) == PEDGE_ON) {
+               wsgl_edge_area3(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
+            }
          }
          break;
 
       case PELEM_FILL_AREA_SET3:
          if (check_draw_primitive(ws)) {
             wsgl_fill_area_set3(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
+            if (wsgl_get_edge_flag(&wsgl->cur_struct.ast) == PEDGE_ON) {
+               wsgl_edge_area_set3(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
+            }
          }
          break;
 
