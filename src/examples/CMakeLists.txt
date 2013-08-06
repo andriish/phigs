@@ -26,7 +26,3 @@ ADD_EXECUTABLE(example7 example7.c)
 TARGET_LINK_LIBRARIES(example7 phigs
                       ${OPENGL_LIBRARY} ${X11_LIBRARY} ${XMU_LIBRARY} m)
 
-ADD_EXECUTABLE(example10 example10.c)
-TARGET_LINK_LIBRARIES(example10 phigs
-                      ${OPENGL_LIBRARY} ${X11_LIBRARY} ${XMU_LIBRARY} m)
-
