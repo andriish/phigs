@@ -59,16 +59,6 @@ void wsgl_fill_area(
       }
       glEnd();
    }
-
-   if (wsgl_get_edge_flag(ast) == PEDGE_ON) {
-      wsgl_setup_edge_attr(ast);
-      glBegin(GL_LINE_LOOP);
-      for (i = 0; i < point_list.num_points; i++) {
-         glVertex2f(point_list.points[i].x,
-                    point_list.points[i].y);
-      }
-      glEnd();
-   }
 }
 
 /*******************************************************************************
@@ -86,7 +76,6 @@ void wsgl_fill_area3(
 {
    int i;
    Pint_style style;
-   Pedge_flag flag;
    Ppoint_list3 point_list;
    Wsgl_handle wsgl = ws->render_context;
    Pint *data = (Pint *) pdata;
@@ -95,7 +84,6 @@ void wsgl_fill_area3(
    point_list.points = (Ppoint3 *) &data[1];
 
    style = wsgl_get_int_style(ast);
-   flag = wsgl_get_edge_flag(ast);
 
    wsgl_set_polygon_offset(wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
@@ -129,17 +117,6 @@ void wsgl_fill_area3(
    else {
       wsgl_setup_int_attr(ast);
       glBegin(GL_POLYGON);
-      for (i = 0; i < point_list.num_points; i++) {
-         glVertex3f(point_list.points[i].x,
-                    point_list.points[i].y,
-                    point_list.points[i].z);
-      }
-      glEnd();
-   }
-
-   if (flag == PEDGE_ON) {
-      wsgl_setup_edge_attr(ast);
-      glBegin(GL_LINE_LOOP);
       for (i = 0; i < point_list.num_points; i++) {
          glVertex3f(point_list.points[i].x,
                     point_list.points[i].y,

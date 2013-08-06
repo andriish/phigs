@@ -744,6 +744,58 @@ void wsgl_fill_area_set3(
    );
 
 /*******************************************************************************
+ * wsgl_edge_area
+ *
+ * DESCR:       Draw fill area edge
+ * RETURNS:     N/A
+ */
+
+void wsgl_edge_area(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_edge_area3
+ *
+ * DESCR:       Draw fill area edge 3D
+ * RETURNS:     N/A
+ */
+
+void wsgl_edge_area3(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_edge_area_set
+ *
+ * DESCR:       Draw fill area set edge
+ * RETURNS:     N/A
+ */
+
+void wsgl_edge_area_set(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_edge_area_set3
+ *
+ * DESCR:       Draw fill area set edge 3D
+ * RETURNS:     N/A
+ */
+
+void wsgl_edge_area_set3(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * phg_draw_fill_area3_data
  *
  * DESCR:       Draw fill area width data 3D

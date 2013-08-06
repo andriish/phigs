@@ -21,60 +21,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 #include <math.h>
-#include <stdint.h>
 #include <GL/gl.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
-#include <phigs/util.h>
-#include <phigs/private/wsxP.h>
 #include <phigs/private/wsglP.h>
-
-/*******************************************************************************
- * wsgl_edge_type
- *
- * DESCR:       Set edge type
- * RETURNS:     N/A
- */
-
-static void wsgl_edge_type(
-    Pint type
-    )
-{
-   /* Line style */
-   switch (type) {
-      case PLINE_DASH:
-         glLineStipple(1, 0x00ff);
-         glEnable(GL_LINE_STIPPLE);
-      break;
-
-      case PLINE_DOT:
-         glLineStipple(1, 0x0101);
-         glEnable(GL_LINE_STIPPLE);
-      break;
-
-      case PLINE_DASH_DOT:
-         glLineStipple(1, 0x1c47);
-         glEnable(GL_LINE_STIPPLE);
-      break;
-
-      default:
-         glDisable(GL_LINE_STIPPLE);
-      break;
-   }
-}
 
 /*******************************************************************************
  * wsgl_edge_area
  *
- * DESCR:       Draw edge for fill area
- * RETURNS:     N/A
+ * DESCR:	Draw fill area edge
+ * RETURNS:	N/A
  */
 
-static void wsgl_edge_area(
-   void *pdata
+void wsgl_edge_area(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
    )
 {
    int i;
@@ -84,7 +48,8 @@ static void wsgl_edge_area(
    point_list.num_points = *data;
    point_list.points = (Ppoint *) &data[1];
 
-   glBegin(GL_POLYGON);
+   wsgl_setup_edge_attr(ast);
+   glBegin(GL_LINE_LOOP);
    for (i = 0; i < point_list.num_points; i++) {
       glVertex2f(point_list.points[i].x,
                  point_list.points[i].y);
@@ -95,12 +60,14 @@ static void wsgl_edge_area(
 /*******************************************************************************
  * wsgl_edge_area3
  *
- * DESCR:       Draw edge for fill area 3D
- * RETURNS:     N/A
+ * DESCR:	Draw fill area edge 3D
+ * RETURNS:	N/A
  */
 
-static void wsgl_edge_area3(
-   void *pdata
+void wsgl_edge_area3(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
    )
 {
    int i;
@@ -110,7 +77,8 @@ static void wsgl_edge_area3(
    point_list.num_points = *data;
    point_list.points = (Ppoint3 *) &data[1];
 
-   glBegin(GL_POLYGON);
+   wsgl_setup_edge_attr(ast);
+   glBegin(GL_LINE_LOOP);
    for (i = 0; i < point_list.num_points; i++) {
       glVertex3f(point_list.points[i].x,
                  point_list.points[i].y,
@@ -122,12 +90,14 @@ static void wsgl_edge_area3(
 /*******************************************************************************
  * wsgl_edge_area_set
  *
- * DESCR:	Draw edge for fill area set
+ * DESCR:	Draw fill area set edge
  * RETURNS:	N/A
  */
 
 void wsgl_edge_area_set(
-   void *pdata
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
    )
 {
    Pint i, num_lists;
@@ -139,20 +109,22 @@ void wsgl_edge_area_set(
    for (i = 0; i < num_lists; i++) {
       point_list.num_points = *data;
       point_list.points = (Ppoint *) &data[1];
-      wsgl_edge_area(data);
+      wsgl_edge_area(ws, data, ast);
       data = (Pint *) &point_list.points[point_list.num_points];
    }
 }
 
 /*******************************************************************************
- * wsgl_fill_area_set3
+ * wsgl_edge_area_set3
  *
- * DESCR:	Draw edge for fill area set 3D
+ * DESCR:	Draw fill area set edge 3D
  * RETURNS:	N/A
  */
 
-static void wsgl_edge_area_set3(
-   void *pdata
+void wsgl_edge_area_set3(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
    )
 {
    Pint i, num_lists;
@@ -164,120 +136,8 @@ static void wsgl_edge_area_set3(
    for (i = 0; i < num_lists; i++) {
       point_list.num_points = *data;
       point_list.points = (Ppoint3 *) &data[1];
-      wsgl_edge_area3(data);
+      wsgl_edge_area3(ws, data, ast);
       data = (Pint *) &point_list.points[point_list.num_points];
-   }
-}
-
-/*******************************************************************************
- * wsgl_begin_edge
- *
- * DESCR:	Start rendering for edge pass
- * RETURNS:	N/A
- */
-
-void wsgl_begin_edge(
-    void
-    )
-{
-   glPolygonOffset(-1, 1);
-   glEnable(GL_POLYGON_OFFSET_LINE);
-   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-}
-
-/*******************************************************************************
- * wsgl_end_edge
- *
- * DESCR:	Start rendering for edge pass
- * RETURNS:	N/A
- */
-
-void wsgl_end_edge(
-    void
-    )
-{
-   glDisable(GL_POLYGON_OFFSET_LINE);
-   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
-
-/*******************************************************************************
- * wsgl_render_edge
- *
- * DESCR:	Render fill element to current workstation rendering window
- * RETURNS:	N/A
- */
-
-void wsgl_render_edge(
-   Ws_attr_st *ast,
-   El_handle el
-   )
-{
-   switch (el->eltype) {
-      case PELEM_INDIV_ASF:
-         wsgl_setup_edge_attr(ast);
-         break;
-
-      case PELEM_EDGE_IND:
-         wsgl_setup_edge_attr(ast);
-         break;
-
-      case PELEM_EDGE_COLR_IND:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_EDGE_COLR_IND)) {
-             wsgl_set_gcolr(&ast->indiv_group.edge_bundle.colr);
-         }
-         break;
-
-      case PELEM_EDGE_COLR:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_EDGE_COLR_IND)) {
-             wsgl_set_gcolr(&ast->indiv_group.edge_bundle.colr);
-         }
-         break;
-
-      case PELEM_EDGEWIDTH:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_EDGEWIDTH)) {
-            glLineWidth(ast->indiv_group.edge_bundle.width);
-         }
-         break;
-
-      case PELEM_EDGETYPE:
-         if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_EDGETYPE)) {
-            wsgl_edge_type(ast->indiv_group.edge_bundle.type);
-         }
-         break;
-
-      case PELEM_FILL_AREA:
-         if (wsgl_get_edge_flag(ast) == PEDGE_ON) {
-            wsgl_edge_area(ELMT_CONTENT(el));
-         }
-         break;
-
-      case PELEM_FILL_AREA_SET:
-         if (wsgl_get_edge_flag(ast) == PEDGE_ON) {
-            wsgl_edge_area_set(ELMT_CONTENT(el));
-         }
-         break;
-
-      case PELEM_FILL_AREA3:
-         if (wsgl_get_edge_flag(ast) == PEDGE_ON) {
-            wsgl_edge_area3(ELMT_CONTENT(el));
-         }
-         break;
-
-      case PELEM_FILL_AREA_SET3:
-         if (wsgl_get_edge_flag(ast) == PEDGE_ON) {
-            wsgl_edge_area_set3(ELMT_CONTENT(el));
-         }
-         break;
-
-      case PELEM_FILL_AREA3_DATA:
-         /* TODO */
-         break;
-
-      default:
-         break;
    }
 }
 
