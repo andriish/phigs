@@ -739,50 +739,37 @@ void wsgl_render_element(
 
       case PELEM_FILL_AREA:
          if (check_draw_primitive(ws)) {
-            phg_draw_fill_area(ws,
-                               ELMT_CONTENT(el),
-                               &wsgl->cur_struct.ast);
+            wsgl_fill_area(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
          }
          break;
 
       case PELEM_FILL_AREA_SET:
          if (check_draw_primitive(ws)) {
-            phg_draw_fill_area_set(ws,
-                                   ELMT_CONTENT(el),
-                                   &wsgl->cur_struct.ast);
+            wsgl_fill_area_set(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
          }
          break;
 
       case PELEM_POLYLINE:
          if (check_draw_primitive(ws)) {
-            phg_draw_polyline(ws,
-                              ELMT_CONTENT(el),
-                              &wsgl->cur_struct.ast
-                              );
+            wsgl_polyline(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
          }
          break;
 
       case PELEM_POLYMARKER:
          if (check_draw_primitive(ws)) {
-            phg_draw_polymarker(ws,
-                                ELMT_CONTENT(el),
-                                &wsgl->cur_struct.ast);
+            wsgl_polymarker(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
          }
          break;
 
       case PELEM_FILL_AREA3:
          if (check_draw_primitive(ws)) {
-            phg_draw_fill_area3(ws,
-                                ELMT_CONTENT(el),
-                                &wsgl->cur_struct.ast);
+            wsgl_fill_area3(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
          }
          break;
 
       case PELEM_FILL_AREA_SET3:
          if (check_draw_primitive(ws)) {
-            phg_draw_fill_area_set3(ws,
-                                    ELMT_CONTENT(el),
-                                    &wsgl->cur_struct.ast);
+            wsgl_fill_area_set3(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
          }
          break;
 
@@ -796,22 +783,18 @@ void wsgl_render_element(
 
       case PELEM_POLYLINE3:
          if (check_draw_primitive(ws)) {
-            phg_draw_polyline3(ws,
-                               ELMT_CONTENT(el),
-                               &wsgl->cur_struct.ast);
+            wsgl_polyline3(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
          }
          break;
 
       case PELEM_POLYMARKER3:
          if (check_draw_primitive(ws)) {
-            phg_draw_polymarker3(ws,
-                                 ELMT_CONTENT(el),
-                                 &wsgl->cur_struct.ast);
+            wsgl_polymarker3(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
          }
          break;
 
       case PELEM_TEXT:
-         phg_draw_text(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
+         wsgl_text(ws, ELMT_CONTENT(el), &wsgl->cur_struct.ast);
          break;
 
       case PELEM_GLOBAL_MODEL_TRAN3:

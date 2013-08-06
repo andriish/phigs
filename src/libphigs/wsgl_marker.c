@@ -21,22 +21,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 #include <math.h>
-#include <stdint.h>
 #include <GL/gl.h>
 #include <phigs/phg.h>
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
-#include <phigs/util.h>
-#include <phigs/private/wsxP.h>
 #include <phigs/private/wsglP.h>
 
 /*******************************************************************************
  * wsgl_marker_dot
  *
- * DESCR:       Draw marker dots helper function
- * RETURNS:     N/A
+ * DESCR:	Draw marker dots helper function
+ * RETURNS:	N/A
  */
 
 static void wsgl_marker_dot(
@@ -58,8 +54,8 @@ static void wsgl_marker_dot(
 /*******************************************************************************
  * wsgl_marker_plus
  *
- * DESCR:       Draw marker pluses helper function
- * RETURNS:     N/A
+ * DESCR:	Draw marker pluses helper function
+ * RETURNS:	N/A
  */
 
 static void wsgl_marker_plus(
@@ -89,10 +85,10 @@ static void wsgl_marker_plus(
 }
 
 /*******************************************************************************
- * phg_draw_marker_asterisk
+ * wsgl_marker_asterisk
  *
- * DESCR:       Draw marker asterisks helper function
- * RETURNS:     N/A
+ * DESCR:	Draw marker asterisks helper function
+ * RETURNS:	N/A
  */
 
 static void wsgl_marker_asterisk(
@@ -134,8 +130,8 @@ static void wsgl_marker_asterisk(
 /*******************************************************************************
  * wsgl_marker_cross
  *
- * DESCR:       Draw marker crosses helper function
- * RETURNS:     N/A
+ * DESCR:	Draw marker crosses helper function
+ * RETURNS:	N/A
  */
 
 static void wsgl_marker_cross(
@@ -167,11 +163,12 @@ static void wsgl_marker_cross(
 /*******************************************************************************
  * wsgl_polymarker
  *
- * DESCR:       Draw markers
- * RETURNS:     N/A
+ * DESCR:	Draw markers
+ * RETURNS:	N/A
  */
 
 void wsgl_polymarker(
+   Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    )
@@ -184,9 +181,7 @@ void wsgl_polymarker(
    point_list.num_points = *data;
    point_list.points = (Ppoint *) &data[1];
 
-   type = wsgl_get_marker_type(ast);
-   size = wsgl_get_marker_size(ast);
-
+   wsgl_setup_marker_attr(ast, &type, &size);
    switch (type) {
       case PMARKER_DOT:
          wsgl_marker_dot(&point_list, size);
@@ -209,11 +204,12 @@ void wsgl_polymarker(
 /*******************************************************************************
  * wsgl_polymarker3
  *
- * DESCR:       Draw markers 3D
- * RETURNS:     N/A
+ * DESCR:	Draw markers 3D
+ * RETURNS:	N/A
  */
 
 void wsgl_polymarker3(
+   Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    )
@@ -228,19 +224,19 @@ void wsgl_polymarker3(
    point_list.num_points = *data;
    point_list.points = (Ppoint3 *) &data[1];
 
-   if (1/*PHG_SCRATCH_SPACE(&ws->scratch,
-                         point_list.num_points * sizeof(Ppoint))*/) {
+   wsgl_setup_line_attr(ast);
+
+   if (PHG_SCRATCH_SPACE(&ws->scratch,
+                         point_list.num_points * sizeof(Ppoint))) {
       plist.num_points = point_list.num_points;
-      plist.points = (Ppoint *) malloc(plist.num_points * sizeof(Ppoint));
+      plist.points = (Ppoint *) ws->scratch.buf;
 
       for (i = 0; i < point_list.num_points; i++) {
          plist.points[i].x = point_list.points[i].x;
          plist.points[i].y = point_list.points[i].y;
       }
 
-      type = wsgl_get_marker_type(ast);
-      size = wsgl_get_marker_size(ast);
-
+      wsgl_setup_marker_attr(ast, &type, &size);
       switch (type) {
          case PMARKER_DOT:
             wsgl_marker_dot(&plist, size);
@@ -258,67 +254,9 @@ void wsgl_polymarker3(
             wsgl_marker_cross(&plist, size);
          break;
       }
-      // TODO: Remove
-      free(plist.points);
    }
    else {
-      //ERR_REPORT(ws->erh, ERR900);
-   }
-}
-
-/*******************************************************************************
- * wsgl_render_marker
- *
- * DESCR:	Render marker element to current workstation rendering window
- * RETURNS:	N/A
- */
-
-void wsgl_render_marker(
-   Ws_attr_st *ast,
-   El_handle el
-   )
-{
-   switch (el->eltype) {
-      case PELEM_INDIV_ASF:
-         wsgl_setup_line_attr(ast);
-         break;
-
-      case PELEM_MARKER_IND:
-         wsgl_setup_marker_attr(ast);
-         break;
-
-      case PELEM_MARKER_COLR_IND:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_MARKER_COLR_IND)) {
-             wsgl_set_gcolr(&ast->indiv_group.marker_bundle.colr);
-         }
-         break;
-
-      case PELEM_MARKER_COLR:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_MARKER_COLR_IND)) {
-             wsgl_set_gcolr(&ast->indiv_group.marker_bundle.colr);
-         }
-         break;
-
-      case PELEM_MARKER_SIZE:
-         /* Nothing to do since the marker size is read when drawing */
-         break;
-
-      case PELEM_MARKER_TYPE:
-         /* Nothing to do since the marker type is read when drawing */
-         break;
-
-      case PELEM_POLYMARKER:
-         wsgl_polymarker(ELMT_CONTENT(el), ast);
-         break;
-
-      case PELEM_POLYMARKER3: 
-         wsgl_polymarker3(ELMT_CONTENT(el), ast);
-         break;
-
-      default:
-         break;
+      ERR_REPORT(ws->erh, ERR900);
    }
 }
 
