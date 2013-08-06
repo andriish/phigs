@@ -495,8 +495,8 @@ void pfill_area_set(
       for (i = 0, num_points = 0; i < num_lists; i++) {
          num_points += point_list_list->point_lists[i].num_points;
       }
-      ARGS_ELMT_SIZE(&args) = sizeof(Pint) * num_lists +
-         sizeof(Ppoint) * num_points;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint) +
+         sizeof(Pint) * num_lists + sizeof(Ppoint) * num_points;
 
       if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size)) {
          ERR_REPORT(PHG_ERH, ERR900);
@@ -540,8 +540,8 @@ void pfill_area_set3(
       for (i = 0, num_points = 0; i < num_lists; i++) {
          num_points += point_list_list->point_lists[i].num_points;
       }
-      ARGS_ELMT_SIZE(&args) = sizeof(Pint) * num_lists +
-         sizeof(Ppoint3) * num_points;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint) +
+         sizeof(Pint) * num_lists + sizeof(Ppoint3) * num_points;
 
       if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size)) {
          ERR_REPORT(PHG_ERH, ERR900);

@@ -500,8 +500,7 @@ void phg_wsb_traverse_all_postings(
 
 void phg_wsb_traverse_net(
     Ws_handle ws,
-    Struct_handle structp,
-    int flags
+    Struct_handle structp
     );
 
 void phg_wsb_add_el(
