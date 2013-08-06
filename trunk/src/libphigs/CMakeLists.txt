@@ -6,7 +6,6 @@ ADD_LIBRARY(phigs
      phg_ut.c wsb.c wsb_lut.c ws_inp.c wsgl.c wsgl_attr.c wsgl_hatch.c
      wsgl_light.c wsx.c wsx_util.c wstx_ini.c wsx_inp.c sin.c sinq.c
      sin_evt.c sin_ws.c sin_cvs.c sin_val.c sin_cho.c sin_str.c sin_dev.c
-     phg_mroman.c phg_roman.c ar.c ar_conv.c ar_ops.c wsgl_extfill.c
-     wsgl_fill.c wsgl_edge.c wsgl_line.c wsgl_marker.c wsgl_text.c
+     phg_mroman.c phg_roman.c ar.c ar_conv.c ar_ops.c wsgl_draw.c wsgl_extfill.c
     )
 

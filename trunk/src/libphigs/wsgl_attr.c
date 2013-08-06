@@ -34,13 +34,13 @@ static Phg_font *fonts[] = {
 };
 
 /*******************************************************************************
- * wsgl_set_matrix
+ * phg_set_matrix
  *
  * DESCR:	Setup matrix
  * RETURNS:	N/A
  */
 
-static void wsgl_set_matrix(
+static void phg_set_matrix(
     Pmatrix3 mat,
     int mult
     )
@@ -65,13 +65,13 @@ static void wsgl_set_matrix(
 }
 
 /*******************************************************************************
- * wsgl_update_projection
+ * phg_update_projection
  *
  * DESCR:	Update projection matrix
  * RETURNS:	N/A
  */
 
-void wsgl_update_projection(
+void phg_update_projection(
    Ws *ws
    )
 {
@@ -86,21 +86,21 @@ void wsgl_update_projection(
       phg_mat_mul(wsgl->model_tran,
                   wsgl->pick_tran,
                   wsgl->cur_struct.view_rep.map_matrix);
-      wsgl_set_matrix(wsgl->model_tran, FALSE);
+      phg_set_matrix(wsgl->model_tran, FALSE);
    }
    else {
-      wsgl_set_matrix(wsgl->cur_struct.view_rep.map_matrix, FALSE);
+      phg_set_matrix(wsgl->cur_struct.view_rep.map_matrix, FALSE);
    }
 }
 
 /*******************************************************************************
- * wsgl_update_modelview
+ * phg_update_modelview
  *
  * DESCR:	Update modelview matrix
  * RETURNS:	N/A
  */
 
-void wsgl_update_modelview(
+void phg_update_modelview(
    Ws *ws
    )
 {
@@ -117,17 +117,17 @@ void wsgl_update_modelview(
    phg_mat_mul(wsgl->model_tran,
                wsgl->cur_struct.view_rep.ori_matrix,
                wsgl->composite_tran);
-   wsgl_set_matrix(wsgl->model_tran, FALSE);
+   phg_set_matrix(wsgl->model_tran, FALSE);
 }
 
 /*******************************************************************************
- * wsgl_set_view_ind
+ * phg_set_view_ind
  *
  * DESCR:	Setup view
  * RETURNS:	N/A
  */
 
-void wsgl_set_view_ind(
+void phg_set_view_ind(
    Ws *ws,
    Pint ind
    )
@@ -144,19 +144,19 @@ void wsgl_set_view_ind(
       memcpy(&wsgl->cur_struct.view_rep,
              &ret.data.rep.viewrep,
              sizeof(Pview_rep3));
-      wsgl_update_projection(ws);
-      wsgl_update_modelview(ws);
+      phg_update_projection(ws);
+      phg_update_modelview(ws);
    }
 }
 
 /*******************************************************************************
- * wsgl_update_hlhsr_id
+ * phg_update_hlhsr_id
  *
  * DESCR:	Update depth buffer checking flag
  * RETURNS:	N/A
  */
 
-void wsgl_update_hlhsr_id(
+void phg_update_hlhsr_id(
    Ws *ws
    )
 {
@@ -177,13 +177,13 @@ void wsgl_update_hlhsr_id(
 }
 
 /*******************************************************************************
- * wsgl_set_asf
+ * phg_set_asf
  *
  * DESCR:	Setup asf
  * RETURNS:	N/A
  */
 
-void wsgl_set_asf(
+void phg_set_asf(
    Ws_attr_st *ast,
    void *asf_info
    )
@@ -199,13 +199,13 @@ void wsgl_set_asf(
 }
 
 /*******************************************************************************
- * wsgl_set_colr
+ * phg_set_colr
  *
  * DESCR:	Set colour value
  * RETURNS:	N/A
  */
 
-void wsgl_set_colr(
+void phg_set_colr(
    Pint colr_type,
    Pcoval *colr
    )
@@ -227,13 +227,13 @@ void wsgl_set_colr(
 }
 
 /*******************************************************************************
- * wsgl_set_gcolr
+ * phg_set_gcolr
  *
  * DESCR:	Set colour
  * RETURNS:	N/A
  */
 
-void wsgl_set_gcolr(
+void phg_set_gcolr(
    Pgcolr *gcolr
    )
 {
@@ -254,13 +254,13 @@ void wsgl_set_gcolr(
 }
 
 /*******************************************************************************
- * wsgl_colr_from_gcolr
+ * phg_colr_from_gcolr
  *
- * DESCR:	Get colour value from Pgcolr helper
+ * DESCR:	Get colour value from Pgcolr
  * RETURNS:	N/A
  */
 
-static void wsgl_colr_from_gcolr(
+void phg_colr_from_gcolr(
    Pcoval *colr,
    Pgcolr *gcolr
    )
@@ -282,13 +282,13 @@ static void wsgl_colr_from_gcolr(
 }
 
 /*******************************************************************************
- * wsgl_set_line_ind
+ * phg_set_line_ind
  *
  * DESCR:	Setup line index
  * RETURNS:	N/A
  */
 
-void wsgl_set_line_ind(
+void phg_set_line_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
@@ -309,17 +309,24 @@ void wsgl_set_line_ind(
 }
 
 /*******************************************************************************
- * wsgl_setup_linetype_attr
+ * phg_setup_line_attr
  *
- * DESCR:	Setup line type attribute
+ * DESCR:	Setup line attributes
  * RETURNS:	N/A
  */
 
-void wsgl_setup_linetype_attr(
+void phg_setup_line_attr(
    Ws_attr_st *ast
    )
 {
    Pint type;
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINE_COLR_IND)) {
+      phg_set_gcolr(&ast->indiv_group.line_bundle.colr);
+   }
+   else {
+      phg_set_gcolr(&ast->bundl_group.line_bundle.colr);
+   }
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINETYPE)) {
       type = ast->indiv_group.line_bundle.type;
@@ -348,25 +355,6 @@ void wsgl_setup_linetype_attr(
          glDisable(GL_LINE_STIPPLE);
       break;
    }
-}
-
-/*******************************************************************************
- * wsgl_setup_line_attr
- *
- * DESCR:	Setup line attributes
- * RETURNS:	N/A
- */
-
-void wsgl_setup_line_attr(
-   Ws_attr_st *ast
-   )
-{
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINE_COLR_IND)) {
-      wsgl_set_gcolr(&ast->indiv_group.line_bundle.colr);
-   }
-   else {
-      wsgl_set_gcolr(&ast->bundl_group.line_bundle.colr);
-   }
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_LINEWIDTH)) {
       glLineWidth(ast->indiv_group.line_bundle.width);
@@ -374,18 +362,16 @@ void wsgl_setup_line_attr(
    else {
       glLineWidth(ast->bundl_group.line_bundle.width);
    }
-
-   wsgl_setup_linetype_attr(ast);
 }
 
 /*******************************************************************************
- * wsgl_set_int_ind
+ * phg_set_int_ind
  *
  * DESCR:	Setup interior index
  * RETURNS:	N/A
  */
 
-void wsgl_set_int_ind(
+void phg_set_int_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
@@ -406,13 +392,13 @@ void wsgl_set_int_ind(
 }
 
 /*******************************************************************************
- * wsgl_get_int_style
+ * phg_get_int_style
  *
  * DESCR:	Get interior style
  * RETURNS:	Interiour style
  */
 
-Pint_style wsgl_get_int_style(
+Pint_style phg_get_int_style(
    Ws_attr_st *ast
    )
 {
@@ -429,20 +415,21 @@ Pint_style wsgl_get_int_style(
 }
 
 /*******************************************************************************
- * wsgl_setup_int_style_attr
+ * phg_setup_int_nocol
  *
- * DESCR:	Setup interior style attribute
+ * DESCR:	Setup interior attributes without color
  * RETURNS:	N/A
  */
 
-void wsgl_setup_int_style_attr(
+void phg_setup_int_attr_nocol(
    Ws_attr_st *ast
    )
 {
    Pint_style style;
    Pint style_ind;
+   Pint shad_meth;
 
-   style = wsgl_get_int_style(ast);
+   style = phg_get_int_style(ast);
    switch (style) {
       case PSTYLE_HOLLOW:
          glDisable(GL_POLYGON_STIPPLE);
@@ -473,20 +460,6 @@ void wsgl_setup_int_style_attr(
          break;
    }
 
-}
-
-/*******************************************************************************
- * wsgl_setup_int_shad_meth_attr
- *
- * DESCR:	Setup interior shading method attribute
- * RETURNS:	N/A
- */
-void wsgl_setup_int_shad_meth_attr(
-   Ws_attr_st *ast
-   )
-{
-   Pint shad_meth;
-
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_SHAD_METH)) {
       shad_meth = ast->indiv_group.int_bundle.shad_meth;
    }
@@ -503,34 +476,34 @@ void wsgl_setup_int_shad_meth_attr(
 }
 
 /*******************************************************************************
- * wsgl_setup_int_attr
+ * phg_setup_int_attr
  *
  * DESCR:	Setup interior attributes
  * RETURNS:	N/A
  */
 
-void wsgl_setup_int_attr(
+void phg_setup_int_attr(
    Ws_attr_st *ast
    )
 {
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_COLR_IND)) {
-      wsgl_set_gcolr(&ast->indiv_group.int_bundle.colr);
+      phg_set_gcolr(&ast->indiv_group.int_bundle.colr);
    }
    else {
-      wsgl_set_gcolr(&ast->bundl_group.int_bundle.colr);
+      phg_set_gcolr(&ast->bundl_group.int_bundle.colr);
    }
 
-   wsgl_setup_int_style_attr(ast);
+   phg_setup_int_attr_nocol(ast);
 }
 
 /*******************************************************************************
- * wsgl_set_polygon_offset
+ * phg_set_polygon_offset
  *
  * DESCR:       Setup polygon offset helper function
  * RETURNS:     N/A
  */
 
-void wsgl_set_polygon_offset(
+void phg_set_polygon_offset(
    float w
    )
 {
@@ -538,13 +511,13 @@ void wsgl_set_polygon_offset(
 }
 
 /*******************************************************************************
- * wsgl_get_facet_colr
+ * phg_get_facet_colr
  *
  * DESCR:	Get facet colour
  * RETURNS:	N/A
  */
 
-void wsgl_get_facet_colr(
+void phg_get_facet_colr(
    Pcoval *colr,
    Pint fflag,
    Pfacet_data3 *fdata,
@@ -563,23 +536,23 @@ void wsgl_get_facet_colr(
       default:
          if (phg_nset_name_is_set(&ast->asf_nameset,
                                   (Pint) PASPECT_INT_COLR_IND)) {
-            wsgl_colr_from_gcolr(colr, &ast->indiv_group.int_bundle.colr);
+            phg_colr_from_gcolr(colr, &ast->indiv_group.int_bundle.colr);
          }
          else {
-            wsgl_colr_from_gcolr(colr, &ast->bundl_group.int_bundle.colr);
+            phg_colr_from_gcolr(colr, &ast->bundl_group.int_bundle.colr);
          }
          break;
    }
 }
 
 /*******************************************************************************
- * wsgl_get_int_refl_eqn
+ * phg_get_int_refl_eqn
  *
  * DESCR:	Get interiour reflection equation
  * RETURNS:	N/A
  */
 
-Pint wsgl_get_int_refl_eqn(
+Pint phg_get_int_refl_eqn(
    Ws_attr_st *ast
    )
 {
@@ -619,13 +592,13 @@ Prefl_props* phg_get_refl_props(
 }
 
 /*******************************************************************************
- * wsgl_set_edge_ind
+ * phg_set_edge_ind
  *
  * DESCR:	Setup edge index
  * RETURNS:	N/A
  */
 
-void wsgl_set_edge_ind(
+void phg_set_edge_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
@@ -646,13 +619,13 @@ void wsgl_set_edge_ind(
 }
 
 /*******************************************************************************
- * wsgl_get_edge_flag
+ * phg_get_edge_flag
  *
  * DESCR:	Get edge flag
  * RETURNS:	Edge flag
  */
 
-Pedge_flag wsgl_get_edge_flag(
+Pedge_flag phg_get_edge_flag(
    Ws_attr_st *ast
    )
 {
@@ -669,13 +642,13 @@ Pedge_flag wsgl_get_edge_flag(
 }
 
 /*******************************************************************************
- * wsgl_get_edge_width
+ * phg_get_edge_width
  *
  * DESCR:	Get edge width
  * RETURNS:	Edge width
  */
 
-Pfloat wsgl_get_edge_width(
+Pfloat phg_get_edge_width(
    Ws_attr_st *ast
    )
 {
@@ -692,13 +665,13 @@ Pfloat wsgl_get_edge_width(
 }
 
 /*******************************************************************************
- * wsgl_setup_edge_attr
+ * phg_setup_edge_attr
  *
  * DESCR:	Setup edge attributes
  * RETURNS:	N/A
  */
 
-void wsgl_setup_edge_attr(
+void phg_setup_edge_attr(
    Ws_attr_st *ast
    )
 {
@@ -707,13 +680,13 @@ void wsgl_setup_edge_attr(
    glDisable(GL_LIGHTING);
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_EDGE_COLR_IND)) {
-      wsgl_set_gcolr(&ast->indiv_group.edge_bundle.colr);
+      phg_set_gcolr(&ast->indiv_group.edge_bundle.colr);
    }
    else {
-      wsgl_set_gcolr(&ast->bundl_group.edge_bundle.colr);
+      phg_set_gcolr(&ast->bundl_group.edge_bundle.colr);
    }
 
-   glLineWidth(wsgl_get_edge_width(ast));
+   glLineWidth(phg_get_edge_width(ast));
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_EDGETYPE)) {
       type = ast->indiv_group.edge_bundle.type;
@@ -747,13 +720,13 @@ void wsgl_setup_edge_attr(
 
 
 /*******************************************************************************
- * wsgl_set_marker_ind
+ * phg_set_marker_ind
  *
  * DESCR:	Setup marker index
  * RETURNS:	N/A
  */
 
-void wsgl_set_marker_ind(
+void phg_set_marker_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
@@ -774,79 +747,49 @@ void wsgl_set_marker_ind(
 }
 
 /*******************************************************************************
- * wsgl_get_marker_type
- *
- * DESCR:	Get marker type
- * RETURNS:	Marker type
- */
-
-Pint wsgl_get_marker_type(
-   Ws_attr_st *ast
-   )
-{
-   Pint type;
-
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_MARKER_TYPE)) {
-      type = ast->indiv_group.marker_bundle.type;
-   }
-   else {
-      type = ast->bundl_group.marker_bundle.type;
-   }
-
-   return type;
-}
-
-/*******************************************************************************
- * wsgl_get_marker_size
- *
- * DESCR:	Get marker size
- * RETURNS:	Marker size
- */
-
-Pfloat wsgl_get_marker_size(
-   Ws_attr_st *ast
-   )
-{
-   Pfloat size;
-
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_MARKER_SIZE)) {
-      size = ast->indiv_group.marker_bundle.size;
-   }
-   else {
-      size = ast->bundl_group.marker_bundle.size;
-   }
-
-   return size;
-}
-
-/*******************************************************************************
- * wsgl_setup_marker_attr
+ * phg_setup_marker_attr
  *
  * DESCR:	Setup marker attributes
  * RETURNS:	N/A
  */
 
-void wsgl_setup_marker_attr(
-   Ws_attr_st *ast
+void phg_setup_marker_attr(
+   Ws_attr_st *ast,
+   Pint *type,
+   Pfloat *size
    )
 {
    if (phg_nset_name_is_set(&ast->asf_nameset,
                             (Pint) PASPECT_MARKER_COLR_IND)) {
-      wsgl_set_gcolr(&ast->indiv_group.marker_bundle.colr);
+      phg_set_gcolr(&ast->indiv_group.marker_bundle.colr);
    }
    else {
-      wsgl_set_gcolr(&ast->bundl_group.marker_bundle.colr);
+      phg_set_gcolr(&ast->bundl_group.marker_bundle.colr);
+   }
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_MARKER_TYPE)) {
+      *type = ast->indiv_group.marker_bundle.type;
+   }
+   else {
+      *type = ast->bundl_group.marker_bundle.type;
+   }
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_MARKER_SIZE)) {
+      *size = ast->indiv_group.marker_bundle.size;
+   }
+   else {
+      *size = ast->bundl_group.marker_bundle.size;
    }
 }
 
 /*******************************************************************************
- * wsgl_setup_background
+ * phg_setup_background
  *
  * DESCR:	Setup background colour
  * RETURNS:	N/A
  */
 
-void wsgl_setup_background(
+void phg_setup_background(
    Ws *ws
    )
 {
@@ -859,13 +802,13 @@ void wsgl_setup_background(
 }
 
 /*******************************************************************************
- * wsgl_set_text_ind
+ * phg_set_text_ind
  *
  * DESCR:	Setup text index
  * RETURNS:	N/A
  */
 
-void wsgl_set_text_ind(
+void phg_set_text_ind(
    Ws *ws,
    Pattr_group *attr_group,
    Pint ind
@@ -886,13 +829,13 @@ void wsgl_set_text_ind(
 }
 
 /*******************************************************************************
- * wsgl_get_text_prec
+ * phg_get_text_prec
  *
  * DESCR:	Get text precision
  * RETURNS:	Text precision
  */
 
-Ptext_prec wsgl_get_text_prec(
+Ptext_prec phg_get_text_prec(
    Ws_attr_st *ast
    )
 {
@@ -909,18 +852,28 @@ Ptext_prec wsgl_get_text_prec(
 }
 
 /*******************************************************************************
- * wsgl_get_text_fnt
+ * phg_setup_text_attr
  *
- * DESCR:	Get text font
- * RETURNS:	Text font
+ * DESCR:	Setup text attributes
+ * RETURNS:	N/A
  */
 
-Phg_font* wsgl_get_text_fnt(
-   Ws_attr_st *ast
+void phg_setup_text_attr(
+   Ws_attr_st *ast,
+   Phg_font **fnt,
+   Pfloat *char_expan
    )
 {
    Pint font;
-   Phg_font *fnt;
+
+   glLineWidth(2.0);
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_TEXT_COLR_IND)) {
+      phg_set_gcolr(&ast->indiv_group.text_bundle.colr);
+   }
+   else {
+      phg_set_gcolr(&ast->bundl_group.text_bundle.colr);
+   }
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_TEXT_FONT)) {
       font = ast->indiv_group.text_bundle.font;
@@ -930,90 +883,48 @@ Phg_font* wsgl_get_text_fnt(
    }
 
    if (font < 1) {
-      fnt = fonts[1];
+      *fnt = fonts[1];
    }
    else {
-      fnt = fonts[font - 1];
+      *fnt = fonts[font - 1];
    }
-
-   return fnt;
-}
-
-/*******************************************************************************
- * wsgl_get_text_char_expan
- *
- * DESCR:	Get text character expansion
- * RETURNS:	Text font
- */
-
-Pfloat wsgl_get_text_char_expan(
-   Ws_attr_st *ast
-   )
-{
-   Pfloat char_expan;
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_CHAR_EXPAN)) {
-      char_expan = ast->indiv_group.text_bundle.char_expan;
+      *char_expan = ast->indiv_group.text_bundle.char_expan;
    }
    else {
-      char_expan = ast->bundl_group.text_bundle.char_expan;
+      *char_expan = ast->bundl_group.text_bundle.char_expan;
    }
-
-   return char_expan;
 }
 
 /*******************************************************************************
- * wsgl_get_text_char_space
+ * phg_get_char_text_attr
  *
- * DESCR:	Get text character spacing
- * RETURNS:	Character spacing
- */
-
-Pfloat wsgl_get_text_char_space(
-   Ws_attr_st *ast
-   )
-{
-   Pfloat char_space;
-
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_CHAR_SPACE)) {
-      char_space = ast->indiv_group.text_bundle.char_space;
-   }
-   else {
-      char_space = ast->bundl_group.text_bundle.char_space;
-   }
-
-   return char_space;
-}
-
-/*******************************************************************************
- * wsgl_setup_text_attr
- *
- * DESCR:	Setup text attributes
+ * DESCR:	Get text attributes
  * RETURNS:	N/A
  */
 
-void wsgl_setup_text_attr(
-   Ws_attr_st *ast
+void phg_get_char_text_attr(
+   Ws_attr_st *ast,
+   Pfloat *char_space
    )
 {
-   glLineWidth(2.0);
-
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_TEXT_COLR_IND)) {
-      wsgl_set_gcolr(&ast->indiv_group.text_bundle.colr);
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_CHAR_SPACE)) {
+      *char_space = ast->indiv_group.text_bundle.char_space;
    }
    else {
-      wsgl_set_gcolr(&ast->bundl_group.text_bundle.colr);
+      *char_space = ast->bundl_group.text_bundle.char_space;
    }
 }
 
 /*******************************************************************************
- * wsgl_add_names_set
+ * phg_add_names_set
  *
  * DESCR:	Add names to nameset
  * RETURNS:	N/A
  */
 
-void wsgl_add_names_set(
+void phg_add_names_set(
    Ws *ws,
    void *names
    )
@@ -1031,13 +942,13 @@ void wsgl_add_names_set(
 }
 
 /*******************************************************************************
- * wsgl_remove_names_set
+ * phg_remove_names_set
  *
  * DESCR:	Remove names from nameset
  * RETURNS:	N/A
  */
 
-void wsgl_remove_names_set(
+void phg_remove_names_set(
    Ws *ws,
    void *names
    )

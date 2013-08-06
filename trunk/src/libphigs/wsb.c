@@ -762,55 +762,15 @@ void phg_wsb_traverse_all_postings(
     Ws_post_str		*post_str, *end;
 
     WSB_CHECK_POSTED(&owsb->posted);
-    if(WSB_SOME_POSTED(&owsb->posted)) {
+    if( WSB_SOME_POSTED(&owsb->posted) ) {
 	/* Set up for complete traversal. */
+	post_str = owsb->posted.lowest.higher;
+	end = &(owsb->posted.highest);
         wsgl_begin_rendering(ws);
-
-	post_str = owsb->posted.lowest.higher;
-	end = &(owsb->posted.highest);
-        wsgl_begin_pass(ws, WS_RENDER_FILL);
 	while ( post_str != end ) {
-	    phg_wsb_traverse_net(ws, post_str->structh, WS_RENDER_FILL);
+	    phg_wsb_traverse_net( ws, post_str->structh );
 	    post_str = post_str->higher;
 	}
-        wsgl_end_pass(ws, WS_RENDER_FILL);
-
-	post_str = owsb->posted.lowest.higher;
-	end = &(owsb->posted.highest);
-        wsgl_begin_pass(ws, WS_RENDER_EDGE);
-	while ( post_str != end ) {
-	    phg_wsb_traverse_net(ws, post_str->structh, WS_RENDER_EDGE);
-	    post_str = post_str->higher;
-	}
-        wsgl_end_pass(ws, WS_RENDER_EDGE);
-
-	post_str = owsb->posted.lowest.higher;
-	end = &(owsb->posted.highest);
-        wsgl_begin_pass(ws, WS_RENDER_LINE);
-	while ( post_str != end ) {
-	    phg_wsb_traverse_net(ws, post_str->structh, WS_RENDER_LINE);
-	    post_str = post_str->higher;
-	}
-        wsgl_end_pass(ws, WS_RENDER_LINE);
-
-	post_str = owsb->posted.lowest.higher;
-	end = &(owsb->posted.highest);
-        wsgl_begin_pass(ws, WS_RENDER_MARKER);
-	while ( post_str != end ) {
-	    phg_wsb_traverse_net(ws, post_str->structh, WS_RENDER_MARKER);
-	    post_str = post_str->higher;
-	}
-        wsgl_end_pass(ws, WS_RENDER_MARKER);
-
-	post_str = owsb->posted.lowest.higher;
-	end = &(owsb->posted.highest);
-        wsgl_begin_pass(ws, WS_RENDER_TEXT);
-	while ( post_str != end ) {
-	    phg_wsb_traverse_net(ws, post_str->structh, WS_RENDER_TEXT);
-	    post_str = post_str->higher;
-	}
-        wsgl_end_pass(ws, WS_RENDER_TEXT);
-
         wsgl_end_rendering(ws);
 	owsb->surf_state = PSURF_NOT_EMPTY;
     }
@@ -818,8 +778,7 @@ void phg_wsb_traverse_all_postings(
 
 void phg_wsb_traverse_net(
     Ws_handle ws,
-    Struct_handle structp,
-    int flags
+    Struct_handle structp
     )
 {
     El_handle el;
@@ -831,10 +790,10 @@ void phg_wsb_traverse_net(
 	    case PELEM_NIL:
 		break;
 	    case PELEM_EXEC_STRUCT:
-		phg_wsb_traverse_net(ws, (Struct_handle)el->eldata.ptr, flags);
+		phg_wsb_traverse_net( ws, (Struct_handle)el->eldata.ptr );
 		break;
 	    default:
-                wsgl_render_element(ws, el, flags);
+                wsgl_render_element(ws, el);
 		break;
 	}
 
@@ -842,7 +801,7 @@ void phg_wsb_traverse_net(
 	    break;  /* out of the while over all elements in struct */
 	el = el->next;
     }
-    wsgl_end_structure(ws, flags);
+    wsgl_end_structure(ws);
 }
 
 static int wsb_visible_element_type(
@@ -2212,8 +2171,7 @@ int phg_wsb_resolve_pick(
         end = &(owsb->posted.lowest);
 
         while (post_str != end) {
-            phg_wsb_traverse_net(ws, post_str->structh, WS_RENDER_FILL);
-            phg_wsb_traverse_net(ws, post_str->structh, WS_RENDER_EDGE);
+            phg_wsb_traverse_net(ws, post_str->structh);
             post_str = post_str->lower;
         }
 

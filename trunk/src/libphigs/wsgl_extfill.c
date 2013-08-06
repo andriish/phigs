@@ -281,10 +281,10 @@ static void phg_shade_facet3(
    Prefl_props *refl_props;
 
    normal = phg_get_facet_normal3(fflag, fdata);
-   refl_eqn = wsgl_get_int_refl_eqn(ast);
-   refl_props = wsgl_get_refl_props(ast);
+   refl_eqn = phg_get_int_refl_eqn(ast);
+   refl_props = phg_get_refl_props(ast);
 
-   wsgl_get_facet_colr(&colr, fflag, fdata, ast);
+   phg_get_facet_colr(&colr, fflag, fdata, ast);
 
    if (fflag == PFACET_NORMAL) {
       wsgl_light_colr(ws,
@@ -334,7 +334,7 @@ static void phg_draw_fill_area3_points(
 
       /* If hidden surface removal, clear interiour to background colour */
       if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_ON) {
-         wsgl_setup_background(ws);
+         phg_setup_background(ws);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
             glVertex3f(points[i].x,
@@ -345,9 +345,8 @@ static void phg_draw_fill_area3_points(
       }
 
       if (style == PSTYLE_HOLLOW) {
-         wsgl_setup_int_style_attr(ast);
-         wsgl_setup_int_shad_meth_attr(ast);
-         wsgl_set_colr(colr_type, colr);
+         phg_setup_int_attr_nocol(ast);
+         phg_set_colr(colr_type, colr);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
             glVertex3f(points[i].x,
@@ -359,9 +358,8 @@ static void phg_draw_fill_area3_points(
    }
 
    else {
-      wsgl_setup_int_style_attr(ast);
-      wsgl_setup_int_shad_meth_attr(ast);
-      wsgl_set_colr(colr_type, colr);
+      phg_setup_int_attr_nocol(ast);
+      phg_set_colr(colr_type, colr);
       glBegin(GL_POLYGON);
       for (i = 0; i < num_vertices; i++) {
          glVertex3f(points[i].x,
@@ -396,7 +394,7 @@ static void phg_draw_fill_area3_ptcolrs(
 
       /* If hidden surface removal, clear interiour to background colour */
       if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_ON) {
-         wsgl_setup_background(ws);
+         phg_setup_background(ws);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
             glVertex3f(ptcolrs[i].point.x,
@@ -407,10 +405,10 @@ static void phg_draw_fill_area3_ptcolrs(
       }
 
       if (style == PSTYLE_HOLLOW) {
-         wsgl_setup_int_attr(ast);
+         phg_setup_int_attr(ast);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
-            wsgl_set_colr(colr_type, &ptcolrs[i].colr);
+            phg_set_colr(colr_type, &ptcolrs[i].colr);
             glVertex3f(ptcolrs[i].point.x,
                        ptcolrs[i].point.y,
                        ptcolrs[i].point.z);
@@ -420,11 +418,10 @@ static void phg_draw_fill_area3_ptcolrs(
    }
 
    else {
-      wsgl_setup_int_style_attr(ast);
-      wsgl_setup_int_shad_meth_attr(ast);
+      phg_setup_int_attr_nocol(ast);
       glBegin(GL_POLYGON);
       for (i = 0; i < num_vertices; i++) {
-         wsgl_set_colr(colr_type, &ptcolrs[i].colr);
+         phg_set_colr(colr_type, &ptcolrs[i].colr);
          glVertex3f(ptcolrs[i].point.x,
                     ptcolrs[i].point.y,
                     ptcolrs[i].point.z);
@@ -461,7 +458,7 @@ static void phg_draw_fill_area3_ptcolrs_norm(
 
       /* If hidden surface removal, clear interiour to background colour */
       if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_ON) {
-         wsgl_setup_background(ws);
+         phg_setup_background(ws);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
             glVertex3f(ptcolrs[i].point.x,
@@ -472,7 +469,7 @@ static void phg_draw_fill_area3_ptcolrs_norm(
       }
 
       if (style == PSTYLE_HOLLOW) {
-         wsgl_setup_int_attr(ast);
+         phg_setup_int_attr(ast);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
             wsgl_light_colr(ws,
@@ -482,7 +479,7 @@ static void phg_draw_fill_area3_ptcolrs_norm(
                             colr_type,
                             &ptcolrs[i].colr,
                             normal);
-            wsgl_set_colr(colr_type, &result);
+            phg_set_colr(colr_type, &result);
             glVertex3f(ptcolrs[i].point.x,
                        ptcolrs[i].point.y,
                        ptcolrs[i].point.z);
@@ -492,8 +489,7 @@ static void phg_draw_fill_area3_ptcolrs_norm(
    }
 
    else {
-      wsgl_setup_int_style_attr(ast);
-      wsgl_setup_int_shad_meth_attr(ast);
+      phg_setup_int_attr_nocol(ast);
       glBegin(GL_POLYGON);
       for (i = 0; i < num_vertices; i++) {
          wsgl_light_colr(ws,
@@ -503,7 +499,7 @@ static void phg_draw_fill_area3_ptcolrs_norm(
                          colr_type,
                          &ptcolrs[i].colr,
                          normal);
-         wsgl_set_colr(colr_type, &result);
+         phg_set_colr(colr_type, &result);
          glVertex3f(ptcolrs[i].point.x,
                     ptcolrs[i].point.y,
                     ptcolrs[i].point.z);
@@ -540,7 +536,7 @@ static void phg_draw_fill_area3_ptnorms(
 
       /* If hidden surface removal, clear interiour to background colour */
       if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_ON) {
-         wsgl_setup_background(ws);
+         phg_setup_background(ws);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
             glVertex3f(ptnorms[i].point.x,
@@ -551,8 +547,7 @@ static void phg_draw_fill_area3_ptnorms(
       }
 
       if (style == PSTYLE_HOLLOW) {
-         wsgl_setup_int_style_attr(ast);
-         wsgl_setup_int_shad_meth_attr(ast);
+         phg_setup_int_attr_nocol(ast);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
             wsgl_light_colr(ws,
@@ -562,7 +557,7 @@ static void phg_draw_fill_area3_ptnorms(
                             colr_type,
                             colr,
                             &ptnorms[i].norm);
-            wsgl_set_colr(colr_type, &result);
+            phg_set_colr(colr_type, &result);
             glVertex3f(ptnorms[i].point.x,
                        ptnorms[i].point.y,
                        ptnorms[i].point.z);
@@ -572,8 +567,7 @@ static void phg_draw_fill_area3_ptnorms(
    }
 
    else {
-      wsgl_setup_int_style_attr(ast);
-      wsgl_setup_int_shad_meth_attr(ast);
+      phg_setup_int_attr_nocol(ast);
       glBegin(GL_POLYGON);
       for (i = 0; i < num_vertices; i++) {
          wsgl_light_colr(ws,
@@ -583,7 +577,7 @@ static void phg_draw_fill_area3_ptnorms(
                          colr_type,
                          colr,
                          &ptnorms[i].norm);
-         wsgl_set_colr(colr_type, &result);
+         phg_set_colr(colr_type, &result);
          glVertex3f(ptnorms[i].point.x,
                     ptnorms[i].point.y,
                     ptnorms[i].point.z);
@@ -620,7 +614,7 @@ static void phg_draw_fill_area3_ptconorms(
 
       /* If hidden surface removal, clear interiour to background colour */
       if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_ON) {
-         wsgl_setup_background(ws);
+         phg_setup_background(ws);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
             glVertex3f(ptconorms[i].point.x,
@@ -631,8 +625,7 @@ static void phg_draw_fill_area3_ptconorms(
       }
 
       if (style == PSTYLE_HOLLOW) {
-         wsgl_setup_int_style_attr(ast);
-         wsgl_setup_int_shad_meth_attr(ast);
+         phg_setup_int_attr_nocol(ast);
          glBegin(GL_POLYGON);
          for (i = 0; i < num_vertices; i++) {
             wsgl_light_colr(ws,
@@ -642,7 +635,7 @@ static void phg_draw_fill_area3_ptconorms(
                             colr_type,
                             &ptconorms[i].colr,
                             &ptconorms[i].norm);
-            wsgl_set_colr(colr_type, &result);
+            phg_set_colr(colr_type, &result);
             glVertex3f(ptconorms[i].point.x,
                        ptconorms[i].point.y,
                        ptconorms[i].point.z);
@@ -652,8 +645,7 @@ static void phg_draw_fill_area3_ptconorms(
    }
 
    else {
-      wsgl_setup_int_style_attr(ast);
-      wsgl_setup_int_shad_meth_attr(ast);
+      phg_setup_int_attr_nocol(ast);
       glBegin(GL_POLYGON);
       for (i = 0; i < num_vertices; i++) {
          wsgl_light_colr(ws,
@@ -663,7 +655,7 @@ static void phg_draw_fill_area3_ptconorms(
                          colr_type,
                          &ptconorms[i].colr,
                          &ptconorms[i].norm);
-         wsgl_set_colr(colr_type, &result);
+         phg_set_colr(colr_type, &result);
          glVertex3f(ptconorms[i].point.x,
                     ptconorms[i].point.y,
                     ptconorms[i].point.z);
@@ -691,7 +683,7 @@ static void phg_draw_edges3_points(
 {
    Pint i;
 
-   wsgl_setup_edge_attr(ast);
+   phg_setup_edge_attr(ast);
    if (eflag == PEDGE_VISIBILITY) {
       glBegin(GL_LINES);
       for (i = 0; i < num_edges - 1; i++) {
@@ -756,7 +748,7 @@ static void phg_draw_edges3_ptcolrs(
 {
    Pint i;
 
-   wsgl_setup_edge_attr(ast);
+   phg_setup_edge_attr(ast);
    if (eflag == PEDGE_VISIBILITY) {
       glBegin(GL_LINES);
       for (i = 0; i < num_edges - 1; i++) {
@@ -821,7 +813,7 @@ static void phg_draw_edges3_ptnorms(
 {
    Pint i;
 
-   wsgl_setup_edge_attr(ast);
+   phg_setup_edge_attr(ast);
    if (eflag == PEDGE_VISIBILITY) {
       glBegin(GL_LINES);
       for (i = 0; i < num_edges - 1; i++) {
@@ -886,7 +878,7 @@ static void phg_draw_edges3_ptconorms(
 {
    Pint i;
 
-   wsgl_setup_edge_attr(ast);
+   phg_setup_edge_attr(ast);
    if (eflag == PEDGE_VISIBILITY) {
       glBegin(GL_LINES);
       for (i = 0; i < num_edges - 1; i++) {
@@ -955,14 +947,14 @@ void phg_draw_fill_area3_data(
    Pint refl_eqn;
    Prefl_props *refl_props;
 
-   Pint_style style = wsgl_get_int_style(ast);
-   Pedge_flag flag = wsgl_get_edge_flag(ast);
+   Pint_style style = phg_get_int_style(ast);
+   Pedge_flag flag = phg_get_edge_flag(ast);
 
    fasd3.edata = &edata;
    fasd3.vdata = &vdata;
    phg_facet_head3(&fasd3, pdata);
 
-   wsgl_set_polygon_offset(wsgl_get_edge_width(ast));
+   phg_set_polygon_offset(phg_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
 
@@ -1004,8 +996,8 @@ void phg_draw_fill_area3_data(
       case PVERT_COORD_COLOUR:
          if (fasd3.fflag == PFACET_NORMAL) {
             normal = phg_get_facet_normal3(fasd3.fflag, &fasd3.fdata);
-            refl_eqn = wsgl_get_int_refl_eqn(ast);
-            refl_props = wsgl_get_refl_props(ast);
+            refl_eqn = phg_get_int_refl_eqn(ast);
+            refl_props = phg_get_refl_props(ast);
             for (i = 0; i < fasd3.nfa; i++) {
                phg_draw_fill_area3_ptcolrs_norm(ws,
                                                 style,
@@ -1067,9 +1059,9 @@ void phg_draw_fill_area3_data(
          break;
 
       case PVERT_COORD_NORMAL:
-         wsgl_get_facet_colr(&colr, fasd3.fflag, &fasd3.fdata, ast);
-         refl_eqn = wsgl_get_int_refl_eqn(ast);
-         refl_props = wsgl_get_refl_props(ast);
+         phg_get_facet_colr(&colr, fasd3.fflag, &fasd3.fdata, ast);
+         refl_eqn = phg_get_int_refl_eqn(ast);
+         refl_props = phg_get_refl_props(ast);
          for (i = 0; i < fasd3.nfa; i++) {
             phg_draw_fill_area3_ptnorms(ws,
                                         style,
@@ -1101,8 +1093,8 @@ void phg_draw_fill_area3_data(
          break;
 
       case PVERT_COORD_COLOUR_NORMAL:
-         refl_eqn = wsgl_get_int_refl_eqn(ast);
-         refl_props = wsgl_get_refl_props(ast);
+         refl_eqn = phg_get_int_refl_eqn(ast);
+         refl_props = phg_get_refl_props(ast);
          for (i = 0; i < fasd3.nfa; i++) {
             phg_draw_fill_area3_ptconorms(ws,
                                           style,
