@@ -438,17 +438,6 @@ void wsgl_setup_int_attr(
    );
 
 /*******************************************************************************
- * wsgl_set_polygon_offset
- *
- * DESCR:       Setup polygon offset helper function
- * RETURNS:     N/A
- */
-
-void wsgl_set_polygon_offset(
-   float w
-   );
-
-/*******************************************************************************
  * wsgl_get_facet_colr
  *
  * DESCR:       Get facet colour
@@ -686,6 +675,32 @@ void wsgl_polyline(
  */
 
 void wsgl_polyline3(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_clear_area3
+ *
+ * DESCR:       Clear area 3D
+ * RETURNS:     N/A
+ */
+
+void wsgl_clear_area3(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_clear_area_set3
+ *
+ * DESCR:       Clear area set 3D
+ * RETURNS:     N/A
+ */
+
+void wsgl_clear_area_set3(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
