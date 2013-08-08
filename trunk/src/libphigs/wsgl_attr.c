@@ -497,20 +497,6 @@ void wsgl_setup_int_attr(
 }
 
 /*******************************************************************************
- * wsgl_set_polygon_offset
- *
- * DESCR:       Setup polygon offset helper function
- * RETURNS:     N/A
- */
-
-void wsgl_set_polygon_offset(
-   float w
-   )
-{
-   glPolygonOffset(w, w);
-}
-
-/*******************************************************************************
  * wsgl_get_facet_colr
  *
  * DESCR:	Get facet colour

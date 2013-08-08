@@ -954,7 +954,7 @@ void phg_draw_fill_area3_data(
    fasd3.vdata = &vdata;
    phg_facet_head3(&fasd3, pdata);
 
-   wsgl_set_polygon_offset(wsgl_get_edge_width(ast));
+   glPolygonOffset(1.0, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
 

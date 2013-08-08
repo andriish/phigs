@@ -34,6 +34,10 @@
 #define STRUCT_OBJECT   0
 #define LABEL_TRANS    10
 
+#define FILL_STYLE PSTYLE_SOLID
+#define FILL_STYLE_IND 4
+#define EDGE_WIDTH 1.0
+
 Ppoint3 pts_cube[] = {
    /* Front */
    {0.0, 0.0, 0.0},
@@ -150,7 +154,10 @@ int main(int argc, char *argv[])
    pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
    pset_view_ind(view_ind);
    pset_edge_flag(PEDGE_ON);
+   pset_edgewidth(EDGE_WIDTH);
    pset_int_colr(&blue);
+   pset_int_style(FILL_STYLE);
+   pset_int_style_ind(FILL_STYLE_IND);
    plabel(LABEL_TRANS);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    pfill_area_set3(&shape);

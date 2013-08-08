@@ -29,6 +29,59 @@
 #include <phigs/private/wsglP.h>
 
 /*******************************************************************************
+ * priv_edge_area
+ *
+ * DESCR:	Draw fill area edge helper function
+ * RETURNS:	N/A
+ */
+
+void priv_edge_area(
+   void *pdata
+   )
+{
+   int i;
+   Ppoint_list point_list;
+   Pint *data = (Pint *) pdata;
+
+   point_list.num_points = *data;
+   point_list.points = (Ppoint *) &data[1];
+
+   glBegin(GL_LINE_LOOP);
+   for (i = 0; i < point_list.num_points; i++) {
+      glVertex2f(point_list.points[i].x,
+                 point_list.points[i].y);
+   }
+   glEnd();
+}
+
+/*******************************************************************************
+ * priv_edge_area3
+ *
+ * DESCR:	Draw fill area edge 3D helper function
+ * RETURNS:	N/A
+ */
+
+void priv_edge_area3(
+   void *pdata
+   )
+{
+   int i;
+   Ppoint_list3 point_list;
+   Pint *data = (Pint *) pdata;
+
+   point_list.num_points = *data;
+   point_list.points = (Ppoint3 *) &data[1];
+
+   glBegin(GL_LINE_LOOP);
+   for (i = 0; i < point_list.num_points; i++) {
+      glVertex3f(point_list.points[i].x,
+                 point_list.points[i].y,
+                 point_list.points[i].z);
+   }
+   glEnd();
+}
+
+/*******************************************************************************
  * wsgl_edge_area
  *
  * DESCR:	Draw fill area edge
@@ -41,20 +94,8 @@ void wsgl_edge_area(
    Ws_attr_st *ast
    )
 {
-   int i;
-   Ppoint_list point_list;
-   Pint *data = (Pint *) pdata;
-
-   point_list.num_points = *data;
-   point_list.points = (Ppoint *) &data[1];
-
    wsgl_setup_edge_attr(ast);
-   glBegin(GL_LINE_LOOP);
-   for (i = 0; i < point_list.num_points; i++) {
-      glVertex2f(point_list.points[i].x,
-                 point_list.points[i].y);
-   }
-   glEnd();
+   priv_edge_area(pdata);
 }
 
 /*******************************************************************************
@@ -70,21 +111,8 @@ void wsgl_edge_area3(
    Ws_attr_st *ast
    )
 {
-   int i;
-   Ppoint_list3 point_list;
-   Pint *data = (Pint *) pdata;
-
-   point_list.num_points = *data;
-   point_list.points = (Ppoint3 *) &data[1];
-
    wsgl_setup_edge_attr(ast);
-   glBegin(GL_LINE_LOOP);
-   for (i = 0; i < point_list.num_points; i++) {
-      glVertex3f(point_list.points[i].x,
-                 point_list.points[i].y,
-                 point_list.points[i].z);
-   }
-   glEnd();
+   priv_edge_area3(pdata);
 }
 
 /*******************************************************************************
@@ -106,10 +134,13 @@ void wsgl_edge_area_set(
 
    num_lists = *data;
    data = &data[1];
+
+   wsgl_setup_edge_attr(ast);
+
    for (i = 0; i < num_lists; i++) {
       point_list.num_points = *data;
       point_list.points = (Ppoint *) &data[1];
-      wsgl_edge_area(ws, data, ast);
+      priv_edge_area(data);
       data = (Pint *) &point_list.points[point_list.num_points];
    }
 }
@@ -133,10 +164,13 @@ void wsgl_edge_area_set3(
 
    num_lists = *data;
    data = &data[1];
+
+   wsgl_setup_edge_attr(ast);
+
    for (i = 0; i < num_lists; i++) {
       point_list.num_points = *data;
       point_list.points = (Ppoint3 *) &data[1];
-      wsgl_edge_area3(ws, data, ast);
+      priv_edge_area3(data);
       data = (Pint *) &point_list.points[point_list.num_points];
    }
 }
