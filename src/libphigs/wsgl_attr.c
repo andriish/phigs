@@ -422,6 +422,7 @@ Pint_style wsgl_get_int_style(
  */
 
 void wsgl_setup_int_attr_nocol(
+   Ws *ws,
    Ws_attr_st *ast
    )
 {
@@ -429,35 +430,45 @@ void wsgl_setup_int_attr_nocol(
    Pint style_ind;
    Pint shad_meth;
 
+   Wsgl_handle wsgl = ws->render_context;
+
    style = wsgl_get_int_style(ast);
-   switch (style) {
-      case PSTYLE_HOLLOW:
-         glDisable(GL_POLYGON_STIPPLE);
-         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-         break;
+   if (style != wsgl->dev_st.int_style) {
+      switch (style) {
+         case PSTYLE_HOLLOW:
+            glDisable(GL_POLYGON_STIPPLE);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            break;
 
-      case PSTYLE_SOLID:
-         glDisable(GL_POLYGON_STIPPLE);
-         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-         break;
+         case PSTYLE_SOLID:
+            glDisable(GL_POLYGON_STIPPLE);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            break;
 
-      case PSTYLE_HATCH:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-             (Pint) PASPECT_INT_STYLE_IND)) {
-            style_ind = ast->indiv_group.int_bundle.style_ind;
-         }
-         else {
-            style_ind = ast->bundl_group.int_bundle.style_ind;
-         }
-         glEnable(GL_POLYGON_STIPPLE);
-         glPolygonStipple(wsgl_hatch_tbl[style_ind - 1]);
-         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-         break;
+         case PSTYLE_HATCH:
+            glEnable(GL_POLYGON_STIPPLE);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            break;
 
-      default:
-         glDisable(GL_POLYGON_STIPPLE);
-         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-         break;
+         default:
+            glDisable(GL_POLYGON_STIPPLE);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            break;
+      }
+      wsgl->dev_st.int_style = style;
+   }
+
+   if (phg_nset_name_is_set(&ast->asf_nameset,
+                            (Pint) PASPECT_INT_STYLE_IND)) {
+      style_ind = ast->indiv_group.int_bundle.style_ind;
+   }
+   else {
+      style_ind = ast->bundl_group.int_bundle.style_ind;
+   }
+
+   if (style_ind != wsgl->dev_st.int_style_ind) {
+      glPolygonStipple(wsgl_hatch_tbl[style_ind - 1]);
+      wsgl->dev_st.int_style_ind = style_ind;
    }
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_SHAD_METH)) {
@@ -467,11 +478,14 @@ void wsgl_setup_int_attr_nocol(
       shad_meth = ast->bundl_group.int_bundle.shad_meth;
    }
 
-   if (shad_meth == PSD_NONE) {
-      glShadeModel(GL_FLAT);
-   }
-   else {
-      glShadeModel(GL_SMOOTH);
+   if (shad_meth != wsgl->dev_st.int_shad_meth) {
+      if (shad_meth == PSD_NONE) {
+         glShadeModel(GL_FLAT);
+      }
+      else {
+         glShadeModel(GL_SMOOTH);
+      }
+      wsgl->dev_st.int_shad_meth = shad_meth;
    }
 }
 
@@ -483,6 +497,7 @@ void wsgl_setup_int_attr_nocol(
  */
 
 void wsgl_setup_int_attr(
+   Ws *ws,
    Ws_attr_st *ast
    )
 {
@@ -493,7 +508,7 @@ void wsgl_setup_int_attr(
       wsgl_set_gcolr(&ast->bundl_group.int_bundle.colr);
    }
 
-   wsgl_setup_int_attr_nocol(ast);
+   wsgl_setup_int_attr_nocol(ws, ast);
 }
 
 /*******************************************************************************
@@ -781,10 +796,14 @@ void wsgl_setup_background(
 {
    Wsgl_handle wsgl = ws->render_context;
 
+   glDisable(GL_POLYGON_STIPPLE);
    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
    glColor3f(wsgl->background.val.general.x,
              wsgl->background.val.general.y,
              wsgl->background.val.general.z);
+
+   /* Need to restore polygon mode */
+   wsgl->dev_st.int_style = -1;
 }
 
 /*******************************************************************************

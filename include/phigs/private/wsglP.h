@@ -79,6 +79,12 @@ typedef struct {
    Nameset excl;
 } Ws_filter;
 
+typedef struct {
+   Pint_style int_style;
+   Pint       int_style_ind;
+   Pint       int_shad_meth;
+} Ws_dev_st;
+
 typedef struct _Wsgl {
    Plimit3         cur_win;
    int             win_changed;
@@ -97,6 +103,7 @@ typedef struct _Wsgl {
    Ws_filter       pick_filter;
    Pint            select_size;
    GLuint          *select_buf;
+   Ws_dev_st       dev_st;
 } Wsgl;
 
 /*******************************************************************************
@@ -426,6 +433,7 @@ Pint_style wsgl_get_int_style(
  */
 
 void wsgl_setup_int_attr_nocol(
+   Ws *ws,
    Ws_attr_st *ast
    );
 
@@ -437,6 +445,7 @@ void wsgl_setup_int_attr_nocol(
  */
 
 void wsgl_setup_int_attr(
+   Ws *ws,
    Ws_attr_st *ast
    );
 

@@ -94,7 +94,7 @@ void wsgl_fill_area(
    Ws_attr_st *ast
    )
 {
-   wsgl_setup_int_attr(ast);
+   wsgl_setup_int_attr(ws, ast);
    priv_fill_area(pdata);
 }
 
@@ -114,7 +114,7 @@ void wsgl_fill_area3(
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
-   wsgl_setup_int_attr(ast);
+   wsgl_setup_int_attr(ws, ast);
    priv_fill_area3(pdata);
    glDisable(GL_POLYGON_OFFSET_LINE);
    glDisable(GL_POLYGON_OFFSET_FILL);
@@ -140,7 +140,7 @@ void wsgl_fill_area_set(
    num_lists = *data;
    data = &data[1];
 
-   wsgl_setup_int_attr(ast);
+   wsgl_setup_int_attr(ws, ast);
 
    for (i = 0; i < num_lists; i++) {
       point_list.num_points = *data;
@@ -173,7 +173,7 @@ void wsgl_fill_area_set3(
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
-   wsgl_setup_int_attr(ast);
+   wsgl_setup_int_attr(ws, ast);
 
    for (i = 0; i < num_lists; i++) {
       point_list.num_points = *data;
