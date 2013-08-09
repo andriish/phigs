@@ -295,7 +295,7 @@ void wsgl_fill_area3_data(
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
-   wsgl_setup_int_attr_nocol(ast);
+   wsgl_setup_int_attr_nocol(ws, ast);
 
    switch (fasd3.vflag) {
       case PVERT_COORD:

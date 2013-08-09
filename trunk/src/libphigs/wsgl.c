@@ -88,6 +88,11 @@ int wsgl_init(
    wsgl->select_size = select_size;
    wsgl->select_buf  = (unsigned *) &wsgl[1];
    ws->render_context = wsgl;
+
+   wsgl->dev_st.int_style     = -1;
+   wsgl->dev_st.int_style_ind = -1;
+   wsgl->dev_st.int_shad_meth = -1;
+
    status = TRUE;
 
    return status;
