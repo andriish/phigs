@@ -28,6 +28,9 @@
 #include <phigs/util.h>
 #include <GL/gl.h>
 
+#define WS_CLEAR_AREA_OFFSET   2.0
+#define WS_FILL_AREA_OFFSET    1.0
+
 typedef struct {
    Pint x, y;
    Pfloat distance;
@@ -811,13 +814,39 @@ void wsgl_edge_area_set3(
    );
 
 /*******************************************************************************
- * phg_draw_fill_area3_data
+ * wsgl_clear_area3_data
  *
- * DESCR:       Draw fill area width data 3D
+ * DESCR:       Clear fill area with data 3D
  * RETURNS:     N/A
  */
 
-void phg_draw_fill_area3_data(
+void wsgl_clear_area3_data(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_fill_area3_data
+ *
+ * DESCR:       Draw fill area with data 3D
+ * RETURNS:     N/A
+ */
+
+void wsgl_fill_area3_data(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_edge_area3_data
+ *
+ * DESCR:       Draw fill area edges with data 3D
+ * RETURNS:     N/A
+ */
+
+void wsgl_edge_area3_data(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast

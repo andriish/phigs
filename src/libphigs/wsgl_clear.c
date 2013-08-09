@@ -28,8 +28,6 @@
 #include <phigs/ws.h>
 #include <phigs/private/wsglP.h>
 
-#define CLEAR_AREA_OFFSET      2.0
-
 /*******************************************************************************
  * priv_clear_area3
  *
@@ -70,7 +68,7 @@ void wsgl_clear_area3(
    Ws_attr_st *ast
    )
 {
-   glPolygonOffset(CLEAR_AREA_OFFSET, wsgl_get_edge_width(ast));
+   glPolygonOffset(WS_CLEAR_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    wsgl_setup_background(ws);
    priv_clear_area3(pdata);
@@ -97,7 +95,7 @@ void wsgl_clear_area_set3(
    num_lists = *data;
    data = &data[1];
 
-   glPolygonOffset(CLEAR_AREA_OFFSET, wsgl_get_edge_width(ast));
+   glPolygonOffset(WS_CLEAR_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    wsgl_setup_background(ws);
 

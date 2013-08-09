@@ -810,9 +810,24 @@ void wsgl_render_element(
 
       case PELEM_FILL_AREA3_DATA:
          if (check_draw_primitive(ws)) {
-            phg_draw_fill_area3_data(ws,
-                                     ELMT_CONTENT(el),
-                                     &wsgl->cur_struct.ast);
+            style = wsgl_get_int_style(&wsgl->cur_struct.ast);
+            if (wsgl->cur_struct.hlhsr_id == PHIGS_HLHSR_ID_ON) {
+               if (style == PSTYLE_EMPTY || style == PSTYLE_HOLLOW) {
+                  wsgl_clear_area3_data(ws,
+                                        ELMT_CONTENT(el),
+                                        &wsgl->cur_struct.ast);
+               }
+            }
+            if (style != PSTYLE_EMPTY) {
+               wsgl_fill_area3_data(ws,
+                                    ELMT_CONTENT(el),
+                                    &wsgl->cur_struct.ast);
+            }
+            if (wsgl_get_edge_flag(&wsgl->cur_struct.ast) == PEDGE_ON) {
+               wsgl_edge_area3_data(ws,
+                                    ELMT_CONTENT(el),
+                                    &wsgl->cur_struct.ast);
+            }
          }
          break;
 

@@ -8,6 +8,6 @@ ADD_LIBRARY(phigs
      sin_evt.c sin_ws.c sin_cvs.c sin_val.c sin_cho.c sin_str.c sin_dev.c
      phg_mroman.c phg_roman.c ar.c ar_conv.c ar_ops.c
      wsgl_clear.c wsgl_fill.c wsgl_edge.c wsgl_marker.c wsgl_line.c wsgl_text.c
-     wsgl_extfill.c
+     fasd3.c wsgl_fasd3clear.c wsgl_fasd3fill.c wsgl_fasd3edge.c wsgl_extfill.c
     )
 
