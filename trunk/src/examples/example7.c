@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 
    popen_struct(0);
    pset_view_ind(view_index);
-   init_checker(8);
+   init_checker(16);
    pclose_struct();
 
    popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);
