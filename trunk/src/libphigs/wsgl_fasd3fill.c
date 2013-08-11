@@ -266,13 +266,13 @@ static void priv_fill_area3_ptconorms(
 }
 
 /*******************************************************************************
- * wsgl_fill_area3_data
+ * wsgl_fill_area_set3_data
  *
- * DESCR:	Draw fill area with data 3D
+ * DESCR:	Draw fill area set with data 3D
  * RETURNS:	N/A
  */
 
-void wsgl_fill_area3_data(
+void wsgl_fill_area_set3_data(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast

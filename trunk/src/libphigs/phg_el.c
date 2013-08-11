@@ -624,7 +624,7 @@ void pfill_area_set3_data(
             break;
       }
 
-      ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA3_DATA;
+      ARGS_ELMT_TYPE(&args) = PELEM_FILL_AREA_SET3_DATA;
       ARGS_ELMT_SIZE(&args) = 5 * sizeof(Pint) + facet_size;
 
       if (eflag == PEDGE_VISIBILITY) {

@@ -290,13 +290,13 @@ static void priv_edges_ptconorms(
 }
 
 /*******************************************************************************
- * wsgl_edge_area3_data
+ * wsgl_edge_area_set3_data
  *
- * DESCR:	Draw fill area edges with data 3D
+ * DESCR:	Draw fill area set edges with data 3D
  * RETURNS:	N/A
  */
 
-void wsgl_edge_area3_data(
+void wsgl_edge_area_set3_data(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
