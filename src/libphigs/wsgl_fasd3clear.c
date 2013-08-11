@@ -146,13 +146,13 @@ static void priv_clear_area3_ptconorms(
 }
 
 /*******************************************************************************
- * wsgl_clear_area3_data
+ * wsgl_clear_area_set3_data
  *
- * DESCR:	Clear fill area with data 3D
+ * DESCR:	Clear fill area set with data 3D
  * RETURNS:	N/A
  */
 
-void wsgl_clear_area3_data(
+void wsgl_clear_area_set3_data(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast

@@ -823,39 +823,39 @@ void wsgl_edge_area_set3(
    );
 
 /*******************************************************************************
- * wsgl_clear_area3_data
+ * wsgl_clear_area_set3_data
  *
- * DESCR:       Clear fill area with data 3D
+ * DESCR:       Clear fill area set with data 3D
  * RETURNS:     N/A
  */
 
-void wsgl_clear_area3_data(
+void wsgl_clear_area_set3_data(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * wsgl_fill_area3_data
+ * wsgl_fill_area_set3_data
  *
- * DESCR:       Draw fill area with data 3D
+ * DESCR:       Draw fill area set with data 3D
  * RETURNS:     N/A
  */
 
-void wsgl_fill_area3_data(
+void wsgl_fill_area_set3_data(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * wsgl_edge_area3_data
+ * wsgl_edge_area_set3_data
  *
- * DESCR:       Draw fill area edges with data 3D
+ * DESCR:       Draw fill area set edges with data 3D
  * RETURNS:     N/A
  */
 
-void wsgl_edge_area3_data(
+void wsgl_edge_area_set3_data(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
