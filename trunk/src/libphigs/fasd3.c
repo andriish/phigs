@@ -63,8 +63,8 @@ void fasd3_head(
          break;
 
       case PFACET_COLOUR_NORMAL:
-         memcpy(&fasd3->fdata.conorm, tp, sizeof(Pptconorm3));
-         tp += sizeof(Pptconorm3);
+         memcpy(&fasd3->fdata.conorm, tp, sizeof(Pconorm3));
+         tp += sizeof(Pconorm3);
          break;
 
       default:
