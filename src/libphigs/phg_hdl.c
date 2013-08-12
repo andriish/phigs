@@ -880,24 +880,18 @@ int phg_handle_fasd3(
 
          switch(fasd3->fflag) {
             case PFACET_COLOUR:
-               memcpy(tp,
-                      &fasd3->fdata.colr,
-                      sizeof(Pcoval));
+               memcpy(tp, &fasd3->fdata.colr, sizeof(Pcoval));
                tp += sizeof(Pcoval);
                break;
 
             case PFACET_NORMAL:
-               memcpy(tp,
-                      &fasd3->fdata.norm,
-                      sizeof(Pvec3));
+               memcpy(tp, &fasd3->fdata.norm, sizeof(Pvec3));
                tp += sizeof(Pvec3);
                break;
 
             case PFACET_COLOUR_NORMAL:
-               memcpy(tp,
-                      &fasd3->fdata.conorm,
-                      sizeof(Pptconorm3));
-               tp += sizeof(Pptconorm3);
+               memcpy(tp, &fasd3->fdata.conorm, sizeof(Pconorm3));
+               tp += sizeof(Pconorm3);
                break;
 
             default:

@@ -594,7 +594,7 @@ void pfill_area_set3_data(
             break;
 
          case PFACET_COLOUR_NORMAL:
-            facet_size = sizeof(Pptconorm3);
+            facet_size = sizeof(Pconorm3);
             break;
 
          default:

@@ -83,16 +83,7 @@ static void priv_shade_facet3(
 
    wsgl_get_facet_colr(&colr, fflag, fdata, ast);
 
-   if (fflag == PFACET_NORMAL) {
-      wsgl_light_colr(ws,
-                      result,
-                      refl_eqn,
-                      refl_props,
-                      colr_type,
-                      &colr,
-                      normal);
-   }
-   else if (fflag == PFACET_COLOUR_NORMAL) {
+   if (fflag == PFACET_NORMAL || fflag == PFACET_COLOUR_NORMAL) {
       wsgl_light_colr(ws,
                       result,
                       refl_eqn,

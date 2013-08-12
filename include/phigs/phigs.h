@@ -121,6 +121,7 @@ typedef enum {
    PELEM_FILL_AREA_SET,
    PELEM_FILL_AREA_SET3,
    PELEM_FILL_AREA_SET3_DATA,
+   PELEM_SET_OF_FILL_AREA_SET3_DATA,
    PELEM_POLYLINE,
    PELEM_POLYLINE3,
    PELEM_POLYMARKER,
@@ -441,6 +442,11 @@ typedef struct {
 } Pint_list;
 
 typedef struct {
+   Pint num_lists;
+   Pint_list *lists;
+} Pint_list_list;
+
+typedef struct {
    Pfloat x;
    Pfloat y;
 } Ppoint;
@@ -639,6 +645,37 @@ typedef union {
 } Pcoval;
 
 typedef struct {
+   Pcoval colr;
+   Pvec3  norm;
+} Pconorm3;
+
+typedef union {
+   Pcoval   colr;
+   Pvec3    norm;
+   Pconorm3 conorm;
+} Pfacet_data3;
+
+typedef union {
+   Pcoval   *colrs;
+   Pvec3    *norms;
+   Pconorm3 *conorms;
+} Pfacet_data_arr3;
+
+typedef union {
+   Pedge_flag *edges;
+} Pedge_data_arr;
+
+typedef struct {
+   Pint           num_edges;
+   Pedge_data_arr edgedata;
+} Pedge_data_list;
+
+typedef struct {
+   Pint            num_lists;
+   Pedge_data_list *edgelist;
+} Pedge_data_list_list;
+
+typedef struct {
    Ppoint3 point;
    Pcoval  colr;
 } Pptco3;
@@ -653,21 +690,6 @@ typedef struct {
    Pcoval  colr;
    Pvec3   norm;
 } Pptconorm3;
-
-typedef union {
-   Pcoval     colr;
-   Pvec3      norm;
-   Pptconorm3 conorm;
-} Pfacet_data3;
-
-typedef union {
-   Pedge_flag *edges;
-} Pedge_data_arr;
-
-typedef struct {
-   Pint           num_edges;
-   Pedge_data_arr edgedata;
-} Pedge_data_list;
 
 typedef union {
    Ppoint3    *points;
@@ -773,6 +795,18 @@ typedef struct {
 } Pfasd3;
 
 typedef struct {
+   Pint                 fflag;
+   Pint                 eflag;
+   Pint                 vflag;
+   Pint                 colr_model;
+   Pint                 num_sets;
+   Pfacet_data_arr3     fdata;
+   Pedge_data_list_list *edata;
+   Pint_list_list       *vlist;
+   Pfacet_vdata_list3   vdata;
+} Psofas3;
+
+typedef struct {
    Pint_list activation;
    Pint_list deactivation;
 } Plss;
@@ -785,6 +819,7 @@ typedef union {
    Ppoint_list_list  point_list_list;
    Ppoint_list_list3 point_list_list3;
    Pfasd3            fasd3;
+   Psofas3           sofas3;
    Ptext_prec        text_prec;
    Ptext_path        text_path;
    Ptext_align       text_align;
