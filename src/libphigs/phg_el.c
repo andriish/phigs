@@ -652,6 +652,119 @@ void pfill_area_set3_data(
 }
 
 /*******************************************************************************
+ * pset_of_fill_area_set3_data
+ *
+ * DESCR:	Creates a new element - Set of fill area set with data 3D
+ * RETURNS:	N/A
+ */
+
+void pset_of_fill_area_set3_data(
+   Pint fflag,
+   Pint eflag,
+   Pint vflag,
+   Pint colr_type,
+   Pint num_sets,
+   Pfacet_data_arr3 *fdata,
+   Pedge_data_list_list *edata,
+   Pint_list_list *vlist,
+   Pfacet_vdata_list3 *vdata
+   )
+{
+   Pint i, j;
+   unsigned facet_size, vertex_size;
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_fill_area_set3_data);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      switch (fflag) {
+         case PFACET_COLOUR:
+            facet_size = sizeof(Pcoval);
+            break;
+
+         case PFACET_NORMAL:
+            facet_size = sizeof(Pvec3);
+            break;
+
+         case PFACET_COLOUR_NORMAL:
+            facet_size = sizeof(Pconorm3);
+            break;
+
+         default:
+            facet_size = 0;
+            break;
+      }
+
+      switch (vflag) {
+         case PVERT_COORD:
+            vertex_size = sizeof(Ppoint3);
+            break;
+
+         case PVERT_COORD_COLOUR:
+            vertex_size = sizeof(Pptco3);
+            break;
+
+         case PVERT_COORD_NORMAL:
+            vertex_size = sizeof(Pptnorm3);
+            break;
+
+         case PVERT_COORD_COLOUR_NORMAL:
+            vertex_size = sizeof(Pptconorm3);
+            break;
+
+         default: 
+            vertex_size = 0;
+            break;
+      }
+
+      ARGS_ELMT_TYPE(&args) = PELEM_SET_OF_FILL_AREA_SET3_DATA;
+      ARGS_ELMT_SIZE(&args) = 5 * sizeof(Pint) + num_sets * facet_size;
+
+      if (eflag == PEDGE_VISIBILITY) {
+         for (i = 0; i < num_sets; i++) {
+            ARGS_ELMT_SIZE(&args) += sizeof(Pint);   /* Pint num_lists */
+            for (j = 0; j < edata[i].num_lists; j++) {
+               ARGS_ELMT_SIZE(&args) += sizeof(Pint);   /* Pint num_edges */
+               ARGS_ELMT_SIZE(&args) += edata[i].edgelist[j].num_edges *
+                                        sizeof(Pedge_flag);
+            }
+         }
+      }
+
+      for (i = 0; i < num_sets; i++) {
+         ARGS_ELMT_SIZE(&args) += sizeof(Pint);   /* Pint num_lists */
+         for (j = 0; j < vlist[i].num_lists; i++) {
+            ARGS_ELMT_SIZE(&args) += sizeof(Pint);   /* Pint num_ints */
+            ARGS_ELMT_SIZE(&args) += vlist[i].lists[j].num_ints * sizeof(Pint);
+         }
+      }
+
+      for (i = 0; i < num_sets; i++) {
+         ARGS_ELMT_SIZE(&args) += sizeof(Pint);   /* Pint num_vertices */
+         ARGS_ELMT_SIZE(&args) += vdata[i].num_vertices * vertex_size;
+      }
+
+      ARGS_ELMT_DATA(&args).sofas3.fflag = fflag;
+      ARGS_ELMT_DATA(&args).sofas3.eflag = eflag;
+      ARGS_ELMT_DATA(&args).sofas3.vflag = vflag;
+      ARGS_ELMT_DATA(&args).sofas3.colr_type = colr_type;
+      ARGS_ELMT_DATA(&args).sofas3.num_sets = num_sets;
+      memcpy(&ARGS_ELMT_DATA(&args).sofas3.fdata,
+             fdata,
+             sizeof(Pfacet_data_arr3));
+      ARGS_ELMT_DATA(&args).sofas3.edata = edata;
+      ARGS_ELMT_DATA(&args).sofas3.edata = edata;
+      memcpy(&ARGS_ELMT_DATA(&args).sofas3.vdata,
+             vdata,
+             sizeof(Pfacet_vdata_list3));
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * plabel
  *
  * DESCR:	Creates a new element - Label

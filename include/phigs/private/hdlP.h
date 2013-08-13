@@ -195,6 +195,20 @@ int phg_handle_fasd3(
    );
 
 /*******************************************************************************
+ * phg_handle_sofas3
+ *
+ * DESCR:       Handle set of facet lists 3D
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int phg_handle_sofas3(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   );
+
+/*******************************************************************************
  * phg_handle_text_align
  *
  * DESCR:       Handle text alignment
