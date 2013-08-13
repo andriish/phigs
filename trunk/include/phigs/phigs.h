@@ -442,7 +442,7 @@ typedef struct {
 } Pint_list;
 
 typedef struct {
-   Pint num_lists;
+   Pint      num_lists;
    Pint_list *lists;
 } Pint_list_list;
 
@@ -798,7 +798,7 @@ typedef struct {
    Pint                 fflag;
    Pint                 eflag;
    Pint                 vflag;
-   Pint                 colr_model;
+   Pint                 colr_type;
    Pint                 num_sets;
    Pfacet_data_arr3     fdata;
    Pedge_data_list_list *edata;

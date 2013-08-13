@@ -859,6 +859,25 @@ void pfill_area_set3_data(
    );
 
 /*******************************************************************************
+ * pset_of_fill_area_set3_data
+ *
+ * DESCR:       Creates a new element - Set of fill area set with data 3D
+ * RETURNS:     N/A
+ */
+
+void pset_of_fill_area_set3_data(
+   Pint fflag,
+   Pint eflag,
+   Pint vflag,
+   Pint colr_type,
+   Pint num_sets,
+   Pfacet_data_arr3 *fdata,
+   Pedge_data_list_list *edata,
+   Pint_list_list *vlist,
+   Pfacet_vdata_list3 *vdata
+   );
+
+/*******************************************************************************
  * plabel
  *
  * DESCR:       Creates a new element - Label
