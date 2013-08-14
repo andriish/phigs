@@ -43,8 +43,6 @@ static void priv_facet_colr(
    Ws_attr_st *ast
    )
 {
-   Pgcolr *gcolr;
-
    switch (fflag) {
       case PFACET_COLOUR:
          memcpy(colr, &fdata->colr, sizeof(Pcoval));
@@ -55,8 +53,7 @@ static void priv_facet_colr(
          break;
 
       default:
-         gcolr = wsgl_get_int_colr(ast);
-         wsgl_colr_from_gcolr(colr, gcolr);
+         wsgl_colr_from_gcolr(colr, wsgl_get_int_colr(ast));
          break;
    }
 }
