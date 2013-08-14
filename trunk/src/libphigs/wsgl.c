@@ -839,7 +839,11 @@ void wsgl_render_element(
 
       case PELEM_SET_OF_FILL_AREA_SET3_DATA:
          if (check_draw_primitive(ws)) {
-            sofas3_list(ELMT_CONTENT(el));
+            if (1) {
+               wsgl_set_of_fill_area_set3_data(ws,
+                                               ELMT_CONTENT(el),
+                                               &wsgl->cur_struct.ast);
+            }
          }
          break;
 

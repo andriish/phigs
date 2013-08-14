@@ -27,19 +27,20 @@
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
 #include <phigs/private/wsglP.h>
-#include <phigs/private/fasd3P.h>
+#include <phigs/private/sofas3P.h>
 
 /*******************************************************************************
  * priv_facet_colr
  *
- * DESCR:       Get facet normal colour helper function
- * RETURNS:     N/A
+ * DESCR:	Get facet normal colour helper function
+ * RETURNS:	N/A
  */
 
 static void priv_facet_colr(
    Pcoval *colr,
    Pint fflag,
-   Pfacet_data3 *fdata,
+   Pfacet_data_arr3 *fdata,
+   int index,
    Ws_attr_st *ast
    )
 {
@@ -47,11 +48,11 @@ static void priv_facet_colr(
 
    switch (fflag) {
       case PFACET_COLOUR:
-         memcpy(colr, &fdata->colr, sizeof(Pcoval));
+         memcpy(colr, &fdata->colrs[index], sizeof(Pcoval));
          break;
 
       case PFACET_COLOUR_NORMAL:
-         memcpy(colr, &fdata->conorm.colr, sizeof(Pcoval));
+         memcpy(colr, &fdata->conorms[index].colr, sizeof(Pcoval));
          break;
 
       default:
@@ -70,16 +71,17 @@ static void priv_facet_colr(
 
 static Pvec3* priv_normal3(
    Pint fflag,
-   Pfacet_data3 *fdata
+   Pfacet_data_arr3 *fdata,
+   Pint index
    )
 {
    Pvec3 *normal;
 
    if (fflag == PFACET_NORMAL) {
-      normal = &fdata->norm;
+      normal = &fdata->norms[index];
    }
    else if (fflag == PFACET_COLOUR_NORMAL) {
-      normal = &fdata->conorm.norm;
+      normal = &fdata->conorms[index].norm;
    }
    else {
       normal = NULL;
@@ -96,21 +98,23 @@ static Pvec3* priv_normal3(
  */
 
 static void priv_fill_area3_points(
-   Pint num_vertices,
+   Pint_list *vlist,
    Ppoint3 *points
    )
 {
-   Pint i;
+   Pint i, vert;
 
    glBegin(GL_POLYGON);
-   for (i = 0; i < num_vertices; i++) {
-      glVertex3f(points[i].x,
-                 points[i].y,
-                 points[i].z);
+   for (i = 0; i < vlist->num_ints; i++) {
+      vert = vlist->ints[i];
+      glVertex3f(points[vert].x,
+                 points[vert].y,
+                 points[vert].z);
    }
    glEnd();
 }
 
+#if 0
 /*******************************************************************************
  * priv_fill_area3_ptcolrs
  *
@@ -246,71 +250,68 @@ static void priv_fill_area3_ptconorms(
    }
    glEnd();
 }
+#endif
 
 /*******************************************************************************
- * wsgl_fill_area_set3_data
+ * wsgl_set_of_fill_area_set3_data
  *
- * DESCR:	Draw fill area set with data 3D
+ * DESCR:	Draw set of fill area set with data 3D
  * RETURNS:	N/A
  */
 
-void wsgl_fill_area_set3_data(
+void wsgl_set_of_fill_area_set3_data(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    )
 {
-   Pint i;
-   Pfasd3 fasd3;
-   Pedge_data_list edata;
-   Pfacet_vdata_list3 vdata;
+   Pint i, j;
+   Psofas3 sofas3;
+   Pint num_lists;
+   Pint_list vlist;
 
    Pcoval colr, scolr;
    Pvec3 *normal;
    Pint refl_eqn;
    Prefl_props *refl_props;
 
-   fasd3.edata = &edata;
-   fasd3.vdata = &vdata;
-   fasd3_head(&fasd3, pdata);
+   sofas3_head(&sofas3, pdata);
 
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
    wsgl_setup_int_attr_nocol(ws, ast);
 
-   switch (fasd3.vflag) {
+   switch (sofas3.vflag) {
       case PVERT_COORD:
-         refl_eqn = wsgl_get_refl_eqn(ast);
-         refl_props = wsgl_get_refl_props(ast);
-         priv_facet_colr(&scolr, fasd3.fflag, &fasd3.fdata, ast);
-         normal = priv_normal3(fasd3.fflag, &fasd3.fdata);
-         if (normal != NULL) {
-            wsgl_light_colr(ws,
-                            &colr,
-                            refl_eqn,
-                            refl_props,
-                            fasd3.colr_type,
-                            &scolr,
-                            normal);
-            wsgl_set_colr(fasd3.colr_type, &colr);
-         }
-         else {
-            wsgl_set_colr(fasd3.colr_type, &scolr);
-         }
-         for (i = 0; i < fasd3.nfa; i++) {
-            priv_fill_area3_points(fasd3.vdata->num_vertices,
-                                   fasd3.vdata->vertex_data.points);
-
-            /* Advance to next set of data */
-            fasd3_next_vdata3(&fasd3);
-            if (fasd3.eflag == PEDGE_VISIBILITY) {
-               fasd3_next_edata(&fasd3);
+         for (i = 0; i < sofas3.num_sets; i++) {
+            refl_eqn = wsgl_get_refl_eqn(ast);
+            refl_props = wsgl_get_refl_props(ast);
+            priv_facet_colr(&scolr, sofas3.fflag, &sofas3.fdata, i, ast);
+            normal = priv_normal3(sofas3.fflag, &sofas3.fdata, i);
+            if (normal != NULL) {
+               wsgl_light_colr(ws,
+                               &colr,
+                               refl_eqn,
+                               refl_props,
+                               sofas3.colr_type,
+                               &scolr,
+                               normal);
+               wsgl_set_colr(sofas3.colr_type, &colr);
+            }
+            else {
+               wsgl_set_colr(sofas3.colr_type, &scolr);
+            }
+            num_lists = *(Pint *) sofas3.vlist;
+            for (j = 0; j < num_lists; j++) {
+               sofas3_next_vlist(&vlist, &sofas3);
+               priv_fill_area3_points(&vlist, sofas3.vdata.vertex_data.points);
             }
          }
          break;
 
       case PVERT_COORD_COLOUR:
+#if 0
          if (fasd3.fflag == PFACET_NORMAL) {
             normal = priv_normal3(fasd3.fflag, &fasd3.fdata);
             refl_eqn = wsgl_get_refl_eqn(ast);
@@ -347,10 +348,12 @@ void wsgl_fill_area_set3_data(
                }
             }
          }
+#endif
          break;
 
       case PVERT_COORD_NORMAL:
-         priv_facet_colr(&colr, fasd3.fflag, &fasd3.fdata, ast);
+#if 0
+         wsgl_get_int_colr(&colr, fasd3.fflag, &fasd3.fdata, ast);
          refl_eqn = wsgl_get_refl_eqn(ast);
          refl_props = wsgl_get_refl_props(ast);
          for (i = 0; i < fasd3.nfa; i++) {
@@ -368,9 +371,11 @@ void wsgl_fill_area_set3_data(
                fasd3_next_edata(&fasd3);
             }
          }
+#endif
          break;
 
       case PVERT_COORD_COLOUR_NORMAL:
+#if 0
          refl_eqn = wsgl_get_refl_eqn(ast);
          refl_props = wsgl_get_refl_props(ast);
          for (i = 0; i < fasd3.nfa; i++) {
@@ -387,6 +392,7 @@ void wsgl_fill_area_set3_data(
                fasd3_next_edata(&fasd3);
             }
          }
+#endif
          break;
 
       default:

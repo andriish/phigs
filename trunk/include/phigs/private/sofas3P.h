@@ -26,7 +26,7 @@
 /*******************************************************************************
  * sofas3_head
  *
- * DESCR:       Get set of fill area set head information 3D
+ * DESCR:       Get set of fill area set header information 3D
  * RETURNS:     N/A
  */
 
@@ -34,6 +34,18 @@ void sofas3_head(
    Psofas3 *sofas3,
    void *pdata
    );
+
+/*******************************************************************************
+ * sofas3_next_vlist
+ *
+ * DESCR:       Get set of fill area set next vertex list
+ * RETURNS:     N/A
+ */
+
+void sofas3_next_vlist(
+    Pint_list *vlist,
+    Psofas3 *sofas3
+    );
 
 /*******************************************************************************
  * sofas3_print

@@ -184,21 +184,21 @@ void init_shape_norm_per_facet(void)
 
    /* Bottom */
    vlist[2].num_lists = 1;
-   vlist[2].lists = set_vertices(2, 3, 6, 7);
+   vlist[2].lists = set_vertices(0, 1, 5, 4);
    norms[2].delta_x = 0.0;
    norms[2].delta_y = -1.0;
    norms[2].delta_z = 0.0;
 
    /* Top */
    vlist[3].num_lists = 1;
-   vlist[3].lists = set_vertices(0, 1, 4, 5);
+   vlist[3].lists = set_vertices(3, 2, 6, 7);
    norms[3].delta_x = 0.0;
    norms[3].delta_y = 1.0;
    norms[3].delta_z = 0.0;
 
    /* Left */
    vlist[4].num_lists = 1;
-   vlist[4].lists = set_vertices(0, 4, 3, 7);
+   vlist[4].lists = set_vertices(0, 4, 7, 3);
    norms[4].delta_x = -1.0;
    norms[4].delta_y = 0.0;
    norms[4].delta_z = 0.0;
