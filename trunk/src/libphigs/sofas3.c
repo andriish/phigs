@@ -41,6 +41,7 @@ void sofas3_head(
    void *pdata
    )
 {
+   char *tp;
    Pint *data = (Pint *) pdata;
 
    sofas3->fflag = data[0];
@@ -48,18 +49,71 @@ void sofas3_head(
    sofas3->vflag = data[2];
    sofas3->colr_type = data[3];
    sofas3->num_sets = data[4];
+   tp = (char *) &data[5];
 
    switch (sofas3->fflag) {
       case PFACET_COLOUR:
-         sofas3->fdata.colrs = (Pcoval *) &data[5];
+         sofas3->fdata.colrs = (Pcoval *) tp;
+         tp += sizeof(Pcoval) * sofas3->num_sets;
          break;
 
       case PFACET_NORMAL:
-         sofas3->fdata.norms = (Pvec3 *) &data[5];
+         sofas3->fdata.norms = (Pvec3 *) tp;
+         tp += sizeof(Pvec3) * sofas3->num_sets;
          break;
 
       case PFACET_COLOUR_NORMAL:
-         sofas3->fdata.conorms = (Pconorm3 *) &data[5];
+         sofas3->fdata.conorms = (Pconorm3 *) tp;
+         tp += sizeof(Pconorm3) * sofas3->num_sets;
+         break;
+
+      default:
+         break;
+   }
+
+   /* TODO: Setup and move past edge lists */
+
+   sofas3->vlist = (Pint_list_list *) tp;
+
+   /* TODO: Also move forward and setup vertext lists */
+}
+
+void sofas3_next_vlist(
+    Pint_list *vlist,
+    Psofas3 *sofas3
+    )
+{
+   Pint *data = (Pint *) sofas3->vlist;
+   data = &data[1];
+
+   vlist->num_ints = data[0];
+   data = &data[1];
+   vlist->ints = data;
+   sofas3->vlist = (Pint_list_list *) &data[vlist->num_ints];
+}
+
+void sofas3_vdata(
+   Psofas3 *sofas3
+   )
+{
+   Pint *data = (Pint *) sofas3->vlist;
+
+   sofas3->vdata.num_vertices = *data;
+   switch (sofas3->vflag) {
+      case PVERT_COORD:
+         sofas3->vdata.vertex_data.points = (Ppoint3 *) &data[1];
+         break;
+
+      case PVERT_COORD_COLOUR:
+         sofas3->vdata.vertex_data.ptcolrs = (Pptco3 *) &data[1];
+         break;
+
+      case PVERT_COORD_NORMAL:
+         sofas3->vdata.vertex_data.ptnorms = (Pptnorm3 *) &data[1];
+         break;
+
+      case PVERT_COORD_COLOUR_NORMAL:
+         sofas3->vdata.vertex_data.ptconorms = (Pptconorm3 *) &data[1];
          break;
 
       default:
@@ -78,16 +132,19 @@ void sofas3_print(
    Psofas3 *sofas3
    )
 {
-   int i;
+   Pint i, j, k;
+   Pint num_lists;
+   Pint_list vlist;
 
-   printf("Facet flags: %d\n", sofas3->fflag);
-   printf("Edge flags: %d\n", sofas3->eflag);
-   printf("Vertex flags: %d\n", sofas3->vflag);
-   printf("Colour type: %d\n", sofas3->colr_type);
-   printf("Num sets: %d\n", sofas3->num_sets);
+   printf("Facet flags:\t%d\n", sofas3->fflag);
+   printf("Edge flags:\t%d\n", sofas3->eflag);
+   printf("Vertex flags:\t%d\n", sofas3->vflag);
+   printf("Colour type:\t%d\n", sofas3->colr_type);
+   printf("Num sets:\t%d\n", sofas3->num_sets);
 
+   printf("\n");
    for (i = 0; i < sofas3->num_sets; i++) {
-      printf("#%d\t", i);
+      printf("Set #%d\t", i);
       switch (sofas3->fflag) {
          case PFACET_COLOUR:
             printf("Colour: %g, %g, %g\n",
@@ -117,6 +174,31 @@ void sofas3_print(
          default:
             break;
       }
+   }
+
+   /* TODO: Get edge data */
+
+   printf("\n");
+   for (i = 0; i < sofas3->num_sets; i++) {
+      num_lists = *(Pint *) sofas3->vlist;
+      printf("Set #%d, num lists: %d\n", i, num_lists);
+      for (j = 0; j < num_lists; j++) {
+         sofas3_next_vlist(&vlist, sofas3);
+         printf("\tList #%d, num_ints: %d\t", j, vlist.num_ints);
+         for (k = 0; k < vlist.num_ints; k++) {
+            printf("%d ", vlist.ints[k]);
+         }
+         printf("\n");
+      }
+   }
+
+   sofas3_vdata(sofas3);
+   printf("\nNum vertices: %d\n", sofas3->vdata.num_vertices);
+   for (i = 0; i < sofas3->vdata.num_vertices; i++) {
+       printf("#%d:\t%g %g %g\n", i,
+              sofas3->vdata.vertex_data.points[i].x,
+              sofas3->vdata.vertex_data.points[i].y,
+              sofas3->vdata.vertex_data.points[i].z);
    }
 }
 

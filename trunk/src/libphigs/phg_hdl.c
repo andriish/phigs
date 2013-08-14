@@ -1089,6 +1089,8 @@ int phg_handle_sofas3(
                }
          }
 
+         num_vertices = sofas3->vdata.num_vertices;
+
          data = (Pint *) tp;
          *data = num_vertices;
          tp = (char *) &data[1];
