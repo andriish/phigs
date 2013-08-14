@@ -30,9 +30,46 @@
 #include <phigs/private/sofas3P.h>
 
 /*******************************************************************************
+ * priv_vdata
+ *
+ * DESCR:	Get set of fill area set vertex data helper function
+ * NOTES:	Shall be called after all vertex lists has been processed
+ * RETURNS:	N/A
+ */
+
+static void priv_vdata(
+   Psofas3 *sofas3
+   )
+{
+   Pint *data = (Pint *) sofas3->vlist;
+
+   sofas3->vdata.num_vertices = *data;
+   switch (sofas3->vflag) {
+      case PVERT_COORD:
+         sofas3->vdata.vertex_data.points = (Ppoint3 *) &data[1];
+         break;
+
+      case PVERT_COORD_COLOUR:
+         sofas3->vdata.vertex_data.ptcolrs = (Pptco3 *) &data[1];
+         break;
+
+      case PVERT_COORD_NORMAL:
+         sofas3->vdata.vertex_data.ptnorms = (Pptnorm3 *) &data[1];
+         break;
+
+      case PVERT_COORD_COLOUR_NORMAL:
+         sofas3->vdata.vertex_data.ptconorms = (Pptconorm3 *) &data[1];
+         break;
+
+      default:
+         break;
+   }
+}
+
+/*******************************************************************************
  * sofas3_head
  *
- * DESCR:	Get set of fill area set head information 3D
+ * DESCR:	Get set of fill area set header information 3D
  * RETURNS:	N/A
  */
 
@@ -41,6 +78,9 @@ void sofas3_head(
    void *pdata
    )
 {
+   Pint i, j;
+   Pint num_lists;
+   Pint_list vlist;
    char *tp;
    Pint *data = (Pint *) pdata;
 
@@ -75,8 +115,27 @@ void sofas3_head(
 
    sofas3->vlist = (Pint_list_list *) tp;
 
-   /* TODO: Also move forward and setup vertext lists */
+   /* Move forward and setup vertext lists */
+   for (i = 0; i < sofas3->num_sets; i++) {
+      num_lists = *(Pint *) sofas3->vlist;
+      for (j = 0; j < num_lists; j++) {
+         sofas3_next_vlist(&vlist, sofas3);
+      }
+   }
+
+   /* Setup pointers to vertex data */
+   priv_vdata(sofas3);
+
+   /* Restore pointer to first vertex list */
+   sofas3->vlist = (Pint_list_list *) tp;
 }
+
+/*******************************************************************************
+ * sofas3_next_vlist
+ *
+ * DESCR:	Get set of fill area set next vertex list
+ * RETURNS:	N/A
+ */
 
 void sofas3_next_vlist(
     Pint_list *vlist,
@@ -90,35 +149,6 @@ void sofas3_next_vlist(
    data = &data[1];
    vlist->ints = data;
    sofas3->vlist = (Pint_list_list *) &data[vlist->num_ints];
-}
-
-void sofas3_vdata(
-   Psofas3 *sofas3
-   )
-{
-   Pint *data = (Pint *) sofas3->vlist;
-
-   sofas3->vdata.num_vertices = *data;
-   switch (sofas3->vflag) {
-      case PVERT_COORD:
-         sofas3->vdata.vertex_data.points = (Ppoint3 *) &data[1];
-         break;
-
-      case PVERT_COORD_COLOUR:
-         sofas3->vdata.vertex_data.ptcolrs = (Pptco3 *) &data[1];
-         break;
-
-      case PVERT_COORD_NORMAL:
-         sofas3->vdata.vertex_data.ptnorms = (Pptnorm3 *) &data[1];
-         break;
-
-      case PVERT_COORD_COLOUR_NORMAL:
-         sofas3->vdata.vertex_data.ptconorms = (Pptconorm3 *) &data[1];
-         break;
-
-      default:
-         break;
-   }
 }
 
 /*******************************************************************************
@@ -192,7 +222,7 @@ void sofas3_print(
       }
    }
 
-   sofas3_vdata(sofas3);
+   priv_vdata(sofas3);
    printf("\nNum vertices: %d\n", sofas3->vdata.num_vertices);
    for (i = 0; i < sofas3->vdata.num_vertices; i++) {
        printf("#%d:\t%g %g %g\n", i,

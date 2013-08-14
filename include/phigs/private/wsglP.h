@@ -415,6 +415,17 @@ void wsgl_set_int_ind(
    );
 
 /*******************************************************************************
+ * wsgl_get_int_colr
+ *
+ * DESCR:       Get interior colur
+ * RETURNS:     Pointer to interiour colour
+ */
+
+Pgcolr* wsgl_get_int_colr(
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * wsgl_get_int_style
  *
  * DESCR:       Get interior style
@@ -446,20 +457,6 @@ void wsgl_setup_int_attr_nocol(
 
 void wsgl_setup_int_attr(
    Ws *ws,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
- * wsgl_get_facet_colr
- *
- * DESCR:       Get facet colour
- * RETURNS:     N/A
- */
-
-void wsgl_get_facet_colr(
-   Pcoval *colr,
-   Pint fflag,
-   Pfacet_data3 *fdata,
    Ws_attr_st *ast
    );
 
@@ -830,6 +827,19 @@ void wsgl_edge_area_set3(
  */
 
 void wsgl_clear_area_set3_data(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_set_of_fill_area_set3_data
+ *
+ * DESCR:       Draw set of fill area set with data 3D
+ * RETURNS:     N/A
+ */
+
+void wsgl_set_of_fill_area_set3_data(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast

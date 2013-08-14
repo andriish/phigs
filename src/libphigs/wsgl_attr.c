@@ -392,6 +392,29 @@ void wsgl_set_int_ind(
 }
 
 /*******************************************************************************
+ * wsgl_get_int_colr
+ *
+ * DESCR:	Get interior colur
+ * RETURNS:	Pointer to interiour colour
+ */
+
+Pgcolr* wsgl_get_int_colr(
+   Ws_attr_st *ast
+   )
+{
+   Pgcolr *gcolr;
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_COLR_IND)) {
+      gcolr = &ast->indiv_group.int_bundle.colr;
+   }
+   else {
+      gcolr = &ast->bundl_group.int_bundle.colr;
+   }
+
+   return gcolr;
+}
+
+/*******************************************************************************
  * wsgl_get_int_style
  *
  * DESCR:	Get interior style
@@ -501,49 +524,8 @@ void wsgl_setup_int_attr(
    Ws_attr_st *ast
    )
 {
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_COLR_IND)) {
-      wsgl_set_gcolr(&ast->indiv_group.int_bundle.colr);
-   }
-   else {
-      wsgl_set_gcolr(&ast->bundl_group.int_bundle.colr);
-   }
-
+   wsgl_set_gcolr(wsgl_get_int_colr(ast));
    wsgl_setup_int_attr_nocol(ws, ast);
-}
-
-/*******************************************************************************
- * wsgl_get_facet_colr
- *
- * DESCR:	Get facet colour
- * RETURNS:	N/A
- */
-
-void wsgl_get_facet_colr(
-   Pcoval *colr,
-   Pint fflag,
-   Pfacet_data3 *fdata,
-   Ws_attr_st *ast
-   )
-{
-   switch (fflag) {
-      case PFACET_COLOUR:
-         memcpy(colr, &fdata->colr, sizeof(Pcoval));
-         break;
-
-      case PFACET_COLOUR_NORMAL:
-         memcpy(colr, &fdata->conorm.colr, sizeof(Pcoval));
-         break;
-
-      default:
-         if (phg_nset_name_is_set(&ast->asf_nameset,
-                                  (Pint) PASPECT_INT_COLR_IND)) {
-            wsgl_colr_from_gcolr(colr, &ast->indiv_group.int_bundle.colr);
-         }
-         else {
-            wsgl_colr_from_gcolr(colr, &ast->bundl_group.int_bundle.colr);
-         }
-         break;
-   }
 }
 
 /*******************************************************************************
