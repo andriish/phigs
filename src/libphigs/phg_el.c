@@ -674,7 +674,7 @@ void pset_of_fill_area_set3_data(
    unsigned facet_size, vertex_size;
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_fill_area_set3_data);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_of_fill_area_set3_data);
 
    if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
       ERR_REPORT(PHG_ERH, ERR5);
@@ -736,16 +736,14 @@ void pset_of_fill_area_set3_data(
 
       for (i = 0; i < num_sets; i++) {
          ARGS_ELMT_SIZE(&args) += sizeof(Pint);   /* Pint num_lists */
-         for (j = 0; j < vlist[i].num_lists; i++) {
+         for (j = 0; j < vlist[i].num_lists; j++) {
             ARGS_ELMT_SIZE(&args) += sizeof(Pint);   /* Pint num_ints */
             ARGS_ELMT_SIZE(&args) += vlist[i].lists[j].num_ints * sizeof(Pint);
          }
       }
 
-      for (i = 0; i < num_sets; i++) {
-         ARGS_ELMT_SIZE(&args) += sizeof(Pint);   /* Pint num_vertices */
-         ARGS_ELMT_SIZE(&args) += vdata[i].num_vertices * vertex_size;
-      }
+      ARGS_ELMT_SIZE(&args) += sizeof(Pint);   /* Pint num_vertices */
+      ARGS_ELMT_SIZE(&args) += vdata->num_vertices * vertex_size;
 
       ARGS_ELMT_DATA(&args).sofas3.fflag = fflag;
       ARGS_ELMT_DATA(&args).sofas3.eflag = eflag;
@@ -757,6 +755,7 @@ void pset_of_fill_area_set3_data(
              sizeof(Pfacet_data_arr3));
       ARGS_ELMT_DATA(&args).sofas3.edata = edata;
       ARGS_ELMT_DATA(&args).sofas3.edata = edata;
+      ARGS_ELMT_DATA(&args).sofas3.vlist = vlist;
       memcpy(&ARGS_ELMT_DATA(&args).sofas3.vdata,
              vdata,
              sizeof(Pfacet_vdata_list3));
@@ -1806,7 +1805,7 @@ void pset_refl_props(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_refl_props);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_area_prop);
 
    if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
       ERR_REPORT(PHG_ERH, ERR5);

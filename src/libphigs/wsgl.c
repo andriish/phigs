@@ -35,6 +35,7 @@
 #include <phigs/util.h>
 #include <phigs/private/wsxP.h>
 #include <phigs/private/wsglP.h>
+#include <phigs/private/sofas3P.h>
 
 #define LOG_INT(DATA) \
    css_print_eltype(ELMT_HEAD(DATA)->elementType); \
@@ -833,6 +834,12 @@ void wsgl_render_element(
                                         ELMT_CONTENT(el),
                                         &wsgl->cur_struct.ast);
             }
+         }
+         break;
+
+      case PELEM_SET_OF_FILL_AREA_SET3_DATA:
+         if (check_draw_primitive(ws)) {
+            sofas3_list(ELMT_CONTENT(el));
          }
          break;
 

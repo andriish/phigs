@@ -23,5 +23,39 @@
 
 #include <phigs/phigs.h>
 
+/*******************************************************************************
+ * sofas3_head
+ *
+ * DESCR:       Get set of fill area set head information 3D
+ * RETURNS:     N/A
+ */
+
+void sofas3_head(
+   Psofas3 *sofas3,
+   void *pdata
+   );
+
+/*******************************************************************************
+ * sofas3_print
+ *
+ * DESCR:       Print set of fill area set 3D
+ * RETURNS:     N/A
+ */
+
+void sofas3_print(
+   Psofas3 *sofas3
+   );
+
+/*******************************************************************************
+ * sofas3_list
+ *
+ * DESCR:       List set of fill area set 3D
+ * RETURNS:     N/A
+ */
+
+void sofas3_list(
+   void *pdata
+   );
+
 #endif /* _sofas3P_h */
 
