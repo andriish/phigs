@@ -117,7 +117,7 @@ void sofas3_head(
 
    /* Move forward and setup vertext lists */
    for (i = 0; i < sofas3->num_sets; i++) {
-      num_lists = *(Pint *) sofas3->vlist;
+      num_lists = sofas3_num_vlists(sofas3);
       for (j = 0; j < num_lists; j++) {
          sofas3_next_vlist(&vlist, sofas3);
       }
@@ -128,6 +128,24 @@ void sofas3_head(
 
    /* Restore pointer to first vertex list */
    sofas3->vlist = (Pint_list_list *) tp;
+}
+
+/*******************************************************************************
+ * sofas3_num_vlists
+ *
+ * DESCR:	Get set of fill area set number of vertex lists
+ * RETURNS:	Total number of vertext lists
+ */
+
+int sofas3_num_vlists(
+    Psofas3 *sofas3
+    )
+{
+   Pint *data = (Pint *) sofas3->vlist;
+   Pint num_lists = data[0];
+   sofas3->vlist = (Pint_list_list *) &data[1];
+
+   return num_lists;
 }
 
 /*******************************************************************************
@@ -143,7 +161,6 @@ void sofas3_next_vlist(
     )
 {
    Pint *data = (Pint *) sofas3->vlist;
-   data = &data[1];
 
    vlist->num_ints = data[0];
    data = &data[1];
@@ -210,7 +227,7 @@ void sofas3_print(
 
    printf("\n");
    for (i = 0; i < sofas3->num_sets; i++) {
-      num_lists = *(Pint *) sofas3->vlist;
+      num_lists = sofas3_num_vlists(sofas3);
       printf("Set #%d, num lists: %d\n", i, num_lists);
       for (j = 0; j < num_lists; j++) {
          sofas3_next_vlist(&vlist, sofas3);

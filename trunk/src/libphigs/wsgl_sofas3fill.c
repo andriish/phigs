@@ -301,7 +301,7 @@ void wsgl_set_of_fill_area_set3_data(
             else {
                wsgl_set_colr(sofas3.colr_type, &scolr);
             }
-            num_lists = *(Pint *) sofas3.vlist;
+            num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
                priv_fill_area3_points(&vlist, sofas3.vdata.vertex_data.points);
@@ -315,7 +315,7 @@ void wsgl_set_of_fill_area_set3_data(
             refl_props = wsgl_get_refl_props(ast);
             for (i = 0; i < sofas3.num_sets; i++) {
                normal = priv_normal3(sofas3.fflag, &sofas3.fdata, i);
-               num_lists = *(Pint *) sofas3.vlist;
+               num_lists = sofas3_num_vlists(&sofas3);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
                   priv_fill_area3_ptcolrs_norm(ws,
@@ -331,7 +331,7 @@ void wsgl_set_of_fill_area_set3_data(
          }
          else {
             for (i = 0; i < sofas3.num_sets; i++) {
-               num_lists = *(Pint *) sofas3.vlist;
+               num_lists = sofas3_num_vlists(&sofas3);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
                   priv_fill_area3_ptcolrs(sofas3.colr_type,
@@ -347,7 +347,7 @@ void wsgl_set_of_fill_area_set3_data(
          refl_props = wsgl_get_refl_props(ast);
          wsgl_colr_from_gcolr(&colr, wsgl_get_int_colr(ast));
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = *(Pint *) sofas3.vlist;
+            num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
                priv_fill_area3_ptnorms(ws,
@@ -365,7 +365,7 @@ void wsgl_set_of_fill_area_set3_data(
          refl_eqn = wsgl_get_refl_eqn(ast);
          refl_props = wsgl_get_refl_props(ast);
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = *(Pint *) sofas3.vlist;
+            num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
                priv_fill_area3_ptconorms(ws,

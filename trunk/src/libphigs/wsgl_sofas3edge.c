@@ -325,7 +325,7 @@ void wsgl_set_of_edge_area_set3_data(
    switch (sofas3.vflag) {
       case PVERT_COORD:
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = *(Pint *) sofas3.vlist;
+            num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
                priv_edges_points(sofas3.eflag,
@@ -338,7 +338,7 @@ void wsgl_set_of_edge_area_set3_data(
 
       case PVERT_COORD_COLOUR:
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = *(Pint *) sofas3.vlist;
+            num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
                priv_edges_ptcolrs(sofas3.eflag,
@@ -351,7 +351,7 @@ void wsgl_set_of_edge_area_set3_data(
 
       case PVERT_COORD_NORMAL:
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = *(Pint *) sofas3.vlist;
+            num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
                priv_edges_ptnorms(sofas3.eflag,
@@ -364,7 +364,7 @@ void wsgl_set_of_edge_area_set3_data(
 
       case PVERT_COORD_COLOUR_NORMAL:
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = *(Pint *) sofas3.vlist;
+            num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
                priv_edges_ptconorms(sofas3.eflag,

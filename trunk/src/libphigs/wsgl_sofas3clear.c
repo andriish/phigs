@@ -153,7 +153,7 @@ void wsgl_set_of_clear_area_set3_data(
    switch (sofas3.vflag) {
       case PVERT_COORD:
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = *(Pint *) sofas3.vlist;
+            num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
                priv_clear_area3_points(&vlist,
@@ -164,7 +164,7 @@ void wsgl_set_of_clear_area_set3_data(
 
       case PVERT_COORD_COLOUR:
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = *(Pint *) sofas3.vlist;
+            num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
                priv_clear_area3_ptcolrs(&vlist,
@@ -175,7 +175,7 @@ void wsgl_set_of_clear_area_set3_data(
 
       case PVERT_COORD_NORMAL:
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = *(Pint *) sofas3.vlist;
+            num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
                priv_clear_area3_ptnorms(&vlist,
@@ -186,7 +186,7 @@ void wsgl_set_of_clear_area_set3_data(
 
       case PVERT_COORD_COLOUR_NORMAL:
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = *(Pint *) sofas3.vlist;
+            num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
                priv_clear_area3_ptconorms(&vlist,
