@@ -37,21 +37,17 @@
  */
 
 static void priv_edges_points(
-   Ws *ws,
    Pint eflag,
-   Pint num_edges,
    Pedge_data_list *edata,
    Pint num_vertices,
-   Ppoint3 *points,
-   Ws_attr_st *ast
+   Ppoint3 *points
    )
 {
    Pint i;
 
-   wsgl_setup_edge_attr(ast);
    if (eflag == PEDGE_VISIBILITY) {
       glBegin(GL_LINES);
-      for (i = 0; i < num_edges - 1; i++) {
+      for (i = 0; i < edata->num_edges - 1; i++) {
          if (edata->edgedata.edges[i] == PEDGE_ON) {
             glVertex3f(points[i].x,
                        points[i].y,
@@ -61,7 +57,7 @@ static void priv_edges_points(
                        points[i + 1].z);
          }
       }
-      if (num_edges < num_vertices) {
+      if (edata->num_edges < num_vertices) {
          if (edata->edgedata.edges[i] == PEDGE_ON) {
             glVertex3f(points[i].x,
                        points[i].y,
@@ -102,21 +98,17 @@ static void priv_edges_points(
  */
 
 static void priv_edges_ptcolrs(
-   Ws *ws,
    Pint eflag,
-   Pint num_edges,
    Pedge_data_list *edata,
    Pint num_vertices,
-   Pptco3 *ptcolrs,
-   Ws_attr_st *ast
+   Pptco3 *ptcolrs
    )
 {
    Pint i;
 
-   wsgl_setup_edge_attr(ast);
    if (eflag == PEDGE_VISIBILITY) {
       glBegin(GL_LINES);
-      for (i = 0; i < num_edges - 1; i++) {
+      for (i = 0; i < edata->num_edges - 1; i++) {
          if (edata->edgedata.edges[i] == PEDGE_ON) {
             glVertex3f(ptcolrs[i].point.x,
                        ptcolrs[i].point.y,
@@ -126,7 +118,7 @@ static void priv_edges_ptcolrs(
                        ptcolrs[i + 1].point.z);
          }
       }
-      if (num_edges < num_vertices) {
+      if (edata->num_edges < num_vertices) {
          if (edata->edgedata.edges[i] == PEDGE_ON) {
             glVertex3f(ptcolrs[i].point.x,
                        ptcolrs[i].point.y,
@@ -167,21 +159,17 @@ static void priv_edges_ptcolrs(
  */
 
 static void priv_edges_ptnorms(
-   Ws *ws,
    Pint eflag,
-   Pint num_edges,
    Pedge_data_list *edata,
    Pint num_vertices,
-   Pptnorm3 *ptnorms,
-   Ws_attr_st *ast
+   Pptnorm3 *ptnorms
    )
 {
    Pint i;
 
-   wsgl_setup_edge_attr(ast);
    if (eflag == PEDGE_VISIBILITY) {
       glBegin(GL_LINES);
-      for (i = 0; i < num_edges - 1; i++) {
+      for (i = 0; i < edata->num_edges - 1; i++) {
          if (edata->edgedata.edges[i] == PEDGE_ON) {
             glVertex3f(ptnorms[i].point.x,
                        ptnorms[i].point.y,
@@ -191,7 +179,7 @@ static void priv_edges_ptnorms(
                        ptnorms[i + 1].point.z);
          }
       }
-      if (num_edges < num_vertices) {
+      if (edata->num_edges < num_vertices) {
          if (edata->edgedata.edges[i] == PEDGE_ON) {
             glVertex3f(ptnorms[i].point.x,
                        ptnorms[i].point.y,
@@ -232,21 +220,17 @@ static void priv_edges_ptnorms(
  */
 
 static void priv_edges_ptconorms(
-   Ws *ws,
    Pint eflag,
-   Pint num_edges,
    Pedge_data_list *edata,
    Pint num_vertices,
-   Pptconorm3 *ptconorms,
-   Ws_attr_st *ast
+   Pptconorm3 *ptconorms
    )
 {
    Pint i;
 
-   wsgl_setup_edge_attr(ast);
    if (eflag == PEDGE_VISIBILITY) {
       glBegin(GL_LINES);
-      for (i = 0; i < num_edges - 1; i++) {
+      for (i = 0; i < edata->num_edges - 1; i++) {
          if (edata->edgedata.edges[i] == PEDGE_ON) {
             glVertex3f(ptconorms[i].point.x,
                        ptconorms[i].point.y,
@@ -256,7 +240,7 @@ static void priv_edges_ptconorms(
                        ptconorms[i + 1].point.z);
          }
       }
-      if (num_edges < num_vertices) {
+      if (edata->num_edges < num_vertices) {
          if (edata->edgedata.edges[i] == PEDGE_ON) {
             glVertex3f(ptconorms[i].point.x,
                        ptconorms[i].point.y,
@@ -311,16 +295,14 @@ void wsgl_edge_area_set3_data(
    fasd3.vdata = &vdata;
    fasd3_head(&fasd3, pdata);
 
+   wsgl_setup_edge_attr(ast);
    switch (fasd3.vflag) {
       case PVERT_COORD:
          for (i = 0; i < fasd3.nfa; i++) {
-            priv_edges_points(ws,
-                              fasd3.eflag,
-                              fasd3.edata->num_edges,
+            priv_edges_points(fasd3.eflag,
                               fasd3.edata,
                               fasd3.vdata->num_vertices,
-                              fasd3.vdata->vertex_data.points,
-                              ast);
+                              fasd3.vdata->vertex_data.points);
 
             /* Advance to next set of data */
             fasd3_next_vdata3(&fasd3);
@@ -332,13 +314,10 @@ void wsgl_edge_area_set3_data(
 
       case PVERT_COORD_COLOUR:
          for (i = 0; i < fasd3.nfa; i++) {
-            priv_edges_ptcolrs(ws,
-                               fasd3.eflag,
-                               fasd3.edata->num_edges,
+            priv_edges_ptcolrs(fasd3.eflag,
                                fasd3.edata,
                                fasd3.vdata->num_vertices,
-                               fasd3.vdata->vertex_data.ptcolrs,
-                               ast);
+                               fasd3.vdata->vertex_data.ptcolrs);
 
             /* Advance to next set of data */
             fasd3_next_vdata3(&fasd3);
@@ -350,13 +329,10 @@ void wsgl_edge_area_set3_data(
 
       case PVERT_COORD_NORMAL:
          for (i = 0; i < fasd3.nfa; i++) {
-            priv_edges_ptnorms(ws,
-                               fasd3.eflag,
-                               fasd3.edata->num_edges,
+            priv_edges_ptnorms(fasd3.eflag,
                                fasd3.edata,
                                fasd3.vdata->num_vertices,
-                               fasd3.vdata->vertex_data.ptnorms,
-                               ast);
+                               fasd3.vdata->vertex_data.ptnorms);
 
             /* Advance to next set of data */
             fasd3_next_vdata3(&fasd3);
@@ -368,13 +344,10 @@ void wsgl_edge_area_set3_data(
 
       case PVERT_COORD_COLOUR_NORMAL:
          for (i = 0; i < fasd3.nfa; i++) {
-            priv_edges_ptconorms(ws,
-                                 fasd3.eflag,
-                                 fasd3.edata->num_edges,
+            priv_edges_ptconorms(fasd3.eflag,
                                  fasd3.edata,
                                  fasd3.vdata->num_vertices,
-                                 fasd3.vdata->vertex_data.ptconorms,
-                                 ast);
+                                 fasd3.vdata->vertex_data.ptconorms);
 
             /* Advance to next set of data */
             fasd3_next_vdata3(&fasd3);
