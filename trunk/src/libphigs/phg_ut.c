@@ -63,10 +63,9 @@ int phg_echo_limits_valid(
    Wst_phigs_dt *dt
    )
 {
-   Psl_ws_info *wsinfo;
    int status = FALSE;
 
-   wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+   phg_psl_get_ws_info(PHG_PSL, ws_id);
    switch(fn_id) {
       case Pfn_init_loc3:
       case Pfn_init_stroke3:
