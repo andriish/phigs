@@ -36,6 +36,17 @@ void sofas3_head(
    );
 
 /*******************************************************************************
+ * sofas3_num_vlists
+ *
+ * DESCR:       Get set of fill area set number of vertex lists
+ * RETURNS:     Total number of vertext lists
+ */
+
+int sofas3_num_vlists(
+    Psofas3 *sofas3
+    );
+
+/*******************************************************************************
  * sofas3_next_vlist
  *
  * DESCR:       Get set of fill area set next vertex list
