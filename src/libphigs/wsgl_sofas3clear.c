@@ -27,7 +27,7 @@
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
 #include <phigs/private/wsglP.h>
-#include <phigs/private/fasd3P.h>
+#include <phigs/private/sofas3P.h>
 
 /*******************************************************************************
  * priv_clear_area3_points
@@ -37,17 +37,18 @@
  */
 
 static void priv_clear_area3_points(
-   Pint num_vertices,
+   Pint_list *vlist,
    Ppoint3 *points
    )
 {
-   Pint i;
+   Pint i, vert;
 
    glBegin(GL_POLYGON);
-   for (i = 0; i < num_vertices; i++) {
-      glVertex3f(points[i].x,
-                 points[i].y,
-                 points[i].z);
+   for (i = 0; i < vlist->num_ints; i++) {
+      vert = vlist->ints[i];
+      glVertex3f(points[vert].x,
+                 points[vert].y,
+                 points[vert].z);
    }
    glEnd();
 }
@@ -60,17 +61,18 @@ static void priv_clear_area3_points(
  */
 
 static void priv_clear_area3_ptcolrs(
-   Pint num_vertices,
+   Pint_list *vlist,
    Pptco3 *ptcolrs
    )
 {
-   Pint i;
+   Pint i, vert;
 
    glBegin(GL_POLYGON);
-   for (i = 0; i < num_vertices; i++) {
-      glVertex3f(ptcolrs[i].point.x,
-                 ptcolrs[i].point.y,
-                 ptcolrs[i].point.z);
+   for (i = 0; i < vlist->num_ints; i++) {
+      vert = vlist->ints[i];
+      glVertex3f(ptcolrs[vert].point.x,
+                 ptcolrs[vert].point.y,
+                 ptcolrs[vert].point.z);
    }
    glEnd();
 }
@@ -83,17 +85,18 @@ static void priv_clear_area3_ptcolrs(
  */
 
 static void priv_clear_area3_ptnorms(
-   Pint num_vertices,
+   Pint_list *vlist,
    Pptnorm3 *ptnorms
    )
 {
-   Pint i;
+   Pint i, vert;
 
    glBegin(GL_POLYGON);
-   for (i = 0; i < num_vertices; i++) {
-      glVertex3f(ptnorms[i].point.x,
-                 ptnorms[i].point.y,
-                 ptnorms[i].point.z);
+   for (i = 0; i < vlist->num_ints; i++) {
+      vert = vlist->ints[i];
+      glVertex3f(ptnorms[vert].point.x,
+                 ptnorms[vert].point.y,
+                 ptnorms[vert].point.z);
    }
    glEnd();
 }
@@ -107,96 +110,87 @@ static void priv_clear_area3_ptnorms(
  */
 
 static void priv_clear_area3_ptconorms(
-   Pint num_vertices,
+   Pint_list *vlist,
    Pptconorm3 *ptconorms
    )
 {
-   Pint i;
+   Pint i, vert;
 
    glBegin(GL_POLYGON);
-   for (i = 0; i < num_vertices; i++) {
-      glVertex3f(ptconorms[i].point.x,
-                 ptconorms[i].point.y,
-                 ptconorms[i].point.z);
+   for (i = 0; i < vlist->num_ints; i++) {
+      vert = vlist->ints[i];
+      glVertex3f(ptconorms[vert].point.x,
+                 ptconorms[vert].point.y,
+                 ptconorms[vert].point.z);
    }
    glEnd();
 }
 
 /*******************************************************************************
- * wsgl_clear_area_set3_data
+ * wsgl_set_of_clear_area_set3_data
  *
- * DESCR:	Clear fill area set with data 3D
+ * DESCR:	Clear set of fill area set with data 3D
  * RETURNS:	N/A
  */
 
-void wsgl_clear_area_set3_data(
+void wsgl_set_of_clear_area_set3_data(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
    )
 {
-   Pint i;
-   Pfasd3 fasd3;
-   Pedge_data_list edata;
-   Pfacet_vdata_list3 vdata;
+   Pint i, j;
+   Psofas3 sofas3;
+   Pint num_lists;
+   Pint_list vlist;
 
-   fasd3.edata = &edata;
-   fasd3.vdata = &vdata;
-   fasd3_head(&fasd3, pdata);
+   sofas3_head(&sofas3, pdata);
 
    glPolygonOffset(WS_CLEAR_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    wsgl_setup_background(ws);
 
-   switch (fasd3.vflag) {
+   switch (sofas3.vflag) {
       case PVERT_COORD:
-         for (i = 0; i < fasd3.nfa; i++) {
-            priv_clear_area3_points(fasd3.vdata->num_vertices,
-                                    fasd3.vdata->vertex_data.points);
-
-            /* Advance to next set of data */
-            fasd3_next_vdata3(&fasd3);
-            if (fasd3.eflag == PEDGE_VISIBILITY) {
-               fasd3_next_edata(&fasd3);
+         for (i = 0; i < sofas3.num_sets; i++) {
+            num_lists = *(Pint *) sofas3.vlist;
+            for (j = 0; j < num_lists; j++) {
+               sofas3_next_vlist(&vlist, &sofas3);
+               priv_clear_area3_points(&vlist,
+                                       sofas3.vdata.vertex_data.points);
             }
          }
          break;
 
       case PVERT_COORD_COLOUR:
-         for (i = 0; i < fasd3.nfa; i++) {
-            priv_clear_area3_ptcolrs(fasd3.vdata->num_vertices,
-                                     fasd3.vdata->vertex_data.ptcolrs);
-
-            /* Advance to next set of data */
-            fasd3_next_vdata3(&fasd3);
-            if (fasd3.eflag == PEDGE_VISIBILITY) {
-               fasd3_next_edata(&fasd3);
+         for (i = 0; i < sofas3.num_sets; i++) {
+            num_lists = *(Pint *) sofas3.vlist;
+            for (j = 0; j < num_lists; j++) {
+               sofas3_next_vlist(&vlist, &sofas3);
+               priv_clear_area3_ptcolrs(&vlist,
+                                        sofas3.vdata.vertex_data.ptcolrs);
             }
          }
          break;
 
       case PVERT_COORD_NORMAL:
-         for (i = 0; i < fasd3.nfa; i++) {
-            priv_clear_area3_ptnorms(fasd3.vdata->num_vertices,
-                                     fasd3.vdata->vertex_data.ptnorms);
-
-            /* Advance to next set of data */
-            fasd3_next_vdata3(&fasd3);
-            if (fasd3.eflag == PEDGE_VISIBILITY) {
-               fasd3_next_edata(&fasd3);
+         for (i = 0; i < sofas3.num_sets; i++) {
+            num_lists = *(Pint *) sofas3.vlist;
+            for (j = 0; j < num_lists; j++) {
+               sofas3_next_vlist(&vlist, &sofas3);
+               priv_clear_area3_ptnorms(&vlist,
+                                        sofas3.vdata.vertex_data.ptnorms);
             }
          }
          break;
 
       case PVERT_COORD_COLOUR_NORMAL:
-         for (i = 0; i < fasd3.nfa; i++) {
-            priv_clear_area3_ptconorms(fasd3.vdata->num_vertices,
-                                       fasd3.vdata->vertex_data.ptconorms);
-
-            /* Advance to next set of data */
-            fasd3_next_vdata3(&fasd3);
-            if (fasd3.eflag == PEDGE_VISIBILITY) {
-               fasd3_next_edata(&fasd3);
+         for (i = 0; i < sofas3.num_sets; i++) {
+            num_lists = *(Pint *) sofas3.vlist;
+            for (j = 0; j < num_lists; j++) {
+               sofas3_next_vlist(&vlist, &sofas3);
+               priv_clear_area3_ptconorms(&vlist,
+                                          sofas3.vdata.vertex_data.ptconorms);
             }
          }
          break;

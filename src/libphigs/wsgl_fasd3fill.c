@@ -326,9 +326,6 @@ void wsgl_fill_area_set3_data(
                if (fasd3.eflag == PEDGE_VISIBILITY) {
                   fasd3_next_edata(&fasd3);
                }
-               else {
-                  fasd3.edata->num_edges = fasd3.vdata->num_vertices;
-               }
             }
          }
          else {

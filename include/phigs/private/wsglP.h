@@ -833,19 +833,6 @@ void wsgl_clear_area_set3_data(
    );
 
 /*******************************************************************************
- * wsgl_set_of_fill_area_set3_data
- *
- * DESCR:       Draw set of fill area set with data 3D
- * RETURNS:     N/A
- */
-
-void wsgl_set_of_fill_area_set3_data(
-   Ws *ws,
-   void *pdata,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
  * wsgl_fill_area_set3_data
  *
  * DESCR:       Draw fill area set with data 3D
@@ -866,6 +853,32 @@ void wsgl_fill_area_set3_data(
  */
 
 void wsgl_edge_area_set3_data(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_set_of_clear_area_set3_data
+ *
+ * DESCR:       Clear set of fill area set with data 3D
+ * RETURNS:     N/A
+ */
+
+void wsgl_set_of_clear_area_set3_data(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_set_of_fill_area_set3_data
+ *
+ * DESCR:       Draw set of fill area set with data 3D
+ * RETURNS:     N/A
+ */
+
+void wsgl_set_of_fill_area_set3_data(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
