@@ -852,6 +852,11 @@ void wsgl_render_element(
                                                ELMT_CONTENT(el),
                                                &wsgl->cur_struct.ast);
             }
+            if (wsgl_get_edge_flag(&wsgl->cur_struct.ast) == PEDGE_ON) {
+               wsgl_set_of_edge_area_set3_data(ws,
+                                               ELMT_CONTENT(el),
+                                               &wsgl->cur_struct.ast);
+            }
          }
          break;
 

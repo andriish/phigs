@@ -885,6 +885,19 @@ void wsgl_set_of_fill_area_set3_data(
    );
 
 /*******************************************************************************
+ * wsgl_set_of_edge_area_set3_data
+ *
+ * DESCR:       Draw set of fill area set edges with data 3D
+ * RETURNS:     N/A
+ */
+
+void wsgl_set_of_edge_area_set3_data(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * wsgl_text
  *
  * DESCR:       Draw text
