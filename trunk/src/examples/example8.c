@@ -37,7 +37,7 @@
 #define INT_STYLE      PSTYLE_SOLID
 #define EDGE_FLAG      PEDGE_ON
 #define HLHSR_FLAG     PHIGS_HLHSR_ID_ON
-#define INIT_SHAPE     init_shape_norm_per_facet_coord_colr
+#define INIT_SHAPE     init_shape_colour_norm_per_facet
 
 Pint errnum;
 Pmatrix3 rot3, rotx, roty;
@@ -230,7 +230,7 @@ void init_shape_norm_per_facet(void)
    free(vlist[5].lists);
 }
 
-void init_shape_norm_per_facet_coord_colr(void)
+void init_shape_colour_norm_per_facet(void)
 {
    Pptco3 vertex_data[8];
    Pvec3 norms[6];
@@ -466,7 +466,7 @@ void init_shape_norm_per_vertex(void)
    free(vlist[5].lists);
 }
 
-void init_shape_norm_per_vertex_coord_colr(void)
+void init_shape_colour_norm_per_vertex(void)
 {
    Pptconorm3 vertex_data[8];
    Pint_list_list vlist[6];

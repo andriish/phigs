@@ -331,41 +331,19 @@ void wsgl_edge_area_set3_data(
          break;
 
       case PVERT_COORD_COLOUR:
-         if (fasd3.fflag == PFACET_NORMAL) {
-            for (i = 0; i < fasd3.nfa; i++) {
-               priv_edges_ptcolrs(ws,
-                                  fasd3.eflag,
-                                  fasd3.edata->num_edges,
-                                  fasd3.edata,
-                                  fasd3.vdata->num_vertices,
-                                  fasd3.vdata->vertex_data.ptcolrs,
-                                  ast);
+         for (i = 0; i < fasd3.nfa; i++) {
+            priv_edges_ptcolrs(ws,
+                               fasd3.eflag,
+                               fasd3.edata->num_edges,
+                               fasd3.edata,
+                               fasd3.vdata->num_vertices,
+                               fasd3.vdata->vertex_data.ptcolrs,
+                               ast);
 
-               /* Advance to next set of data */
-               fasd3_next_vdata3(&fasd3);
-               if (fasd3.eflag == PEDGE_VISIBILITY) {
-                  fasd3_next_edata(&fasd3);
-               }
-               else {
-                  fasd3.edata->num_edges = fasd3.vdata->num_vertices;
-               }
-            }
-         }
-         else {
-            for (i = 0; i < fasd3.nfa; i++) {
-               priv_edges_ptcolrs(ws,
-                                  fasd3.eflag,
-                                  fasd3.edata->num_edges,
-                                  fasd3.edata,
-                                  fasd3.vdata->num_vertices,
-                                  fasd3.vdata->vertex_data.ptcolrs,
-                                  ast);
-
-               /* Advance to next set of data */
-               fasd3_next_vdata3(&fasd3);
-               if (fasd3.eflag == PEDGE_VISIBILITY) {
-                  fasd3_next_edata(&fasd3);
-               }
+            /* Advance to next set of data */
+            fasd3_next_vdata3(&fasd3);
+            if (fasd3.eflag == PEDGE_VISIBILITY) {
+               fasd3_next_edata(&fasd3);
             }
          }
          break;

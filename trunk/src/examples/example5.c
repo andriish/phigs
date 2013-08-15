@@ -27,6 +27,9 @@
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>
 
+#define INT_STYLE     PSTYLE_SOLID
+#define EDGE_FLAG     PEDGE_ON
+
 #define ANGLE_DELTA   0.1
 #define WIDTH         1.0
 #define HEIGHT        1.0
@@ -309,8 +312,9 @@ int main(int argc, char *argv[])
    popen_struct(STRUCT_OBJECT);
    pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
    pset_view_ind(view_ind);
-   pset_edge_flag(PEDGE_ON);
+   pset_edge_flag(EDGE_FLAG);
    pset_edge_colr(&edge_colr);
+   pset_int_style(INT_STYLE);
    pset_int_shad_meth(PSD_COLOUR);
    plabel(LABEL_TRANS);
    pset_local_tran3(rot3, PTYPE_REPLACE);
