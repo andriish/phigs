@@ -362,7 +362,6 @@ void init_shape_norm_per_facet_coord_colr(void)
 void init_shape_norm_per_vertex(void)
 {
    Pptnorm3 vertex_data[8];
-   Pfacet_data_arr3 fdata;
    Pint_list_list vlist[6];
    Pfacet_vdata_list3 vdata;
 
@@ -454,7 +453,7 @@ void init_shape_norm_per_vertex(void)
                                PVERT_COORD_NORMAL,
                                PMODEL_RGB,
                                6,
-                               &fdata,
+                               NULL,
                                NULL,
                                vlist,
                                &vdata);
@@ -470,7 +469,6 @@ void init_shape_norm_per_vertex(void)
 void init_shape_norm_per_vertex_coord_colr(void)
 {
    Pptconorm3 vertex_data[8];
-   Pfacet_data_arr3 fdata;
    Pint_list_list vlist[6];
    Pfacet_vdata_list3 vdata;
 
@@ -586,7 +584,7 @@ void init_shape_norm_per_vertex_coord_colr(void)
                                PVERT_COORD_COLOUR_NORMAL,
                                PMODEL_RGB,
                                6,
-                               &fdata,
+                               NULL,
                                NULL,
                                vlist,
                                &vdata);

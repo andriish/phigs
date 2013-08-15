@@ -643,7 +643,11 @@ void pfill_area_set3_data(
       ARGS_ELMT_DATA(&args).fasd3.eflag = eflag;
       ARGS_ELMT_DATA(&args).fasd3.vflag = vflag;
       ARGS_ELMT_DATA(&args).fasd3.colr_type = colr_type;
-      memcpy(&ARGS_ELMT_DATA(&args).fasd3.fdata, fdata, sizeof(Pfacet_data3));
+      if (fflag != PFACET_NONE) {
+         memcpy(&ARGS_ELMT_DATA(&args).fasd3.fdata,
+                fdata,
+                sizeof(Pfacet_data3));
+      }
       ARGS_ELMT_DATA(&args).fasd3.nfa = nfa;
       ARGS_ELMT_DATA(&args).fasd3.edata = edata;
       ARGS_ELMT_DATA(&args).fasd3.vdata = vdata;
@@ -750,9 +754,11 @@ void pset_of_fill_area_set3_data(
       ARGS_ELMT_DATA(&args).sofas3.vflag = vflag;
       ARGS_ELMT_DATA(&args).sofas3.colr_type = colr_type;
       ARGS_ELMT_DATA(&args).sofas3.num_sets = num_sets;
-      memcpy(&ARGS_ELMT_DATA(&args).sofas3.fdata,
-             fdata,
-             sizeof(Pfacet_data_arr3));
+      if (fflag != PFACET_NONE) {
+         memcpy(&ARGS_ELMT_DATA(&args).sofas3.fdata,
+                fdata,
+                sizeof(Pfacet_data_arr3));
+      }
       ARGS_ELMT_DATA(&args).sofas3.edata = edata;
       ARGS_ELMT_DATA(&args).sofas3.edata = edata;
       ARGS_ELMT_DATA(&args).sofas3.vlist = vlist;
