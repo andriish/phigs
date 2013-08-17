@@ -59,6 +59,29 @@ void sofas3_next_vlist(
     );
 
 /*******************************************************************************
+ * sofas3_num_elists
+ *
+ * DESCR:       Get set of fill area set number of edge lists
+ * RETURNS:     Total number of edge lists
+ */
+
+int sofas3_num_elists(
+    Psofas3 *sofas3
+    );
+
+/*******************************************************************************
+ * sofas3_next_elist
+ *
+ * DESCR:       Get set of fill area set next edge list
+ * RETURNS:     N/A
+ */
+
+void sofas3_next_elist(
+    Pedge_data_list *elist,
+    Psofas3 *sofas3
+    );
+
+/*******************************************************************************
  * sofas3_print
  *
  * DESCR:       Print set of fill area set 3D

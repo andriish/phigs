@@ -81,6 +81,8 @@ void sofas3_head(
    Pint i, j;
    Pint num_lists;
    Pint_list vlist;
+   Pedge_data_list elist;
+   Pedge_data_list_list *estart;
    char *tp;
    Pint *data = (Pint *) pdata;
 
@@ -111,7 +113,22 @@ void sofas3_head(
          break;
    }
 
-   /* TODO: Setup and move past edge lists */
+   if (sofas3->eflag == PEDGE_VISIBILITY) {
+      sofas3->edata = (Pedge_data_list_list *) tp;
+      estart = sofas3->edata;
+
+      /* Move forward and setup edge lists */
+      for (i = 0; i < sofas3->num_sets; i++) {
+         num_lists = sofas3_num_elists(sofas3);
+         for (j = 0; j < num_lists; j++) {
+            sofas3_next_elist(&elist, sofas3);
+         }
+      }
+      tp = (char *) sofas3->edata;
+
+      /* Restore pointer to first edge list */
+      sofas3->edata = estart;
+   }
 
    sofas3->vlist = (Pint_list_list *) tp;
 
@@ -169,6 +186,46 @@ void sofas3_next_vlist(
 }
 
 /*******************************************************************************
+ * sofas3_num_elists
+ *
+ * DESCR:	Get set of fill area set number of edge lists
+ * RETURNS:	Total number of edge lists
+ */
+
+int sofas3_num_elists(
+    Psofas3 *sofas3
+    )
+{
+   Pint *data = (Pint *) sofas3->edata;
+   Pint num_lists = data[0];
+   sofas3->edata = (Pedge_data_list_list *) &data[1];
+
+   return num_lists;
+}
+
+/*******************************************************************************
+ * sofas3_next_elist
+ *
+ * DESCR:	Get set of fill area set next edge list
+ * RETURNS:	N/A
+ */
+
+void sofas3_next_elist(
+    Pedge_data_list *elist,
+    Psofas3 *sofas3
+    )
+{
+   Pint *data = (Pint *) sofas3->edata;
+   Pedge_flag *edata;
+
+   elist->num_edges = data[0];
+   data = &data[1];
+   edata = (Pedge_flag *) data;
+   elist->edgedata.edges = edata;
+   sofas3->edata = (Pedge_data_list_list *) &edata[elist->num_edges];
+}
+
+/*******************************************************************************
  * sofas3_print
  *
  * DESCR:	Print set of fill area set 3D
@@ -182,6 +239,7 @@ void sofas3_print(
    Pint i, j, k;
    Pint num_lists;
    Pint_list vlist;
+   Pedge_data_list elist;
 
    printf("Facet flags:\t%d\n", sofas3->fflag);
    printf("Edge flags:\t%d\n", sofas3->eflag);
@@ -223,7 +281,23 @@ void sofas3_print(
       }
    }
 
-   /* TODO: Get edge data */
+   if (sofas3->eflag == PEDGE_VISIBILITY) {
+      printf("\n");
+      for (i = 0; i < sofas3->num_sets; i++) {
+         num_lists = sofas3_num_elists(sofas3);
+         printf("Set #%d, num lists: %d\n", i, num_lists);
+         for (j = 0; j < num_lists; j++) {
+            sofas3_next_elist(&elist, sofas3);
+            printf("\tList #%d, num_edges: %d\t", j, elist.num_edges);
+            for (k = 0; k < elist.num_edges; k++) {
+               printf("%s ",
+                      (elist.edgedata.edges[k] == PEDGE_ON) ? "ON" : "OFF");
+            }
+            printf("\n");
+         }
+      }
+   }
+
 
    printf("\n");
    for (i = 0; i < sofas3->num_sets; i++) {

@@ -760,7 +760,6 @@ void pset_of_fill_area_set3_data(
                 sizeof(Pfacet_data_arr3));
       }
       ARGS_ELMT_DATA(&args).sofas3.edata = edata;
-      ARGS_ELMT_DATA(&args).sofas3.edata = edata;
       ARGS_ELMT_DATA(&args).sofas3.vlist = vlist;
       memcpy(&ARGS_ELMT_DATA(&args).sofas3.vdata,
              vdata,
