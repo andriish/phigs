@@ -316,8 +316,11 @@ void wsgl_set_of_edge_area_set3_data(
 {
    Pint i, j;
    Psofas3 sofas3;
-   Pint num_lists;
+   Pint num_vlists;
    Pint_list vlist;
+   Pint num_elists;
+   Pedge_data_list elist;
+   Pint eflag;
 
    sofas3_head(&sofas3, pdata);
 
@@ -325,11 +328,23 @@ void wsgl_set_of_edge_area_set3_data(
    switch (sofas3.vflag) {
       case PVERT_COORD:
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = sofas3_num_vlists(&sofas3);
-            for (j = 0; j < num_lists; j++) {
+            num_vlists = sofas3_num_vlists(&sofas3);
+            eflag = sofas3.eflag;
+            if (eflag == PEDGE_VISIBILITY) {
+               num_elists = sofas3_num_elists(&sofas3);
+            }
+            for (j = 0; j < num_vlists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
-               priv_edges_points(sofas3.eflag,
-                                 NULL, /* TODO */
+               if (sofas3.eflag == PEDGE_VISIBILITY) {
+                  if (j < num_elists) {
+                     sofas3_next_elist(&elist, &sofas3);
+                  }
+                  else {
+                     eflag = PEDGE_NONE;
+                  }
+               }
+               priv_edges_points(eflag,
+                                 &elist,
                                  &vlist,
                                  sofas3.vdata.vertex_data.points);
             }
@@ -338,11 +353,23 @@ void wsgl_set_of_edge_area_set3_data(
 
       case PVERT_COORD_COLOUR:
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = sofas3_num_vlists(&sofas3);
-            for (j = 0; j < num_lists; j++) {
+            num_vlists = sofas3_num_vlists(&sofas3);
+            eflag = sofas3.eflag;
+            if (eflag == PEDGE_VISIBILITY) {
+               num_elists = sofas3_num_elists(&sofas3);
+            }
+            for (j = 0; j < num_vlists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
-               priv_edges_ptcolrs(sofas3.eflag,
-                                  NULL, /* TODO */
+               if (sofas3.eflag == PEDGE_VISIBILITY) {
+                  if (j < num_elists) {
+                     sofas3_next_elist(&elist, &sofas3);
+                  }
+                  else {
+                     eflag = PEDGE_NONE;
+                  }
+               }
+               priv_edges_ptcolrs(eflag,
+                                  &elist,
                                   &vlist,
                                   sofas3.vdata.vertex_data.ptcolrs);
             }
@@ -351,11 +378,23 @@ void wsgl_set_of_edge_area_set3_data(
 
       case PVERT_COORD_NORMAL:
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = sofas3_num_vlists(&sofas3);
-            for (j = 0; j < num_lists; j++) {
+            num_vlists = sofas3_num_vlists(&sofas3);
+            eflag = sofas3.eflag;
+            if (eflag == PEDGE_VISIBILITY) {
+               num_elists = sofas3_num_elists(&sofas3);
+            }
+            for (j = 0; j < num_vlists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
-               priv_edges_ptnorms(sofas3.eflag,
-                                  NULL, /* TODO */
+               if (sofas3.eflag == PEDGE_VISIBILITY) {
+                  if (j < num_elists) {
+                     sofas3_next_elist(&elist, &sofas3);
+                  }
+                  else {
+                     eflag = PEDGE_NONE;
+                  }
+               }
+               priv_edges_ptnorms(eflag,
+                                  &elist,
                                   &vlist,
                                   sofas3.vdata.vertex_data.ptnorms);
             }
@@ -364,11 +403,23 @@ void wsgl_set_of_edge_area_set3_data(
 
       case PVERT_COORD_COLOUR_NORMAL:
          for (i = 0; i < sofas3.num_sets; i++) {
-            num_lists = sofas3_num_vlists(&sofas3);
-            for (j = 0; j < num_lists; j++) {
+            num_vlists = sofas3_num_vlists(&sofas3);
+            eflag = sofas3.eflag;
+            if (eflag == PEDGE_VISIBILITY) {
+               num_elists = sofas3_num_elists(&sofas3);
+            }
+            for (j = 0; j < num_vlists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
-               priv_edges_ptconorms(sofas3.eflag,
-                                    NULL, /* TODO */
+               if (sofas3.eflag == PEDGE_VISIBILITY) {
+                  if (j < num_elists) {
+                     sofas3_next_elist(&elist, &sofas3);
+                  }
+                  else {
+                     eflag = PEDGE_NONE;
+                  }
+               }
+               priv_edges_ptconorms(eflag,
+                                    &elist,
                                     &vlist,
                                     sofas3.vdata.vertex_data.ptconorms);
             }

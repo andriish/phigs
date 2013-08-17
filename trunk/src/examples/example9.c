@@ -70,6 +70,7 @@ void init_checker(int num)
    Ppoint3 *points = (Ppoint3 *) malloc(sizeof(Ppoint3) * 4 * num);
    Pedge_flag *edges = (Pedge_flag *) malloc(sizeof(Pedge_flag) * 4 * num);
    Pedge_data_list *edata = malloc(sizeof(Pedge_data_list) * num);
+   Pedge_data_list_list earr;
    Ppoint3 *p;
    Pint_list *lists = malloc(sizeof(Pint_list) * num);
    Pint_list_list vlist;
@@ -78,11 +79,10 @@ void init_checker(int num)
    fdata.colr.direct.rgb.red = 0.0;
    fdata.colr.direct.rgb.green = 0.5;
    fdata.colr.direct.rgb.blue = 0.5;
-   farr.colrs = &fdata.colr;
 
    p = points;
    for (i = 0; i < 4 * num; i++) {
-      edges[i] = (i % 2) ? PEDGE_OFF : PEDGE_ON;
+      edges[i] = (rand() % 2) ? PEDGE_OFF : PEDGE_ON;
    }
 
    for (i = 0; i < num; i++) {
@@ -117,6 +117,11 @@ void init_checker(int num)
       p = &p[4];
    }
 
+   farr.colrs = &fdata.colr;
+
+   earr.num_lists = num;
+   earr.edgelist = edata;
+
    vlist.num_lists = num;
    vlist.lists = lists;
 
@@ -126,12 +131,12 @@ void init_checker(int num)
    pset_edge_flag(PEDGE_ON);
    pset_edgewidth(2.0);
    pset_of_fill_area_set3_data(PFACET_COLOUR,
-                               PEDGE_NONE,
+                               PEDGE_VISIBILITY,
                                PVERT_COORD,
                                PMODEL_RGB,
                                1,
                                &farr,
-                               NULL,
+                               &earr,
                                &vlist,
                                &vdata);
 
