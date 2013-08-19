@@ -170,7 +170,7 @@ void init_shape_norm_per_facet(void)
 
    /* Back */
    vlist[0].num_lists = 1;
-   vlist[0].lists = set_vertices(0, 1, 2, 3);
+   vlist[0].lists = set_vertices(3, 2, 1, 0);
    norms[0].delta_x = 0.0;
    norms[0].delta_y = 0.0;
    norms[0].delta_z = -1.0;
@@ -191,7 +191,7 @@ void init_shape_norm_per_facet(void)
 
    /* Top */
    vlist[3].num_lists = 1;
-   vlist[3].lists = set_vertices(3, 2, 6, 7);
+   vlist[3].lists = set_vertices(2, 3, 7, 6);
    norms[3].delta_x = 0.0;
    norms[3].delta_y = 1.0;
    norms[3].delta_z = 0.0;
@@ -205,7 +205,7 @@ void init_shape_norm_per_facet(void)
 
    /* Right */
    vlist[5].num_lists = 1;
-   vlist[5].lists = set_vertices(1, 5, 6, 2);
+   vlist[5].lists = set_vertices(5, 1, 2, 6);
    norms[5].delta_x = 1.0;
    norms[5].delta_y = 0.0;
    norms[5].delta_z = 0.0;
@@ -299,7 +299,7 @@ void init_shape_colour_norm_per_facet(void)
 
    /* Back */
    vlist[0].num_lists = 1;
-   vlist[0].lists = set_vertices(0, 1, 2, 3);
+   vlist[0].lists = set_vertices(3, 2, 1, 0);
    norms[0].delta_x = 0.0;
    norms[0].delta_y = 0.0;
    norms[0].delta_z = -1.0;
@@ -320,7 +320,7 @@ void init_shape_colour_norm_per_facet(void)
 
    /* Top */
    vlist[3].num_lists = 1;
-   vlist[3].lists = set_vertices(3, 2, 6, 7);
+   vlist[3].lists = set_vertices(2, 3, 7, 6);
    norms[3].delta_x = 0.0;
    norms[3].delta_y = 1.0;
    norms[3].delta_z = 0.0;
@@ -334,7 +334,7 @@ void init_shape_colour_norm_per_facet(void)
 
    /* Right */
    vlist[5].num_lists = 1;
-   vlist[5].lists = set_vertices(1, 5, 6, 2);
+   vlist[5].lists = set_vertices(5, 1, 2, 6);
    norms[5].delta_x = 1.0;
    norms[5].delta_y = 0.0;
    norms[5].delta_z = 0.0;
@@ -426,7 +426,7 @@ void init_shape_norm_per_vertex(void)
 
    /* Back */
    vlist[0].num_lists = 1;
-   vlist[0].lists = set_vertices(0, 1, 2, 3);
+   vlist[0].lists = set_vertices(3, 2, 1, 0);
 
    /* Front */
    vlist[1].num_lists = 1;
@@ -438,7 +438,7 @@ void init_shape_norm_per_vertex(void)
 
    /* Top */
    vlist[3].num_lists = 1;
-   vlist[3].lists = set_vertices(3, 2, 6, 7);
+   vlist[3].lists = set_vertices(2, 3, 7, 6);
 
    /* Left */
    vlist[4].num_lists = 1;
@@ -446,7 +446,7 @@ void init_shape_norm_per_vertex(void)
 
    /* Right */
    vlist[5].num_lists = 1;
-   vlist[5].lists = set_vertices(1, 5, 6, 2);
+   vlist[5].lists = set_vertices(5, 1, 2, 6);
 
    pset_of_fill_area_set3_data(PFACET_NONE,
                                PEDGE_NONE,
@@ -557,7 +557,7 @@ void init_shape_colour_norm_per_vertex(void)
 
    /* Back */
    vlist[0].num_lists = 1;
-   vlist[0].lists = set_vertices(0, 1, 2, 3);
+   vlist[0].lists = set_vertices(3, 2, 1, 0);
 
    /* Front */
    vlist[1].num_lists = 1;
@@ -569,7 +569,7 @@ void init_shape_colour_norm_per_vertex(void)
 
    /* Top */
    vlist[3].num_lists = 1;
-   vlist[3].lists = set_vertices(3, 2, 6, 7);
+   vlist[3].lists = set_vertices(2, 3, 7, 6);
 
    /* Left */
    vlist[4].num_lists = 1;
@@ -577,7 +577,7 @@ void init_shape_colour_norm_per_vertex(void)
 
    /* Right */
    vlist[5].num_lists = 1;
-   vlist[5].lists = set_vertices(1, 5, 6, 2);
+   vlist[5].lists = set_vertices(5, 1, 2, 6);
 
    pset_of_fill_area_set3_data(PFACET_NONE,
                                PEDGE_NONE,

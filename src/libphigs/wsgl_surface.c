@@ -62,50 +62,49 @@ void wsgl_surface_colr_props(
    switch (refl_eqn) {
       case PREFL_AMBIENT:
          if (colr_type == PMODEL_RGB) {
-            glColorMaterial(GL_FRONT, GL_AMBIENT);
+            glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
             glColor3f(colr->direct.rgb.red   * refl_props->ambient_coef,
                       colr->direct.rgb.green * refl_props->ambient_coef,
                       colr->direct.rgb.blue  * refl_props->ambient_coef);
          }
 
-         glColorMaterial(GL_FRONT, GL_DIFFUSE);
+         glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
          glColor3f(0.0, 0.0, 0.0);
 
-         glColorMaterial(GL_FRONT, GL_SPECULAR);
+         glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
          glColor3f(0.0, 0.0, 0.0);
          break;
 
       case PREFL_AMB_DIFF:
          if (colr_type == PMODEL_RGB) {
-            glColorMaterial(GL_FRONT, GL_AMBIENT);
+            glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
             glColor3f(colr->direct.rgb.red   * refl_props->ambient_coef,
                       colr->direct.rgb.green * refl_props->ambient_coef,
                       colr->direct.rgb.blue  * refl_props->ambient_coef);
 
-            glColorMaterial(GL_FRONT, GL_DIFFUSE);
+            glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
             glColor3f(colr->direct.rgb.red   * refl_props->diffuse_coef,
                       colr->direct.rgb.green * refl_props->diffuse_coef,
                       colr->direct.rgb.blue  * refl_props->diffuse_coef);
          }
 
-         glColorMaterial(GL_FRONT, GL_SPECULAR);
+         glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
          glColor3f(0.0, 0.0, 0.0);
          break;
 
       case PREFL_AMB_DIFF_SPEC:
          if (colr_type == PMODEL_RGB) {
-
-            glColorMaterial(GL_FRONT, GL_AMBIENT);
+            glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
             glColor3f(colr->direct.rgb.red   * refl_props->ambient_coef,
                       colr->direct.rgb.green * refl_props->ambient_coef,
                       colr->direct.rgb.blue  * refl_props->ambient_coef);
 
-            glColorMaterial(GL_FRONT, GL_DIFFUSE);
+            glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
             glColor3f(colr->direct.rgb.red   * refl_props->diffuse_coef,
                       colr->direct.rgb.green * refl_props->diffuse_coef,
                       colr->direct.rgb.blue  * refl_props->diffuse_coef);
 
-            glColorMaterial(GL_FRONT, GL_SPECULAR);
+            glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
             glColor3f(colr->direct.rgb.red   * refl_props->specular_coef,
                       colr->direct.rgb.green * refl_props->specular_coef,
                       colr->direct.rgb.blue  * refl_props->specular_coef);

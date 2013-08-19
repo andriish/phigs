@@ -216,6 +216,9 @@ void wsgl_set_of_fill_area_set3_data(
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
+   glEnable(GL_CULL_FACE);
+   glCullFace(GL_BACK);
+   /* TODO: Shall be GL_FRONT when drawing with back face attributes */
    wsgl_setup_int_attr_nocol(ws, ast);
 
    if (wsgl->cur_struct.lighting) {
@@ -367,6 +370,7 @@ void wsgl_set_of_fill_area_set3_data(
       glDisable(GL_LIGHTING);
    }
 
+   glDisable(GL_CULL_FACE);
    glDisable(GL_POLYGON_OFFSET_LINE);
    glDisable(GL_POLYGON_OFFSET_FILL);
 }
