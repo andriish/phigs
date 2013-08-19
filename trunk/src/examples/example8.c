@@ -37,7 +37,7 @@
 #define INT_STYLE      PSTYLE_SOLID
 #define EDGE_FLAG      PEDGE_ON
 #define HLHSR_FLAG     PHIGS_HLHSR_ID_ON
-#define INIT_SHAPE     init_shape_colour_norm_per_facet
+#define INIT_SHAPE     init_shape_norm_per_facet
 
 Pint errnum;
 Pmatrix3 rot3, rotx, roty;

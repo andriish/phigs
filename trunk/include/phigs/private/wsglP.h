@@ -69,6 +69,7 @@ typedef struct {
    Pmatrix3   local_tran;
    Pmatrix3   global_tran;
    Pint       pick_id;
+   Pint       lighting;
    Nset       lightstat;
    uint32_t   lightstat_buf[1];
 } Ws_struct;
@@ -807,6 +808,19 @@ void wsgl_edge_area_set(
    );
 
 /*******************************************************************************
+ * wsgl_text
+ *
+ * DESCR:       Draw text
+ * RETURNS:     N/A
+ */
+
+void wsgl_text(
+   Ws *ws,
+   void *tdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * wsgl_edge_area_set3
  *
  * DESCR:       Draw fill area set edge 3D
@@ -898,19 +912,6 @@ void wsgl_set_of_edge_area_set3_data(
    );
 
 /*******************************************************************************
- * wsgl_text
- *
- * DESCR:       Draw text
- * RETURNS:     N/A
- */
-
-void wsgl_text(
-   Ws *ws,
-   void *tdata,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
  * wsgl_set_light_src_state
  *
  * DESCR:       Set light source state for workstation
@@ -920,6 +921,17 @@ void wsgl_text(
 void wsgl_set_light_src_state(
    Ws *ws,
    void *pdata
+   );
+
+/*******************************************************************************
+ * wsgl_update_light_src_state
+ *
+ * DESCR:       Update light source state for workstation
+ * RETURNS:     N/A
+ */
+
+void wsgl_update_light_src_state(
+   Ws *ws
    );
 
 /*******************************************************************************
@@ -937,6 +949,19 @@ void wsgl_light_colr(
    Pint colr_type,
    Pcoval *coval,
    Pvec3 *normal
+   );
+
+/*******************************************************************************
+ * wsgl_surface_colr_props
+ *
+ * DESCR:       Setup surface reflection and colour properties
+ * RETURNS:     N/A
+ */
+
+void wsgl_surface_colr_props(
+   Pint colr_model,
+   Pcoval *colr,
+   Ws_attr_st *ast
    );
 
 extern unsigned char *wsgl_hatch_tbl[];
