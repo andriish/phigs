@@ -225,6 +225,7 @@ void wsgl_set_of_fill_area_set3_data(
    switch (sofas3.vflag) {
       case PVERT_COORD:
          if (sofas3.fflag == PFACET_COLOUR_NORMAL) {
+            glEnable(GL_COLOR_MATERIAL);
             for (i = 0; i < sofas3.num_sets; i++) {
                wsgl_surface_colr_props(sofas3.colr_type,
                                        &sofas3.fdata.conorms[i].colr,
@@ -239,8 +240,10 @@ void wsgl_set_of_fill_area_set3_data(
                                          sofas3.vdata.vertex_data.points);
                }
             }
+            glDisable(GL_COLOR_MATERIAL);
          }
          else if (sofas3.fflag == PFACET_NORMAL) {
+            glEnable(GL_COLOR_MATERIAL);
             wsgl_colr_from_gcolr(&colr, wsgl_get_int_colr(ast));
             wsgl_surface_colr_props(sofas3.colr_type, &colr, ast);
             for (i = 0; i < sofas3.num_sets; i++) {
@@ -254,6 +257,7 @@ void wsgl_set_of_fill_area_set3_data(
                                          sofas3.vdata.vertex_data.points);
                }
             }
+            glDisable(GL_COLOR_MATERIAL);
          }
          else if (sofas3.fflag == PFACET_COLOUR) {
             for (i = 0; i < sofas3.num_sets; i++) {
@@ -281,6 +285,7 @@ void wsgl_set_of_fill_area_set3_data(
 
       case PVERT_COORD_COLOUR:
          if (sofas3.fflag == PFACET_NORMAL) {
+            glEnable(GL_COLOR_MATERIAL);
             for (i = 0; i < sofas3.num_sets; i++) {
                priv_facet_normal3(sofas3.fflag, &sofas3.fdata, i);
                num_lists = sofas3_num_vlists(&sofas3);
@@ -292,6 +297,7 @@ void wsgl_set_of_fill_area_set3_data(
                                           ast);
                }
             }
+            glDisable(GL_COLOR_MATERIAL);
          }
          else {
             for (i = 0; i < sofas3.num_sets; i++) {
@@ -308,6 +314,7 @@ void wsgl_set_of_fill_area_set3_data(
 
       case PVERT_COORD_NORMAL:
          if (sofas3.fflag == PFACET_COLOUR) {
+            glEnable(GL_COLOR_MATERIAL);
             for (i = 0; i < sofas3.num_sets; i++) {
                wsgl_surface_colr_props(sofas3.colr_type,
                                        &sofas3.fdata.colrs[i],
@@ -319,8 +326,10 @@ void wsgl_set_of_fill_area_set3_data(
                                           sofas3.vdata.vertex_data.ptnorms);
                }
             }
+            glDisable(GL_COLOR_MATERIAL);
          }
          else {
+            glEnable(GL_COLOR_MATERIAL);
             wsgl_colr_from_gcolr(&colr, wsgl_get_int_colr(ast));
             wsgl_surface_colr_props(sofas3.colr_type, &colr, ast);
             for (i = 0; i < sofas3.num_sets; i++) {
@@ -331,10 +340,12 @@ void wsgl_set_of_fill_area_set3_data(
                                           sofas3.vdata.vertex_data.ptnorms);
                }
             }
+            glDisable(GL_COLOR_MATERIAL);
          }
          break;
 
       case PVERT_COORD_COLOUR_NORMAL:
+         glEnable(GL_COLOR_MATERIAL);
          for (i = 0; i < sofas3.num_sets; i++) {
             num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
@@ -345,6 +356,7 @@ void wsgl_set_of_fill_area_set3_data(
                                          ast);
             }
          }
+         glDisable(GL_COLOR_MATERIAL);
          break;
 
       default:

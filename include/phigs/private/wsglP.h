@@ -955,11 +955,12 @@ void wsgl_light_colr(
  * wsgl_surface_colr_props
  *
  * DESCR:       Setup surface reflection and colour properties
+ * NOTES:       Make sure to enable GL_COLOR_MATERIAL before use
  * RETURNS:     N/A
  */
 
 void wsgl_surface_colr_props(
-   Pint colr_model,
+   Pint colr_type,
    Pcoval *colr,
    Ws_attr_st *ast
    );
