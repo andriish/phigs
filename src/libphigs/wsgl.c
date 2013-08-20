@@ -849,9 +849,12 @@ void wsgl_render_element(
                }
             }
             if (style != PSTYLE_EMPTY) {
-               wsgl_set_of_fill_area_set3_data(ws,
-                                               ELMT_CONTENT(el),
-                                               &wsgl->cur_struct.ast);
+               wsgl_set_of_fill_area_set3_data_back(ws,
+                                                    ELMT_CONTENT(el),
+                                                    &wsgl->cur_struct.ast);
+               wsgl_set_of_fill_area_set3_data_front(ws,
+                                                     ELMT_CONTENT(el),
+                                                     &wsgl->cur_struct.ast);
             }
             if (wsgl_get_edge_flag(&wsgl->cur_struct.ast) == PEDGE_ON) {
                wsgl_set_of_edge_area_set3_data(ws,

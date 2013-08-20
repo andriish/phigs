@@ -438,6 +438,40 @@ Pint_style wsgl_get_int_style(
 }
 
 /*******************************************************************************
+ * wsgl_setup_int_style
+ *
+ * DESCR:	Setup interior style
+ * RETURNS:	N/A
+ */
+
+void wsgl_setup_int_style(
+   Pint_style style
+   )
+{
+   switch (style) {
+      case PSTYLE_HOLLOW:
+         glDisable(GL_POLYGON_STIPPLE);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+         break;
+
+      case PSTYLE_SOLID:
+         glDisable(GL_POLYGON_STIPPLE);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+         break;
+
+      case PSTYLE_HATCH:
+         glEnable(GL_POLYGON_STIPPLE);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+         break;
+
+      default:
+         glDisable(GL_POLYGON_STIPPLE);
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+         break;
+   }
+}
+
+/*******************************************************************************
  * wsgl_setup_int_attr_nocol
  *
  * DESCR:	Setup interior attributes without color
@@ -457,27 +491,7 @@ void wsgl_setup_int_attr_nocol(
 
    style = wsgl_get_int_style(ast);
    if (style != wsgl->dev_st.int_style) {
-      switch (style) {
-         case PSTYLE_HOLLOW:
-            glDisable(GL_POLYGON_STIPPLE);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            break;
-
-         case PSTYLE_SOLID:
-            glDisable(GL_POLYGON_STIPPLE);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            break;
-
-         case PSTYLE_HATCH:
-            glEnable(GL_POLYGON_STIPPLE);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            break;
-
-         default:
-            glDisable(GL_POLYGON_STIPPLE);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            break;
-      }
+      wsgl_setup_int_style(style);
       wsgl->dev_st.int_style = style;
    }
 
@@ -526,52 +540,6 @@ void wsgl_setup_int_attr(
 {
    wsgl_set_gcolr(wsgl_get_int_colr(ast));
    wsgl_setup_int_attr_nocol(ws, ast);
-}
-
-/*******************************************************************************
- * wsgl_get_refl_eqn
- *
- * DESCR:	Get interiour reflection equation
- * RETURNS:	N/A
- */
-
-Pint wsgl_get_refl_eqn(
-   Ws_attr_st *ast
-   )
-{
-   Pint refl_eqn;
-
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_REFL_EQN)) {
-      refl_eqn = ast->indiv_group.int_bundle.refl_eqn;
-   }
-   else {
-      refl_eqn = ast->bundl_group.int_bundle.refl_eqn;
-   }
-
-   return refl_eqn;
-}
-
-/*******************************************************************************
- * wsgl_get_refl_props
- *
- * DESCR:	Get surface reflectance properties
- * RETURNS:	Pointer to surface reflectance properties
- */
-
-Prefl_props* wsgl_get_refl_props(
-   Ws_attr_st *ast
-   )
-{
-   Prefl_props *refl_props;
-
-   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_REFL_PROPS)) {
-      refl_props = &ast->indiv_group.int_bundle.refl_props;
-   }
-   else {
-      refl_props = &ast->bundl_group.int_bundle.refl_props;
-   }
-
-   return refl_props;
 }
 
 /*******************************************************************************

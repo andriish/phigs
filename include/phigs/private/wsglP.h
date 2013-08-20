@@ -438,6 +438,17 @@ Pint_style wsgl_get_int_style(
    );
 
 /*******************************************************************************
+ * wsgl_setup_int_style
+ *
+ * DESCR:       Setup interior style
+ * RETURNS:     N/A
+ */
+
+void wsgl_setup_int_style(
+   Pint_style style
+   );
+
+/*******************************************************************************
  * wsgl_setup_int_attr_nocol
  *
  * DESCR:       Setup interior attributes without color 
@@ -462,24 +473,51 @@ void wsgl_setup_int_attr(
    );
 
 /*******************************************************************************
- * wsgl_get_refl_eqn
- *
- * DESCR:       Get interiour reflection equation
- * RETURNS:     N/A
+ * wsgl_get_back_int_colr
+ * 
+ * DESCR:       Get backface interior colur
+ * RETURNS:     Pointer to interiour colour
  */
-
-Pint wsgl_get_refl_eqn(
+ 
+Pgcolr* wsgl_get_back_int_colr(
    Ws_attr_st *ast
    );
 
 /*******************************************************************************
- * wsgl_get_refl_props
+ * wsgl_setup_back_int_attr_nocol
  *
- * DESCR:       Get surface reflectance properties
- * RETURNS:     Pointer to surface reflectance properties
+ * DESCR:       Setup backface interior attributes without color
+ * RETURNS:     N/A
  */
 
-Prefl_props* wsgl_get_refl_props(
+void wsgl_setup_back_int_attr_nocol(
+   Ws *ws,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_setup_int_refl_props
+ *
+ * DESCR:       Setup surface reflection and colour properties
+ * RETURNS:     N/A
+ */
+
+void wsgl_setup_int_refl_props(
+   Pint colr_type,
+   Pcoval *colr,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_setup_back_int_refl_props
+ *
+ * DESCR:       Setup backface surface reflection and colour properties
+ * RETURNS:     N/A
+ */
+
+void wsgl_setup_back_int_refl_props(
+   Pint colr_type,
+   Pcoval *colr,
    Ws_attr_st *ast
    );
 
@@ -886,13 +924,26 @@ void wsgl_set_of_clear_area_set3_data(
    );
 
 /*******************************************************************************
- * wsgl_set_of_fill_area_set3_data
+ * wsgl_set_of_fill_area_set3_data_front
  *
- * DESCR:       Draw set of fill area set with data 3D
+ * DESCR:       Draw set of fill area set with data 3D front faces
  * RETURNS:     N/A
  */
 
-void wsgl_set_of_fill_area_set3_data(
+void wsgl_set_of_fill_area_set3_data_front(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_set_of_fill_area_set3_data_back
+ *
+ * DESCR:       Draw set of fill area set with data 3D back faces
+ * RETURNS:     N/A
+ */
+
+void wsgl_set_of_fill_area_set3_data_back(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
@@ -949,20 +1000,6 @@ void wsgl_light_colr(
    Pint colr_type,
    Pcoval *coval,
    Pvec3 *normal
-   );
-
-/*******************************************************************************
- * wsgl_surface_colr_props
- *
- * DESCR:       Setup surface reflection and colour properties
- * NOTES:       Make sure to enable GL_COLOR_MATERIAL before use
- * RETURNS:     N/A
- */
-
-void wsgl_surface_colr_props(
-   Pint colr_type,
-   Pcoval *colr,
-   Ws_attr_st *ast
    );
 
 extern unsigned char *wsgl_hatch_tbl[];

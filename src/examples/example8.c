@@ -38,6 +38,7 @@
 #define EDGE_FLAG      PEDGE_ON
 #define HLHSR_FLAG     PHIGS_HLHSR_ID_ON
 #define INIT_SHAPE     init_shape_norm_per_facet
+#define SHOW_FACES     5
 
 Pint errnum;
 Pmatrix3 rot3, rotx, roty;
@@ -216,7 +217,7 @@ void init_shape_norm_per_facet(void)
                                PEDGE_NONE,
                                PVERT_COORD,
                                PMODEL_RGB,
-                               6,
+                               SHOW_FACES,
                                &fdata,
                                NULL,
                                vlist,
@@ -345,7 +346,7 @@ void init_shape_colour_norm_per_facet(void)
                                PEDGE_NONE,
                                PVERT_COORD_COLOUR,
                                PMODEL_RGB,
-                               6,
+                               SHOW_FACES,
                                &fdata,
                                NULL,
                                vlist,
@@ -452,7 +453,7 @@ void init_shape_norm_per_vertex(void)
                                PEDGE_NONE,
                                PVERT_COORD_NORMAL,
                                PMODEL_RGB,
-                               6,
+                               SHOW_FACES,
                                NULL,
                                NULL,
                                vlist,
@@ -583,7 +584,7 @@ void init_shape_colour_norm_per_vertex(void)
                                PEDGE_NONE,
                                PVERT_COORD_COLOUR_NORMAL,
                                PMODEL_RGB,
-                               6,
+                               SHOW_FACES,
                                NULL,
                                NULL,
                                vlist,

@@ -327,7 +327,13 @@ typedef enum {
    PASPECT_EDGE_COLR_IND,
    PASPECT_INT_SHAD_METH,
    PASPECT_REFL_PROPS,
-   PASPECT_INT_REFL_EQN
+   PASPECT_INT_REFL_EQN,
+   PASPECT_BACK_INT_STYLE,
+   PASPECT_BACK_INT_STYLE_IND,
+   PASPECT_BACK_INT_COLR,
+   PASPECT_BACK_INT_SHAD_METH,
+   PASPECT_BACK_REFL_PROPS,
+   PASPECT_BACK_INT_REFL_EQN
 } Paspect;
 
 typedef enum {
@@ -570,6 +576,12 @@ typedef struct {
    Pint        refl_eqn;
    Pint        shad_meth;
    Prefl_props refl_props;
+   Pint_style  back_style;
+   Pint        back_style_ind;
+   Pgcolr      back_colr;
+   Pint        back_refl_eqn;
+   Pint        back_shad_meth;
+   Prefl_props back_refl_props;
 } Pint_bundle_plus;
 
 typedef struct {
