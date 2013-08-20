@@ -985,23 +985,6 @@ void wsgl_update_light_src_state(
    Ws *ws
    );
 
-/*******************************************************************************
- * wsgl_light_colr
- *
- * DESCR:       Perform lighting calculations and set colour for vertex
- * RETURNS:     N/A
- */
-
-void wsgl_light_colr(
-   Ws *ws,
-   Pcoval *result,
-   Pint refl_eqn,
-   Prefl_props *refl_props,
-   Pint colr_type,
-   Pcoval *coval,
-   Pvec3 *normal
-   );
-
 extern unsigned char *wsgl_hatch_tbl[];
 
 #endif /* _wsglP_h */

@@ -931,6 +931,32 @@ void pset_int_style(
 }
 
 /*******************************************************************************
+ * pset_back_int_style
+ *
+ * DESCR:	Creates a new element - Backface Interiour Style
+ * RETURNS:	N/A
+ */
+
+void pset_back_int_style(
+   Pint_style int_style
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_back_int_style);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_BACK_INT_STYLE;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint_style);
+      ARGS_ELMT_DATA(&args).int_style = int_style;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_int_style_ind
  *
  * DESCR:	Creates a new element - Face Interiour Pattern Index
@@ -953,6 +979,35 @@ void pset_int_style_ind(
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_INT_STYLE_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
+      ARGS_ELMT_DATA(&args).int_data = int_style_ind;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_back_int_style_ind
+ *
+ * DESCR:	Creates a new element - Backface Interiour Pattern Index
+ * RETURNS:	N/A
+ */
+
+void pset_back_int_style_ind(
+   Pint int_style_ind
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_back_int_style);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else if (int_style_ind < 1) {
+      ERR_REPORT(PHG_ERH, ERR112);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_BACK_INT_STYLE_IND;
       ARGS_ELMT_SIZE(&args) = sizeof(Pint);
       ARGS_ELMT_DATA(&args).int_data = int_style_ind;
       phg_add_el(PHG_CSS, &args);
@@ -1608,6 +1663,32 @@ void pset_int_colr(
 }
 
 /*******************************************************************************
+ * pset_back_int_colr
+ *
+ * DESCR:	Creates a new element - Backface Color Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_back_int_colr(
+   Pgcolr *colr
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_back_int_colr);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_BACK_INT_COLR;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pgcolr);
+      memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_line_colr
  *
  * DESCR:	Creates a new element - Line Color Attribute
@@ -1772,6 +1853,32 @@ void pset_int_shad_meth(
 }
 
 /*******************************************************************************
+ * pset_back_int_shad_meth
+ *
+ * DESCR:	Creates a new element - Set backface interiour shading method
+ * RETURNS:	N/A
+ */
+
+void pset_back_int_shad_meth(
+   Pint shad_meth
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_back_int_shad_meth);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_BACK_INT_SHAD_METH;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
+      ARGS_ELMT_DATA(&args).int_data = shad_meth;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_refl_eqn
  *
  * DESCR:	Creates a new element - Set surface reflectance equation
@@ -1798,6 +1905,32 @@ void pset_refl_eqn(
 }
 
 /*******************************************************************************
+ * pset_back_refl_eqn
+ *
+ * DESCR:	Creates a new element - Set backsurface reflectance equation
+ * RETURNS:	N/A
+ */
+
+void pset_back_refl_eqn(
+   Pint refl_equ
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_back_refl_eqn);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_BACK_INT_REFL_EQN;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
+      ARGS_ELMT_DATA(&args).int_data = refl_equ;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_refl_props
  *
  * DESCR:	Creates a new element - Set surface reflectance properties
@@ -1810,13 +1943,39 @@ void pset_refl_props(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_area_prop);
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_refl_props);
 
    if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
       ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
       ARGS_ELMT_TYPE(&args) = PELEM_REFL_PROPS;
+      ARGS_ELMT_SIZE(&args) = sizeof(Prefl_props);
+      memcpy(&ARGS_ELMT_DATA(&args).props, refl_props, sizeof(Prefl_props));
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_back_refl_props
+ *
+ * DESCR:	Creates a new element - Set backsurface reflectance properties
+ * RETURNS:	N/A
+ */
+
+void pset_back_refl_props(
+   Prefl_props *refl_props
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_back_refl_props);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_BACK_REFL_PROPS;
       ARGS_ELMT_SIZE(&args) = sizeof(Prefl_props);
       memcpy(&ARGS_ELMT_DATA(&args).props, refl_props, sizeof(Prefl_props));
       phg_add_el(PHG_CSS, &args);

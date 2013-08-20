@@ -107,7 +107,9 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_INT_IND] = hdl_int;
     fptr[(int)PELEM_INT_COLR_IND] = hdl_int;
     fptr[(int)PELEM_INT_STYLE] = hdl_int;
+    fptr[(int)PELEM_BACK_INT_STYLE] = hdl_int;
     fptr[(int)PELEM_INT_STYLE_IND] = hdl_int;
+    fptr[(int)PELEM_BACK_INT_STYLE_IND] = hdl_int;
     fptr[(int)PELEM_LINE_IND] = hdl_int;
     fptr[(int)PELEM_LINE_COLR_IND] = hdl_int;
     fptr[(int)PELEM_LINEWIDTH] = hdl_float;
@@ -142,14 +144,18 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_PICK_ID] = hdl_int;
     fptr[(int)PELEM_HLHSR_ID] = hdl_int;
     fptr[(int)PELEM_INT_COLR] = hdl_gcolr;
+    fptr[(int)PELEM_BACK_INT_COLR] = hdl_gcolr;
     fptr[(int)PELEM_LINE_COLR] = hdl_gcolr;
     fptr[(int)PELEM_MARKER_COLR] = hdl_gcolr;
     fptr[(int)PELEM_EDGE_COLR] = hdl_gcolr;
     fptr[(int)PELEM_TEXT_COLR] = hdl_gcolr;
     fptr[(int)PELEM_LIGHT_SRC_STATE] = hdl_lss;
     fptr[(int)PELEM_INT_SHAD_METH] = hdl_int;
+    fptr[(int)PELEM_BACK_INT_SHAD_METH] = hdl_int;
     fptr[(int)PELEM_INT_REFL_EQN] = hdl_int;
+    fptr[(int)PELEM_BACK_INT_REFL_EQN] = hdl_int;
     fptr[(int)PELEM_REFL_PROPS] = hdl_refl_props;
+    fptr[(int)PELEM_BACK_REFL_PROPS] = hdl_refl_props;
 
     if ( !(cssh->stab = phg_css_stab_init(CSS_STAB_SIZE)) ) {
 	free((char *)cssh);
