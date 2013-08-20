@@ -44,7 +44,7 @@ static void init_output_ws_dt(
    Pint ws_type
    )
 {
-   Pgcolr fg, bf;
+   Pgcolr fg;
 
    wsdt->ws_class             = PCLASS_RASTER;
    wsdt->deferral_mode        = PDEFER_ASAP;
@@ -74,12 +74,6 @@ static void init_output_ws_dt(
    fg.val.general.x = 1.0;
    fg.val.general.y = 1.0;
    fg.val.general.z = 1.0;
-
-   /* Set backface colour */
-   bf.type = PMODEL_RGB;
-   bf.val.general.x = 0.0;
-   bf.val.general.y = 1.0;
-   bf.val.general.z = 0.0;
 
    /* Setup default attribute bundles */
    wsdt->num_predefined_polyline_indices = WST_MIN_PREDEF_LINE_REPS;
@@ -119,16 +113,16 @@ static void init_output_ws_dt(
    memcpy(&wsdt->default_interior_bundle_table[0].refl_props.specular_colr,
           &fg,
           sizeof(Pgcolr));
-   wsdt->default_interior_bundle_table[0].back_style = PSTYLE_HATCH;
+   wsdt->default_interior_bundle_table[0].back_style = PSTYLE_SOLID;
    wsdt->default_interior_bundle_table[0].back_style_ind = 1;
    memcpy(&wsdt->default_interior_bundle_table[0].back_colr,
-          &bf,
+          &fg,
           sizeof(Pgcolr));
    wsdt->default_interior_bundle_table[0].back_refl_eqn = PREFL_AMBIENT;
    wsdt->default_interior_bundle_table[0].back_shad_meth = PSD_NONE;
-   wsdt->default_interior_bundle_table[0].back_refl_props.ambient_coef = 1.0;
-   wsdt->default_interior_bundle_table[0].back_refl_props.diffuse_coef = 1.0;
-   wsdt->default_interior_bundle_table[0].back_refl_props.specular_coef = 1.0;
+   wsdt->default_interior_bundle_table[0].back_refl_props.ambient_coef = 0.2;
+   wsdt->default_interior_bundle_table[0].back_refl_props.diffuse_coef = 0.0;
+   wsdt->default_interior_bundle_table[0].back_refl_props.specular_coef = 0.0;
    memcpy(&wsdt->default_interior_bundle_table[0].back_refl_props.specular_colr,
           &fg,
           sizeof(Pgcolr));

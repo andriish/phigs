@@ -111,7 +111,7 @@ typedef struct {
    int  posted;
 } Phg_args_change_struct;
 
-typedef struct {
+typedef struct _Phg_args_conn_info {
    unsigned long background;
    Colormap      colormap;
    GLXContext    glx_context;

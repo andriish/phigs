@@ -603,13 +603,29 @@ void wsgl_render_element(
                 sizeof(Pgcolr));
          break;
 
+      case PELEM_BACK_INT_COLR:
+         memcpy(&wsgl->cur_struct.ast.indiv_group.int_bundle.back_colr,
+                ELMT_CONTENT(el),
+                sizeof(Pgcolr));
+         break;
+
       case PELEM_INT_STYLE:
          wsgl->cur_struct.ast.indiv_group.int_bundle.style =
             (Pint_style) PHG_INT(el);
          break;
 
+      case PELEM_BACK_INT_STYLE:
+         wsgl->cur_struct.ast.indiv_group.int_bundle.back_style =
+            (Pint_style) PHG_INT(el);
+         break;
+
       case PELEM_INT_STYLE_IND:
          wsgl->cur_struct.ast.indiv_group.int_bundle.style_ind = PHG_INT(el);
+         break;
+
+      case PELEM_BACK_INT_STYLE_IND:
+         wsgl->cur_struct.ast.indiv_group.int_bundle.back_style_ind =
+            PHG_INT(el);
          break;
 
       case PELEM_EDGE_IND:
@@ -919,12 +935,28 @@ void wsgl_render_element(
          wsgl->cur_struct.ast.indiv_group.int_bundle.shad_meth = PHG_INT(el);
          break;
 
+      case PELEM_BACK_INT_SHAD_METH:
+         wsgl->cur_struct.ast.indiv_group.int_bundle.back_shad_meth =
+            PHG_INT(el);
+         break;
+
       case PELEM_INT_REFL_EQN:
          wsgl->cur_struct.ast.indiv_group.int_bundle.refl_eqn = PHG_INT(el);
          break;
 
+      case PELEM_BACK_INT_REFL_EQN:
+         wsgl->cur_struct.ast.indiv_group.int_bundle.back_refl_eqn =
+            PHG_INT(el);
+         break;
+
       case PELEM_REFL_PROPS:
          memcpy(&wsgl->cur_struct.ast.indiv_group.int_bundle.refl_props,
+                ELMT_CONTENT(el),
+                sizeof(Prefl_props));
+         break;
+
+      case PELEM_BACK_REFL_PROPS:
+         memcpy(&wsgl->cur_struct.ast.indiv_group.int_bundle.back_refl_props,
                 ELMT_CONTENT(el),
                 sizeof(Prefl_props));
          break;

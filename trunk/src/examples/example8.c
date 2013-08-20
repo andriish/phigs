@@ -37,6 +37,12 @@
 #define INT_STYLE      PSTYLE_SOLID
 #define EDGE_FLAG      PEDGE_ON
 #define HLHSR_FLAG     PHIGS_HLHSR_ID_ON
+#define BACK_INT_STYLE PSTYLE_HATCH
+#define BACK_STYLE_IND 6
+#define SHAD_METH      PSD_COLOUR
+#define BACK_SHAD_METH PSD_NONE
+#define REFL_EQN       PREFL_AMB_DIFF
+#define BACK_REFL_EQN  PREFL_AMBIENT
 #define INIT_SHAPE     init_shape_norm_per_facet
 #define SHOW_FACES     5
 
@@ -45,12 +51,15 @@ Pmatrix3 rot3, rotx, roty;
 Pint view_ind = 5;
 Pfloat angle_x = 0.0;
 Pfloat angle_y = 0.0;
+Pgcolr int_colr;
+Pgcolr back_int_colr;
 Pgcolr edge_colr;
 Pint lights_on[] = {1, 2};
 Pint light_off[] = {0};
 Pint_list lights_on_list = {2, lights_on};
 Pint_list lights_off_list = {0, light_off};
 Prefl_props refl_props;
+Prefl_props back_refl_props;
 
 void struct_content(Pint struct_id, Pint elmt_num)
 {
@@ -93,14 +102,14 @@ void setup_light(Pint ws_id)
    Plight_src_bundle light;
 
    light.type = PLIGHT_AMBIENT;
-   light.rec.ambient.colr.val.general.x= 1.0;
-   light.rec.ambient.colr.val.general.y = 0.0;
-   light.rec.ambient.colr.val.general.z = 0.0;
+   light.rec.ambient.colr.val.general.x = 0.2;
+   light.rec.ambient.colr.val.general.y = 0.2;
+   light.rec.ambient.colr.val.general.z = 0.2;
 
    pset_light_src_rep(ws_id, 1, &light);
 
    light.type = PLIGHT_DIRECTIONAL;
-   light.rec.directional.colr.val.general.x = 0.0;
+   light.rec.directional.colr.val.general.x = 1.0;
    light.rec.directional.colr.val.general.y = 1.0;
    light.rec.directional.colr.val.general.z = 1.0;
    light.rec.directional.dir.delta_x = 1/sqrt(3.0);
@@ -613,8 +622,21 @@ int main(int argc, char *argv[])
    edge_colr.val.general.y = 1.0;
    edge_colr.val.general.z = 1.0;
 
+   int_colr.type = PMODEL_RGB;
+   int_colr.val.general.x = 0.0;
+   int_colr.val.general.y = 1.0;
+   int_colr.val.general.z = 1.0;
+
+   back_int_colr.type = PMODEL_RGB;
+   back_int_colr.val.general.x = 0.0;
+   back_int_colr.val.general.y = 1.0;
+   back_int_colr.val.general.z = 0.0;
+
    refl_props.ambient_coef = 0.25;
    refl_props.diffuse_coef = 1.0;
+
+   back_refl_props.ambient_coef = 0.2;
+   back_refl_props.diffuse_coef = 0.0;
 
    popen_phigs(NULL, 0);
    phg_mat_identity(rot3);
@@ -624,11 +646,18 @@ int main(int argc, char *argv[])
    pset_view_ind(view_ind);
    pset_edge_flag(EDGE_FLAG);
    pset_edge_colr(&edge_colr);
+   pset_int_colr(&int_colr);
+   pset_back_int_colr(&back_int_colr);
    pset_int_style(INT_STYLE);
+   pset_back_int_style(BACK_INT_STYLE);
+   pset_back_int_style_ind(BACK_STYLE_IND);
    pset_light_src_state(&lights_on_list, &lights_off_list);
-   pset_int_shad_meth(PSD_COLOUR);
-   pset_refl_eqn(PREFL_AMB_DIFF);
+   pset_int_shad_meth(SHAD_METH);
+   pset_back_int_shad_meth(BACK_SHAD_METH);
+   pset_refl_eqn(REFL_EQN);
+   pset_back_refl_eqn(BACK_REFL_EQN);
    pset_refl_props(&refl_props);
+   pset_back_refl_props(&back_refl_props);
    plabel(LABEL_TRANS);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    INIT_SHAPE();

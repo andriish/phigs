@@ -193,7 +193,9 @@ void css_print_eltype(Pelem_type eltype)
         case PELEM_TEXT_COLR_IND: name = "PELEM_TEXT_COLR_IND"; break;
         case PELEM_INT_IND: name = "PELEM_INT_IND"; break;
         case PELEM_INT_STYLE: name = "PELEM_INT_STYLE"; break;
+        case PELEM_BACK_INT_STYLE: name = "PELEM_BACK_INT_STYLE"; break;
         case PELEM_INT_STYLE_IND: name = "PELEM_INT_STYLE_IND"; break;
+        case PELEM_BACK_INT_STYLE_IND: name = "PELEM_BACK_INT_STYLE_IND"; break;
         case PELEM_INT_COLR_IND: name = "PELEM_INT_COLR_IND"; break;
         case PELEM_EDGE_IND: name = "PELEM_EDGE_IND"; break;
         case PELEM_EDGE_FLAG: name = "PELEM_EDGE_FLAG"; break;
@@ -213,14 +215,18 @@ void css_print_eltype(Pelem_type eltype)
         case PELEM_PICK_ID: name = "PELEM_PICK_ID"; break;
         case PELEM_HLHSR_ID: name = "PELEM_HLHSR_ID"; break;
         case PELEM_INT_COLR: name = "PELEM_INT_COLR"; break;
+        case PELEM_BACK_INT_COLR: name = "PELEM_BACK_INT_COLR"; break;
         case PELEM_LINE_COLR: name = "PELEM_LINE_COLR"; break;
         case PELEM_MARKER_COLR: name = "PELEM_MARKER_COLR"; break;
         case PELEM_EDGE_COLR: name = "PELEM_EDGE_COLR"; break;
         case PELEM_TEXT_COLR: name = "PELEM_TEXT_COLR"; break;
         case PELEM_LIGHT_SRC_STATE: name = "PELEM_LIGHT_SRC_STATE"; break;
         case PELEM_INT_SHAD_METH: name = "PELEM_INT_SHAD_METH"; break;
+        case PELEM_BACK_INT_SHAD_METH: name = "PELEM_BACK_INT_SHAD_METH"; break;
         case PELEM_INT_REFL_EQN: name = "PELEM_INT_REFL_EQN"; break;
+        case PELEM_BACK_INT_REFL_EQN: name = "PELEM_BACK_INT_REFL_EQN"; break;
         case PELEM_REFL_PROPS: name = "PELEM_REFL_PROP"; break;
+        case PELEM_BACK_REFL_PROPS: name = "PELEM_BACK_REFL_PROP"; break;
 
       default:
 	fprintf(stderr, "UNKNOWN TYPE: %d", eltype);

@@ -291,3 +291,212 @@ void wsgl_setup_back_int_refl_props(
    }
 }
 #endif
+
+/*******************************************************************************
+ * wsgl_setup_int_refl_props
+ * 
+ * DESCR:       Setup surface reflection and colour properties
+ * RETURNS:     N/A
+ */
+
+void wsgl_setup_int_refl_props(
+   Pint colr_model,
+   Pcoval *colr,
+   Ws_attr_st *ast
+   )
+{
+   Pint refl_eqn;
+   Prefl_props *refl_props;
+   GLfloat ambient[4];
+   GLfloat diffuse[4];
+   GLfloat specular[4];
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_INT_REFL_EQN)) {
+      refl_eqn = ast->indiv_group.int_bundle.refl_eqn;
+   }
+   else {
+      refl_eqn = ast->bundl_group.int_bundle.refl_eqn;
+   }
+
+   if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_REFL_PROPS)) {
+      refl_props = &ast->indiv_group.int_bundle.refl_props;
+   }
+   else {
+      refl_props = &ast->bundl_group.int_bundle.refl_props;
+   }
+
+   switch (refl_eqn) {
+      case PREFL_AMBIENT:
+         if (colr_model == PMODEL_RGB) {
+            ambient[0] = colr->direct.rgb.red   * refl_props->ambient_coef;
+            ambient[1] = colr->direct.rgb.green * refl_props->ambient_coef;
+            ambient[2] = colr->direct.rgb.blue  * refl_props->ambient_coef;
+            ambient[3] = 1.0;
+
+            diffuse[0] = 0.0;
+            diffuse[1] = 0.0;
+            diffuse[2] = 0.0;
+            diffuse[3] = 1.0;
+
+            specular[0] = 0.0;
+            specular[1] = 0.0;
+            specular[2] = 0.0;
+            specular[3] = 1.0;
+         }
+         break;
+
+      case PREFL_AMB_DIFF:
+         if (colr_model == PMODEL_RGB) {
+            ambient[0] = colr->direct.rgb.red   * refl_props->ambient_coef;
+            ambient[1] = colr->direct.rgb.green * refl_props->ambient_coef;
+            ambient[2] = colr->direct.rgb.blue  * refl_props->ambient_coef;
+            ambient[3] = 1.0;
+
+            diffuse[0] = colr->direct.rgb.red   * refl_props->diffuse_coef;
+            diffuse[1] = colr->direct.rgb.green * refl_props->diffuse_coef;
+            diffuse[2] = colr->direct.rgb.blue  * refl_props->diffuse_coef;
+            diffuse[3] = 1.0;
+
+            specular[0] = 0.0;
+            specular[1] = 0.0;
+            specular[2] = 0.0;
+            specular[3] = 1.0;
+         }
+         break;
+
+      case PREFL_AMB_DIFF_SPEC:
+         if (colr_model == PMODEL_RGB) {
+            ambient[0] = colr->direct.rgb.red   * refl_props->ambient_coef;
+            ambient[1] = colr->direct.rgb.green * refl_props->ambient_coef;
+            ambient[2] = colr->direct.rgb.blue  * refl_props->ambient_coef;
+            ambient[3] = 1.0;
+
+            diffuse[0] = colr->direct.rgb.red   * refl_props->diffuse_coef;
+            diffuse[1] = colr->direct.rgb.green * refl_props->diffuse_coef;
+            diffuse[2] = colr->direct.rgb.blue  * refl_props->diffuse_coef;
+            diffuse[3] = 1.0;
+
+            specular[0] = colr->direct.rgb.red   * refl_props->specular_coef;
+            specular[1] = colr->direct.rgb.green * refl_props->specular_coef;
+            specular[2] = colr->direct.rgb.blue  * refl_props->specular_coef;
+            specular[3] = 1.0;
+         }
+         break;
+
+      default:
+         memset(ambient, 0.0, sizeof(Pfloat) * 3);
+         memset(diffuse, 0.0, sizeof(Pfloat) * 3);
+         memset(specular, 0.0, sizeof(Pfloat) * 3);
+         break;
+   }
+
+   glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+   glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+   glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+}
+
+/*******************************************************************************
+ * wsgl_setup_back_int_refl_props
+ * 
+ * DESCR:       Setup back surface reflection and colour properties
+ * RETURNS:     N/A
+ */
+
+void wsgl_setup_back_int_refl_props(
+   Pint colr_model,
+   Pcoval *colr,
+   Ws_attr_st *ast
+   )
+{
+   Pint refl_eqn;
+   Prefl_props *refl_props;
+   GLfloat ambient[4];
+   GLfloat diffuse[4];
+   GLfloat specular[4];
+
+   if (phg_nset_name_is_set(&ast->asf_nameset,
+                            (Pint) PASPECT_BACK_INT_REFL_EQN)) {
+      refl_eqn = ast->indiv_group.int_bundle.back_refl_eqn;
+   }
+   else {
+      refl_eqn = ast->bundl_group.int_bundle.back_refl_eqn;
+   }
+
+   if (phg_nset_name_is_set(&ast->asf_nameset,
+                            (Pint) PASPECT_BACK_REFL_PROPS)) {
+      refl_props = &ast->indiv_group.int_bundle.back_refl_props;
+   }
+   else {
+      refl_props = &ast->bundl_group.int_bundle.back_refl_props;
+   }
+
+   switch (refl_eqn) {
+      case PREFL_AMBIENT:
+         if (colr_model == PMODEL_RGB) {
+            ambient[0] = colr->direct.rgb.red   * refl_props->ambient_coef;
+            ambient[1] = colr->direct.rgb.green * refl_props->ambient_coef;
+            ambient[2] = colr->direct.rgb.blue  * refl_props->ambient_coef;
+            ambient[3] = 1.0;
+
+            diffuse[0] = 0.0;
+            diffuse[1] = 0.0;
+            diffuse[2] = 0.0;
+            diffuse[3] = 1.0;
+
+            specular[0] = 0.0;
+            specular[1] = 0.0;
+            specular[2] = 0.0;
+            specular[3] = 1.0;
+         }
+         break;
+
+      case PREFL_AMB_DIFF:
+         if (colr_model == PMODEL_RGB) {
+            ambient[0] = colr->direct.rgb.red   * refl_props->ambient_coef;
+            ambient[1] = colr->direct.rgb.green * refl_props->ambient_coef;
+            ambient[2] = colr->direct.rgb.blue  * refl_props->ambient_coef;
+            ambient[3] = 1.0;
+
+            diffuse[0] = colr->direct.rgb.red   * refl_props->diffuse_coef;
+            diffuse[1] = colr->direct.rgb.green * refl_props->diffuse_coef;
+            diffuse[2] = colr->direct.rgb.blue  * refl_props->diffuse_coef;
+            diffuse[3] = 1.0;
+
+            specular[0] = 0.0;
+            specular[1] = 0.0;
+            specular[2] = 0.0;
+            specular[3] = 1.0;
+         }
+         break;
+
+      case PREFL_AMB_DIFF_SPEC:
+         if (colr_model == PMODEL_RGB) {
+            ambient[0] = colr->direct.rgb.red   * refl_props->ambient_coef;
+            ambient[1] = colr->direct.rgb.green * refl_props->ambient_coef;
+            ambient[2] = colr->direct.rgb.blue  * refl_props->ambient_coef;
+            ambient[3] = 1.0;
+
+            diffuse[0] = colr->direct.rgb.red   * refl_props->diffuse_coef;
+            diffuse[1] = colr->direct.rgb.green * refl_props->diffuse_coef;
+            diffuse[2] = colr->direct.rgb.blue  * refl_props->diffuse_coef;
+            diffuse[3] = 1.0;
+
+            specular[0] = colr->direct.rgb.red   * refl_props->specular_coef;
+            specular[1] = colr->direct.rgb.green * refl_props->specular_coef;
+            specular[2] = colr->direct.rgb.blue  * refl_props->specular_coef;
+            specular[3] = 1.0;
+         }
+         break;
+
+      default:
+         memset(ambient, 0.0, sizeof(Pfloat) * 3);
+         memset(diffuse, 0.0, sizeof(Pfloat) * 3);
+         memset(specular, 0.0, sizeof(Pfloat) * 3);
+         break;
+   }
+
+   glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+   glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+   glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+}
+
