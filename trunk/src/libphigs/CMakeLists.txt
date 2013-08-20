@@ -13,7 +13,7 @@ ADD_LIBRARY(phigs
     ar.c ar_conv.c ar_ops.c
     wsgl.c wsgl_attr.c wsgl_hatch.c
     wsgl_clear.c wsgl_fill.c wsgl_edge.c wsgl_marker.c wsgl_line.c wsgl_text.c
-    wsgl_light.c wsgl_surface.c
+    wsgl_extattr.c wsgl_light.c wsgl_surface.c
     fasd3.c wsgl_fasd3clear.c wsgl_fasd3fill.c wsgl_fasd3edge.c
     sofas3.c wsgl_sofas3clear.c wsgl_sofas3fill.c wsgl_sofas3edge.c
     )

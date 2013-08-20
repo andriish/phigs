@@ -123,7 +123,7 @@ static void priv_fill_area3_ptcolrs(
 
    glBegin(GL_POLYGON);
    for (i = 0; i < num_vertices; i++) {
-      wsgl_surface_colr_props(colr_type, &ptcolrs[i].colr, ast);
+      wsgl_setup_int_refl_props(colr_type, &ptcolrs[i].colr, ast);
       glVertex3f(ptcolrs[i].point.x,
                  ptcolrs[i].point.y,
                  ptcolrs[i].point.z);
@@ -205,7 +205,7 @@ static void priv_fill_area3_ptconorms(
       glNormal3f(ptconorms[i].norm.delta_x,
                  ptconorms[i].norm.delta_y,
                  ptconorms[i].norm.delta_z);
-      wsgl_surface_colr_props(colr_type, &ptconorms[i].colr, ast);
+      wsgl_setup_int_refl_props(colr_type, &ptconorms[i].colr, ast);
       glVertex3f(ptconorms[i].point.x,
                  ptconorms[i].point.y,
                  ptconorms[i].point.z);
@@ -251,7 +251,7 @@ void wsgl_fill_area_set3_data(
       case PVERT_COORD:
          priv_facet_normal3(fasd3.fflag, &fasd3.fdata);
          priv_get_colr(&colr, fasd3.fflag, &fasd3.fdata, ast);
-         wsgl_surface_colr_props(fasd3.colr_type, &colr, ast);
+         wsgl_setup_int_refl_props(fasd3.colr_type, &colr, ast);
          for (i = 0; i < fasd3.nfa; i++) {
             priv_fill_area3_points(fasd3.vdata->num_vertices,
                                    fasd3.vdata->vertex_data.points);
@@ -297,7 +297,7 @@ void wsgl_fill_area_set3_data(
 
       case PVERT_COORD_NORMAL:
          priv_get_colr(&colr, fasd3.fflag, &fasd3.fdata, ast);
-         wsgl_surface_colr_props(fasd3.colr_type, &colr, ast);
+         wsgl_setup_int_refl_props(fasd3.colr_type, &colr, ast);
          for (i = 0; i < fasd3.nfa; i++) {
             priv_fill_area3_ptnorms(fasd3.vdata->num_vertices,
                                     fasd3.vdata->vertex_data.ptnorms);
