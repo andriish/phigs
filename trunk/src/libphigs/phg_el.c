@@ -1982,3 +1982,55 @@ void pset_back_refl_props(
    }
 }
 
+/*******************************************************************************
+ * pset_face_disting_mode
+ *
+ * DESCR:	Creates a new element - Set facet distinguish mode
+ * RETURNS:	N/A
+ */
+
+void pset_face_disting_mode(
+   Pdisting_mode disting_mode
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_face_disting_mode);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_FACE_DISTING_MODE;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pdisting_mode);
+      ARGS_ELMT_DATA(&args).disting_mode = disting_mode;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pset_face_cull_mode
+ *
+ * DESCR:	Creates a new element - Set face culling mode
+ * RETURNS:	N/A
+ */
+
+void pset_face_cull_mode(
+   Pcull_mode cull_mode
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_face_cull_mode);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_FACE_CULL_MODE;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pcull_mode);
+      ARGS_ELMT_DATA(&args).cull_mode = cull_mode;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+

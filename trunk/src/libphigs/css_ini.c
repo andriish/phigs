@@ -156,6 +156,8 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_BACK_INT_REFL_EQN] = hdl_int;
     fptr[(int)PELEM_REFL_PROPS] = hdl_refl_props;
     fptr[(int)PELEM_BACK_REFL_PROPS] = hdl_refl_props;
+    fptr[(int)PELEM_FACE_DISTING_MODE] = hdl_int;
+    fptr[(int)PELEM_FACE_CULL_MODE] = hdl_int;
 
     if ( !(cssh->stab = phg_css_stab_init(CSS_STAB_SIZE)) ) {
 	free((char *)cssh);

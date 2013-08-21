@@ -48,14 +48,16 @@ typedef enum {
 } Ws_render_mode;
 
 typedef struct {
-   Pattr_group  bundl_group;
-   Pattr_group  indiv_group;
-   Pfloat       char_ht;
-   Ptext_path   text_path;
-   Ptext_align  text_align;
-   Pvec         char_up_vec;
-   Nset         asf_nameset;
-   uint32_t     ast_buf[1];
+   Pattr_group   bundl_group;
+   Pattr_group   indiv_group;
+   Pfloat        char_ht;
+   Ptext_path    text_path;
+   Ptext_align   text_align;
+   Pvec          char_up_vec;
+   Pdisting_mode disting_mode;
+   Pcull_mode    cull_mode;
+   Nset          asf_nameset;
+   uint32_t      ast_buf[1];
 } Ws_attr_st;
 
 typedef struct {

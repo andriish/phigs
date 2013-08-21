@@ -320,6 +320,8 @@ static void init_rendering_state(
    wsgl->cur_struct.ast.text_path = PPATH_RIGHT;
    wsgl->cur_struct.ast.char_up_vec.delta_x = 0.0;
    wsgl->cur_struct.ast.char_up_vec.delta_y = 1.0;
+   wsgl->cur_struct.ast.disting_mode = PDISTING_YES;
+   wsgl->cur_struct.ast.cull_mode = PCULL_NONE;
    wsgl_set_edge_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
    wsgl_set_edge_ind(ws, &wsgl->cur_struct.ast.indiv_group, 0);
    wsgl_set_int_ind(ws, &wsgl->cur_struct.ast.bundl_group, 0);
@@ -865,12 +867,29 @@ void wsgl_render_element(
                }
             }
             if (style != PSTYLE_EMPTY) {
-               wsgl_set_of_fill_area_set3_data_back(ws,
-                                                    ELMT_CONTENT(el),
-                                                    &wsgl->cur_struct.ast);
-               wsgl_set_of_fill_area_set3_data_front(ws,
-                                                     ELMT_CONTENT(el),
-                                                     &wsgl->cur_struct.ast);
+               if (wsgl->cur_struct.ast.cull_mode != PCULL_BACKFACE) {
+                  if (wsgl->cur_struct.ast.disting_mode == PDISTING_YES) {
+                     glEnable(GL_CULL_FACE);
+                     wsgl_set_of_fill_area_set3_data_back(ws,
+                                                          ELMT_CONTENT(el),
+                                                          &wsgl->cur_struct.ast);
+                     glDisable(GL_CULL_FACE);
+                  }
+               }
+               if (wsgl->cur_struct.ast.cull_mode != PCULL_FRONTFACE) {
+                  if (wsgl->cur_struct.ast.disting_mode == PDISTING_YES) {
+                     glEnable(GL_CULL_FACE);
+                     wsgl_set_of_fill_area_set3_data_front(ws,
+                                                           ELMT_CONTENT(el),
+                                                           &wsgl->cur_struct.ast);
+                     glDisable(GL_CULL_FACE);
+                  }
+                  else {
+                     wsgl_set_of_fill_area_set3_data_front(ws,
+                                                           ELMT_CONTENT(el),
+                                                           &wsgl->cur_struct.ast);
+                  }
+               }
             }
             if (wsgl_get_edge_flag(&wsgl->cur_struct.ast) == PEDGE_ON) {
                wsgl_set_of_edge_area_set3_data(ws,
@@ -959,6 +978,14 @@ void wsgl_render_element(
          memcpy(&wsgl->cur_struct.ast.indiv_group.int_bundle.back_refl_props,
                 ELMT_CONTENT(el),
                 sizeof(Prefl_props));
+         break;
+
+      case PELEM_FACE_DISTING_MODE:
+         wsgl->cur_struct.ast.disting_mode = (Pdisting_mode) PHG_INT(el);
+         break;
+
+      case PELEM_FACE_CULL_MODE:
+         wsgl->cur_struct.ast.cull_mode = (Pcull_mode) PHG_INT(el);
          break;
 
       default:

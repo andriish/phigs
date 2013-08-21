@@ -208,6 +208,8 @@
 #define         Pfn_set_line_colr               (310)
 #define         Pfn_set_marker_colr             (312)
 #define         Pfn_set_text_colr               (313)
+#define         Pfn_set_face_disting_mode       (314)
+#define         Pfn_set_face_cull_mode          (315)
 #define         Pfn_set_int_colr                (316)
 #define         Pfn_set_int_shad_meth           (317)
 #define         Pfn_set_refl_props              (318)

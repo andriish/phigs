@@ -21,6 +21,10 @@
 #ifndef _phigs_h
 #define _phigs_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdlib.h>
 
 /* Max name length */
@@ -181,6 +185,8 @@ typedef enum {
    PELEM_BACK_INT_REFL_EQN,
    PELEM_REFL_PROPS,
    PELEM_BACK_REFL_PROPS,
+   PELEM_FACE_DISTING_MODE,
+   PELEM_FACE_CULL_MODE,
    PELEM_NUM_EL_TYPES
 } Pelem_type;
 
@@ -242,6 +248,17 @@ typedef enum {
    PTYPE_POSTCONCAT,
    PTYPE_REPLACE
 } Pcompose_type;
+
+typedef enum {
+   PDISTING_NO,
+   PDISTING_YES
+} Pdisting_mode;
+
+typedef enum {
+   PCULL_NONE,
+   PCULL_BACKFACE,
+   PCULL_FRONTFACE
+} Pcull_mode;
 
 typedef enum {
    PFLAG_COND,
@@ -856,6 +873,8 @@ typedef union {
    Pgcolr            colr;
    Plss              lss;
    Prefl_props       props;
+   Pdisting_mode     disting_mode;
+   Pcull_mode        cull_mode;
 } Pelem_data;
 
 typedef struct {
@@ -2260,6 +2279,28 @@ void pset_back_refl_props(
    );
 
 /*******************************************************************************
+ * pset_face_disting_mode
+ *
+ * DESCR:       Creates a new element - Set facet distinguish mode
+ * RETURNS:     N/A
+ */
+
+void pset_face_disting_mode(
+   Pdisting_mode disting_mode
+   );
+
+/*******************************************************************************
+ * pset_face_cull_mode
+ *
+ * DESCR:       Creates a new element - Set face culling mode
+ * RETURNS:     N/A
+ */
+
+void pset_face_cull_mode(
+   Pcull_mode cull_mode
+   );
+
+/*******************************************************************************
  * ptranslate3
  *
  * DESCR:       Generate 3D translation matrix
@@ -2839,6 +2880,10 @@ void pinq_disp_space_size3(
    Pint *err_ind,
    Pdisp_space_size3 *size
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _phigs_h */
 

@@ -37,14 +37,16 @@
 #define INT_STYLE      PSTYLE_SOLID
 #define EDGE_FLAG      PEDGE_ON
 #define HLHSR_FLAG     PHIGS_HLHSR_ID_ON
+#define INIT_SHAPE     init_shape_norm_per_facet
+#define SHOW_FACES     5
+#define CULL_MODE      PCULL_NONE
+#define DISTING_MODE   PDISTING_YES
 #define BACK_INT_STYLE PSTYLE_HATCH
 #define BACK_STYLE_IND 6
 #define SHAD_METH      PSD_COLOUR
 #define BACK_SHAD_METH PSD_NONE
 #define REFL_EQN       PREFL_AMB_DIFF
 #define BACK_REFL_EQN  PREFL_AMBIENT
-#define INIT_SHAPE     init_shape_norm_per_facet
-#define SHOW_FACES     5
 
 Pint errnum;
 Pmatrix3 rot3, rotx, roty;
@@ -646,6 +648,8 @@ int main(int argc, char *argv[])
    pset_view_ind(view_ind);
    pset_edge_flag(EDGE_FLAG);
    pset_edge_colr(&edge_colr);
+   pset_face_disting_mode(DISTING_MODE);
+   pset_face_cull_mode(CULL_MODE);
    pset_int_colr(&int_colr);
    pset_back_int_colr(&back_int_colr);
    pset_int_style(INT_STYLE);
