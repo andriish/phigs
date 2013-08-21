@@ -227,6 +227,8 @@ void css_print_eltype(Pelem_type eltype)
         case PELEM_BACK_INT_REFL_EQN: name = "PELEM_BACK_INT_REFL_EQN"; break;
         case PELEM_REFL_PROPS: name = "PELEM_REFL_PROP"; break;
         case PELEM_BACK_REFL_PROPS: name = "PELEM_BACK_REFL_PROP"; break;
+        case PELEM_FACE_DISTING_MODE: name = "PELEM_FACE_DISTING_MODE"; break;
+        case PELEM_FACE_CULL_MODE: name = "PELEM_FACE_CULL_MODE"; break;
 
       default:
 	fprintf(stderr, "UNKNOWN TYPE: %d", eltype);

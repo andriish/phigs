@@ -274,7 +274,6 @@ void wsgl_set_of_fill_area_set3_data_front(
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
-   glEnable(GL_CULL_FACE);
    glCullFace(GL_BACK);
    wsgl_setup_int_attr_nocol(ws, ast);
 
@@ -415,7 +414,6 @@ void wsgl_set_of_fill_area_set3_data_front(
       glDisable(GL_LIGHTING);
    }
 
-   glDisable(GL_CULL_FACE);
    glDisable(GL_POLYGON_OFFSET_LINE);
    glDisable(GL_POLYGON_OFFSET_FILL);
 }
@@ -446,7 +444,6 @@ void wsgl_set_of_fill_area_set3_data_back(
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
-   glEnable(GL_CULL_FACE);
    glCullFace(GL_FRONT);
    wsgl_setup_back_int_attr_nocol(ws, ast);
 
@@ -587,7 +584,6 @@ void wsgl_set_of_fill_area_set3_data_back(
       glDisable(GL_LIGHTING);
    }
 
-   glDisable(GL_CULL_FACE);
    glDisable(GL_POLYGON_OFFSET_LINE);
    glDisable(GL_POLYGON_OFFSET_FILL);
 }
