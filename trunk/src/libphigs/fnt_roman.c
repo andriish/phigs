@@ -2489,5 +2489,5 @@ static Phg_char chars[] = {
     { 2, char127, 0.2689, 0.5378 },
 };
 
-Phg_font phg_roman = { "Roman", 128, chars, 0.960356, -0.2689 };
+Phg_font fnt_roman = { "Roman", 128, chars, 0.960356, -0.2689 };
 

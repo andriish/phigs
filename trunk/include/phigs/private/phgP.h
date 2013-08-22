@@ -104,6 +104,18 @@
    )
 
 /*******************************************************************************
+ * phg_add_el
+ *
+ * DESCR:       Add an element and update workstations posted to
+ * RETURNS:     N/A
+ */
+
+void phg_add_el(
+   Css_handle cssh,
+   Phg_args_add_el *args
+   );
+
+/*******************************************************************************
  * phg_get_colr_ind
  *
  * DESCR:       Get colour from index
@@ -142,9 +154,6 @@ int phg_echo_limits_valid(
    Plimit3 *e_volume,
    Wst_phigs_dt *dt
    );
-
-extern Phg_font phg_mroman;
-extern Phg_font phg_roman;
 
 #endif
 

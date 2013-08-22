@@ -21,42 +21,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+#include <GL/gl.h>
 #include <phigs/phg.h>
-#include <phigs/ws.h>
 #include <phigs/private/phgP.h>
+#include <phigs/ws.h>
+#include <phigs/private/wsglP.h>
 
-/*******************************************************************************
- * phg_get_colr_ind
- *
- * DESCR:       Get colour from index
- * RETURNS:     N/A
- */
+extern Phg_font fnt_mroman;
+extern Phg_font fnt_roman;
 
-void phg_get_colr_ind(
-   Ws *ws,
-   Pgcolr *gcolr,
-   Pint ind
-   )
-{
-   Phg_ret ret;
-
-   gcolr->type = ws->current_colour_model;
-
-   if (ws->current_colour_model == PINDIRECT) {
-      gcolr->val.ind = ind;
-   }
-   else {
-      (*ws->inq_representation)(ws,
-                                ind,
-                                PINQ_REALIZED,
-                                PHG_ARGS_COREP,
-                                &ret);
-      if (ret.err == 0) {
-
-            gcolr->val.general.x = ret.data.rep.corep.rgb.red;
-            gcolr->val.general.y = ret.data.rep.corep.rgb.green;
-            gcolr->val.general.z = ret.data.rep.corep.rgb.blue;
-      }
-   }
-}
+Phg_font *fnt_fonts[] = {
+   &fnt_mroman,
+   &fnt_roman
+};
 
