@@ -38,6 +38,7 @@
 #define EDGE_FLAG      PEDGE_ON
 #define HLHSR_FLAG     PHIGS_HLHSR_ID_ON
 #define INIT_SHAPE     init_shape_norm_per_facet
+#define DISTING_MODE   PDISTING_NO
 
 Pint errnum;
 Pmatrix3 rot3, rotx, roty;
@@ -1183,6 +1184,7 @@ int main(int argc, char *argv[])
    pset_int_shad_meth(PSD_COLOUR);
    pset_refl_eqn(PREFL_AMB_DIFF);
    pset_refl_props(&refl_props);
+   pset_face_disting_mode(DISTING_MODE);
    plabel(LABEL_TRANS);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    INIT_SHAPE();
