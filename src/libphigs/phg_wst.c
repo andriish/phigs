@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <phigs/phg.h>
+#include <phigs/private/wsxP.h>
 
 /*******************************************************************************
  * phg_wst_create
@@ -156,46 +157,50 @@ Wst_phigs_dt* phg_wst_check_set_rep(
    return dt;
 }
 
+/*******************************************************************************
+ * phg_wst_add_ws_type
+ *
+ * DESCR:       Add workstation type
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wst_add_ws_type(
+   Pws_cat category,
+   int double_buffer
+   )
+{
+   int status;
+   Wst *wst;
+
+   wst = phg_wstx_create(PHG_ERH, category, double_buffer);
+   if (wst == NULL) {
+      status = FALSE;
+   }
+   else {
+      list_add(&PHG_WST_LIST, &wst->node);
+      status = TRUE;
+   }
+
+   return status;
+}
 
 /*******************************************************************************
- * pinq_disp_space_size3
+ * phg_wst_remove_ws_types
  *
- * DESCR:       Get display size 3D
+ * DESCR:       Remove workstation types
  * RETURNS:     N/A
  */
 
-void pinq_disp_space_size3(
-   Pint ws_type,
-   Pint *err_ind,
-   Pdisp_space_size3 *size
+void phg_wst_remove_ws_types(
+   void
    )
 {
    Wst *wst;
-   Wst_phigs_dt *dt;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
-
-   wst = phg_wst_find(&PHG_WST_LIST, ws_type);
-   if (wst == NULL) {
-      *err_ind = ERR52;
-   }
-   else {
-      dt = &wst->desc_tbl.phigs_dt;
-      if (dt->ws_category == PCAT_MI) {
-         *err_ind = ERR57;
-      }
-      else {
-         *err_ind = 0;
-         if (wst->bound_status != WST_BOUND) {
-            size->dc_units           = dt->dev_coord_units;
-            size->size_raster.size_x = dt->dev_addrs_units[0];
-            size->size_raster.size_y = dt->dev_addrs_units[1];
-            size->size_raster.size_z = dt->dev_addrs_units[2];
-            size->size_dc.size_x     = dt->dev_coords[0];
-            size->size_dc.size_y     = dt->dev_coords[1];
-            size->size_dc.size_z     = dt->dev_coords[2];
-         }
-      }
+   wst = (Wst *) list_get(&PHG_WST_LIST);
+   while (wst != NULL) {
+      phg_wst_destroy(wst);
+      wst = (Wst *) list_get(&PHG_WST_LIST);
    }
 }
 

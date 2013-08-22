@@ -28,38 +28,6 @@
 #include <phigs/css.h>
 #include <phigs/ws.h>
 
-static char default_window_name[] = "Open PHIGS Workstation";
-static char default_icon_name[]   = "Open PHIGS";
-
-/*******************************************************************************
- * phg_ws_open
- *
- * DESCR:	Helper function to get workstation information
- * RETURNS:	N/A
- */
-
-Psl_ws_info* phg_ws_open(
-   Pint ws_id,
-   Pint fn_id
-   )
-{
-   Psl_ws_info *wsinfo = NULL;
-
-   ERR_SET_CUR_FUNC(PHG_ERH, fn_id);
-
-   if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
-      ERR_REPORT(PHG_ERH, ERR3);
-   }
-   else {
-      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
-      if (wsinfo == NULL) {
-         ERR_REPORT(PHG_ERH, ERR54);
-      }
-   }
-
-   return wsinfo;
-}
-
 /*******************************************************************************
  * popen_ws
  *
@@ -111,8 +79,8 @@ void popen_ws(
          args.cssh = PHG_CSS;
          args.memory = 8192;
          args.input_q = PHG_INPUT_Q;
-         args.window_name = default_window_name;
-         args.icon_name = default_icon_name;
+         args.window_name = phg_default_window_name;
+         args.icon_name = phg_default_icon_name;
 
          /* Open workstation */
          PHG_WSID(ws_id) = phg_wsb_open_ws(&args, &ret);
@@ -330,44 +298,6 @@ void pset_ws_win3(
 }
 
 /*******************************************************************************
- * set_filter
- *
- * DESCR:	Set workstation filter helper function
- * RETURNS:	N/A
- */
-
-static void set_filter(
-   Pint ws_id,
-   Pint fn_id,
-   Phg_args_flt_type type,
-   Pfilter *filter
-   )
-{
-   Psl_ws_info *wsinfo;
-   Ws_handle wsh;
-
-   wsinfo = phg_ws_open(ws_id, fn_id);
-   if (wsinfo != NULL) {
-      switch (wsinfo->wstype->desc_tbl.phigs_dt.ws_category) {
-         case PCAT_OUTIN:
-         case PCAT_OUT:
-         case PCAT_MO:
-            wsh = PHG_WSID(ws_id);
-            (*wsh->set_filter)(wsh,
-                               type,
-                               1,
-                               &filter->incl_set,
-                               &filter->excl_set);
-            break;
-
-         default:
-            ERR_REPORT(PHG_ERH, ERR59);
-            break;
-      }
-   }
-}
-
-/*******************************************************************************
  * pset_invis_filter
  *
  * DESCR:	Set workstation invisibility filter
@@ -379,7 +309,7 @@ void pset_invis_filter(
    Pfilter *filter
    )
 {
-   set_filter(ws_id, Pfn_set_invis_filter, PHG_ARGS_FLT_INVIS, filter);
+   phg_set_ws_filter(ws_id, Pfn_set_invis_filter, PHG_ARGS_FLT_INVIS, filter);
 }
 
 /*******************************************************************************
