@@ -79,3 +79,45 @@ void pinq_open_struct(
    }
 }
 
+/*******************************************************************************
+ * pinq_disp_space_size3
+ *
+ * DESCR:       Get display size 3D
+ * RETURNS:     N/A
+ */
+
+void pinq_disp_space_size3(
+   Pint ws_type,
+   Pint *err_ind,
+   Pdisp_space_size3 *size
+   )
+{
+   Wst *wst;
+   Wst_phigs_dt *dt;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_INQUIRY);
+
+   wst = phg_wst_find(&PHG_WST_LIST, ws_type);
+   if (wst == NULL) {
+      *err_ind = ERR52;
+   }
+   else {
+      dt = &wst->desc_tbl.phigs_dt;
+      if (dt->ws_category == PCAT_MI) {
+         *err_ind = ERR57;
+      }
+      else {
+         *err_ind = 0;
+         if (wst->bound_status != WST_BOUND) {
+            size->dc_units           = dt->dev_coord_units;
+            size->size_raster.size_x = dt->dev_addrs_units[0];
+            size->size_raster.size_y = dt->dev_addrs_units[1];
+            size->size_raster.size_z = dt->dev_addrs_units[2];
+            size->size_dc.size_x     = dt->dev_coords[0];
+            size->size_dc.size_y     = dt->dev_coords[1];
+            size->size_dc.size_z     = dt->dev_coords[2];
+         }
+      }
+   }
+}
+

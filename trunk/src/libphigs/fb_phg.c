@@ -2,7 +2,7 @@
 *   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
 *
 *   This file is part of Open PHIGS
-*   Copyright (C) 2011 - 2012 Surplus Users Ham Society
+*   Copyright (C) 2011 - 2013 Surplus Users Ham Society
 *
 *   Open PHIGS is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU Lesser General Public License as published by
@@ -33,15 +33,15 @@
 #include <phigs/private/evtP.h>
 
 /*******************************************************************************
- * popen_phigs
+ * popph
  *
  * DESCR:       Open phigs
  * RETURNS:     N/A
  */
 
-void popen_phigs(
-   char *error_file,
-   size_t memory
+void popph_(
+   Pint *error_file,
+   Pint *memory
    )
 {
    phg = (Phg_handle) malloc(sizeof(Phg_struct));
@@ -50,7 +50,8 @@ void popen_phigs(
    }
    memset(phg, 0, sizeof(Phg_struct));
 
-   PHG_ERH = phg_erh_create(error_file);
+   /* TODO: What argument to send here */
+   PHG_ERH = phg_erh_create(NULL);
    if (PHG_ERH == NULL) {
       goto abort;
    }

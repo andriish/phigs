@@ -104,6 +104,19 @@
    )
 
 /*******************************************************************************
+ * phg_int_in_list
+ *
+ * DESCR:       Find out if integer values is stored in list
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_int_in_list(
+   Pint v,
+   Pint num,
+   Pint *list
+   );
+
+/*******************************************************************************
  * phg_add_el
  *
  * DESCR:       Add an element and update workstations posted to
@@ -129,16 +142,29 @@ void phg_get_colr_ind(
    );
 
 /*******************************************************************************
- * phg_int_in_list
+ * phg_ws_open
  *
- * DESCR:       Find out if integer values is stored in list
- * RETURNS:     TRUE or FALSE
+ * DESCR:       Helper function to get workstation information
+ * RETURNS:     N/A
  */
 
-int phg_int_in_list(
-   Pint v,
-   Pint num,
-   Pint *list
+Psl_ws_info* phg_ws_open(
+   Pint ws_id,
+   Pint fn_id
+   );
+
+/*******************************************************************************
+ * phg_set_ws_filter
+ *
+ * DESCR:       Set workstation filter
+ * RETURNS:     N/A
+ */
+
+void phg_set_ws_filter(
+   Pint ws_id,
+   Pint fn_id,
+   Phg_args_flt_type type,
+   Pfilter *filter
    );
 
 /*******************************************************************************
@@ -154,6 +180,9 @@ int phg_echo_limits_valid(
    Plimit3 *e_volume,
    Wst_phigs_dt *dt
    );
+
+extern char phg_default_window_name[];
+extern char phg_default_icon_name[];
 
 #endif
 

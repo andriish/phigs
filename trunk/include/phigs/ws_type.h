@@ -295,5 +295,28 @@ Wst_phigs_dt* phg_wst_check_set_rep(
    Pint colr_ind
    );
 
+/*******************************************************************************
+ * phg_wst_add_ws_type
+ *
+ * DESCR:       Add workstation type
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_wst_add_ws_type(
+   Pws_cat category,
+   int double_buffer
+   );
+
+/*******************************************************************************
+ * phg_wst_remove_ws_types
+ *
+ * DESCR:       Remove workstation types
+ * RETURNS:     N/A
+ */
+
+void phg_wst_remove_ws_types(
+   void
+   );
+
 #endif /* _ws_type_h */
 

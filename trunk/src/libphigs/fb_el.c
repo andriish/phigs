@@ -2,7 +2,7 @@
 *   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
 *
 *   This file is part of Open PHIGS
-*   Copyright (C) 2011 - 2012 Surplus Users Ham Society
+*   Copyright (C) 2011 - 2013 Surplus Users Ham Society
 *
 *   Open PHIGS is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU Lesser General Public License as published by
@@ -18,44 +18,53 @@
 *   along with Open PHIGS. If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <phigs/phg.h>
-#include <phigs/ws.h>
+#include <phigs/css.h>
 #include <phigs/private/phgP.h>
 
 /*******************************************************************************
- * phg_get_colr_ind
+ * ppl
  *
- * DESCR:       Get colour from index
- * RETURNS:     N/A
+ * DESCR:	Creates a new element - Polyline
+ * RETURNS:	N/A
  */
 
-void phg_get_colr_ind(
-   Ws *ws,
-   Pgcolr *gcolr,
-   Pint ind
+void ppl_(
+   Pint *n,
+   Pfloat *pxa,
+   Pfloat *pya
    )
 {
-   Phg_ret ret;
+   Pint i;
+   unsigned size;
+   Phg_args_add_el args;
 
-   gcolr->type = ws->current_colour_model;
+   Ppoint_list point_list;
 
-   if (ws->current_colour_model == PINDIRECT) {
-      gcolr->val.ind = ind;
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_polyline);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
-      (*ws->inq_representation)(ws,
-                                ind,
-                                PINQ_REALIZED,
-                                PHG_ARGS_COREP,
-                                &ret);
-      if (ret.err == 0) {
-
-            gcolr->val.general.x = ret.data.rep.corep.rgb.red;
-            gcolr->val.general.y = ret.data.rep.corep.rgb.green;
-            gcolr->val.general.z = ret.data.rep.corep.rgb.blue;
+      point_list.num_points = *n;
+      size = sizeof(Ppoint) * point_list.num_points;
+      if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size)) {
+         ERR_REPORT(PHG_ERH, ERR900);
+      }
+      else {
+         point_list.points = (Ppoint *) PHG_SCRATCH.buf;
+         for (i = 0; i < point_list.num_points; i++) {
+            point_list.points[i].x = pxa[i];
+            point_list.points[i].y = pya[i];
+         }
+         ARGS_ELMT_TYPE(&args) = PELEM_POLYLINE;
+         ARGS_ELMT_SIZE(&args) = sizeof(Pint) + size;
+         ARGS_ELMT_DATA(&args).point_list.num_points = point_list.num_points;
+         ARGS_ELMT_DATA(&args).point_list.points = point_list.points;
+         phg_add_el(PHG_CSS, &args);
       }
    }
 }
