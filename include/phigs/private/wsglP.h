@@ -1000,6 +1000,7 @@ void wsgl_update_light_src_state(
    Ws *ws
    );
 
+extern Phg_font *fnt_fonts[];
 extern unsigned char *wsgl_hatch_tbl[];
 
 #endif /* _wsglP_h */

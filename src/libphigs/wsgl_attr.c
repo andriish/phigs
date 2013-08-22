@@ -28,11 +28,6 @@
 #include <phigs/ws.h>
 #include <phigs/private/wsglP.h>
 
-static Phg_font *fonts[] = {
-   &phg_mroman,
-   &phg_roman
-};
-
 /*******************************************************************************
  * wsgl_set_matrix
  *
@@ -838,10 +833,10 @@ void wsgl_setup_text_attr(
    }
 
    if (font < 1) {
-      *fnt = fonts[1];
+      *fnt = fnt_fonts[1];
    }
    else {
-      *fnt = fonts[font - 1];
+      *fnt = fnt_fonts[font - 1];
    }
 
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_CHAR_EXPAN)) {
