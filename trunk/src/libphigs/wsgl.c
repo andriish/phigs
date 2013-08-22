@@ -844,9 +844,29 @@ void wsgl_render_element(
                }
             }
             if (style != PSTYLE_EMPTY) {
-               wsgl_fill_area_set3_data(ws,
-                                        ELMT_CONTENT(el),
-                                        &wsgl->cur_struct.ast);
+               if (wsgl->cur_struct.ast.cull_mode != PCULL_BACKFACE) {
+                  if (wsgl->cur_struct.ast.disting_mode == PDISTING_YES) {
+                     glEnable(GL_CULL_FACE);
+                     wsgl_fill_area_set3_data_back(ws,
+                                                   ELMT_CONTENT(el),
+                                                   &wsgl->cur_struct.ast);
+                     glDisable(GL_CULL_FACE);
+                  }
+               }
+               if (wsgl->cur_struct.ast.cull_mode != PCULL_FRONTFACE) {
+                  if (wsgl->cur_struct.ast.disting_mode == PDISTING_YES) {
+                     glEnable(GL_CULL_FACE);
+                     wsgl_fill_area_set3_data_front(ws,
+                                                    ELMT_CONTENT(el),
+                                                    &wsgl->cur_struct.ast);
+                     glDisable(GL_CULL_FACE);
+                  }
+                  else {
+                     wsgl_fill_area_set3_data_front(ws,
+                                                    ELMT_CONTENT(el),
+                                                    &wsgl->cur_struct.ast);
+                  }
+               }
             }
             if (wsgl_get_edge_flag(&wsgl->cur_struct.ast) == PEDGE_ON) {
                wsgl_edge_area_set3_data(ws,

@@ -887,13 +887,26 @@ void wsgl_clear_area_set3_data(
    );
 
 /*******************************************************************************
- * wsgl_fill_area_set3_data
+ * wsgl_fill_area_set3_data_front
  *
- * DESCR:       Draw fill area set with data 3D
+ * DESCR:       Draw fill area set with data 3D front faces
  * RETURNS:     N/A
  */
 
-void wsgl_fill_area_set3_data(
+void wsgl_fill_area_set3_data_front(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_fill_area_set3_data_back
+ *
+ * DESCR:       Draw fill area set with data 3D back faces
+ * RETURNS:     N/A
+ */
+
+void wsgl_fill_area_set3_data_back(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast
