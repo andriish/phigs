@@ -34,8 +34,8 @@
 #define INT_STYLE      PSTYLE_SOLID
 #define EDGE_FLAG      PEDGE_OFF
 #define HLHSR_FLAG     PHIGS_HLHSR_ID_ON
-#define INIT_SHAPE     init_shape_norm_per_vertex
-#define CULL_MODE      PCULL_NONE
+#define INIT_SHAPE     init_shape_single
+#define CULL_MODE      PCULL_BACKFACE
 #define DISTING_MODE   PDISTING_YES
 #define BACK_INT_STYLE PSTYLE_HATCH
 #define BACK_STYLE_IND 6
@@ -220,6 +220,61 @@ void init_shape_norm_per_vertex(void)
    }
    //free(vlist);
    //free(vertex_data);
+}
+
+#define T(x) (model->triangles[(x)])
+void init_shape_single(void)
+{
+   Pint i, j, vert, norm;
+   Pptnorm3 vertex_data[3];
+   Pfacet_data3 fdata;
+   Pfacet_vdata_list3 vdata;
+   GLMgroup *group;
+   GLMtriangle *triangle;
+   GLMmaterial *material;
+
+   for (group = model->groups; group != NULL; group = group->next) {
+
+      if (model->materials != NULL) {
+         material = &model->materials[group->material];
+         fdata.colr.direct.rgb.red   = material->diffuse[0];
+         fdata.colr.direct.rgb.green = material->diffuse[1];
+         fdata.colr.direct.rgb.blue  = material->diffuse[2];
+      }
+      else {
+         fdata.colr.direct.rgb.red   = 0.0;
+         fdata.colr.direct.rgb.green = 0.75;
+         fdata.colr.direct.rgb.blue  = 0.75;
+      }
+
+      for (i = 0; i < group->numtriangles; i++) {
+         triangle = &T(group->triangles[i]);
+
+         for (j = 0; j < 3; j++) {
+            vert = triangle->vindices[j];
+            vertex_data[j].point.x      = model->vertices[vert * 3    ];
+            vertex_data[j].point.y      = model->vertices[vert * 3 + 1];
+            vertex_data[j].point.z      = model->vertices[vert * 3 + 2];
+
+            norm = triangle->nindices[j];
+            vertex_data[j].norm.delta_x = model->normals[norm * 3    ];
+            vertex_data[j].norm.delta_y = model->normals[norm * 3 + 1];
+            vertex_data[j].norm.delta_z = model->normals[norm * 3 + 2];
+         }
+
+         vdata.num_vertices = 3;
+         vdata.vertex_data.ptnorms = vertex_data;
+
+         pfill_area_set3_data(PFACET_COLOUR,
+                              PEDGE_NONE,
+                              PVERT_COORD_NORMAL,
+                              PMODEL_RGB,
+                              &fdata,
+                              1,
+                              NULL,
+                              &vdata);
+      }
+   }
 }
 
 int main(int argc, char *argv[])
