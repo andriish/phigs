@@ -4,9 +4,9 @@ C	Include PHIGS enumeration file
 	INCLUDE 'phigs/phigsf77.h'
 
 C	Delcare arrays
-	REAL COLR(3)
-	REAL PXA(2)
-	REAL PYA(2)
+	REAL COLR(1:3)
+	REAL PXA(1:2)
+	REAL PYA(1:2)
 
 C	Open PHIGS and a workstation
 	CALL POPPH(0, 0)
