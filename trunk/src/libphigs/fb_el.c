@@ -70,3 +70,86 @@ FTN_SUBROUTINE(ppl)(
    }
 }
 
+/*******************************************************************************
+ * pspcli
+ *
+ * DESCR:       Creates a new element - Line Color Attribute
+ * RETURNS:     N/A
+ */
+
+FTN_SUBROUTINE(psplci)(
+   FTN_INTEGER(coli)
+   )
+{
+   Phg_args_add_el args;
+
+   Pint colr_ind = FTN_INTEGER_GET(coli);
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_line_colr_ind);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else if (colr_ind < 0) {
+      ERR_REPORT(PHG_ERH, ERR113);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_LINE_COLR_IND;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
+      ARGS_ELMT_DATA(&args).int_data = colr_ind;
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * psln
+ *
+ * DESCR:       Creates a new element - Line Type Attribute
+ * RETURNS:     N/A
+ */
+
+FTN_SUBROUTINE(psln)(
+   FTN_INTEGER(ltype)
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_linetype);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_LINETYPE;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
+      ARGS_ELMT_DATA(&args).int_data = FTN_INTEGER_GET(ltype);
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pslwsc
+ *
+ * DESCR:       Creates a new element - Line Width Attribute
+ * RETURNS:     N/A
+ */
+
+FTN_SUBROUTINE(pslwsc)(
+   FTN_REAL(lwidth)
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_linewidth);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_LINEWIDTH;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pfloat);
+      ARGS_ELMT_DATA(&args).float_data = FTN_REAL_GET(lwidth);
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+

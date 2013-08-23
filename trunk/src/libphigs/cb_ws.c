@@ -782,10 +782,7 @@ void pset_colr_rep(
    Phg_args_rep_data corep;
    Wst_phigs_dt *dt;
 
-   dt = phg_wst_check_set_rep(Pfn_set_colr_rep,
-                              ws_id,
-                              1,
-                              ind);
+   dt = phg_wst_check_set_rep(Pfn_set_colr_rep, ws_id, 1, ind);
    if (dt != NULL) {
       wsh = PHG_WSID(ws_id);
       corep.index = ind;
