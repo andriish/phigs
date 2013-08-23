@@ -1,4 +1,3 @@
-C	Program that draws a cross in the workstation window
 	PROGRAM DRAWLINE
 
 C	Line coordinates
