@@ -27,6 +27,7 @@
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>
 #include <phigs/ws.h>
+#include <phigs/util/ftn.h>
 
 /*******************************************************************************
  * popwk
@@ -35,20 +36,20 @@
  * RETURNS:	N/A
  */
 
-void popwk_(
-   Pint *wkid,
-   Pint *conid,
-   Pint *wtype
+FTN_SUBROUTINE(popwk)(
+   FTN_INTEGER(WKID),
+   FTN_INTEGER(CONID),
+   FTN_INTEGER(WTYPE)
    )
 {
    Wst *wst;
    Phg_args_open_ws args;
    Phg_ret ret;
 
-   Pint ws_id = *wkid;
-   Pint ws_type = *wtype;
+   Pint ws_id = FTN_INTEGER_GET(WKID);
    /* TODO: Check what to set conn_id to */
    Phg_args_conn_info *conn_id = NULL;
+   Pint ws_type = FTN_INTEGER_GET(WTYPE);
 
    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_open_ws);
 
@@ -109,10 +110,10 @@ void popwk_(
  * RETURNS:	N/A
  */
 
-void ppost_(
-   Pint *wkid,
-   Pint *strid,
-   Pfloat *priort 
+FTN_SUBROUTINE(ppost)(
+   FTN_INTEGER(WKID),
+   FTN_INTEGER(STRID),
+   FTN_REAL(PRIORT)
    )
 {
    int status;
@@ -120,9 +121,9 @@ void ppost_(
    Css_handle cssh;
    Struct_handle structp;
 
-   Pint ws_id = *wkid;
-   Pint struct_id = *strid;
-   Pfloat priority = *priort;
+   Pint ws_id = FTN_INTEGER_GET(WKID);
+   Pint struct_id = FTN_INTEGER_GET(STRID);
+   Pfloat priority = FTN_REAL_GET(PRIORT);
 
    if (phg_ws_open(ws_id, Pfn_post_struct) != NULL) {
       wsh = PHG_WSID(ws_id);

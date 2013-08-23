@@ -23,6 +23,7 @@
 #include <phigs/phg.h>
 #include <phigs/css.h>
 #include <phigs/private/phgP.h>
+#include <phigs/util/ftn.h>
 
 /*******************************************************************************
  * ppl
@@ -31,10 +32,10 @@
  * RETURNS:	N/A
  */
 
-void ppl_(
-   Pint *n,
-   Pfloat *pxa,
-   Pfloat *pya
+FTN_SUBROUTINE(ppl)(
+   FTN_INTEGER(N),
+   FTN_REAL_ARRAY(PXA),
+   FTN_REAL_ARRAY(PYA)
    )
 {
    Pint i;
@@ -49,7 +50,7 @@ void ppl_(
       ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
-      point_list.num_points = *n;
+      point_list.num_points = FTN_INTEGER_GET(N);
       size = sizeof(Ppoint) * point_list.num_points;
       if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size)) {
          ERR_REPORT(PHG_ERH, ERR900);
@@ -57,8 +58,8 @@ void ppl_(
       else {
          point_list.points = (Ppoint *) PHG_SCRATCH.buf;
          for (i = 0; i < point_list.num_points; i++) {
-            point_list.points[i].x = pxa[i];
-            point_list.points[i].y = pya[i];
+            point_list.points[i].x = FTN_REAL_ARRAY_GET(PXA, i);
+            point_list.points[i].y = FTN_REAL_ARRAY_GET(PYA, i);
          }
          ARGS_ELMT_TYPE(&args) = PELEM_POLYLINE;
          ARGS_ELMT_SIZE(&args) = sizeof(Pint) + size;

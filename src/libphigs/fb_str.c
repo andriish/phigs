@@ -23,6 +23,7 @@
 #include <phigs/phg.h>
 #include <phigs/css.h>
 #include <phigs/private/phgP.h>
+#include <phigs/util/ftn.h>
 
 /*******************************************************************************
  * popst
@@ -31,11 +32,11 @@
  * RETURNS:	N/A
  */
 
-void popst_(
-   Pint *strid
+FTN_SUBROUTINE(popst)(
+   FTN_INTEGER(STRID)
    )
 {
-   Pint struct_id = *strid;
+   Pint struct_id = FTN_INTEGER_GET(STRID);
 
    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_open_struct);
 
@@ -58,7 +59,7 @@ void popst_(
  * RETURNS:	N/A
  */
 
-void pclst_(
+FTN_SUBROUTINE(pclst)(
    void
    )
 {
