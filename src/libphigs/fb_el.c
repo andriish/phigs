@@ -33,9 +33,9 @@
  */
 
 FTN_SUBROUTINE(ppl)(
-   FTN_INTEGER(N),
-   FTN_REAL_ARRAY(PXA),
-   FTN_REAL_ARRAY(PYA)
+   FTN_INTEGER(n),
+   FTN_REAL_ARRAY(pxa),
+   FTN_REAL_ARRAY(pya)
    )
 {
    Pint i;
@@ -50,7 +50,7 @@ FTN_SUBROUTINE(ppl)(
       ERR_REPORT(PHG_ERH, ERR5);
    }
    else {
-      point_list.num_points = FTN_INTEGER_GET(N);
+      point_list.num_points = FTN_INTEGER_GET(n);
       size = sizeof(Ppoint) * point_list.num_points;
       if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size)) {
          ERR_REPORT(PHG_ERH, ERR900);
@@ -58,8 +58,8 @@ FTN_SUBROUTINE(ppl)(
       else {
          point_list.points = (Ppoint *) PHG_SCRATCH.buf;
          for (i = 0; i < point_list.num_points; i++) {
-            point_list.points[i].x = FTN_REAL_ARRAY_GET(PXA, i);
-            point_list.points[i].y = FTN_REAL_ARRAY_GET(PYA, i);
+            point_list.points[i].x = FTN_REAL_ARRAY_GET(pxa, i);
+            point_list.points[i].y = FTN_REAL_ARRAY_GET(pya, i);
          }
          ARGS_ELMT_TYPE(&args) = PELEM_POLYLINE;
          ARGS_ELMT_SIZE(&args) = sizeof(Pint) + size;
