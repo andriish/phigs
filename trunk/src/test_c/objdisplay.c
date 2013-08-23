@@ -30,6 +30,7 @@
 
 #define ANGLE_DELTA   0.1
 #define STRUCT_OBJECT   0
+#define STRUCT_SCENE    1
 #define LABEL_TRANS    10
 #define INT_STYLE      PSTYLE_SOLID
 #define EDGE_FLAG      PEDGE_OFF
@@ -59,6 +60,8 @@ Pint_list lights_off_list = {0, light_off};
 Prefl_props refl_props;
 Prefl_props back_refl_props;
 GLMmodel *model = NULL;
+char object_name[80];
+Ppoint text_pos = {0.01, 0.01};
 
 void setup_light(Pint ws_id)
 {
@@ -297,6 +300,7 @@ int main(int argc, char *argv[])
       fprintf(stderr, "Fatal Error - Unable to read model: %s\n", argv[1]);
       return 1;
    }
+   strncpy(object_name, argv[1], 80);
 
    glmUnitize(model);
    glmFacetNormals(model);
@@ -327,6 +331,12 @@ int main(int argc, char *argv[])
    phg_mat_identity(rot3);
 
    popen_struct(STRUCT_OBJECT);
+   plabel(LABEL_TRANS);
+   pset_local_tran3(rot3, PTYPE_REPLACE);
+   INIT_SHAPE();
+   pclose_struct();
+
+   popen_struct(STRUCT_SCENE);
    pset_hlhsr_id(HLHSR_FLAG);
    pset_view_ind(view_ind);
    pset_edge_flag(EDGE_FLAG);
@@ -345,16 +355,17 @@ int main(int argc, char *argv[])
    pset_back_refl_eqn(BACK_REFL_EQN);
    pset_refl_props(&refl_props);
    pset_back_refl_props(&back_refl_props);
-   plabel(LABEL_TRANS);
-   pset_local_tran3(rot3, PTYPE_REPLACE);
-   INIT_SHAPE();
+   pexec_struct(STRUCT_OBJECT);
+   pset_view_ind(0);
+   pset_char_ht(0.02);
+   ptext(&text_pos, object_name);
    pclose_struct();
 
    popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);
    pset_hlhsr_mode(0, PHIGS_HLHSR_MODE_ZBUFF);
    setup_light(0);
    pset_disp_upd_st(0, PDEFER_BNIL, PMODE_UQUM);
-   ppost_struct(0, STRUCT_OBJECT, 0);
+   ppost_struct(0, STRUCT_SCENE, 0);
    pupd_ws(0, PFLAG_PERFORM);
 
    XSelectInput(PHG_WSID(0)->display,
