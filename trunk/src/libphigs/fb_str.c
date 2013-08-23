@@ -33,10 +33,10 @@
  */
 
 FTN_SUBROUTINE(popst)(
-   FTN_INTEGER(STRID)
+   FTN_INTEGER(strid)
    )
 {
-   Pint struct_id = FTN_INTEGER_GET(STRID);
+   Pint struct_id = FTN_INTEGER_GET(strid);
 
    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_open_struct);
 

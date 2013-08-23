@@ -41,8 +41,8 @@
  */
 
 FTN_SUBROUTINE(popph)(
-   FTN_INTEGER(ERRFIL),
-   FTN_INTEGER(BUFA)
+   FTN_INTEGER(errfil),
+   FTN_INTEGER(bufa)
    )
 {
    phg = (Phg_handle) malloc(sizeof(Phg_struct));

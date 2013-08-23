@@ -37,19 +37,19 @@
  */
 
 FTN_SUBROUTINE(popwk)(
-   FTN_INTEGER(WKID),
-   FTN_INTEGER(CONID),
-   FTN_INTEGER(WTYPE)
+   FTN_INTEGER(wkid),
+   FTN_INTEGER(conid),
+   FTN_INTEGER(wtype)
    )
 {
    Wst *wst;
    Phg_args_open_ws args;
    Phg_ret ret;
 
-   Pint ws_id = FTN_INTEGER_GET(WKID);
+   Pint ws_id = FTN_INTEGER_GET(wkid);
    /* TODO: Check what to set conn_id to */
    Phg_args_conn_info *conn_id = NULL;
-   Pint ws_type = FTN_INTEGER_GET(WTYPE);
+   Pint ws_type = FTN_INTEGER_GET(wtype);
 
    ERR_SET_CUR_FUNC(PHG_ERH, Pfn_open_ws);
 
@@ -111,9 +111,9 @@ FTN_SUBROUTINE(popwk)(
  */
 
 FTN_SUBROUTINE(ppost)(
-   FTN_INTEGER(WKID),
-   FTN_INTEGER(STRID),
-   FTN_REAL(PRIORT)
+   FTN_INTEGER(wkid),
+   FTN_INTEGER(strid),
+   FTN_REAL(priort)
    )
 {
    int status;
@@ -121,9 +121,9 @@ FTN_SUBROUTINE(ppost)(
    Css_handle cssh;
    Struct_handle structp;
 
-   Pint ws_id = FTN_INTEGER_GET(WKID);
-   Pint struct_id = FTN_INTEGER_GET(STRID);
-   Pfloat priority = FTN_REAL_GET(PRIORT);
+   Pint ws_id = FTN_INTEGER_GET(wkid);
+   Pint struct_id = FTN_INTEGER_GET(strid);
+   Pfloat priority = FTN_REAL_GET()priort;
 
    if (phg_ws_open(ws_id, Pfn_post_struct) != NULL) {
       wsh = PHG_WSID(ws_id);
