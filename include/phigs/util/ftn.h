@@ -28,10 +28,17 @@
 
 #define FTN_INTEGER(NAME)                int *NAME
 #define FTN_INTEGER_GET(NAME)            *NAME
+
 #define FTN_REAL(NAME)                   float *NAME
 #define FTN_REAL_GET(NAME)               *NAME
+
 #define FTN_REAL_ARRAY(NAME)             float NAME[]
 #define FTN_REAL_ARRAY_GET(NAME, INDEX)  NAME[INDEX]
+
+#define FTN_CHARACTER(NAME)              char *NAME_str, \
+                                         int NAME_len
+#define FTN_CHARACTER_GET(NAME)          NAME_str
+#define FTN_CHARACTER_LEN(NAME)          NAME_len
 
 #endif /* _ftn_h */
 

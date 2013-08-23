@@ -21,6 +21,12 @@ C	Define line colour in workstation table
 C	Open structure
 	CALL POPST(0)
 
+C	Set text attributes
+	CALL PSCHH(0.055)
+
+C	Draw text
+	CALL PTX(0.22, 0.48, 'Hello Fortran!')
+
 C	Set line attributes
 	CALL PSPLCI(1)
 	CALL PSLN(PLDASD)

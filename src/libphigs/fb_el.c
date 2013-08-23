@@ -153,3 +153,72 @@ FTN_SUBROUTINE(pslwsc)(
    }
 }
 
+/*******************************************************************************
+ * ptx
+ *
+ * DESCR:       Creates a new element - Text
+ * RETURNS:     N/A
+ */
+
+FTN_SUBROUTINE(ptx)(
+   FTN_REAL(px),
+   FTN_REAL(py),
+   FTN_CHARACTER(chars)
+   )
+{
+   Phg_args_add_el args;
+   Ppoint text_pos;
+   char *char_string;
+
+   Pint len = FTN_CHARACTER_LEN(chars);
+   text_pos.x = FTN_REAL_GET(px);
+   text_pos.y = FTN_REAL_GET(py);
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_text);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, len + 1)) {
+         ERR_REPORT(PHG_ERH, ERR900);
+      }
+      else {
+         char_string = (char *) PHG_SCRATCH.buf;
+         ARGS_ELMT_TYPE(&args) = PELEM_TEXT;
+         ARGS_ELMT_SIZE(&args) = sizeof(Ppoint) + len + 1;
+         memcpy(&ARGS_ELMT_DATA(&args).text.pos, &text_pos, sizeof(Ppoint));
+         strncpy(char_string, FTN_CHARACTER_GET(chars), len);
+         char_string[len] = '\0';
+         ARGS_ELMT_DATA(&args).text.char_string = char_string;
+         phg_add_el(PHG_CSS, &args);
+      }
+   }
+}
+
+/*******************************************************************************
+ * pschh
+ *
+ * DESCR:       Creates a new element - Character height Attribute
+ * RETURNS:     N/A
+ */
+
+FTN_SUBROUTINE(pschh)(
+   FTN_REAL(chh)
+   )
+{
+   Phg_args_add_el args;
+
+   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_char_ht);
+
+   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      ERR_REPORT(PHG_ERH, ERR5);
+   }
+   else {
+      ARGS_ELMT_TYPE(&args) = PELEM_CHAR_HT;
+      ARGS_ELMT_SIZE(&args) = sizeof(Pfloat);
+      ARGS_ELMT_DATA(&args).float_data = FTN_REAL_GET(chh);
+      phg_add_el(PHG_CSS, &args);
+   }
+}
+
