@@ -1,31 +1,54 @@
-	program drawline
+	PROGRAM DRAWLINE
 
-	real pxa(2)
-	real pya(2)
+C	Include PHIGS enumeration file
+	INCLUDE 'phigs/phigsf77.h'
 
-	call popph(0, 0)
-	call popwk(0, 0, 0)
+C	Delcare arrays
+	REAL COLR(3)
+	REAL PXA(2)
+	REAL PYA(2)
 
-	call popst(0)
+C	Open PHIGS and a workstation
+	CALL POPPH(0, 0)
+	CALL POPWK(0, 0, 0)
 
-	pxa(1) = 0.0
-	pya(1) = 0.0
-	pxa(2) = 1.0
-	pya(2) = 1.0
-	call ppl(2, pxa, pya)
+C	Define line colour in workstation table
+	COLR(1) = 1.0
+	COLR(2) = 1.0
+	COLR(3) = 0.0
+	CALL PSCR(0, 1, 3, COLR)
 
-	pxa(1) = 1.0
-	pya(1) = 0.0
-	pxa(2) = 0.0
-	pya(2) = 1.0
-	call ppl(2, pxa, pya)
+C	Open structure
+	CALL POPST(0)
 
-	call pclst
+C	Set line attributes
+	CALL PSPLCI(1)
+	CALL PSLN(PLDASD)
+	CALL PSLWSC(2.0)
 
-	call ppost(0, 0, 0.0)
+C	Draw line from bottom-left to top-right
+	PXA(1) = 0.0
+	PYA(1) = 0.0
+	PXA(2) = 1.0
+	PYA(2) = 1.0
+	CALL PPL(2, PXA, PYA)
 
-	do while (1 .gt. 0)
-	end do
+C	Draw line from bottom-right to top-left
+	PXA(1) = 1.0
+	PYA(1) = 0.0
+	PXA(2) = 0.0
+	PYA(2) = 1.0
+	CALL PPL(2, PXA, PYA)
 
-	stop
-	end
+C	Close structure
+	CALL PCLST
+
+C	Post structure to workstation
+	CALL PPOST(0, 0, 0.0)
+
+C	Buisy loop
+	DO WHILE (1 .GT. 0)
+	END DO
+
+	STOP
+	END

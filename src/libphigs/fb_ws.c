@@ -135,3 +135,43 @@ FTN_SUBROUTINE(ppost)(
    }
 }
 
+/*******************************************************************************
+ * pscr
+ *
+ * DESCR:       Set workstation colour representation
+ * RETURNS:     N/A
+ */
+
+FTN_SUBROUTINE(pscr)(
+   FTN_INTEGER(wkid),
+   FTN_INTEGER(ci),
+   FTN_INTEGER(nccs),
+   FTN_REAL_ARRAY(cspec)
+   )
+{
+   Pcolr_rep rep;
+   Ws *wsh;
+   Phg_args_rep_data corep;
+   Wst_phigs_dt *dt;
+
+   Pint ws_id = FTN_INTEGER_GET(wkid);
+   Pint ind = FTN_INTEGER_GET(ci);
+   Pint num_comp = FTN_INTEGER_GET(nccs);
+   if (num_comp >= 3) {
+      rep.rgb.red   = FTN_REAL_ARRAY_GET(cspec, 0);
+      rep.rgb.green = FTN_REAL_ARRAY_GET(cspec, 1);
+      rep.rgb.blue  = FTN_REAL_ARRAY_GET(cspec, 2);
+   }
+   else {
+      rep.rgb.red = rep.rgb.green = rep.rgb.blue = FTN_REAL_ARRAY_GET(cspec, 0);
+   }
+
+   dt = phg_wst_check_set_rep(Pfn_set_colr_rep, ws_id, 1, ind);
+   if (dt != NULL) {
+      wsh = PHG_WSID(ws_id);
+      corep.index = ind;
+      memcpy(&corep.bundl.corep, &rep, sizeof(Pcolr_rep));
+      (*wsh->set_rep)(wsh, PHG_ARGS_COREP, &corep);
+   }
+}
+
