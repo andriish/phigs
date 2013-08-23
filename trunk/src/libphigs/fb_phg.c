@@ -31,6 +31,7 @@
 #include <phigs/ws_type.h>
 #include <phigs/private/wsxP.h>
 #include <phigs/private/evtP.h>
+#include <phigs/util/ftn.h>
 
 /*******************************************************************************
  * popph
@@ -39,9 +40,9 @@
  * RETURNS:     N/A
  */
 
-void popph_(
-   Pint *error_file,
-   Pint *memory
+FTN_SUBROUTINE(popph)(
+   FTN_INTEGER(ERRFIL),
+   FTN_INTEGER(BUFA)
    )
 {
    phg = (Phg_handle) malloc(sizeof(Phg_struct));
