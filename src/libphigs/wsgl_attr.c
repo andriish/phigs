@@ -357,6 +357,8 @@ void wsgl_setup_line_attr(
    else {
       glLineWidth(ast->bundl_group.line_bundle.width);
    }
+
+   glDisable(GL_LIGHTING);
 }
 
 /*******************************************************************************
@@ -632,8 +634,6 @@ void wsgl_setup_edge_attr(
 {
    Pint type;
 
-   glDisable(GL_LIGHTING);
-
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_EDGE_COLR_IND)) {
       wsgl_set_gcolr(&ast->indiv_group.edge_bundle.colr);
    }
@@ -671,6 +671,8 @@ void wsgl_setup_edge_attr(
          glDisable(GL_LINE_STIPPLE);
       break;
    }
+
+   glDisable(GL_LIGHTING);
 }
 
 
@@ -735,6 +737,8 @@ void wsgl_setup_marker_attr(
    else {
       *size = ast->bundl_group.marker_bundle.size;
    }
+
+   glDisable(GL_LIGHTING);
 }
 
 /*******************************************************************************
@@ -825,8 +829,6 @@ void wsgl_setup_text_attr(
 {
    Pint font;
 
-   glLineWidth(2.0);
-
    if (phg_nset_name_is_set(&ast->asf_nameset, (Pint) PASPECT_TEXT_COLR_IND)) {
       wsgl_set_gcolr(&ast->indiv_group.text_bundle.colr);
    }
@@ -854,6 +856,10 @@ void wsgl_setup_text_attr(
    else {
       *char_expan = ast->bundl_group.text_bundle.char_expan;
    }
+
+   glDisable(GL_LIGHTING);
+   glLineWidth(2.0);
+
 }
 
 /*******************************************************************************
