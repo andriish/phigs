@@ -43,8 +43,20 @@ void sofas3_head(
  */
 
 int sofas3_num_vlists(
-    Psofas3 *sofas3
-    );
+   Psofas3 *sofas3
+   );
+
+/*******************************************************************************
+ * sofas3_get_vlist
+ *
+ * DESCR:       Get set of fill area set vertex list
+ * RETURNS:     N/A
+ */
+
+void sofas3_get_vlist(
+   Pint_list *vlist,
+   Psofas3 *sofas3
+   );
 
 /*******************************************************************************
  * sofas3_next_vlist
@@ -54,9 +66,9 @@ int sofas3_num_vlists(
  */
 
 void sofas3_next_vlist(
-    Pint_list *vlist,
-    Psofas3 *sofas3
-    );
+   Pint_list *vlist,
+   Psofas3 *sofas3
+   );
 
 /*******************************************************************************
  * sofas3_num_elists
@@ -66,8 +78,8 @@ void sofas3_next_vlist(
  */
 
 int sofas3_num_elists(
-    Psofas3 *sofas3
-    );
+   Psofas3 *sofas3
+   );
 
 /*******************************************************************************
  * sofas3_next_elist
@@ -77,9 +89,22 @@ int sofas3_num_elists(
  */
 
 void sofas3_next_elist(
-    Pedge_data_list *elist,
-    Psofas3 *sofas3
-    );
+   Pedge_data_list *elist,
+   Psofas3 *sofas3
+   );
+
+/*******************************************************************************
+ * sofas3_normal3
+ *
+ * DESCR:       Get normal
+ * RETURNS:     N/A
+ */
+
+void sofas3_normal3(
+   Pvec3 *norm,
+   Psofas3 *sofas3,
+   Pint_list *vlist
+   );
 
 /*******************************************************************************
  * sofas3_print

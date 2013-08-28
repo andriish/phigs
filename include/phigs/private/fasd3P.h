@@ -61,5 +61,17 @@ void fasd3_next_vdata3(
    Pfasd3 *fasd3
    );
 
+/*******************************************************************************
+ * fasd3_normal3
+ *
+ * DESCR:       Get normal
+ * RETURNS:     N/A
+ */
+
+void fasd3_normal3(
+   Pvec3 *norm,
+   Pfasd3 *fasd3
+   );
+
 #endif /* _fasd3P_h */
 

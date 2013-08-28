@@ -511,6 +511,32 @@ void wsgl_setup_int_refl_props(
    );
 
 /*******************************************************************************
+ * wsgl_setup_int_colr
+ *
+ * DESCR:       Setup surface colour
+ * RETURNS:     Lighting state
+ */
+
+int wsgl_setup_int_colr(
+   Ws *ws,
+   Pint colr_type,
+   Pcoval *colr,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_setup_int_attr_plus
+ *
+ * DESCR:       Setup interiour attributes for PHIGS Plus
+ * RETURNS:     Lighting state
+ */
+
+int wsgl_setup_int_attr_plus(
+   Ws *ws,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
  * wsgl_setup_back_int_refl_props
  *
  * DESCR:       Setup backface surface reflection and colour properties
@@ -520,6 +546,32 @@ void wsgl_setup_int_refl_props(
 void wsgl_setup_back_int_refl_props(
    Pint colr_type,
    Pcoval *colr,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_setup_back_int_colr
+ *
+ * DESCR:       Setup back-surface colour
+ * RETURNS:     Lighting state
+ */
+
+int wsgl_setup_back_int_colr(
+   Ws *ws,
+   Pint colr_type,
+   Pcoval *colr,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_setup_back_int_attr_plus
+ *
+ * DESCR:       Setup backface interiour attributes for PHIGS Plus
+ * RETURNS:     Lighting state
+ */
+
+int wsgl_setup_back_int_attr_plus(
+   Ws *ws,
    Ws_attr_st *ast
    );
 
@@ -777,6 +829,19 @@ void wsgl_fill_area(
  */
 
 void wsgl_fill_area3(
+   Ws *ws,
+   void *pdata,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_back_area3
+ *
+ * DESCR:       Draw backface area 3D
+ * RETURNS:     N/A
+ */
+
+void wsgl_back_area3(
    Ws *ws,
    void *pdata,
    Ws_attr_st *ast

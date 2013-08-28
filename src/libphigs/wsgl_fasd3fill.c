@@ -30,30 +30,6 @@
 #include <phigs/private/fasd3P.h>
 
 /*******************************************************************************
- * priv_facet_normal3
- *
- * DESCR:	Set facet normal 3D helper function
- * RETURNS:	N/A
- */
-
-static void priv_facet_normal3(
-   Pint fflag,
-   Pfacet_data3 *fdata
-   )
-{
-   if (fflag == PFACET_NORMAL) {
-      glNormal3f(fdata->norm.delta_x,
-                 fdata->norm.delta_y,
-                 fdata->norm.delta_z);
-   }
-   else if (fflag == PFACET_COLOUR_NORMAL) {
-      glNormal3f(fdata->conorm.norm.delta_x,
-                 fdata->conorm.norm.delta_y,
-                 fdata->conorm.norm.delta_z);
-   }
-}
-
-/*******************************************************************************
  * priv_fill_area3_points
  *
  * DESCR:	Draw fill area with point data 3D helper function
@@ -84,6 +60,7 @@ static void priv_fill_area3_points(
  */
 
 static void priv_fill_area3_ptcolrs(
+   Ws *ws,
    Pint colr_type,
    Pint num_vertices,
    Pptco3 *ptcolrs,
@@ -94,7 +71,7 @@ static void priv_fill_area3_ptcolrs(
 
    glBegin(GL_POLYGON);
    for (i = 0; i < num_vertices; i++) {
-      wsgl_setup_int_refl_props(colr_type, &ptcolrs[i].colr, ast);
+      wsgl_setup_int_colr(ws, colr_type, &ptcolrs[i].colr, ast);
       glVertex3f(ptcolrs[i].point.x,
                  ptcolrs[i].point.y,
                  ptcolrs[i].point.z);
@@ -110,6 +87,7 @@ static void priv_fill_area3_ptcolrs(
  */
 
 static void priv_back_area3_ptcolrs(
+   Ws *ws,
    Pint colr_type,
    Pint num_vertices,
    Pptco3 *ptcolrs,
@@ -120,33 +98,7 @@ static void priv_back_area3_ptcolrs(
 
    glBegin(GL_POLYGON);
    for (i = 0; i < num_vertices; i++) {
-      wsgl_setup_back_int_refl_props(colr_type, &ptcolrs[i].colr, ast);
-      glVertex3f(ptcolrs[i].point.x,
-                 ptcolrs[i].point.y,
-                 ptcolrs[i].point.z);
-   }
-   glEnd();
-}
-
-/*******************************************************************************
- * priv_fill_area3_ptcolrs_ns
- *
- * DESCR:	Draw fill area with point and colour data 3D, without shading
- *		helper function
- * RETURNS:	N/A
- */
-
-static void priv_fill_area3_ptcolrs_ns(
-   Pint colr_type,
-   Pint num_vertices,
-   Pptco3 *ptcolrs
-   )
-{
-   Pint i;
-
-   glBegin(GL_POLYGON);
-   for (i = 0; i < num_vertices; i++) {
-      wsgl_set_colr(colr_type, &ptcolrs[i].colr);
+      wsgl_setup_back_int_colr(ws, colr_type, &ptcolrs[i].colr, ast);
       glVertex3f(ptcolrs[i].point.x,
                  ptcolrs[i].point.y,
                  ptcolrs[i].point.z);
@@ -189,6 +141,7 @@ static void priv_fill_area3_ptnorms(
  */
 
 static void priv_fill_area3_ptconorms(
+   Ws *ws,
    Pint colr_type,
    Pint num_vertices,
    Pptconorm3 *ptconorms,
@@ -199,7 +152,7 @@ static void priv_fill_area3_ptconorms(
 
    glBegin(GL_POLYGON);
    for (i = 0; i < num_vertices; i++) {
-      wsgl_setup_int_refl_props(colr_type, &ptconorms[i].colr, ast);
+      wsgl_setup_int_colr(ws, colr_type, &ptconorms[i].colr, ast);
       glNormal3f(ptconorms[i].norm.delta_x,
                  ptconorms[i].norm.delta_y,
                  ptconorms[i].norm.delta_z);
@@ -219,6 +172,7 @@ static void priv_fill_area3_ptconorms(
  */
 
 static void priv_back_area3_ptconorms(
+   Ws *ws,
    Pint colr_type,
    Pint num_vertices,
    Pptconorm3 *ptconorms,
@@ -229,7 +183,7 @@ static void priv_back_area3_ptconorms(
 
    glBegin(GL_POLYGON);
    for (i = 0; i < num_vertices; i++) {
-      wsgl_setup_back_int_refl_props(colr_type, &ptconorms[i].colr, ast);
+      wsgl_setup_back_int_colr(ws, colr_type, &ptconorms[i].colr, ast);
       glNormal3f(ptconorms[i].norm.delta_x,
                  ptconorms[i].norm.delta_y,
                  ptconorms[i].norm.delta_z);
@@ -258,8 +212,7 @@ void wsgl_fill_area_set3_data_front(
    Pedge_data_list edata;
    Pfacet_vdata_list3 vdata;
    Pcoval colr;
-
-   Wsgl_handle wsgl = ws->render_context;
+   Pvec3 norm;
 
    fasd3.edata = &edata;
    fasd3.vdata = &vdata;
@@ -268,19 +221,15 @@ void wsgl_fill_area_set3_data_front(
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
-   glCullFace(GL_BACK);
    wsgl_setup_int_attr_nocol(ws, ast);
-
-   if (wsgl->cur_struct.lighting) {
-      glEnable(GL_LIGHTING);
-   }
 
    switch (fasd3.vflag) {
       case PVERT_COORD:
          if (fasd3.fflag == PFACET_COLOUR_NORMAL) {
-            wsgl_setup_int_refl_props(fasd3.colr_type,
-                                      &fasd3.fdata.conorm.colr,
-                                      ast);
+            wsgl_setup_int_colr(ws,
+                                fasd3.colr_type,
+                                &fasd3.fdata.conorm.colr,
+                                ast);
             glNormal3f(fasd3.fdata.conorm.norm.delta_x,
                        fasd3.fdata.conorm.norm.delta_y,
                        fasd3.fdata.conorm.norm.delta_z);
@@ -297,7 +246,7 @@ void wsgl_fill_area_set3_data_front(
          }
          else if (fasd3.fflag == PFACET_NORMAL) {
             wsgl_colr_from_gcolr(&colr, wsgl_get_int_colr(ast));
-            wsgl_setup_int_refl_props(fasd3.colr_type, &colr, ast);
+            wsgl_setup_int_colr(ws, fasd3.colr_type, &colr, ast);
             glNormal3f(fasd3.fdata.norm.delta_x,
                        fasd3.fdata.norm.delta_y,
                        fasd3.fdata.norm.delta_z);
@@ -313,7 +262,12 @@ void wsgl_fill_area_set3_data_front(
             }
          }
          else if (fasd3.fflag == PFACET_COLOUR) {
-            wsgl_set_colr(fasd3.colr_type, &fasd3.fdata.colr);
+            wsgl_setup_int_colr(ws,
+                                fasd3.colr_type,
+                                &fasd3.fdata.colr,
+                                ast);
+            fasd3_normal3(&norm, &fasd3);
+            glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
             for (i = 0; i < fasd3.nfa; i++) {
                priv_fill_area3_points(fasd3.vdata->num_vertices,
                                       fasd3.vdata->vertex_data.points);
@@ -326,7 +280,10 @@ void wsgl_fill_area_set3_data_front(
             }
          }
          else {
-            wsgl_set_gcolr(wsgl_get_int_colr(ast));
+            wsgl_colr_from_gcolr(&colr, wsgl_get_int_colr(ast));
+            wsgl_setup_int_colr(ws, fasd3.colr_type, &colr, ast);
+            fasd3_normal3(&norm, &fasd3);
+            glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
             for (i = 0; i < fasd3.nfa; i++) {
                priv_fill_area3_points(fasd3.vdata->num_vertices,
                                       fasd3.vdata->vertex_data.points);
@@ -342,9 +299,12 @@ void wsgl_fill_area_set3_data_front(
 
       case PVERT_COORD_COLOUR:
          if (fasd3.fflag == PFACET_NORMAL) {
-            priv_facet_normal3(fasd3.fflag, &fasd3.fdata);
+            glNormal3f(fasd3.fdata.norm.delta_x,
+                       fasd3.fdata.norm.delta_y,
+                       fasd3.fdata.norm.delta_z);
             for (i = 0; i < fasd3.nfa; i++) {
-               priv_fill_area3_ptcolrs(fasd3.colr_type,
+               priv_fill_area3_ptcolrs(ws,
+                                       fasd3.colr_type,
                                        fasd3.vdata->num_vertices,
                                        fasd3.vdata->vertex_data.ptcolrs,
                                        ast);
@@ -357,10 +317,14 @@ void wsgl_fill_area_set3_data_front(
             }
          }
          else {
+            fasd3_normal3(&norm, &fasd3);
+            glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
             for (i = 0; i < fasd3.nfa; i++) {
-               priv_fill_area3_ptcolrs_ns(fasd3.colr_type,
-                                          fasd3.vdata->num_vertices,
-                                          fasd3.vdata->vertex_data.ptcolrs);
+               priv_fill_area3_ptcolrs(ws,
+                                       fasd3.colr_type,
+                                       fasd3.vdata->num_vertices,
+                                       fasd3.vdata->vertex_data.ptcolrs,
+                                       ast);
 
                /* Advance to next set of data */
                fasd3_next_vdata3(&fasd3);
@@ -373,9 +337,10 @@ void wsgl_fill_area_set3_data_front(
 
       case PVERT_COORD_NORMAL:
          if (fasd3.fflag == PFACET_COLOUR) {
-            wsgl_setup_int_refl_props(fasd3.colr_type,
-                                      &fasd3.fdata.colr,
-                                      ast);
+            wsgl_setup_int_colr(ws,
+                                fasd3.colr_type,
+                                &fasd3.fdata.colr,
+                                ast);
             for (i = 0; i < fasd3.nfa; i++) {
                priv_fill_area3_ptnorms(fasd3.vdata->num_vertices,
                                        fasd3.vdata->vertex_data.ptnorms);
@@ -389,7 +354,7 @@ void wsgl_fill_area_set3_data_front(
          }
          else {
             wsgl_colr_from_gcolr(&colr, wsgl_get_int_colr(ast));
-            wsgl_setup_int_refl_props(fasd3.colr_type, &colr, ast);
+            wsgl_setup_int_colr(ws, fasd3.colr_type, &colr, ast);
             for (i = 0; i < fasd3.nfa; i++) {
                priv_fill_area3_ptnorms(fasd3.vdata->num_vertices,
                                        fasd3.vdata->vertex_data.ptnorms);
@@ -405,7 +370,8 @@ void wsgl_fill_area_set3_data_front(
 
       case PVERT_COORD_COLOUR_NORMAL:
          for (i = 0; i < fasd3.nfa; i++) {
-            priv_fill_area3_ptconorms(fasd3.colr_type,
+            priv_fill_area3_ptconorms(ws,
+                                      fasd3.colr_type,
                                       fasd3.vdata->num_vertices,
                                       fasd3.vdata->vertex_data.ptconorms,
                                       ast);
@@ -420,10 +386,6 @@ void wsgl_fill_area_set3_data_front(
 
       default:
          break;
-   }
-
-   if (wsgl->cur_struct.lighting) {
-      glDisable(GL_LIGHTING);
    }
 
    glDisable(GL_POLYGON_OFFSET_LINE);
@@ -448,8 +410,7 @@ void wsgl_fill_area_set3_data_back(
    Pedge_data_list edata;
    Pfacet_vdata_list3 vdata;
    Pcoval colr;
-
-   Wsgl_handle wsgl = ws->render_context;
+   Pvec3 norm;
 
    fasd3.edata = &edata;
    fasd3.vdata = &vdata;
@@ -458,19 +419,15 @@ void wsgl_fill_area_set3_data_back(
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
-   glCullFace(GL_FRONT);
    wsgl_setup_back_int_attr_nocol(ws, ast);
-
-   if (wsgl->cur_struct.lighting) {
-      glEnable(GL_LIGHTING);
-   }
 
    switch (fasd3.vflag) {
       case PVERT_COORD:
          if (fasd3.fflag == PFACET_COLOUR_NORMAL) {
-            wsgl_setup_back_int_refl_props(fasd3.colr_type,
-                                           &fasd3.fdata.conorm.colr,
-                                           ast);
+            wsgl_setup_back_int_colr(ws,
+                                     fasd3.colr_type,
+                                     &fasd3.fdata.conorm.colr,
+                                     ast);
             glNormal3f(fasd3.fdata.conorm.norm.delta_x,
                        fasd3.fdata.conorm.norm.delta_y,
                        fasd3.fdata.conorm.norm.delta_z);
@@ -487,7 +444,7 @@ void wsgl_fill_area_set3_data_back(
          }
          else if (fasd3.fflag == PFACET_NORMAL) {
             wsgl_colr_from_gcolr(&colr, wsgl_get_back_int_colr(ast));
-            wsgl_setup_back_int_refl_props(fasd3.colr_type, &colr, ast);
+            wsgl_setup_back_int_colr(ws, fasd3.colr_type, &colr, ast);
             glNormal3f(fasd3.fdata.norm.delta_x,
                        fasd3.fdata.norm.delta_y,
                        fasd3.fdata.norm.delta_z);
@@ -503,7 +460,12 @@ void wsgl_fill_area_set3_data_back(
             }
          }
          else if (fasd3.fflag == PFACET_COLOUR) {
-            wsgl_set_colr(fasd3.colr_type, &fasd3.fdata.colr);
+            wsgl_setup_back_int_colr(ws,
+                                     fasd3.colr_type,
+                                     &fasd3.fdata.colr,
+                                     ast);
+            fasd3_normal3(&norm, &fasd3);
+            glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
             for (i = 0; i < fasd3.nfa; i++) {
                priv_fill_area3_points(fasd3.vdata->num_vertices,
                                       fasd3.vdata->vertex_data.points);
@@ -516,7 +478,10 @@ void wsgl_fill_area_set3_data_back(
             }
          }
          else {
-            wsgl_set_gcolr(wsgl_get_back_int_colr(ast));
+            wsgl_colr_from_gcolr(&colr, wsgl_get_back_int_colr(ast));
+            wsgl_setup_back_int_colr(ws, fasd3.colr_type, &colr, ast);
+            fasd3_normal3(&norm, &fasd3);
+            glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
             for (i = 0; i < fasd3.nfa; i++) {
                priv_fill_area3_points(fasd3.vdata->num_vertices,
                                       fasd3.vdata->vertex_data.points);
@@ -532,9 +497,12 @@ void wsgl_fill_area_set3_data_back(
 
       case PVERT_COORD_COLOUR:
          if (fasd3.fflag == PFACET_NORMAL) {
-            priv_facet_normal3(fasd3.fflag, &fasd3.fdata);
+            glNormal3f(fasd3.fdata.norm.delta_x,
+                       fasd3.fdata.norm.delta_y,
+                       fasd3.fdata.norm.delta_z);
             for (i = 0; i < fasd3.nfa; i++) {
-               priv_back_area3_ptcolrs(fasd3.colr_type,
+               priv_back_area3_ptcolrs(ws,
+                                       fasd3.colr_type,
                                        fasd3.vdata->num_vertices,
                                        fasd3.vdata->vertex_data.ptcolrs,
                                        ast);
@@ -547,10 +515,14 @@ void wsgl_fill_area_set3_data_back(
             }
          }
          else {
+            fasd3_normal3(&norm, &fasd3);
+            glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
             for (i = 0; i < fasd3.nfa; i++) {
-               priv_fill_area3_ptcolrs_ns(fasd3.colr_type,
-                                          fasd3.vdata->num_vertices,
-                                          fasd3.vdata->vertex_data.ptcolrs);
+               priv_back_area3_ptcolrs(ws,
+                                       fasd3.colr_type,
+                                       fasd3.vdata->num_vertices,
+                                       fasd3.vdata->vertex_data.ptcolrs,
+                                       ast);
 
                /* Advance to next set of data */
                fasd3_next_vdata3(&fasd3);
@@ -563,9 +535,10 @@ void wsgl_fill_area_set3_data_back(
 
       case PVERT_COORD_NORMAL:
          if (fasd3.fflag == PFACET_COLOUR) {
-            wsgl_setup_back_int_refl_props(fasd3.colr_type,
-                                           &fasd3.fdata.colr,
-                                           ast);
+            wsgl_setup_back_int_colr(ws,
+                                     fasd3.colr_type,
+                                     &fasd3.fdata.colr,
+                                     ast);
             for (i = 0; i < fasd3.nfa; i++) {
                priv_fill_area3_ptnorms(fasd3.vdata->num_vertices,
                                        fasd3.vdata->vertex_data.ptnorms);
@@ -579,7 +552,7 @@ void wsgl_fill_area_set3_data_back(
          }
          else {
             wsgl_colr_from_gcolr(&colr, wsgl_get_back_int_colr(ast));
-            wsgl_setup_back_int_refl_props(fasd3.colr_type, &colr, ast);
+            wsgl_setup_back_int_colr(ws, fasd3.colr_type, &colr, ast);
             for (i = 0; i < fasd3.nfa; i++) {
                priv_fill_area3_ptnorms(fasd3.vdata->num_vertices,
                                        fasd3.vdata->vertex_data.ptnorms);
@@ -595,7 +568,8 @@ void wsgl_fill_area_set3_data_back(
 
       case PVERT_COORD_COLOUR_NORMAL:
          for (i = 0; i < fasd3.nfa; i++) {
-            priv_back_area3_ptconorms(fasd3.colr_type,
+            priv_back_area3_ptconorms(ws,
+                                      fasd3.colr_type,
                                       fasd3.vdata->num_vertices,
                                       fasd3.vdata->vertex_data.ptconorms,
                                       ast);
@@ -610,10 +584,6 @@ void wsgl_fill_area_set3_data_back(
 
       default:
          break;
-   }
-
-   if (wsgl->cur_struct.lighting) {
-      glDisable(GL_LIGHTING);
    }
 
    glDisable(GL_POLYGON_OFFSET_LINE);

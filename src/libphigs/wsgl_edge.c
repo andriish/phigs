@@ -36,20 +36,15 @@
  */
 
 void priv_edge_area(
-   void *pdata
+   Ppoint_list *point_list
    )
 {
    int i;
-   Ppoint_list point_list;
-   Pint *data = (Pint *) pdata;
-
-   point_list.num_points = *data;
-   point_list.points = (Ppoint *) &data[1];
 
    glBegin(GL_LINE_LOOP);
-   for (i = 0; i < point_list.num_points; i++) {
-      glVertex2f(point_list.points[i].x,
-                 point_list.points[i].y);
+   for (i = 0; i < point_list->num_points; i++) {
+      glVertex2f(point_list->points[i].x,
+                 point_list->points[i].y);
    }
    glEnd();
 }
@@ -62,21 +57,16 @@ void priv_edge_area(
  */
 
 void priv_edge_area3(
-   void *pdata
+   Ppoint_list3 *point_list
    )
 {
    int i;
-   Ppoint_list3 point_list;
-   Pint *data = (Pint *) pdata;
-
-   point_list.num_points = *data;
-   point_list.points = (Ppoint3 *) &data[1];
 
    glBegin(GL_LINE_LOOP);
-   for (i = 0; i < point_list.num_points; i++) {
-      glVertex3f(point_list.points[i].x,
-                 point_list.points[i].y,
-                 point_list.points[i].z);
+   for (i = 0; i < point_list->num_points; i++) {
+      glVertex3f(point_list->points[i].x,
+                 point_list->points[i].y,
+                 point_list->points[i].z);
    }
    glEnd();
 }
@@ -94,8 +84,14 @@ void wsgl_edge_area(
    Ws_attr_st *ast
    )
 {
+   Ppoint_list point_list;
+   Pint *data = (Pint *) pdata;
+
+   point_list.num_points = *data;
+   point_list.points = (Ppoint *) &data[1];
+
    wsgl_setup_edge_attr(ast);
-   priv_edge_area(pdata);
+   priv_edge_area(&point_list);
 }
 
 /*******************************************************************************
@@ -111,8 +107,14 @@ void wsgl_edge_area3(
    Ws_attr_st *ast
    )
 {
+   Ppoint_list3 point_list;
+   Pint *data = (Pint *) pdata;
+
+   point_list.num_points = *data;
+   point_list.points = (Ppoint3 *) &data[1];
+
    wsgl_setup_edge_attr(ast);
-   priv_edge_area3(pdata);
+   priv_edge_area3(&point_list);
 }
 
 /*******************************************************************************
@@ -140,7 +142,7 @@ void wsgl_edge_area_set(
    for (i = 0; i < num_lists; i++) {
       point_list.num_points = *data;
       point_list.points = (Ppoint *) &data[1];
-      priv_edge_area(data);
+      priv_edge_area(&point_list);
       data = (Pint *) &point_list.points[point_list.num_points];
    }
 }
@@ -170,7 +172,7 @@ void wsgl_edge_area_set3(
    for (i = 0; i < num_lists; i++) {
       point_list.num_points = *data;
       point_list.points = (Ppoint3 *) &data[1];
-      priv_edge_area3(data);
+      priv_edge_area3(&point_list);
       data = (Pint *) &point_list.points[point_list.num_points];
    }
 }
