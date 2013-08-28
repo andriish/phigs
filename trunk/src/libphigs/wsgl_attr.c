@@ -519,6 +519,15 @@ void wsgl_setup_int_attr_nocol(
       }
       wsgl->dev_st.int_shad_meth = shad_meth;
    }
+
+   if (wsgl->cur_struct.lighting) {
+      glEnable(GL_LIGHTING);
+   }
+   else {
+      glDisable(GL_LIGHTING);
+   }
+
+   glCullFace(GL_BACK);
 }
 
 /*******************************************************************************

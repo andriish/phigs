@@ -110,6 +110,15 @@ void wsgl_setup_back_int_attr_nocol(
       }
       wsgl->dev_st.int_shad_meth = shad_meth;
    }
+
+   if (wsgl->cur_struct.lighting) {
+      glEnable(GL_LIGHTING);
+   }
+   else {
+      glEnable(GL_LIGHTING);
+   }
+
+   glCullFace(GL_FRONT);
 }
 
 #if 0
@@ -300,7 +309,7 @@ void wsgl_setup_back_int_refl_props(
  */
 
 void wsgl_setup_int_refl_props(
-   Pint colr_model,
+   Pint colr_type,
    Pcoval *colr,
    Ws_attr_st *ast
    )
@@ -327,7 +336,7 @@ void wsgl_setup_int_refl_props(
 
    switch (refl_eqn) {
       case PREFL_AMBIENT:
-         if (colr_model == PMODEL_RGB) {
+         if (colr_type == PMODEL_RGB) {
             ambient[0] = colr->direct.rgb.red   * refl_props->ambient_coef;
             ambient[1] = colr->direct.rgb.green * refl_props->ambient_coef;
             ambient[2] = colr->direct.rgb.blue  * refl_props->ambient_coef;
@@ -346,7 +355,7 @@ void wsgl_setup_int_refl_props(
          break;
 
       case PREFL_AMB_DIFF:
-         if (colr_model == PMODEL_RGB) {
+         if (colr_type == PMODEL_RGB) {
             ambient[0] = colr->direct.rgb.red   * refl_props->ambient_coef;
             ambient[1] = colr->direct.rgb.green * refl_props->ambient_coef;
             ambient[2] = colr->direct.rgb.blue  * refl_props->ambient_coef;
@@ -365,7 +374,7 @@ void wsgl_setup_int_refl_props(
          break;
 
       case PREFL_AMB_DIFF_SPEC:
-         if (colr_model == PMODEL_RGB) {
+         if (colr_type == PMODEL_RGB) {
             ambient[0] = colr->direct.rgb.red   * refl_props->ambient_coef;
             ambient[1] = colr->direct.rgb.green * refl_props->ambient_coef;
             ambient[2] = colr->direct.rgb.blue  * refl_props->ambient_coef;
@@ -396,6 +405,55 @@ void wsgl_setup_int_refl_props(
 }
 
 /*******************************************************************************
+ * wsgl_setup_int_colr
+ * 
+ * DESCR:       Setup surface colour
+ * RETURNS:     Lighting state
+ */
+
+int wsgl_setup_int_colr(
+   Ws *ws,
+   Pint colr_type,
+   Pcoval *colr,
+   Ws_attr_st *ast
+   )
+{
+   int lighting;
+
+   Wsgl_handle wsgl = ws->render_context;
+
+   if (wsgl->cur_struct.lighting) {
+      wsgl_setup_int_refl_props(colr_type, colr, ast);
+      lighting = TRUE;
+   }
+   else {
+      wsgl_set_colr(colr_type, colr);
+      lighting = FALSE;
+   }
+
+   return lighting;
+}
+
+/*******************************************************************************
+ * wsgl_setup_int_attr_plus
+ * 
+ * DESCR:       Setup interiour attributes for PHIGS Plus
+ * RETURNS:     Lighting state
+ */
+
+int wsgl_setup_int_attr_plus(
+   Ws *ws,
+   Ws_attr_st *ast
+   )
+{
+   Pcoval colr;
+
+   wsgl_setup_int_attr_nocol(ws, ast);
+   wsgl_colr_from_gcolr(&colr, wsgl_get_int_colr(ast));
+   return wsgl_setup_int_colr(ws, PMODEL_RGB, &colr, ast);
+}
+
+/*******************************************************************************
  * wsgl_setup_back_int_refl_props
  * 
  * DESCR:       Setup back surface reflection and colour properties
@@ -403,7 +461,7 @@ void wsgl_setup_int_refl_props(
  */
 
 void wsgl_setup_back_int_refl_props(
-   Pint colr_model,
+   Pint colr_type,
    Pcoval *colr,
    Ws_attr_st *ast
    )
@@ -432,7 +490,7 @@ void wsgl_setup_back_int_refl_props(
 
    switch (refl_eqn) {
       case PREFL_AMBIENT:
-         if (colr_model == PMODEL_RGB) {
+         if (colr_type == PMODEL_RGB) {
             ambient[0] = colr->direct.rgb.red   * refl_props->ambient_coef;
             ambient[1] = colr->direct.rgb.green * refl_props->ambient_coef;
             ambient[2] = colr->direct.rgb.blue  * refl_props->ambient_coef;
@@ -451,7 +509,7 @@ void wsgl_setup_back_int_refl_props(
          break;
 
       case PREFL_AMB_DIFF:
-         if (colr_model == PMODEL_RGB) {
+         if (colr_type == PMODEL_RGB) {
             ambient[0] = colr->direct.rgb.red   * refl_props->ambient_coef;
             ambient[1] = colr->direct.rgb.green * refl_props->ambient_coef;
             ambient[2] = colr->direct.rgb.blue  * refl_props->ambient_coef;
@@ -470,7 +528,7 @@ void wsgl_setup_back_int_refl_props(
          break;
 
       case PREFL_AMB_DIFF_SPEC:
-         if (colr_model == PMODEL_RGB) {
+         if (colr_type == PMODEL_RGB) {
             ambient[0] = colr->direct.rgb.red   * refl_props->ambient_coef;
             ambient[1] = colr->direct.rgb.green * refl_props->ambient_coef;
             ambient[2] = colr->direct.rgb.blue  * refl_props->ambient_coef;
@@ -498,5 +556,54 @@ void wsgl_setup_back_int_refl_props(
    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
    glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+}
+
+/*******************************************************************************
+ * wsgl_setup_back_int_colr
+ * 
+ * DESCR:       Setup back-surface colour
+ * RETURNS:     Lighting state
+ */
+
+int wsgl_setup_back_int_colr(
+   Ws *ws,
+   Pint colr_type,
+   Pcoval *colr,
+   Ws_attr_st *ast
+   )
+{
+   int lighting;
+
+   Wsgl_handle wsgl = ws->render_context;
+
+   if (wsgl->cur_struct.lighting) {
+      wsgl_setup_back_int_refl_props(colr_type, colr, ast);
+      lighting = TRUE;
+   }
+   else {
+      wsgl_set_colr(colr_type, colr);
+      lighting = FALSE;
+   }
+
+   return lighting;
+}
+
+/*******************************************************************************
+ * wsgl_setup_back_int_attr_plus
+ * 
+ * DESCR:       Setup backface interiour attributes for PHIGS Plus
+ * RETURNS:     Lighting state
+ */
+
+int wsgl_setup_back_int_attr_plus(
+   Ws *ws,
+   Ws_attr_st *ast
+   )
+{
+   Pcoval colr;
+
+   wsgl_setup_back_int_attr_nocol(ws, ast);
+   wsgl_colr_from_gcolr(&colr, wsgl_get_back_int_colr(ast));
+   return wsgl_setup_back_int_colr(ws, PMODEL_RGB, &colr, ast);
 }
 

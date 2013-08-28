@@ -30,31 +30,6 @@
 #include <phigs/private/sofas3P.h>
 
 /*******************************************************************************
- * priv_facet_normal3
- *
- * DESCR:	Set facet normal 3D helper function
- * RETURNS:	N/A
- */
-
-static void priv_facet_normal3(
-   Pint fflag,
-   Pfacet_data_arr3 *fdata,
-   Pint index
-   )
-{
-   if (fflag == PFACET_NORMAL) {
-      glNormal3f(fdata->norms[index].delta_x,
-                 fdata->norms[index].delta_y,
-                 fdata->norms[index].delta_z);
-   }
-   else if (fflag == PFACET_COLOUR_NORMAL) {
-      glNormal3f(fdata->conorms[index].norm.delta_x,
-                 fdata->conorms[index].norm.delta_y,
-                 fdata->conorms[index].norm.delta_z);
-   }
-}
-
-/*******************************************************************************
  * priv_fill_area3_points
  *
  * DESCR:	Draw fill area with point data 3D helper function
@@ -86,6 +61,7 @@ static void priv_fill_area3_points(
  */
 
 static void priv_fill_area3_ptcolrs(
+   Ws *ws,
    Pint colr_type,
    Pint_list *vlist,
    Pptco3 *ptcolrs,
@@ -97,7 +73,7 @@ static void priv_fill_area3_ptcolrs(
    glBegin(GL_POLYGON);
    for (i = 0; i < vlist->num_ints; i++) {
       vert = vlist->ints[i];
-      wsgl_setup_int_refl_props(colr_type, &ptcolrs[vert].colr, ast);
+      wsgl_setup_int_colr(ws, colr_type, &ptcolrs[vert].colr, ast);
       glVertex3f(ptcolrs[vert].point.x,
                  ptcolrs[vert].point.y,
                  ptcolrs[vert].point.z);
@@ -113,6 +89,7 @@ static void priv_fill_area3_ptcolrs(
  */
 
 static void priv_back_area3_ptcolrs(
+   Ws *ws,
    Pint colr_type,
    Pint_list *vlist,
    Pptco3 *ptcolrs,
@@ -124,34 +101,7 @@ static void priv_back_area3_ptcolrs(
    glBegin(GL_POLYGON);
    for (i = 0; i < vlist->num_ints; i++) {
       vert = vlist->ints[i];
-      wsgl_setup_back_int_refl_props(colr_type, &ptcolrs[vert].colr, ast);
-      glVertex3f(ptcolrs[vert].point.x,
-                 ptcolrs[vert].point.y,
-                 ptcolrs[vert].point.z);
-   }
-   glEnd();
-}
-
-/*******************************************************************************
- * priv_fill_area3_ptcolrs_ns
- *
- * DESCR:	Draw fill area with point and colour data 3D, with no shading
- *		helper function
- * RETURNS:	N/A
- */
-
-static void priv_fill_area3_ptcolrs_ns(
-   Pint colr_type,
-   Pint_list *vlist,
-   Pptco3 *ptcolrs
-   )
-{
-   Pint i, vert;
-
-   glBegin(GL_POLYGON);
-   for (i = 0; i < vlist->num_ints; i++) {
-      vert = vlist->ints[i];
-      wsgl_set_colr(colr_type, &ptcolrs[vert].colr);
+      wsgl_setup_back_int_colr(ws, colr_type, &ptcolrs[vert].colr, ast);
       glVertex3f(ptcolrs[vert].point.x,
                  ptcolrs[vert].point.y,
                  ptcolrs[vert].point.z);
@@ -195,6 +145,7 @@ static void priv_fill_area3_ptnorms(
  */
 
 static void priv_fill_area3_ptconorms(
+   Ws *ws,
    Pint colr_type,
    Pint_list *vlist,
    Pptconorm3 *ptconorms,
@@ -206,7 +157,7 @@ static void priv_fill_area3_ptconorms(
    glBegin(GL_POLYGON);
    for (i = 0; i < vlist->num_ints; i++) {
       vert = vlist->ints[i];
-      wsgl_setup_int_refl_props(colr_type, &ptconorms[vert].colr, ast);
+      wsgl_setup_int_colr(ws, colr_type, &ptconorms[vert].colr, ast);
       glNormal3f(ptconorms[vert].norm.delta_x,
                  ptconorms[vert].norm.delta_y,
                  ptconorms[vert].norm.delta_z);
@@ -226,6 +177,7 @@ static void priv_fill_area3_ptconorms(
  */
 
 static void priv_back_area3_ptconorms(
+   Ws *ws,
    Pint colr_type,
    Pint_list *vlist,
    Pptconorm3 *ptconorms,
@@ -237,7 +189,7 @@ static void priv_back_area3_ptconorms(
    glBegin(GL_POLYGON);
    for (i = 0; i < vlist->num_ints; i++) {
       vert = vlist->ints[i];
-      wsgl_setup_back_int_refl_props(colr_type, &ptconorms[vert].colr, ast);
+      wsgl_setup_back_int_colr(ws, colr_type, &ptconorms[vert].colr, ast);
       glNormal3f(ptconorms[vert].norm.delta_x,
                  ptconorms[vert].norm.delta_y,
                  ptconorms[vert].norm.delta_z);
@@ -266,32 +218,27 @@ void wsgl_set_of_fill_area_set3_data_front(
    Pint num_lists;
    Pint_list vlist;
    Pcoval colr;
-
-   Wsgl_handle wsgl = ws->render_context;
+   Pvec3 norm;
 
    sofas3_head(&sofas3, pdata);
 
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
-   glCullFace(GL_BACK);
    wsgl_setup_int_attr_nocol(ws, ast);
-
-   if (wsgl->cur_struct.lighting) {
-      glEnable(GL_LIGHTING);
-   }
 
    switch (sofas3.vflag) {
       case PVERT_COORD:
          if (sofas3.fflag == PFACET_COLOUR_NORMAL) {
             for (i = 0; i < sofas3.num_sets; i++) {
-               wsgl_setup_int_refl_props(sofas3.colr_type,
-                                         &sofas3.fdata.conorms[i].colr,
-                                         ast);
+               num_lists = sofas3_num_vlists(&sofas3);
+               wsgl_setup_int_colr(ws,
+                                   sofas3.colr_type,
+                                   &sofas3.fdata.conorms[i].colr,
+                                   ast);
                glNormal3f(sofas3.fdata.conorms[i].norm.delta_x,
                           sofas3.fdata.conorms[i].norm.delta_y,
                           sofas3.fdata.conorms[i].norm.delta_z);
-               num_lists = sofas3_num_vlists(&sofas3);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
                   priv_fill_area3_points(&vlist,
@@ -301,12 +248,12 @@ void wsgl_set_of_fill_area_set3_data_front(
          }
          else if (sofas3.fflag == PFACET_NORMAL) {
             wsgl_colr_from_gcolr(&colr, wsgl_get_int_colr(ast));
-            wsgl_setup_int_refl_props(sofas3.colr_type, &colr, ast);
+            wsgl_setup_int_colr(ws, sofas3.colr_type, &colr, ast);
             for (i = 0; i < sofas3.num_sets; i++) {
+               num_lists = sofas3_num_vlists(&sofas3);
                glNormal3f(sofas3.fdata.norms[i].delta_x,
                           sofas3.fdata.norms[i].delta_y,
                           sofas3.fdata.norms[i].delta_z);
-               num_lists = sofas3_num_vlists(&sofas3);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
                   priv_fill_area3_points(&vlist,
@@ -316,8 +263,14 @@ void wsgl_set_of_fill_area_set3_data_front(
          }
          else if (sofas3.fflag == PFACET_COLOUR) {
             for (i = 0; i < sofas3.num_sets; i++) {
-               wsgl_set_colr(sofas3.colr_type, &sofas3.fdata.colrs[i]);
                num_lists = sofas3_num_vlists(&sofas3);
+               wsgl_setup_int_colr(ws,
+                                   sofas3.colr_type,
+                                   &sofas3.fdata.colrs[i],
+                                   ast);
+               sofas3_get_vlist(&vlist, &sofas3);
+               sofas3_normal3(&norm, &sofas3, &vlist);
+               glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
                   priv_fill_area3_points(&vlist,
@@ -326,9 +279,13 @@ void wsgl_set_of_fill_area_set3_data_front(
             }
          }
          else {
-            wsgl_set_gcolr(wsgl_get_int_colr(ast));
+            wsgl_colr_from_gcolr(&colr, wsgl_get_int_colr(ast));
+            wsgl_setup_int_colr(ws, sofas3.colr_type, &colr, ast);
             for (i = 0; i < sofas3.num_sets; i++) {
                num_lists = sofas3_num_vlists(&sofas3);
+               sofas3_get_vlist(&vlist, &sofas3);
+               sofas3_normal3(&norm, &sofas3, &vlist);
+               glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
                   priv_fill_area3_points(&vlist,
@@ -341,11 +298,14 @@ void wsgl_set_of_fill_area_set3_data_front(
       case PVERT_COORD_COLOUR:
          if (sofas3.fflag == PFACET_NORMAL) {
             for (i = 0; i < sofas3.num_sets; i++) {
-               priv_facet_normal3(sofas3.fflag, &sofas3.fdata, i);
                num_lists = sofas3_num_vlists(&sofas3);
+               glNormal3f(sofas3.fdata.norms[i].delta_x,
+                          sofas3.fdata.norms[i].delta_y,
+                          sofas3.fdata.norms[i].delta_z);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
-                  priv_fill_area3_ptcolrs(sofas3.colr_type,
+                  priv_fill_area3_ptcolrs(ws,
+                                          sofas3.colr_type,
                                           &vlist,
                                           sofas3.vdata.vertex_data.ptcolrs,
                                           ast);
@@ -355,11 +315,16 @@ void wsgl_set_of_fill_area_set3_data_front(
          else {
             for (i = 0; i < sofas3.num_sets; i++) {
                num_lists = sofas3_num_vlists(&sofas3);
+               sofas3_get_vlist(&vlist, &sofas3);
+               sofas3_normal3(&norm, &sofas3, &vlist);
+               glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
-                  priv_fill_area3_ptcolrs_ns(sofas3.colr_type,
-                                             &vlist,
-                                             sofas3.vdata.vertex_data.ptcolrs);
+                  priv_fill_area3_ptcolrs(ws,
+                                          sofas3.colr_type,
+                                          &vlist,
+                                          sofas3.vdata.vertex_data.ptcolrs,
+                                          ast);
                }
             }
          }
@@ -368,9 +333,10 @@ void wsgl_set_of_fill_area_set3_data_front(
       case PVERT_COORD_NORMAL:
          if (sofas3.fflag == PFACET_COLOUR) {
             for (i = 0; i < sofas3.num_sets; i++) {
-               wsgl_setup_int_refl_props(sofas3.colr_type,
-                                         &sofas3.fdata.colrs[i],
-                                         ast);
+               wsgl_setup_int_colr(ws,
+                                   sofas3.colr_type,
+                                   &sofas3.fdata.colrs[i],
+                                   ast);
                num_lists = sofas3_num_vlists(&sofas3);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
@@ -381,7 +347,7 @@ void wsgl_set_of_fill_area_set3_data_front(
          }
          else {
             wsgl_colr_from_gcolr(&colr, wsgl_get_int_colr(ast));
-            wsgl_setup_int_refl_props(sofas3.colr_type, &colr, ast);
+            wsgl_setup_int_colr(ws, sofas3.colr_type, &colr, ast);
             for (i = 0; i < sofas3.num_sets; i++) {
                num_lists = sofas3_num_vlists(&sofas3);
                for (j = 0; j < num_lists; j++) {
@@ -398,7 +364,8 @@ void wsgl_set_of_fill_area_set3_data_front(
             num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
-               priv_fill_area3_ptconorms(sofas3.colr_type,
+               priv_fill_area3_ptconorms(ws,
+                                         sofas3.colr_type,
                                          &vlist,
                                          sofas3.vdata.vertex_data.ptconorms,
                                          ast);
@@ -408,10 +375,6 @@ void wsgl_set_of_fill_area_set3_data_front(
 
       default:
          break;
-   }
-
-   if (wsgl->cur_struct.lighting) {
-      glDisable(GL_LIGHTING);
    }
 
    glDisable(GL_POLYGON_OFFSET_LINE);
@@ -436,32 +399,27 @@ void wsgl_set_of_fill_area_set3_data_back(
    Pint num_lists;
    Pint_list vlist;
    Pcoval colr;
-
-   Wsgl_handle wsgl = ws->render_context;
+   Pvec3 norm;
 
    sofas3_head(&sofas3, pdata);
 
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
-   glCullFace(GL_FRONT);
    wsgl_setup_back_int_attr_nocol(ws, ast);
-
-   if (wsgl->cur_struct.lighting) {
-      glEnable(GL_LIGHTING);
-   }
 
    switch (sofas3.vflag) {
       case PVERT_COORD:
          if (sofas3.fflag == PFACET_COLOUR_NORMAL) {
             for (i = 0; i < sofas3.num_sets; i++) {
-               wsgl_setup_back_int_refl_props(sofas3.colr_type,
-                                              &sofas3.fdata.conorms[i].colr,
-                                              ast);
+               num_lists = sofas3_num_vlists(&sofas3);
+               wsgl_setup_back_int_colr(ws,
+                                        sofas3.colr_type,
+                                        &sofas3.fdata.conorms[i].colr,
+                                        ast);
                glNormal3f(sofas3.fdata.conorms[i].norm.delta_x,
                           sofas3.fdata.conorms[i].norm.delta_y,
                           sofas3.fdata.conorms[i].norm.delta_z);
-               num_lists = sofas3_num_vlists(&sofas3);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
                   priv_fill_area3_points(&vlist,
@@ -471,12 +429,12 @@ void wsgl_set_of_fill_area_set3_data_back(
          }
          else if (sofas3.fflag == PFACET_NORMAL) {
             wsgl_colr_from_gcolr(&colr, wsgl_get_back_int_colr(ast));
-            wsgl_setup_back_int_refl_props(sofas3.colr_type, &colr, ast);
+            wsgl_setup_back_int_colr(ws, sofas3.colr_type, &colr, ast);
             for (i = 0; i < sofas3.num_sets; i++) {
+               num_lists = sofas3_num_vlists(&sofas3);
                glNormal3f(sofas3.fdata.norms[i].delta_x,
                           sofas3.fdata.norms[i].delta_y,
                           sofas3.fdata.norms[i].delta_z);
-               num_lists = sofas3_num_vlists(&sofas3);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
                   priv_fill_area3_points(&vlist,
@@ -486,8 +444,14 @@ void wsgl_set_of_fill_area_set3_data_back(
          }
          else if (sofas3.fflag == PFACET_COLOUR) {
             for (i = 0; i < sofas3.num_sets; i++) {
-               wsgl_set_colr(sofas3.colr_type, &sofas3.fdata.colrs[i]);
                num_lists = sofas3_num_vlists(&sofas3);
+               wsgl_setup_back_int_colr(ws,
+                                        sofas3.colr_type,
+                                        &sofas3.fdata.colrs[i],
+                                        ast);
+               sofas3_get_vlist(&vlist, &sofas3);
+               sofas3_normal3(&norm, &sofas3, &vlist);
+               glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
                   priv_fill_area3_points(&vlist,
@@ -496,9 +460,13 @@ void wsgl_set_of_fill_area_set3_data_back(
             }
          }
          else {
-            wsgl_set_gcolr(wsgl_get_back_int_colr(ast));
+            wsgl_colr_from_gcolr(&colr, wsgl_get_back_int_colr(ast));
+            wsgl_setup_back_int_colr(ws, sofas3.colr_type, &colr, ast);
             for (i = 0; i < sofas3.num_sets; i++) {
                num_lists = sofas3_num_vlists(&sofas3);
+               sofas3_get_vlist(&vlist, &sofas3);
+               sofas3_normal3(&norm, &sofas3, &vlist);
+               glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
                   priv_fill_area3_points(&vlist,
@@ -511,11 +479,14 @@ void wsgl_set_of_fill_area_set3_data_back(
       case PVERT_COORD_COLOUR:
          if (sofas3.fflag == PFACET_NORMAL) {
             for (i = 0; i < sofas3.num_sets; i++) {
-               priv_facet_normal3(sofas3.fflag, &sofas3.fdata, i);
+               glNormal3f(sofas3.fdata.norms[i].delta_x,
+                          sofas3.fdata.norms[i].delta_y,
+                          sofas3.fdata.norms[i].delta_z);
                num_lists = sofas3_num_vlists(&sofas3);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
-                  priv_back_area3_ptcolrs(sofas3.colr_type,
+                  priv_back_area3_ptcolrs(ws,
+                                          sofas3.colr_type,
                                           &vlist,
                                           sofas3.vdata.vertex_data.ptcolrs,
                                           ast);
@@ -525,11 +496,16 @@ void wsgl_set_of_fill_area_set3_data_back(
          else {
             for (i = 0; i < sofas3.num_sets; i++) {
                num_lists = sofas3_num_vlists(&sofas3);
+               sofas3_get_vlist(&vlist, &sofas3);
+               sofas3_normal3(&norm, &sofas3, &vlist);
+               glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
-                  priv_fill_area3_ptcolrs_ns(sofas3.colr_type,
-                                             &vlist,
-                                             sofas3.vdata.vertex_data.ptcolrs);
+                  priv_back_area3_ptcolrs(ws,
+                                          sofas3.colr_type,
+                                          &vlist,
+                                          sofas3.vdata.vertex_data.ptcolrs,
+                                          ast);
                }
             }
          }
@@ -538,10 +514,11 @@ void wsgl_set_of_fill_area_set3_data_back(
       case PVERT_COORD_NORMAL:
          if (sofas3.fflag == PFACET_COLOUR) {
             for (i = 0; i < sofas3.num_sets; i++) {
-               wsgl_setup_back_int_refl_props(sofas3.colr_type,
-                                         &sofas3.fdata.colrs[i],
-                                         ast);
                num_lists = sofas3_num_vlists(&sofas3);
+               wsgl_setup_back_int_colr(ws,
+                                        sofas3.colr_type,
+                                        &sofas3.fdata.colrs[i],
+                                        ast);
                for (j = 0; j < num_lists; j++) {
                   sofas3_next_vlist(&vlist, &sofas3);
                   priv_fill_area3_ptnorms(&vlist,
@@ -551,7 +528,7 @@ void wsgl_set_of_fill_area_set3_data_back(
          }
          else {
             wsgl_colr_from_gcolr(&colr, wsgl_get_back_int_colr(ast));
-            wsgl_setup_back_int_refl_props(sofas3.colr_type, &colr, ast);
+            wsgl_setup_back_int_colr(ws, sofas3.colr_type, &colr, ast);
             for (i = 0; i < sofas3.num_sets; i++) {
                num_lists = sofas3_num_vlists(&sofas3);
                for (j = 0; j < num_lists; j++) {
@@ -568,7 +545,8 @@ void wsgl_set_of_fill_area_set3_data_back(
             num_lists = sofas3_num_vlists(&sofas3);
             for (j = 0; j < num_lists; j++) {
                sofas3_next_vlist(&vlist, &sofas3);
-               priv_back_area3_ptconorms(sofas3.colr_type,
+               priv_back_area3_ptconorms(ws,
+                                         sofas3.colr_type,
                                          &vlist,
                                          sofas3.vdata.vertex_data.ptconorms,
                                          ast);
@@ -578,10 +556,6 @@ void wsgl_set_of_fill_area_set3_data_back(
 
       default:
          break;
-   }
-
-   if (wsgl->cur_struct.lighting) {
-      glDisable(GL_LIGHTING);
    }
 
    glDisable(GL_POLYGON_OFFSET_LINE);

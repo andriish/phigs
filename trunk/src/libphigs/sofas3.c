@@ -155,14 +155,33 @@ void sofas3_head(
  */
 
 int sofas3_num_vlists(
-    Psofas3 *sofas3
-    )
+   Psofas3 *sofas3
+   )
 {
    Pint *data = (Pint *) sofas3->vlist;
    Pint num_lists = data[0];
    sofas3->vlist = (Pint_list_list *) &data[1];
 
    return num_lists;
+}
+
+/*******************************************************************************
+ * sofas3_get_vlist
+ *
+ * DESCR:       Get set of fill area set vertex list
+ * RETURNS:     N/A
+ */
+
+void sofas3_get_vlist(
+   Pint_list *vlist,
+   Psofas3 *sofas3
+   )
+{
+   Pint *data = (Pint *) sofas3->vlist;
+
+   vlist->num_ints = data[0];
+   data = &data[1];
+   vlist->ints = data;
 }
 
 /*******************************************************************************
@@ -173,9 +192,9 @@ int sofas3_num_vlists(
  */
 
 void sofas3_next_vlist(
-    Pint_list *vlist,
-    Psofas3 *sofas3
-    )
+   Pint_list *vlist,
+   Psofas3 *sofas3
+   )
 {
    Pint *data = (Pint *) sofas3->vlist;
 
@@ -193,8 +212,8 @@ void sofas3_next_vlist(
  */
 
 int sofas3_num_elists(
-    Psofas3 *sofas3
-    )
+   Psofas3 *sofas3
+   )
 {
    Pint *data = (Pint *) sofas3->edata;
    Pint num_lists = data[0];
@@ -211,9 +230,9 @@ int sofas3_num_elists(
  */
 
 void sofas3_next_elist(
-    Pedge_data_list *elist,
-    Psofas3 *sofas3
-    )
+   Pedge_data_list *elist,
+   Psofas3 *sofas3
+   )
 {
    Pint *data = (Pint *) sofas3->edata;
    Pedge_flag *edata;
@@ -223,6 +242,82 @@ void sofas3_next_elist(
    edata = (Pedge_flag *) data;
    elist->edgedata.edges = edata;
    sofas3->edata = (Pedge_data_list_list *) &edata[elist->num_edges];
+}
+
+/*******************************************************************************
+ * sofas3_normal3
+ *
+ * DESCR:	Get normal
+ * RETURNS:	N/A
+ */
+
+void sofas3_normal3(
+   Pvec3 *norm,
+   Psofas3 *sofas3,
+   Pint_list *vlist
+   )
+{
+   Pint vert1, vert2, vert3;
+   Pvec3 a, b, c;
+   Pvec3 v1, v2;
+
+   vert1 = vlist->ints[0];
+   vert2 = vlist->ints[1];
+   vert3 = vlist->ints[2];
+
+   switch(sofas3->vflag) {
+      case PVERT_COORD:
+         a.delta_x = sofas3->vdata.vertex_data.points[vert1].x;
+         a.delta_y = sofas3->vdata.vertex_data.points[vert1].y;
+         a.delta_z = sofas3->vdata.vertex_data.points[vert1].z;
+         b.delta_x = sofas3->vdata.vertex_data.points[vert2].x;
+         b.delta_y = sofas3->vdata.vertex_data.points[vert2].y;
+         b.delta_z = sofas3->vdata.vertex_data.points[vert2].z;
+         c.delta_x = sofas3->vdata.vertex_data.points[vert3].x;
+         c.delta_y = sofas3->vdata.vertex_data.points[vert3].y;
+         c.delta_z = sofas3->vdata.vertex_data.points[vert3].z;
+         break;
+
+      case PVERT_COORD_COLOUR:
+         a.delta_x = sofas3->vdata.vertex_data.ptcolrs[vert1].point.x;
+         a.delta_y = sofas3->vdata.vertex_data.ptcolrs[vert1].point.y;
+         a.delta_z = sofas3->vdata.vertex_data.ptcolrs[vert1].point.z;
+         b.delta_x = sofas3->vdata.vertex_data.ptcolrs[vert2].point.x;
+         b.delta_y = sofas3->vdata.vertex_data.ptcolrs[vert2].point.y;
+         b.delta_z = sofas3->vdata.vertex_data.ptcolrs[vert2].point.z;
+         c.delta_x = sofas3->vdata.vertex_data.ptcolrs[vert3].point.x;
+         c.delta_y = sofas3->vdata.vertex_data.ptcolrs[vert3].point.y;
+         c.delta_z = sofas3->vdata.vertex_data.ptcolrs[vert3].point.z;
+         break;
+
+      case PVERT_COORD_NORMAL:
+         a.delta_x = sofas3->vdata.vertex_data.ptnorms[vert1].point.x;
+         a.delta_y = sofas3->vdata.vertex_data.ptnorms[vert1].point.y;
+         a.delta_z = sofas3->vdata.vertex_data.ptnorms[vert1].point.z;
+         b.delta_x = sofas3->vdata.vertex_data.ptnorms[vert2].point.x;
+         b.delta_y = sofas3->vdata.vertex_data.ptnorms[vert2].point.y;
+         b.delta_z = sofas3->vdata.vertex_data.ptnorms[vert2].point.z;
+         c.delta_x = sofas3->vdata.vertex_data.ptnorms[vert3].point.x;
+         c.delta_y = sofas3->vdata.vertex_data.ptnorms[vert3].point.y;
+         c.delta_z = sofas3->vdata.vertex_data.ptnorms[vert3].point.z;
+         break;
+
+      case PVERT_COORD_COLOUR_NORMAL:
+         a.delta_x = sofas3->vdata.vertex_data.ptconorms[vert1].point.x;
+         a.delta_y = sofas3->vdata.vertex_data.ptconorms[vert1].point.y;
+         a.delta_z = sofas3->vdata.vertex_data.ptconorms[vert1].point.z;
+         b.delta_x = sofas3->vdata.vertex_data.ptconorms[vert2].point.x;
+         b.delta_y = sofas3->vdata.vertex_data.ptconorms[vert2].point.y;
+         b.delta_z = sofas3->vdata.vertex_data.ptconorms[vert2].point.z;
+         c.delta_x = sofas3->vdata.vertex_data.ptconorms[vert3].point.x;
+         c.delta_y = sofas3->vdata.vertex_data.ptconorms[vert3].point.y;
+         c.delta_z = sofas3->vdata.vertex_data.ptconorms[vert3].point.z;
+         break;
+   }
+
+   phg_vector_sub(&v1, &b, &a);
+   phg_vector_sub(&v2, &c, &a);
+   phg_vector_cross_prod(norm, &v1, &v2);
 }
 
 /*******************************************************************************

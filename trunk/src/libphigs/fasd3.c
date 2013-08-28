@@ -191,3 +191,72 @@ void fasd3_next_vdata3(
    }
 }
 
+/*******************************************************************************
+ * fasd3_normal3
+ *
+ * DESCR:       Get normal
+ * RETURNS:     N/A
+ */
+
+void fasd3_normal3(
+   Pvec3 *norm,
+   Pfasd3 *fasd3
+   )
+{
+   Pvec3 a, b, c;
+   Pvec3 v1, v2;
+
+   switch(fasd3->vflag) {
+      case PVERT_COORD:
+         a.delta_x = fasd3->vdata->vertex_data.points[0].x;
+         a.delta_y = fasd3->vdata->vertex_data.points[0].y;
+         a.delta_z = fasd3->vdata->vertex_data.points[0].z;
+         b.delta_x = fasd3->vdata->vertex_data.points[1].x;
+         b.delta_y = fasd3->vdata->vertex_data.points[1].y;
+         b.delta_z = fasd3->vdata->vertex_data.points[1].z;
+         c.delta_x = fasd3->vdata->vertex_data.points[2].x;
+         c.delta_y = fasd3->vdata->vertex_data.points[2].y;
+         c.delta_z = fasd3->vdata->vertex_data.points[2].z;
+         break;
+
+      case PVERT_COORD_COLOUR:
+         a.delta_x = fasd3->vdata->vertex_data.ptcolrs[0].point.x;
+         a.delta_y = fasd3->vdata->vertex_data.ptcolrs[0].point.y;
+         a.delta_z = fasd3->vdata->vertex_data.ptcolrs[0].point.z;
+         b.delta_x = fasd3->vdata->vertex_data.ptcolrs[1].point.x;
+         b.delta_y = fasd3->vdata->vertex_data.ptcolrs[1].point.y;
+         b.delta_z = fasd3->vdata->vertex_data.ptcolrs[1].point.z;
+         c.delta_x = fasd3->vdata->vertex_data.ptcolrs[2].point.x;
+         c.delta_y = fasd3->vdata->vertex_data.ptcolrs[2].point.y;
+         c.delta_z = fasd3->vdata->vertex_data.ptcolrs[2].point.z;
+         break;
+
+      case PVERT_COORD_NORMAL:
+         a.delta_x = fasd3->vdata->vertex_data.ptnorms[0].point.x;
+         a.delta_y = fasd3->vdata->vertex_data.ptnorms[0].point.y;
+         a.delta_z = fasd3->vdata->vertex_data.ptnorms[0].point.z;
+         b.delta_x = fasd3->vdata->vertex_data.ptnorms[1].point.x;
+         b.delta_y = fasd3->vdata->vertex_data.ptnorms[1].point.y;
+         b.delta_z = fasd3->vdata->vertex_data.ptnorms[1].point.z;
+         c.delta_x = fasd3->vdata->vertex_data.ptnorms[2].point.x;
+         c.delta_y = fasd3->vdata->vertex_data.ptnorms[2].point.y;
+         c.delta_z = fasd3->vdata->vertex_data.ptnorms[2].point.z;
+         break;
+
+      case PVERT_COORD_COLOUR_NORMAL:
+         a.delta_x = fasd3->vdata->vertex_data.ptconorms[0].point.x;
+         a.delta_y = fasd3->vdata->vertex_data.ptconorms[0].point.y;
+         a.delta_z = fasd3->vdata->vertex_data.ptconorms[0].point.z;
+         b.delta_x = fasd3->vdata->vertex_data.ptconorms[1].point.x;
+         b.delta_y = fasd3->vdata->vertex_data.ptconorms[1].point.y;
+         b.delta_z = fasd3->vdata->vertex_data.ptconorms[1].point.z;
+         c.delta_x = fasd3->vdata->vertex_data.ptconorms[2].point.x;
+         c.delta_y = fasd3->vdata->vertex_data.ptconorms[2].point.y;
+         c.delta_z = fasd3->vdata->vertex_data.ptconorms[2].point.z;
+         break;
+   }
+
+   phg_vector_sub(&v1, &b, &a);
+   phg_vector_sub(&v2, &c, &a);
+   phg_vector_cross_prod(norm, &v1, &v2);
+}

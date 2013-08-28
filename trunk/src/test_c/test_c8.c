@@ -37,7 +37,7 @@
 #define INT_STYLE      PSTYLE_SOLID
 #define EDGE_FLAG      PEDGE_ON
 #define HLHSR_FLAG     PHIGS_HLHSR_ID_ON
-#define INIT_SHAPE     init_shape_norm_per_facet
+#define INIT_SHAPE     init_shape_no_norm
 #define SHOW_FACES     5
 #define CULL_MODE      PCULL_NONE
 #define DISTING_MODE   PDISTING_YES
@@ -135,6 +135,89 @@ Pint_list* set_vertices(int a, int b, int c, int d)
    vlist->ints[3] = d;
 
    return vlist;
+}
+
+void init_shape_no_norm(void)
+{
+   Ppoint3 vertex_data[8];
+   Pint_list_list vlist[6];
+   Pfacet_vdata_list3 vdata;
+
+   vertex_data[0].x = 0.0;
+   vertex_data[0].y = 0.0;
+   vertex_data[0].z = 0.0;
+
+   vertex_data[1].x = WIDTH;
+   vertex_data[1].y = 0.0;
+   vertex_data[1].z = 0.0;
+
+   vertex_data[2].x = WIDTH;
+   vertex_data[2].y = HEIGHT;
+   vertex_data[2].z = 0.0;
+
+   vertex_data[3].x = 0.0;
+   vertex_data[3].y = HEIGHT;
+   vertex_data[3].z = 0.0;
+
+   vertex_data[4].x = 0.0;
+   vertex_data[4].y = 0.0;
+   vertex_data[4].z = DEPTH;
+
+   vertex_data[5].x = WIDTH;
+   vertex_data[5].y = 0.0;
+   vertex_data[5].z = DEPTH;
+
+   vertex_data[6].x = WIDTH;
+   vertex_data[6].y = HEIGHT;
+   vertex_data[6].z = DEPTH;
+
+   vertex_data[7].x = 0.0;
+   vertex_data[7].y = HEIGHT;
+   vertex_data[7].z = DEPTH;
+
+   vdata.num_vertices = 8;
+   vdata.vertex_data.points = vertex_data;
+
+   /* Back */
+   vlist[0].num_lists = 1;
+   vlist[0].lists = set_vertices(3, 2, 1, 0);
+
+   /* Front */
+   vlist[1].num_lists = 1;
+   vlist[1].lists = set_vertices(4, 5, 6, 7);
+
+   /* Bottom */
+   vlist[2].num_lists = 1;
+   vlist[2].lists = set_vertices(0, 1, 5, 4);
+
+   /* Top */
+   vlist[3].num_lists = 1;
+   vlist[3].lists = set_vertices(2, 3, 7, 6);
+
+   /* Left */
+   vlist[4].num_lists = 1;
+   vlist[4].lists = set_vertices(0, 4, 7, 3);
+
+   /* Right */
+   vlist[5].num_lists = 1;
+   vlist[5].lists = set_vertices(5, 1, 2, 6);
+
+   pset_of_fill_area_set3_data(PFACET_NONE,
+                               PEDGE_NONE,
+                               PVERT_COORD,
+                               PMODEL_RGB,
+                               SHOW_FACES,
+                               NULL,
+                               NULL,
+                               vlist,
+                               &vdata);
+
+   free(vlist[0].lists);
+   free(vlist[1].lists);
+   free(vlist[2].lists);
+   free(vlist[3].lists);
+   free(vlist[4].lists);
+   free(vlist[5].lists);
 }
 
 void init_shape_norm_per_facet(void)
