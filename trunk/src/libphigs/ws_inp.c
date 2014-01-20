@@ -1499,7 +1499,7 @@ void phg_ws_input_close(
     if (iws->num_devs.string > 0) {
 	free(iws->devs.string);
     }
-    memset(iws, 0, sizeof(iws));
+    memset(iws, 0, sizeof(*iws));
 }
 
 /*******************************************************************************
