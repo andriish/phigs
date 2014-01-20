@@ -506,6 +506,8 @@ int main(void)
       }
    }
 
+   pclose_ws(WS_1);
+
    return 1;
 }
 

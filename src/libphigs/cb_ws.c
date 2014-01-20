@@ -98,6 +98,22 @@ void popen_ws(
 }
 
 /*******************************************************************************
+ * pclose_ws
+ *
+ * DESCR:	Close workstation
+ * RETURNS:	N/A
+ */
+
+void pclose_ws(
+   Pint ws_id
+   )
+{
+   if (phg_ws_open(ws_id, Pfn_post_struct) != NULL) {
+      phg_psl_rem_ws(PHG_PSL, ws_id);
+   }
+}
+
+/*******************************************************************************
  * pset_ws_vp
  *
  * DESCR:	Set workstation viewport

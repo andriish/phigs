@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
       }
    }
 
-   (*PHG_WSID(0)->close)(PHG_WSID(0));
+   pclose_ws(0);
 
    return 0;
 }

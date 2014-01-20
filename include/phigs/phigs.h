@@ -1148,6 +1148,17 @@ void popen_ws(
    );
 
 /*******************************************************************************
+ * pclose_ws
+ *
+ * DESCR:       Close workstation
+ * RETURNS:     N/A
+ */
+
+void pclose_ws(
+   Pint ws_id
+   );
+
+/*******************************************************************************
  * pset_ws_vp
  *
  * DESCR:       Set workstation viewport
