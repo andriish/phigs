@@ -108,7 +108,20 @@ void pclose_ws(
    Pint ws_id
    )
 {
-   if (phg_ws_open(ws_id, Pfn_post_struct) != NULL) {
+   Ws_handle wsh;
+   Wsb_output_ws *owsb;
+   Ws_post_str *str;
+
+   if (phg_ws_open(ws_id, Pfn_close_ws) != NULL) {
+      wsh = PHG_WSID(ws_id);
+      (*wsh->update)(wsh, PFLAG_PERFORM);
+      owsb = &wsh->out_ws.model.b;
+      str = owsb->posted.lowest.higher;
+      while (str->higher != NULL) {
+         phg_css_unpost(owsb->cssh, str->structh->struct_id, wsh);
+         str = str->higher;
+      }
+      (*wsh->close)(wsh);
       phg_psl_rem_ws(PHG_PSL, ws_id);
    }
 }

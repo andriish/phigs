@@ -577,7 +577,8 @@ void wsb_destroy_ws(
 	if ( ws->display ) {
 	    if ( ws->drawable_id )
 		phg_wsx_release_window( ws );
-                destroy_resources(ws);
+
+            destroy_resources(ws);
 
             /* NOTE:
              * Free renderer resource here if needed
@@ -1595,7 +1596,7 @@ void phg_wsb_set_filter(
     }
 }
 
-#if 0
+#ifdef TODO
 void
 phg_wsb_inq_filter( ws, type, ret )
     Ws                  *ws;
