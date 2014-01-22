@@ -102,6 +102,12 @@ typedef enum {
    PSTRUCT_ST_STOP
 } Pstruct_st;
 
+/* Archive releated */
+typedef enum {
+   PST_ARCL,
+   PST_AROP
+} Par_st;
+
 /* Workstation related */
 typedef enum {
    PCLASS_VEC,
@@ -1129,6 +1135,17 @@ typedef Pstring_data Pstring_data3;
 void popen_phigs(
    char *error_file,
    size_t memory
+   );
+
+/*******************************************************************************
+ * pclose_phigs
+ *
+ * DESCR:       Close phigs
+ * RETURNS:     N/A
+ */
+
+void pclose_phigs(
+   void
    );
 
 /* See phgsargs.h for more info */

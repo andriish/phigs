@@ -396,6 +396,7 @@ int main(int argc, char *argv[])
             }
             else if (ks == XK_Escape) {
                pclose_ws(0);
+               pclose_phigs();
                exit(0);
             }
             protate_x(angle_x * 3.14 / 2.0, &errnum, rotx);
@@ -417,6 +418,7 @@ int main(int argc, char *argv[])
    }
 
    pclose_ws (0);
+   pclose_phigs();
 
    return 0;
 }

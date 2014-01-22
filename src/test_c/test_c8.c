@@ -802,6 +802,7 @@ int main(int argc, char *argv[])
    }
 
    pclose_ws(0);
+   pclose_phigs();
 
    return 0;
 }

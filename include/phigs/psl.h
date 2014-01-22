@@ -39,6 +39,7 @@ typedef struct {
    Psys_st       phg_sys_state;                /* System state */
    Pws_st        phg_ws_state;                 /* Workstation state */
    Pstruct_st    phg_struct_state;             /* Structure state */
+   Par_st        phg_ar_state;                 /* Archive state */
    Psl_ws_info   open_ws[MAX_NO_OPEN_WS];      /* Info list for workstations */
    Psl_inp_event cur_event;                    /* Event gotten by pwait_event */
    Pedit_mode    edit_mode;                    /* Structure edit mode */
@@ -55,6 +56,9 @@ typedef Phg_state_list *Psl_handle;
 
 #define PSL_STRUCT_STATE(_psl) \
    ((_psl)->phg_struct_state)
+
+#define PSL_AR_STATE(_psl) \
+   ((_psl)->phg_ar_state)
 
 #define PSL_SET_CUR_EVENT_ID(_psl, _id) \
    ((_psl)->cur_event.id = (_id))
