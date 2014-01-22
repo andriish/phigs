@@ -114,7 +114,6 @@ void wsgl_close(
 
    free(wsgl->struct_stack);
    free(ws->render_context);
-   free(ws);
 }
 
 /*******************************************************************************
