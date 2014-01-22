@@ -507,6 +507,7 @@ int main(void)
    }
 
    pclose_ws(WS_1);
+   pclose_phigs();
 
    return 1;
 }

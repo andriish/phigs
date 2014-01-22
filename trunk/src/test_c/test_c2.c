@@ -227,6 +227,7 @@ int main(int argc, char *argv[])
 
    pclose_ws(0);
    pclose_ws(1);
+   pclose_phigs();
 
    return 0;
 }
