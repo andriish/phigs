@@ -81,6 +81,24 @@ Pmarker_bundle mkrep = { PMARKER_ASTERISK, 0.1, 0 };
 Pedge_bundle   edgerep = { PEDGE_ON, PLINE_SOLID, 2.0, 1 };
 Pint_bundle    interrep = { PSTYLE_SOLID, HATCH_IND, 0 };
 
+void wslist(void)
+{
+   Pint i;
+   Pint len;
+   Pint err;
+   Pint_list ws_list;
+   Pint int_list[MAX_NO_OPEN_WS];
+
+   ws_list.num_ints = MAX_NO_OPEN_WS;
+   ws_list.ints = int_list;
+
+   printf("Open workstation(s):\n");
+   pinq_open_wss(MAX_NO_OPEN_WS, 0, &err, &ws_list, &len);
+   for (i = 0; i < ws_list.num_ints; i++) {
+      printf("%d\n", ws_list.ints[i]);
+   }
+}
+
 int main(int argc, char *argv[])
 {
    Plimit vp, win;
@@ -198,6 +216,8 @@ int main(int argc, char *argv[])
    col_rep.rgb.green = 0.0;
    col_rep.rgb.blue = 1.0;
    pset_colr_rep(1, 1, &col_rep);
+
+   wslist();
 
    ppost_struct(0, 3, 0);
    ppost_struct(1, 3, 0);

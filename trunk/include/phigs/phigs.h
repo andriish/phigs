@@ -1426,6 +1426,32 @@ void pset_colr_rep(
    );
 
 /*******************************************************************************
+ * pinq_ws_st
+ *
+ * DESCR:       Get workstation state
+ * RETURNS:     N/A
+ */
+
+void pinq_ws_st(
+   Pws_st *ws_state
+   );
+
+/*******************************************************************************
+ * pinq_open_wss
+ *
+ * DESCR:       Get list of open workstations
+ * RETURNS:     N/A
+ */
+
+void pinq_open_wss(
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *open_ws_ids,
+   Pint *num_elems_impl_list
+   );
+
+/*******************************************************************************
  * popen_struct
  *
  * DESCR:       Opens a structure for appending or editing.
