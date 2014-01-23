@@ -27,6 +27,16 @@
 #include <phigs/phg.h>
 #include <phigs/private/cssP.h>
 
+#ifndef min
+#define min(a, b) \
+   ((a) < (b) ? (a) : (b))
+#endif
+
+#ifndef max
+#define max(a, b) \
+   ((a) > (b) ? (a) : (b))
+#endif
+
 #define ARGS_ELMT_SIZE(ARG) \
    ((Phg_args_add_el *) (ARG))->el_size
 
@@ -142,10 +152,22 @@ void phg_get_colr_ind(
    );
 
 /*******************************************************************************
+ * phg_entry_check
+ *
+ * DESCR:       Helper function to check entry
+ * RETURNS:     Zero on error, otherwise non-zero
+ */
+
+int phg_entry_check(
+   int err,
+   int fn_id
+   );
+
+/*******************************************************************************
  * phg_ws_open
  *
  * DESCR:       Helper function to get workstation information
- * RETURNS:     N/A
+ * RETURNS:     Pointer to workstation info
  */
 
 Psl_ws_info* phg_ws_open(

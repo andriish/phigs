@@ -45,56 +45,56 @@ void popen_ws(
    Phg_args_open_ws args;
    Phg_ret ret;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_open_ws);
-
-   if ((ws_id < 0) || (ws_id > MAX_NO_OPEN_WS)) {
-      ERR_REPORT(PHG_ERH, ERR65);
-   }
-   else if (phg_psl_inq_ws_open(PHG_PSL, ws_id)) {
-      ERR_REPORT(PHG_ERH, ERR53);
-   }
-   else if (!phg_psl_ws_free_slot(PHG_PSL)) {
-      ERR_REPORT(PHG_ERH, ERR63);
-   }
-   else {
-      wst = phg_wst_find(&PHG_WST_LIST, ws_type);
-
-      if (wst == NULL) {
-         ERR_REPORT(PHG_ERH, ERR52);
+   if (phg_entry_check(ERR2, Pfn_open_ws)) {
+      if ((ws_id < 0) || (ws_id > MAX_NO_OPEN_WS)) {
+         ERR_REPORT(PHG_ERH, ERR65);
+      }
+      else if (phg_psl_inq_ws_open(PHG_PSL, ws_id)) {
+         ERR_REPORT(PHG_ERH, ERR53);
+      }
+      else if (!phg_psl_ws_free_slot(PHG_PSL)) {
+         ERR_REPORT(PHG_ERH, ERR63);
       }
       else {
-         memset(&args, 0, sizeof(Phg_args_open_ws));
+         wst = phg_wst_find(&PHG_WST_LIST, ws_type);
 
-         if (conn_id == NULL) {
-            args.conn_type = PHG_ARGS_CONN_OPEN;
+         if (wst == NULL) {
+            ERR_REPORT(PHG_ERH, ERR52);
          }
          else {
-            args.conn_type = PHG_ARGS_CONN_DRAWABLE;
-            memcpy(&args.conn_info, conn_id, sizeof(Phg_args_conn_info));
-         }
+            memset(&args, 0, sizeof(Phg_args_open_ws));
 
-         args.wsid = ws_id;
-         args.type = wst;
-         args.erh = PHG_ERH;
-         args.cssh = PHG_CSS;
-         args.memory = 8192;
-         args.input_q = PHG_INPUT_Q;
-         args.window_name = phg_default_window_name;
-         args.icon_name = phg_default_icon_name;
+            if (conn_id == NULL) {
+               args.conn_type = PHG_ARGS_CONN_OPEN;
+            }
+            else {
+               args.conn_type = PHG_ARGS_CONN_DRAWABLE;
+               memcpy(&args.conn_info, conn_id, sizeof(Phg_args_conn_info));
+            }
 
-         /* Open workstation */
-         PHG_WSID(ws_id) = phg_wsb_open_ws(&args, &ret);
-         if (PHG_WSID(ws_id) == NULL) {
-            ERR_REPORT(PHG_ERH, ERR900);
-         }
-         else {
-            /* Add workstation to info list */
-            phg_psl_add_ws(PHG_PSL, ws_id, NULL, wst);
+            args.wsid = ws_id;
+            args.type = wst;
+            args.erh = PHG_ERH;
+            args.cssh = PHG_CSS;
+            args.memory = 8192;
+            args.input_q = PHG_INPUT_Q;
+            args.window_name = phg_default_window_name;
+            args.icon_name = phg_default_icon_name;
+
+            /* Open workstation */
+            PHG_WSID(ws_id) = phg_wsb_open_ws(&args, &ret);
+            if (PHG_WSID(ws_id) == NULL) {
+               ERR_REPORT(PHG_ERH, ERR900);
+            }
+            else {
+               /* Add workstation to info list */
+               phg_psl_add_ws(PHG_PSL, ws_id, NULL, wst);
+            }
          }
       }
-   }
 
-   ERR_FLUSH(PHG_ERH);
+      ERR_FLUSH(PHG_ERH);
+   }
 }
 
 /*******************************************************************************
@@ -572,19 +572,19 @@ void punpost_struct(
    Ws_handle wsh;
    Struct_handle structp;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_unpost_struct);
-
-   if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
-      ERR_REPORT(PHG_ERH, ERR3);
-   }
-   else if (!phg_psl_inq_ws_open(PHG_PSL, ws_id)) {
-      ERR_REPORT(PHG_ERH, ERR54);
-   }
-   else {
-      wsh = PHG_WSID(ws_id);
-      structp = phg_css_unpost(wsh->out_ws.model.b.cssh, struct_id, wsh);
-      if (structp != NULL) {
-         (*wsh->unpost)(wsh, structp);
+   if (phg_entry_check(ERR3, Pfn_unpost_struct)) {
+      if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+         ERR_REPORT(PHG_ERH, ERR3);
+      }
+      else if (!phg_psl_inq_ws_open(PHG_PSL, ws_id)) {
+         ERR_REPORT(PHG_ERH, ERR54);
+      }
+      else {
+         wsh = PHG_WSID(ws_id);
+         structp = phg_css_unpost(wsh->out_ws.model.b.cssh, struct_id, wsh);
+         if (structp != NULL) {
+            (*wsh->unpost)(wsh, structp);
+         }
       }
    }
 }
@@ -602,17 +602,17 @@ void punpost_all_structs(
 {
    Ws_handle wsh;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_unpost_all_structs);
-
-   if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
-      ERR_REPORT(PHG_ERH, ERR3);
-   }
-   else if (!phg_psl_inq_ws_open(PHG_PSL, ws_id)) {
-      ERR_REPORT(PHG_ERH, ERR54);
-   }
-   else {
-      wsh = PHG_WSID(ws_id);
-      (*wsh->unpost_all)(wsh);
+   if (phg_entry_check(ERR3, Pfn_unpost_all_structs)) {
+      if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+         ERR_REPORT(PHG_ERH, ERR3);
+      }
+      else if (!phg_psl_inq_ws_open(PHG_PSL, ws_id)) {
+         ERR_REPORT(PHG_ERH, ERR54);
+      }
+      else {
+         wsh = PHG_WSID(ws_id);
+         (*wsh->unpost_all)(wsh);
+      }
    }
 }
 
@@ -817,6 +817,67 @@ void pset_colr_rep(
       corep.index = ind;
       memcpy(&corep.bundl.corep, rep, sizeof(Pcolr_rep));
       (*wsh->set_rep)(wsh, PHG_ARGS_COREP, &corep);
+   }
+}
+
+/*******************************************************************************
+ * pinq_ws_st
+ *
+ * DESCR:       Get workstation state
+ * RETURNS:     N/A
+ */
+
+void pinq_ws_st(
+   Pws_st *ws_state
+   )
+{
+   if (phg_entry_check(0, Pfn_INQUIRY)) {
+      *ws_state = PSL_WS_STATE(PHG_PSL);
+   }
+   else {
+      *ws_state = PWS_ST_WSCL;
+   }
+}
+
+/*******************************************************************************
+ * pinq_open_wss
+ *
+ * DESCR:       Get list of open workstations
+ * RETURNS:     N/A
+ */
+
+void pinq_open_wss(
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *open_ws_ids,
+   Pint *num_elems_impl_list
+   )
+{
+   Pint ws_ids[MAX_NO_OPEN_WS];
+   Pint n;
+
+   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+      *err_ind = ERR2;
+   }
+   else {
+      *err_ind = 0;
+      n = phg_psl_inq_wsids(PHG_PSL, ws_ids);
+      open_ws_ids->num_ints = 0;
+      *num_elems_impl_list = n;
+      if (n > 0) {
+         if (start_ind < 0 || start_ind >= n) {
+            *err_ind = ERR2201;
+         }
+         else if (num_elems_appl_list > 0) {
+            open_ws_ids->num_ints = min(num_elems_appl_list, n - start_ind);
+            memcpy(open_ws_ids->ints, &ws_ids[start_ind],
+                   open_ws_ids->num_ints * sizeof(Pint));
+         }
+         else if (num_elems_appl_list < 0) {
+            *err_ind = ERRN153;
+         }
+      }
    }
 }
 

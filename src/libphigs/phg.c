@@ -114,10 +114,39 @@ void phg_get_colr_ind(
 }
 
 /*******************************************************************************
+ * phg_entry_check
+ *
+ * DESCR:	Helper function to check entry
+ * RETURNS:	Zero on error, otherwise non-zero
+ */
+
+int phg_entry_check(
+   int err,
+   int fn_id
+   )
+{
+   int status;
+
+   if (PSL_SYS_STATE(PHG_PSL) == PSYS_ST_PHOP) {
+       ERR_FLUSH(PHG_ERH);
+       ERR_SET_CUR_FUNC(PHG_ERH, fn_id);
+       status = 1;
+   }
+   else {
+      status = 0;
+      if (fn_id != Pfn_INQUIRY && err) {
+         ERR_HANDLE(err, fn_id, NULL);
+      }
+   }
+
+   return status;
+}
+
+/*******************************************************************************
  * phg_ws_open
  *
  * DESCR:	Helper function to get workstation information
- * RETURNS:	N/A
+ * RETURNS:	Pointer to workstation info
  */
 
 Psl_ws_info* phg_ws_open(
@@ -127,15 +156,15 @@ Psl_ws_info* phg_ws_open(
 {
    Psl_ws_info *wsinfo = NULL;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, fn_id);
-
-   if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
-      ERR_REPORT(PHG_ERH, ERR3);
-   }
-   else {
-      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
-      if (wsinfo == NULL) {
-         ERR_REPORT(PHG_ERH, ERR54);
+   if (phg_entry_check(ERR3, fn_id)) {
+      if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+         ERR_REPORT(PHG_ERH, ERR3);
+      }
+      else {
+         wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+         if (wsinfo == NULL) {
+            ERR_REPORT(PHG_ERH, ERR54);
+         }
       }
    }
 
