@@ -439,6 +439,8 @@ typedef enum {
    PSWITCH_ECHO
 } Pecho_switch;
 
+typedef void *Pstore;
+
 typedef int Pint;
 typedef long Plong;
 typedef float Pfloat;
@@ -1434,6 +1436,21 @@ void pset_colr_rep(
 
 void pinq_ws_st(
    Pws_st *ws_state
+   );
+
+/*******************************************************************************
+ * pinq_ws_conn_type
+ *
+ * DESCR:       Get workstation connection type
+ * RETURNS:     N/A
+ */
+
+void pinq_ws_conn_type(
+   Pint ws_id,
+   Pstore store,
+   Pint *err_ind,
+   void **conn_id,
+   Pint *ws_type
    );
 
 /*******************************************************************************
