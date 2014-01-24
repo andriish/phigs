@@ -88,14 +88,19 @@ void wslist(void)
    Pint err;
    Pint_list ws_list;
    Pint int_list[MAX_NO_OPEN_WS];
+   Pstore store = 0;
+   void *conn_id;
+   Pint wstype;
 
    ws_list.num_ints = MAX_NO_OPEN_WS;
    ws_list.ints = int_list;
 
-   printf("Open workstation(s):\n");
+   printf("Open workstation(s)\n");
+   printf("Ws\tType\n");
    pinq_open_wss(MAX_NO_OPEN_WS, 0, &err, &ws_list, &len);
    for (i = 0; i < ws_list.num_ints; i++) {
-      printf("%d\n", ws_list.ints[i]);
+      pinq_ws_conn_type(ws_list.ints[i], store, &err, &conn_id, &wstype);
+      printf("%d\t%d\n", ws_list.ints[i], wstype);
    }
 }
 

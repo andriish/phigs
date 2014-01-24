@@ -840,6 +840,42 @@ void pinq_ws_st(
 }
 
 /*******************************************************************************
+ * pinq_ws_conn_type
+ *
+ * DESCR:       Get workstation connection type
+ * RETURNS:     N/A
+ */
+
+void pinq_ws_conn_type(
+   Pint ws_id,
+   Pstore store,
+   Pint *err_ind,
+   void **conn_id,
+   Pint *ws_type
+   )
+{
+   Psl_ws_info *ws_info;
+
+   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+      *err_ind = ERR3;
+   }
+   else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      *err_ind = ERR3;
+   }
+   else {
+      ws_info = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (ws_info == NULL) {
+         *err_ind = ERR54;
+      }
+      else {
+         *err_ind = 0;
+         *((char **) conn_id) = ws_info->connid;
+         *ws_type = ws_info->wstype->ws_type;
+      }
+   }
+}
+
+/*******************************************************************************
  * pinq_open_wss
  *
  * DESCR:       Get list of open workstations
