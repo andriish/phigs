@@ -27,16 +27,6 @@
 #include <phigs/phg.h>
 #include <phigs/private/cssP.h>
 
-#ifndef min
-#define min(a, b) \
-   ((a) < (b) ? (a) : (b))
-#endif
-
-#ifndef max
-#define max(a, b) \
-   ((a) > (b) ? (a) : (b))
-#endif
-
 #define ARGS_ELMT_SIZE(ARG) \
    ((Phg_args_add_el *) (ARG))->el_size
 
