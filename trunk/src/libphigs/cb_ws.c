@@ -906,7 +906,7 @@ void pinq_open_wss(
             *err_ind = ERR2201;
          }
          else if (num_elems_appl_list > 0) {
-            open_ws_ids->num_ints = min(num_elems_appl_list, n - start_ind);
+            open_ws_ids->num_ints = PHG_MIN(num_elems_appl_list, n - start_ind);
             memcpy(open_ws_ids->ints, &ws_ids[start_ind],
                    open_ws_ids->num_ints * sizeof(Pint));
          }
