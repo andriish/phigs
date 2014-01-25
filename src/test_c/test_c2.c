@@ -148,14 +148,14 @@ void wslist(void)
    list.ints = int_list;
 
    printf("Open workstation(s)\n");
-   printf("Ws\tType\tCat\tLine(s)\tMarker(s)\tView(s)\n");
+   printf("Ws\tType\tCat\tLn\tMk\tView\n");
    pinq_open_wss(MAX_NO_OPEN_WS, 0, &err, &list, &len);
    for (i = 0; i < list.num_ints; i++) {
       pinq_ws_conn_type(list.ints[i], store, &err, &conn_id, &wstype);
       pinq_ws_cat(wstype, &err, &cat);
       printf("%d\t%d\t%d\t", list.ints[i], wstype, cat);
       lnlist(list.ints[i]);
-#if 0
+#if 1
       printf("\t");
       mklist(list.ints[i]);
 #endif
