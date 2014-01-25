@@ -570,6 +570,82 @@ void phg_wsb_inq_LUT_entry(
 }
 
 /*******************************************************************************
+ * phg_wsb_inq_LUT_indices
+ *
+ * DESCR:	Get workstation indices in table
+ * RETURNS:	N/A
+ */
+
+void phg_wsb_inq_LUT_indices(
+    Ws *ws,
+    Phg_args_rep_type rep_type,
+    Phg_ret *ret
+    )
+{
+    Hash_table htab;
+    int count;
+
+    switch(rep_type) {
+        case PHG_ARGS_LNREP:
+        case PHG_ARGS_EXTLNREP:
+            htab = ws->out_ws.htab.line;
+            break;
+
+        case PHG_ARGS_MKREP:
+        case PHG_ARGS_EXTMKREP:
+            htab = ws->out_ws.htab.marker;
+            break;
+
+        case PHG_ARGS_TXREP:
+        case PHG_ARGS_EXTTXREP:
+            htab = ws->out_ws.htab.text;
+            break;
+
+        case PHG_ARGS_INTERREP:
+        case PHG_ARGS_EXTINTERREP:
+            htab = ws->out_ws.htab.interior;
+            break;
+
+        case PHG_ARGS_EDGEREP:
+        case PHG_ARGS_EXTEDGEREP:
+            htab = ws->out_ws.htab.edge;
+            break;
+
+        case PHG_ARGS_COREP:
+            htab = ws->out_ws.htab.colour;
+            break;
+
+        case PHG_ARGS_VIEWREP:
+            htab = ws->out_ws.htab.view;
+            break;
+
+        case PHG_ARGS_LIGHTSRCREP:
+            htab = ws->out_ws.htab.light_source;
+            break;
+
+        default:
+            ret->data.int_list.num_ints = 0;
+            return;
+    }
+
+    count = phg_htab_num_entries(htab);
+    if (count <= 0) {
+        ret->data.int_list.num_ints = 0;
+        ret->err = 0;
+    }
+    else if (PHG_SCRATCH_SPACE(&ws->scratch, count * sizeof(Pint))) {
+        ret->data.int_list.ints = (Pint *) ws->scratch.buf;
+        ret->data.int_list.num_ints =
+            phg_htab_get_keys(htab, ret->data.int_list.ints);
+        ret->err = 0;
+    }
+    else {
+        ret->data.int_list.num_ints = 0;
+        ret->err = ERR900;
+    }
+}
+
+/*******************************************************************************
  * phg_wsb_set_name_set
  *
  * DESCR:	Set filter name set

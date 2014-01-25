@@ -311,6 +311,11 @@ typedef struct _Ws {
                    Phg_args_rep_type rep_type,
                    Phg_ret *ret
                    );
+   void         (*inq_bundle_indices)(
+                   struct _Ws *ws,
+                   Phg_args_rep_type rep_type,
+                   Phg_ret *ret
+                );
    void         (*set_view_input_priority)(
                    struct _Ws *ws,
                    Pint index,
@@ -786,6 +791,19 @@ void phg_wsb_inq_LUT_entry(
     Phg_ret *ret,
     Pgcolr *gcolr,
     Pview_rep3 *vrep
+    );
+
+/*******************************************************************************
+ * phg_wsb_inq_LUT_indices
+ *
+ * DESCR:       Get workstation indices in table
+ * RETURNS:     N/A
+ */
+
+void phg_wsb_inq_LUT_indices(
+    Ws *ws,
+    Phg_args_rep_type rep_type,
+    Phg_ret *ret
     );
 
 /*******************************************************************************

@@ -290,6 +290,33 @@ int phg_htab_get_entry(
 }
 
 /*******************************************************************************
+ * phg_htab_get_keys
+ *
+ * DESCR:       Get all keys in hash table
+ * RETURNS:	Number of keys
+ */
+
+int phg_htab_get_keys(
+    Hash_table htab,
+    int *keys
+    )
+{
+    int bucket, index;
+    Htab_entry *entry_p;
+
+    for (index = 0, bucket = 0; bucket < htab->hash_size; bucket++) {
+        for (entry_p = htab->tbl[bucket];
+             entry_p != NULL;
+             entry_p = entry_p->next) {
+            keys[index] = entry_p->key;
+            index++;
+        }
+    }
+
+    return index;
+}
+
+/*******************************************************************************
  * phg_htab_change_data
  *
  * DESCR:       Replace hash table entry
