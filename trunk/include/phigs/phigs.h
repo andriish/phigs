@@ -1469,6 +1469,22 @@ void pinq_open_wss(
    );
 
 /*******************************************************************************
+ * pinq_list_view_inds
+ *
+ * DESCR:       Get list of view indices
+ * RETURNS:     N/A
+ */
+
+void pinq_list_view_inds(
+   Pint ws_id,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *view_inds,
+   Pint *num_elems_impl_list
+   );
+
+/*******************************************************************************
  * pinq_list_line_inds
  *
  * DESCR:       Get list of line indices

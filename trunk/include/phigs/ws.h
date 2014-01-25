@@ -64,7 +64,6 @@ typedef enum {
    WS_INT_NOT_INVERTIBLE
 } Ws_inverse_state;
 
-
 typedef struct {
    Pint x, y;
 } Ws_point;
@@ -309,6 +308,10 @@ typedef struct _Ws {
                    Pint index,
                    Pinq_type how,
                    Phg_args_rep_type rep_type,
+                   Phg_ret *ret
+                   );
+    void        (*inq_view_indices)(
+                   struct _Ws *ws,
                    Phg_ret *ret
                    );
    void         (*inq_bundle_indices)(
@@ -650,6 +653,11 @@ void phg_wsb_inq_rep(
     Pint index,
     Pinq_type how,
     Phg_args_rep_type rep_type,
+    Phg_ret *ret
+    );
+
+void phg_wsb_inq_view_indices(
+    Ws *ws,
     Phg_ret *ret
     );
 

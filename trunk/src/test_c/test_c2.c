@@ -98,6 +98,23 @@ void lnlist(Pint ws_id)
    }
 }
 
+void viewlist(Pint ws_id)
+{
+   Pint i;
+   Pint len;
+   Pint err;
+   Pint_list list;
+   Pint int_list[10];
+
+   list.num_ints = 10;
+   list.ints = int_list;
+
+   pinq_list_view_inds(ws_id, 10, 0, &err, &list, &len);
+   for (i = 0; i < list.num_ints; i++) {
+      printf("%d ", list.ints[i]);
+   }
+}
+
 void wslist(void)
 {
    Pint i;
@@ -113,12 +130,14 @@ void wslist(void)
    list.ints = int_list;
 
    printf("Open workstation(s)\n");
-   printf("Ws\tType\tLine ind\n");
+   printf("Ws\tType\tLine(s)\tView(s)\n");
    pinq_open_wss(MAX_NO_OPEN_WS, 0, &err, &list, &len);
    for (i = 0; i < list.num_ints; i++) {
       pinq_ws_conn_type(list.ints[i], store, &err, &conn_id, &wstype);
       printf("%d\t%d\t", list.ints[i], wstype);
       lnlist(list.ints[i]);
+      printf("\t");
+      viewlist(list.ints[i]);
       printf("\n");
    }
 }
