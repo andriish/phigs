@@ -1501,7 +1501,7 @@ void pinq_list_line_inds(
    );
 
 /*******************************************************************************
- * pinq_marker_marker_inds
+ * pinq_list_marker_inds
  *
  * DESCR:       Get list of marker indices
  * RETURNS:     N/A
@@ -1513,6 +1513,54 @@ void pinq_list_marker_inds(
    Pint start_ind,
    Pint *err_ind,
    Pint_list *def_marker_ind,
+   Pint *num_elems_impl_list
+   );
+
+/*******************************************************************************
+ * pinq_list_text_inds
+ *
+ * DESCR:       Get list of text indices
+ * RETURNS:     N/A
+ */
+
+void pinq_list_text_inds(
+   Pint ws_id,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *def_text_ind,
+   Pint *num_elems_impl_list
+   );
+
+/*******************************************************************************
+ * pinq_list_int_inds
+ *
+ * DESCR:       Get list of interior indices
+ * RETURNS:     N/A
+ */
+
+void pinq_list_int_inds(
+   Pint ws_id,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *def_int_ind,
+   Pint *num_elems_impl_list
+   );
+
+/*******************************************************************************
+ * pinq_list_edge_inds
+ *
+ * DESCR:       Get list of interior indices
+ * RETURNS:     N/A
+ */
+
+void pinq_list_edge_inds(
+   Pint ws_id,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *def_edge_ind,
    Pint *num_elems_impl_list
    );
 
