@@ -1707,7 +1707,7 @@ void phg_wsb_inq_rep(
 	case PHG_ARGS_DCUEREP:
 	case PHG_ARGS_LIGHTSRCREP:
 	case PHG_ARGS_COLRMAPREP:
-	/* View rep is done elsewhere. */
+	    /* View rep is done elsewhere. */
 	    phg_wsb_inq_LUT_entry(ws, index, how, rep_type, ret, NULL, NULL);
 	    break;
 

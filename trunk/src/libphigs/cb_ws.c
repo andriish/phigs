@@ -437,7 +437,7 @@ void pset_marker_rep(
    if (dt != NULL) {
       wsh = PHG_WSID(ws_id);
       rep.index = marker_ind;
-      memcpy(&rep.bundl.lnrep, marker_bundle, sizeof(Pmarker_bundle));
+      memcpy(&rep.bundl.mkrep, marker_bundle, sizeof(Pmarker_bundle));
       (*wsh->set_rep)(wsh, PHG_ARGS_MKREP, &rep);
    }
 }
@@ -466,7 +466,7 @@ void pset_text_rep(
    if (dt != NULL) {
       wsh = PHG_WSID(ws_id);
       rep.index = text_ind;
-      memcpy(&rep.bundl.lnrep, text_bundle, sizeof(Ptext_bundle));
+      memcpy(&rep.bundl.txrep, text_bundle, sizeof(Ptext_bundle));
       (*wsh->set_rep)(wsh, PHG_ARGS_TXREP, &rep);
    }
 }
@@ -495,7 +495,7 @@ void pset_edge_rep(
    if (dt != NULL) {
       wsh = PHG_WSID(ws_id);
       rep.index = edge_ind;
-      memcpy(&rep.bundl.lnrep, edge_bundle, sizeof(Pedge_bundle));
+      memcpy(&rep.bundl.edgerep, edge_bundle, sizeof(Pedge_bundle));
       (*wsh->set_rep)(wsh, PHG_ARGS_EDGEREP, &rep);
    }
 }
@@ -524,7 +524,7 @@ void pset_int_rep(
    if (dt != NULL) {
       wsh = PHG_WSID(ws_id);
       rep.index = int_ind;
-      memcpy(&rep.bundl.lnrep, int_bundle, sizeof(Pint_bundle));
+      memcpy(&rep.bundl.interrep, int_bundle, sizeof(Pint_bundle));
       (*wsh->set_rep)(wsh, PHG_ARGS_INTERREP, &rep);
    }
 }
@@ -1055,6 +1055,52 @@ void pinq_list_line_inds(
             pinq_table_indices(PHG_ARGS_LNREP, ws_id, num_elems_appl_list,
                                start_ind, err_ind,
                                def_line_ind, num_elems_impl_list);
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * pinq_marker_marker_inds
+ *
+ * DESCR:       Get list of marker indices
+ * RETURNS:     N/A
+ */
+
+void pinq_list_marker_inds(
+   Pint ws_id,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *def_marker_ind,
+   Pint *num_elems_impl_list
+   )
+{
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+
+   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+      *err_ind = ERR3;
+   }
+   else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      *err_ind = ERR3;
+   }
+   else {
+      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (wsinfo == NULL) {
+         *err_ind = ERR54;
+      }
+      else {
+         dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+         if (!(dt->ws_category == PCAT_OUT ||
+               dt->ws_category == PCAT_OUTIN ||
+               dt->ws_category == PCAT_MO)) {
+            *err_ind = ERR59;
+         }
+         else {
+            pinq_table_indices(PHG_ARGS_MKREP, ws_id, num_elems_appl_list,
+                               start_ind, err_ind,
+                               def_marker_ind, num_elems_impl_list);
          }
       }
    }
