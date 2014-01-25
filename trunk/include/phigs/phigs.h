@@ -1501,6 +1501,32 @@ void pinq_list_line_inds(
    );
 
 /*******************************************************************************
+ * pinq_ws_cat
+ *
+ * DESCR:       Get workstation category
+ * RETURNS:     N/A
+ */
+
+void pinq_ws_cat(
+   Pint ws_type,
+   Pint *err_ind,
+   Pws_cat *cat
+   );
+
+/*******************************************************************************
+ * pinq_disp_space_size3
+ *
+ * DESCR:       Get display size 3D
+ * RETURNS:     N/A
+ */
+
+void pinq_disp_space_size3(
+   Pint ws_type,
+   Pint *err_ind,
+   Pdisp_space_size3 *size
+   );
+
+/*******************************************************************************
  * popen_struct
  *
  * DESCR:       Opens a structure for appending or editing.
@@ -2969,19 +2995,6 @@ void preq_stroke3(
    Pin_status *in_status,
    Pint *view_ind,
    Ppoint_list3 *stroke
-   );
-
-/*******************************************************************************
- * pinq_disp_space_size3
- *
- * DESCR:       Get display size 3D
- * RETURNS:     N/A
- */
-
-void pinq_disp_space_size3(
-   Pint ws_type,
-   Pint *err_ind,
-   Pdisp_space_size3 *size
    );
 
 #ifdef __cplusplus
