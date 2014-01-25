@@ -111,6 +111,7 @@ static void wsb_load_funcs(
     ws->inq_representation = phg_wsb_inq_rep;
     ws->inq_disp_update_state = phg_wsb_inq_disp_update_state;
     ws->inq_hlhsr_mode = phg_wsb_inq_hlhsr_mode;
+    ws->inq_bundle_indices = phg_wsb_inq_LUT_indices;
     ws->set_view_input_priority = phg_wsb_set_view_input_priority;
     ws->map_initial_points = phg_wsb_map_initial_points;
     ws->resolve_locator = phg_wsb_resolve_locator;

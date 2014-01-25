@@ -81,26 +81,45 @@ Pmarker_bundle mkrep = { PMARKER_ASTERISK, 0.1, 0 };
 Pedge_bundle   edgerep = { PEDGE_ON, PLINE_SOLID, 2.0, 1 };
 Pint_bundle    interrep = { PSTYLE_SOLID, HATCH_IND, 0 };
 
+void lnlist(Pint ws_id)
+{
+   Pint i;
+   Pint len;
+   Pint err;
+   Pint_list list;
+   Pint int_list[10];
+
+   list.num_ints = 10;
+   list.ints = int_list;
+
+   pinq_list_line_inds(ws_id, 10, 0, &err, &list, &len);
+   for (i = 0; i < list.num_ints; i++) {
+      printf("%d ", list.ints[i]);
+   }
+}
+
 void wslist(void)
 {
    Pint i;
    Pint len;
    Pint err;
-   Pint_list ws_list;
+   Pint_list list;
    Pint int_list[MAX_NO_OPEN_WS];
    Pstore store = 0;
    void *conn_id;
    Pint wstype;
 
-   ws_list.num_ints = MAX_NO_OPEN_WS;
-   ws_list.ints = int_list;
+   list.num_ints = MAX_NO_OPEN_WS;
+   list.ints = int_list;
 
    printf("Open workstation(s)\n");
-   printf("Ws\tType\n");
-   pinq_open_wss(MAX_NO_OPEN_WS, 0, &err, &ws_list, &len);
-   for (i = 0; i < ws_list.num_ints; i++) {
-      pinq_ws_conn_type(ws_list.ints[i], store, &err, &conn_id, &wstype);
-      printf("%d\t%d\n", ws_list.ints[i], wstype);
+   printf("Ws\tType\tLine ind\n");
+   pinq_open_wss(MAX_NO_OPEN_WS, 0, &err, &list, &len);
+   for (i = 0; i < list.num_ints; i++) {
+      pinq_ws_conn_type(list.ints[i], store, &err, &conn_id, &wstype);
+      printf("%d\t%d\t", list.ints[i], wstype);
+      lnlist(list.ints[i]);
+      printf("\n");
    }
 }
 
