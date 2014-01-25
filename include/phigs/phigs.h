@@ -1551,7 +1551,7 @@ void pinq_list_int_inds(
 /*******************************************************************************
  * pinq_list_edge_inds
  *
- * DESCR:       Get list of interior indices
+ * DESCR:       Get list of edge indices
  * RETURNS:     N/A
  */
 
@@ -1561,6 +1561,22 @@ void pinq_list_edge_inds(
    Pint start_ind,
    Pint *err_ind,
    Pint_list *def_edge_ind,
+   Pint *num_elems_impl_list
+   );
+
+/*******************************************************************************
+ * pinq_list_colr_inds
+ *
+ * DESCR:       Get list of colour indices
+ * RETURNS:     N/A
+ */
+
+void pinq_list_colr_inds(
+   Pint ws_id,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *colr_ind,
    Pint *num_elems_impl_list
    );
 
