@@ -108,9 +108,10 @@ static void wsb_load_funcs(
     ws->unpost_all = phg_wsb_unpost_all;
     ws->change_posting = phg_wsb_change_posting;
     ws->inq_posted = phg_wsb_inq_posted;
-    ws->inq_representation = phg_wsb_inq_rep;
     ws->inq_disp_update_state = phg_wsb_inq_disp_update_state;
     ws->inq_hlhsr_mode = phg_wsb_inq_hlhsr_mode;
+    ws->inq_representation = phg_wsb_inq_rep;
+    ws->inq_view_indices = phg_wsb_inq_view_indices;
     ws->inq_bundle_indices = phg_wsb_inq_LUT_indices;
     ws->set_view_input_priority = phg_wsb_set_view_input_priority;
     ws->map_initial_points = phg_wsb_map_initial_points;
@@ -419,7 +420,7 @@ static void init_views(
     Ws *ws
     )
 {
-    Ws_output_ws  *ows = &ws->out_ws;
+    Ws_output_ws *ows = &ws->out_ws;
     Wsb_output_ws *owsb = &ows->model.b;
 
     owsb->views_pending = PUPD_NOT_PEND;
@@ -1733,6 +1734,40 @@ void phg_wsb_inq_rep(
 	default:
             /* Default */
             break;
+    }
+}
+
+void phg_wsb_inq_view_indices(
+    Ws *ws,
+    Phg_ret *ret
+    )
+{
+    Wsb_output_ws *owsb = &ws->out_ws.model.b;
+
+    Pint *list;
+    Ws_view_ref *view_ref;
+    int i, count;
+
+    count = list_count(&owsb->views);
+    if (count <= 0) {
+        ret->err = 0;
+        ret->data.int_list.num_ints = 0;
+    }
+    if (!PHG_SCRATCH_SPACE(&ws->scratch, count * sizeof(Pint))) {
+        ret->err = ERR900;
+    }
+    else {
+        ret->err = 0;
+        ret->data.int_list.ints = list = (Pint *) ws->scratch.buf;
+
+        /* Store views based on priority */
+        i = 0;
+        for (view_ref = (Ws_view_ref *) LIST_HEAD(&owsb->views);
+             view_ref != NULL;
+             view_ref = (Ws_view_ref *) NODE_NEXT(&view_ref->node)) {
+            list[i++] = view_ref->id;
+        }
+        ret->data.int_list.num_ints = i;
     }
 }
 
