@@ -1501,6 +1501,22 @@ void pinq_list_line_inds(
    );
 
 /*******************************************************************************
+ * pinq_marker_marker_inds
+ *
+ * DESCR:       Get list of marker indices
+ * RETURNS:     N/A
+ */
+
+void pinq_list_marker_inds(
+   Pint ws_id,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *def_marker_ind,
+   Pint *num_elems_impl_list
+   );
+
+/*******************************************************************************
  * pinq_ws_cat
  *
  * DESCR:       Get workstation category
