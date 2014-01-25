@@ -133,9 +133,10 @@ Hash_table phg_htab_create(
 
     htab = (Hash_table) malloc(sizeof(Htab) +
 	                       sizeof(Htab_entry *) * (unsigned) hash_size);
-    memset(htab, 0, sizeof(Htab_entry *) * (unsigned) hash_size);
+    memset(htab, 0,
+           sizeof (Htab) + sizeof(Htab_entry *) * (unsigned) hash_size);
     if (htab != NULL) {
-	htab->tbl = (Htab_entry **) (htab + 1);
+        htab->tbl = (Htab_entry **) &htab[1];
 	/* Initialize the table. */
 	htab->num_entries = 0;
 	htab->hash_size = hash_size;
