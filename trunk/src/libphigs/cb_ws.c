@@ -1201,7 +1201,7 @@ void pinq_list_int_inds(
 /*******************************************************************************
  * pinq_list_edge_inds
  *
- * DESCR:       Get list of interior indices
+ * DESCR:       Get list of edge indices
  * RETURNS:     N/A
  */
 
@@ -1239,6 +1239,52 @@ void pinq_list_edge_inds(
             pinq_table_indices(PHG_ARGS_EDGEREP, ws_id, num_elems_appl_list,
                                start_ind, err_ind,
                                def_edge_ind, num_elems_impl_list);
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * pinq_list_colr_inds
+ *
+ * DESCR:       Get list of colour indices
+ * RETURNS:     N/A
+ */
+
+void pinq_list_colr_inds(
+   Pint ws_id,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *colr_ind,
+   Pint *num_elems_impl_list
+   )
+{
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+
+   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+      *err_ind = ERR3;
+   }
+   else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      *err_ind = ERR3;
+   }
+   else {
+      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (wsinfo == NULL) {
+         *err_ind = ERR54;
+      }
+      else {
+         dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+         if (!(dt->ws_category == PCAT_OUT ||
+               dt->ws_category == PCAT_OUTIN ||
+               dt->ws_category == PCAT_MO)) {
+            *err_ind = ERR59;
+         }
+         else {
+            pinq_table_indices(PHG_ARGS_COREP, ws_id, num_elems_appl_list,
+                               start_ind, err_ind,
+                               colr_ind, num_elems_impl_list);
          }
       }
    }
