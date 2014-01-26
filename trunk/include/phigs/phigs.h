@@ -1471,7 +1471,7 @@ void pinq_open_wss(
 /*******************************************************************************
  * pinq_list_view_inds
  *
- * DESCR:       Get list of view indices
+ * DESCR:       Get workstation list of view indices
  * RETURNS:     N/A
  */
 
@@ -1487,7 +1487,7 @@ void pinq_list_view_inds(
 /*******************************************************************************
  * pinq_list_line_inds
  *
- * DESCR:       Get list of line indices
+ * DESCR:       Get workstation list of line indices
  * RETURNS:     N/A
  */
 
@@ -1503,7 +1503,7 @@ void pinq_list_line_inds(
 /*******************************************************************************
  * pinq_list_marker_inds
  *
- * DESCR:       Get list of marker indices
+ * DESCR:       Get workstation list of marker indices
  * RETURNS:     N/A
  */
 
@@ -1519,7 +1519,7 @@ void pinq_list_marker_inds(
 /*******************************************************************************
  * pinq_list_text_inds
  *
- * DESCR:       Get list of text indices
+ * DESCR:       Get workstation list of text indices
  * RETURNS:     N/A
  */
 
@@ -1535,7 +1535,7 @@ void pinq_list_text_inds(
 /*******************************************************************************
  * pinq_list_int_inds
  *
- * DESCR:       Get list of interior indices
+ * DESCR:       Get workstation list of interior indices
  * RETURNS:     N/A
  */
 
@@ -1551,7 +1551,7 @@ void pinq_list_int_inds(
 /*******************************************************************************
  * pinq_list_edge_inds
  *
- * DESCR:       Get list of edge indices
+ * DESCR:       Get workstation list of edge indices
  * RETURNS:     N/A
  */
 
@@ -1567,7 +1567,7 @@ void pinq_list_edge_inds(
 /*******************************************************************************
  * pinq_list_colr_inds
  *
- * DESCR:       Get list of colour indices
+ * DESCR:       Get workstation list of colour indices
  * RETURNS:     N/A
  */
 
@@ -1578,6 +1578,96 @@ void pinq_list_colr_inds(
    Pint *err_ind,
    Pint_list *colr_ind,
    Pint *num_elems_impl_list
+   );
+
+/*******************************************************************************
+ * pinq_line_rep
+ *
+ * DESCR:       Get workstation line representation
+ * RETURNS:     N/A
+ */
+
+void pinq_line_rep(
+   Pint ws_id,
+   Pint index,
+   Pinq_type type,
+   Pint *err_ind,
+   Pline_bundle *line_rep
+   );
+
+/*******************************************************************************
+ * pinq_marker_rep
+ *
+ * DESCR:       Get workstation marker representation
+ * RETURNS:     N/A
+ */
+
+void pinq_marker_rep(
+   Pint ws_id,
+   Pint index,
+   Pinq_type type,
+   Pint *err_ind,
+   Pmarker_bundle *marker_rep
+   );
+
+/*******************************************************************************
+ * pinq_text_rep
+ *
+ * DESCR:       Get workstation text representation
+ * RETURNS:     N/A
+ */
+
+void pinq_text_rep(
+   Pint ws_id,
+   Pint index,
+   Pinq_type type,
+   Pint *err_ind,
+   Ptext_bundle *text_rep
+   );
+
+/*******************************************************************************
+ * pinq_int_rep
+ *
+ * DESCR:       Get workstation interior representation
+ * RETURNS:     N/A
+ */
+
+void pinq_int_rep(
+   Pint ws_id,
+   Pint index,
+   Pinq_type type,
+   Pint *err_ind,
+   Pint_bundle *int_rep
+   );
+
+/*******************************************************************************
+ * pinq_edge_rep
+ *
+ * DESCR:       Get workstation edge representation
+ * RETURNS:     N/A
+ */
+
+void pinq_edge_rep(
+   Pint ws_id,
+   Pint index,
+   Pinq_type type,
+   Pint *err_ind,
+   Pedge_bundle *edge_rep
+   );
+
+/*******************************************************************************
+ * pinq_colr_rep
+ *
+ * DESCR:       Get workstation colour representation
+ * RETURNS:     N/A
+ */
+
+void pinq_colr_rep(
+   Pint ws_id,
+   Pint colr_ind,
+   Pinq_type type,
+   Pint *err_ind,
+   Pcolr_rep *colr_rep
    );
 
 /*******************************************************************************
@@ -1596,7 +1686,7 @@ void pinq_ws_cat(
 /*******************************************************************************
  * pinq_disp_space_size3
  *
- * DESCR:       Get display size 3D
+ * DESCR:       Get workstation type display size 3D
  * RETURNS:     N/A
  */
 

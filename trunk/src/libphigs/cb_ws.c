@@ -973,7 +973,7 @@ static void pinq_table_indices(
 /*******************************************************************************
  * pinq_list_view_inds
  *
- * DESCR:       Get list of view indices
+ * DESCR:       Get workstation list of view indices
  * RETURNS:     N/A
  */
 
@@ -1017,7 +1017,7 @@ void pinq_list_view_inds(
 /*******************************************************************************
  * pinq_list_line_inds
  *
- * DESCR:       Get list of line indices
+ * DESCR:       Get workstation list of line indices
  * RETURNS:     N/A
  */
 
@@ -1063,7 +1063,7 @@ void pinq_list_line_inds(
 /*******************************************************************************
  * pinq_list_marker_inds
  *
- * DESCR:       Get list of marker indices
+ * DESCR:       Get workstation list of marker indices
  * RETURNS:     N/A
  */
 
@@ -1109,7 +1109,7 @@ void pinq_list_marker_inds(
 /*******************************************************************************
  * pinq_list_text_inds
  *
- * DESCR:       Get list of text indices
+ * DESCR:       Get workstation list of text indices
  * RETURNS:     N/A
  */
 
@@ -1155,7 +1155,7 @@ void pinq_list_text_inds(
 /*******************************************************************************
  * pinq_list_int_inds
  *
- * DESCR:       Get list of interior indices
+ * DESCR:       Get workstation list of interior indices
  * RETURNS:     N/A
  */
 
@@ -1201,7 +1201,7 @@ void pinq_list_int_inds(
 /*******************************************************************************
  * pinq_list_edge_inds
  *
- * DESCR:       Get list of edge indices
+ * DESCR:       Get workstation list of edge indices
  * RETURNS:     N/A
  */
 
@@ -1247,7 +1247,7 @@ void pinq_list_edge_inds(
 /*******************************************************************************
  * pinq_list_colr_inds
  *
- * DESCR:       Get list of colour indices
+ * DESCR:       Get workstation list of colour indices
  * RETURNS:     N/A
  */
 
@@ -1285,6 +1285,376 @@ void pinq_list_colr_inds(
             pinq_table_indices(PHG_ARGS_COREP, ws_id, num_elems_appl_list,
                                start_ind, err_ind,
                                colr_ind, num_elems_impl_list);
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * pinq_line_rep
+ *
+ * DESCR:       Get workstation line representation
+ * RETURNS:     N/A
+ */
+
+void pinq_line_rep(
+   Pint ws_id,
+   Pint index,
+   Pinq_type type,
+   Pint *err_ind,
+   Pline_bundle *line_rep
+   )
+{
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+   Ws_handle wsh;
+   Phg_ret ret;
+
+   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+      *err_ind = ERR3;
+   }
+   else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      *err_ind = ERR3;
+   }
+   else {
+      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (wsinfo == NULL) {
+         *err_ind = ERR54;
+      }
+      else {
+         dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+         if (!(dt->ws_category == PCAT_OUT ||
+               dt->ws_category == PCAT_OUTIN ||
+               dt->ws_category == PCAT_MO)) {
+            *err_ind = ERR59;
+         }
+         else if (index < 1) {
+            *err_ind = ERR100;
+         }
+         else {
+            wsh = PHG_WSID(ws_id);
+            (*wsh->inq_representation)(wsh, index, type, PHG_ARGS_EXTLNREP,
+                                       &ret);
+            if (ret.err) {
+               *err_ind = ret.err;
+            }
+            else if (ret.data.rep.extlnrep.colr.type != PINDIRECT) {
+               *err_ind = ERR134;
+            }
+            else {
+               line_rep->type = ret.data.rep.extlnrep.type;
+               line_rep->width = ret.data.rep.extlnrep.width;
+               line_rep->colr_ind = ret.data.rep.extlnrep.colr.val.ind;
+               *err_ind = 0;
+            }
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * pinq_marker_rep
+ *
+ * DESCR:       Get workstation marker representation
+ * RETURNS:     N/A
+ */
+
+void pinq_marker_rep(
+   Pint ws_id,
+   Pint index,
+   Pinq_type type,
+   Pint *err_ind,
+   Pmarker_bundle *marker_rep
+   )
+{
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+   Ws_handle wsh;
+   Phg_ret ret;
+
+   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+      *err_ind = ERR3;
+   }
+   else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      *err_ind = ERR3;
+   }
+   else {
+      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (wsinfo == NULL) {
+         *err_ind = ERR54;
+      }
+      else {
+         dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+         if (!(dt->ws_category == PCAT_OUT ||
+               dt->ws_category == PCAT_OUTIN ||
+               dt->ws_category == PCAT_MO)) {
+            *err_ind = ERR59;
+         }
+         else if (index < 1) {
+            *err_ind = ERR100;
+         }
+         else {
+            wsh = PHG_WSID(ws_id);
+            (*wsh->inq_representation)(wsh, index, type, PHG_ARGS_EXTMKREP,
+                                       &ret);
+            if (ret.err) {
+               *err_ind = ret.err;
+            }
+            else if (ret.data.rep.extmkrep.colr.type != PINDIRECT) {
+               *err_ind = ERR134;
+            }
+            else {
+               marker_rep->type = ret.data.rep.extmkrep.type;
+               marker_rep->size = ret.data.rep.extmkrep.size;
+               marker_rep->colr_ind = ret.data.rep.extmkrep.colr.val.ind;
+               *err_ind = 0;
+            }
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * pinq_text_rep
+ *
+ * DESCR:       Get workstation text representation
+ * RETURNS:     N/A
+ */
+
+void pinq_text_rep(
+   Pint ws_id,
+   Pint index,
+   Pinq_type type,
+   Pint *err_ind,
+   Ptext_bundle *text_rep
+   )
+{
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+   Ws_handle wsh;
+   Phg_ret ret;
+
+   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+      *err_ind = ERR3;
+   }
+   else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      *err_ind = ERR3;
+   }
+   else {
+      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (wsinfo == NULL) {
+         *err_ind = ERR54;
+      }
+      else {
+         dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+         if (!(dt->ws_category == PCAT_OUT ||
+               dt->ws_category == PCAT_OUTIN ||
+               dt->ws_category == PCAT_MO)) {
+            *err_ind = ERR59;
+         }
+         else if (index < 1) {
+            *err_ind = ERR100;
+         }
+         else {
+            wsh = PHG_WSID(ws_id);
+            (*wsh->inq_representation)(wsh, index, type, PHG_ARGS_EXTTXREP,
+                                       &ret);
+            if (ret.err) {
+               *err_ind = ret.err;
+            }
+            else if (ret.data.rep.exttxrep.colr.type != PINDIRECT) {
+               *err_ind = ERR134;
+            }
+            else {
+               text_rep->font = ret.data.rep.exttxrep.font;
+               text_rep->prec = ret.data.rep.exttxrep.prec;
+               text_rep->char_expan = ret.data.rep.exttxrep.char_expan;
+               text_rep->char_space = ret.data.rep.exttxrep.char_space;
+               text_rep->colr_ind = ret.data.rep.exttxrep.colr.val.ind;
+               *err_ind = 0;
+            }
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * pinq_int_rep
+ *
+ * DESCR:       Get workstation interior representation
+ * RETURNS:     N/A
+ */
+
+void pinq_int_rep(
+   Pint ws_id,
+   Pint index,
+   Pinq_type type,
+   Pint *err_ind,
+   Pint_bundle *int_rep
+   )
+{
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+   Ws_handle wsh;
+   Phg_ret ret;
+
+   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+      *err_ind = ERR3;
+   }
+   else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      *err_ind = ERR3;
+   }
+   else {
+      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (wsinfo == NULL) {
+         *err_ind = ERR54;
+      }
+      else {
+         dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+         if (!(dt->ws_category == PCAT_OUT ||
+               dt->ws_category == PCAT_OUTIN ||
+               dt->ws_category == PCAT_MO)) {
+            *err_ind = ERR59;
+         }
+         else if (index < 1) {
+            *err_ind = ERR100;
+         }
+         else {
+            wsh = PHG_WSID(ws_id);
+            (*wsh->inq_representation)(wsh, index, type, PHG_ARGS_EXTINTERREP,
+                                       &ret);
+            if (ret.err) {
+               *err_ind = ret.err;
+            }
+            else if (ret.data.rep.extinterrep.colr.type != PINDIRECT) {
+               *err_ind = ERR134;
+            }
+            else {
+               int_rep->style = ret.data.rep.extinterrep.style;
+               int_rep->style_ind = ret.data.rep.extinterrep.style_ind;
+               int_rep->colr_ind = ret.data.rep.extinterrep.colr.val.ind;
+               *err_ind = 0;
+            }
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * pinq_edge_rep
+ *
+ * DESCR:       Get workstation edge representation
+ * RETURNS:     N/A
+ */
+
+void pinq_edge_rep(
+   Pint ws_id,
+   Pint index,
+   Pinq_type type,
+   Pint *err_ind,
+   Pedge_bundle *edge_rep
+   )
+{
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+   Ws_handle wsh;
+   Phg_ret ret;
+
+   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+      *err_ind = ERR3;
+   }
+   else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      *err_ind = ERR3;
+   }
+   else {
+      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (wsinfo == NULL) {
+         *err_ind = ERR54;
+      }
+      else {
+         dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+         if (!(dt->ws_category == PCAT_OUT ||
+               dt->ws_category == PCAT_OUTIN ||
+               dt->ws_category == PCAT_MO)) {
+            *err_ind = ERR59;
+         }
+         else if (index < 1) {
+            *err_ind = ERR100;
+         }
+         else {
+            wsh = PHG_WSID(ws_id);
+            (*wsh->inq_representation)(wsh, index, type, PHG_ARGS_EXTEDGEREP,
+                                       &ret);
+            if (ret.err) {
+               *err_ind = ret.err;
+            }
+            else if (ret.data.rep.extedgerep.colr.type != PINDIRECT) {
+               *err_ind = ERR134;
+            }
+            else {
+               edge_rep->flag = ret.data.rep.extedgerep.flag;
+               edge_rep->type = ret.data.rep.extedgerep.type;
+               edge_rep->width = ret.data.rep.extedgerep.width;
+               edge_rep->colr_ind = ret.data.rep.extedgerep.colr.val.ind;
+               *err_ind = 0;
+            }
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * pinq_colr_rep
+ *
+ * DESCR:       Get workstation colour representation
+ * RETURNS:     N/A
+ */
+
+void pinq_colr_rep(
+   Pint ws_id,
+   Pint colr_ind,
+   Pinq_type type,
+   Pint *err_ind,
+   Pcolr_rep *colr_rep
+   )
+{
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+   Ws_handle wsh;
+   Phg_ret ret;
+
+   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+      *err_ind = ERR3;
+   }
+   else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      *err_ind = ERR3;
+   }
+   else {
+      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (wsinfo == NULL) {
+         *err_ind = ERR54;
+      }
+      else {
+         dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+         if (!(dt->ws_category == PCAT_OUT ||
+               dt->ws_category == PCAT_OUTIN ||
+               dt->ws_category == PCAT_MO)) {
+            *err_ind = ERR59;
+         }
+         else if (colr_ind < 0) {
+            *err_ind = ERR113;
+         }
+         else {
+            wsh = PHG_WSID(ws_id);
+            (*wsh->inq_representation)(wsh, colr_ind, type, PHG_ARGS_COREP,
+                                       &ret);
+            if (ret.err) {
+               *err_ind = ret.err;
+            }
+            else {
+               memcpy (colr_rep, &ret.data.rep.corep, sizeof(Pcolr_rep));
+               *err_ind = 0;
+            }
          }
       }
    }
