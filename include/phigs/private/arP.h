@@ -35,6 +35,15 @@
 
 #define PHG_AR_END_FOR_ALL_TOC_ENTRIES }}}}
 
+#define PHG_AR_CHECK_TMPMEM_BLOCKSIZE(blockptr, blocktype, els_used)       \
+    if ( (els_used) && !( (els_used)%PHG_AR_TMPMEM_BLOCKSIZE) ) {          \
+        /* get more space */                                               \
+        (blockptr) = (blocktype *) realloc((char *)(blockptr),             \
+         (int)((els_used + PHG_AR_TMPMEM_BLOCKSIZE) * sizeof(blocktype))); \
+        if (!(blockptr))                                                   \
+            return(FALSE);                      /* out of memory */        \
+    }
+
 /******************************************************************************
  * phg_ar_set_conversion
  *
@@ -205,7 +214,7 @@ int phg_ar_read_eoa(
     );
 
 /*******************************************************************************
- * phg_ar_read_eoa
+ * phg_ar_write_eoa
  *
  * DESCR:       End of Archive (EOA) element write
  * RETURNS:     Zero on success, otherwise error
@@ -266,6 +275,40 @@ int phg_ar_write_struct_to_archive(
     Pint nelts,
     caddr_t mem
     );
+
+/*******************************************************************************
+ * phg_ar_inq_descendants
+ *
+ * DESCR:       -
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_ar_inq_descendants(
+    Ar_handle arh,
+    Pint structid,
+    Pelem_ref_list *allpaths,
+    Pelem_ref_list *curpath,
+    Pint_list *counts,
+    Ppath_order order,
+    Pint depth
+    );
+
+/*******************************************************************************
+ * phg_ar_inq_ancestors
+ *
+ * DESCR:       -
+ * RETURNS:     TRUE or FALSE
+ */
+
+int phg_ar_inq_ancestors(
+    Ar_handle arh,
+    Pint structid,
+    Pelem_ref_list *allpaths,
+    Pelem_ref_list *curpath,
+    Pint_list *counts,
+    Ppath_order order,
+    Pint depth
+   );
 
 #endif /* _arP_h */
 
