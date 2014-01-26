@@ -53,6 +53,9 @@
 #define PHG_AR_STRUCT            0x1         /* block contains structure */
 #define PHG_AR_FREE_SPACE        0x2         /* block is free space */
 
+#define PHG_AR_TMPMEM_BLOCKSIZE  20          /* size of memblock increament */
+
+
 typedef enum {
     PHG_AR_WRITING_ARCHIVE,
     PHG_AR_READING_ARCHIVE

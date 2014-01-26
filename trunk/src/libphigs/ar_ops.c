@@ -536,7 +536,7 @@ int phg_ar_read_eoa(
 }
 
 /*******************************************************************************
- * phg_ar_read_eoa
+ * phg_ar_write_eoa
  *
  * DESCR:	End of Archive (EOA) element write
  * RETURNS:	Zero on success, otherwise error
