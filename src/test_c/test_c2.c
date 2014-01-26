@@ -78,6 +78,7 @@ int view_index = 0;
 
 Pline_bundle   lnrep = { PLINE_DASH_DOT, 2.0,  0 };
 Pmarker_bundle mkrep = { PMARKER_ASTERISK, 0.1, 0 };
+Ptext_bundle   txrep = { 1, PREC_STROKE, 1.0, 0, 1 };
 Pedge_bundle   edgerep = { PEDGE_ON, PLINE_SOLID, 2.0, 1 };
 Pint_bundle    interrep = { PSTYLE_SOLID, HATCH_IND, 0 };
 
@@ -88,13 +89,21 @@ void lnlist(Pint ws_id)
    Pint err;
    Pint_list list;
    Pint int_list[10];
+   Pline_bundle rep;
 
    list.num_ints = 0;
    list.ints = int_list;
 
-   pinq_list_line_inds(ws_id, 10, 0, &err, &list, &len);
+   pinq_list_line_inds(ws_id, 10, ATTR_NO, &err, &list, &len);
+   printf("line\ttype\twidth\tcolr\n");
    for (i = 0; i < list.num_ints; i++) {
-      printf("%d ", list.ints[i]);
+      printf("#%d:\t", list.ints[i]);
+      pinq_line_rep(ws_id, list.ints[i], 0, &err, &rep);
+      if (!err)
+         printf("%d\t%g\t%d", rep.type, rep.width, rep.colr_ind);
+      else
+         printf("ERR%d", err);
+      printf("\n");
    }
 }
 
@@ -105,13 +114,21 @@ void mklist(Pint ws_id)
    Pint err;
    Pint_list list;
    Pint int_list[10];
+   Pmarker_bundle rep;
 
    list.num_ints = 0;
    list.ints = int_list;
 
-   pinq_list_marker_inds(ws_id, 10, 0, &err, &list, &len);
+   pinq_list_marker_inds(ws_id, 10, ATTR_NO, &err, &list, &len);
+   printf("marker\ttype\tsize\tcolr\n");
    for (i = 0; i < list.num_ints; i++) {
-      printf("%d ", list.ints[i]);
+      printf("#%d:\t", list.ints[i]);
+      pinq_marker_rep(ws_id, list.ints[i], 0, &err, &rep);
+      if (!err)
+         printf("%d\t%g\t%d", rep.type, rep.size, rep.colr_ind);
+      else
+         printf("ERR%d", err);
+      printf("\n");
    }
 }
 
@@ -122,13 +139,22 @@ void txlist(Pint ws_id)
    Pint err;
    Pint_list list;
    Pint int_list[10];
+   Ptext_bundle rep;
 
    list.num_ints = 0;
    list.ints = int_list;
 
-   pinq_list_text_inds(ws_id, 10, 0, &err, &list, &len);
+   pinq_list_text_inds(ws_id, 10, ATTR_NO, &err, &list, &len);
+   printf("text\tfont\tprec\texpan\tspace\tcolr\n");
    for (i = 0; i < list.num_ints; i++) {
-      printf("%d ", list.ints[i]);
+      printf("#%d:\t", list.ints[i]);
+      pinq_text_rep(ws_id, list.ints[i], 0, &err, &rep);
+      if (!err)
+         printf("%d\t%d\t%g\t%g\t%d", rep.font, rep.prec,
+                rep.char_expan, rep.char_space, rep.colr_ind);
+      else
+         printf("ERR%d", err);
+      printf("\n");
    }
 }
 
@@ -139,13 +165,21 @@ void intlist(Pint ws_id)
    Pint err;
    Pint_list list;
    Pint int_list[10];
+   Pint_bundle rep;
 
    list.num_ints = 0;
    list.ints = int_list;
 
-   pinq_list_int_inds(ws_id, 10, 0, &err, &list, &len);
+   pinq_list_int_inds(ws_id, 10, ATTR_NO, &err, &list, &len);
+   printf("int\tstyle\tind\tcolr\n");
    for (i = 0; i < list.num_ints; i++) {
-      printf("%d ", list.ints[i]);
+      printf("#%d:\t", list.ints[i]);
+      pinq_int_rep(ws_id, list.ints[i], 0, &err, &rep);
+      if (!err)
+         printf("%d\t%d\t%d", rep.style, rep.style_ind, rep.colr_ind);
+      else
+         printf("ERR%d", err);
+      printf("\n");
    }
 }
 
@@ -156,13 +190,21 @@ void edgelist(Pint ws_id)
    Pint err;
    Pint_list list;
    Pint int_list[10];
+   Pedge_bundle rep;
 
    list.num_ints = 0;
    list.ints = int_list;
 
-   pinq_list_edge_inds(ws_id, 10, 0, &err, &list, &len);
+   pinq_list_edge_inds(ws_id, 10, ATTR_NO, &err, &list, &len);
+   printf("edge\tflag\ttype\twidth\tcolr\n");
    for (i = 0; i < list.num_ints; i++) {
-      printf("%d ", list.ints[i]);
+      printf("#%d:\t", list.ints[i]);
+      pinq_edge_rep(ws_id, list.ints[i], 0, &err, &rep);
+      if (!err)
+         printf("%d\t%d\t%g\t%d", rep.flag, rep.type, rep.width, rep.colr_ind);
+      else
+         printf("ERR%d", err);
+      printf("\n");
    }
 }
 
@@ -173,13 +215,21 @@ void colrlist(Pint ws_id)
    Pint err;
    Pint_list list;
    Pint int_list[10];
+   Pcolr_rep rep;
 
    list.num_ints = 0;
    list.ints = int_list;
 
    pinq_list_colr_inds(ws_id, 10, 0, &err, &list, &len);
+   printf("colour\tred\tgreen\tblue\n");
    for (i = 0; i < list.num_ints; i++) {
-      printf("%d ", list.ints[i]);
+      printf("#%d:\t", list.ints[i]);
+      pinq_colr_rep(ws_id, list.ints[i], 0, &err, &rep);
+      if (!err)
+         printf("%g\t%g\t%g", rep.rgb.red, rep.rgb.green, rep.rgb.blue);
+      else
+         printf("ERR%d", err);
+      printf("\n");
    }
 }
 
@@ -195,9 +245,11 @@ void viewlist(Pint ws_id)
    list.ints = int_list;
 
    pinq_list_view_inds(ws_id, 10, 0, &err, &list, &len);
+   printf("View(s): ");
    for (i = 0; i < list.num_ints; i++) {
       printf("%d ", list.ints[i]);
    }
+   printf("\n");
 }
 
 void wslist(void)
@@ -216,24 +268,26 @@ void wslist(void)
    list.ints = int_list;
 
    printf("Open workstation(s)\n");
-   printf("W T C\tLN\tMK\tTX\tINT\tEDGE\tCOL\tVIEW\n");
    pinq_open_wss(MAX_NO_OPEN_WS, 0, &err, &list, &len);
    for (i = 0; i < list.num_ints; i++) {
       pinq_ws_conn_type(list.ints[i], store, &err, &conn_id, &wstype);
       pinq_ws_cat(wstype, &err, &cat);
-      printf("%d %d %d\t", list.ints[i], wstype, cat);
+      printf("Workstation:\t%d\n", list.ints[i]);
+      printf("Ws Type:\t%d\n", wstype);
+      printf("Category:\t%d\n", cat);
+      printf("\n");
       lnlist(list.ints[i]);
-      printf("\t");
+      printf("\n");
       mklist(list.ints[i]);
-      printf("\t");
+      printf("\n");
       txlist(list.ints[i]);
-      printf("\t");
+      printf("\n");
       intlist(list.ints[i]);
-      printf("\t");
+      printf("\n");
       edgelist(list.ints[i]);
-      printf("\t");
+      printf("\n");
       colrlist(list.ints[i]);
-      printf("\t");
+      printf("\n");
       viewlist(list.ints[i]);
       printf("\n");
    }
@@ -318,6 +372,7 @@ int main(int argc, char *argv[])
    pset_ws_win(0, &win);
    pset_line_rep(0, ATTR_NO, &lnrep);
    pset_marker_rep(0, ATTR_NO, &mkrep);
+   pset_text_rep(0, ATTR_NO, &txrep);
    pset_edge_rep(0, ATTR_NO, &edgerep);
    pset_int_rep(0, ATTR_NO, &interrep);
 
@@ -344,6 +399,7 @@ int main(int argc, char *argv[])
    pset_ws_win(1, &win);
    pset_line_rep(1, ATTR_NO, &lnrep);
    pset_marker_rep(1, ATTR_NO, &mkrep);
+   pset_text_rep(1, ATTR_NO, &txrep);
    pset_edge_rep(1, ATTR_NO, &edgerep);
    pset_int_rep(1, ATTR_NO, &interrep);
 
