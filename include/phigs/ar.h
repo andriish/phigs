@@ -156,5 +156,41 @@ void phg_ar_close(
     Pint ar_id
     );
 
+/*******************************************************************************
+ * phg_ar_get_names
+ *
+ * DESCR:       Get archive catalog of names
+ * RETURNS:     N/A
+ */
+
+void phg_ar_get_names(
+    Pint arid,
+    Phg_ret *ret
+    );
+
+/*******************************************************************************
+ * phg_ar_get_hierarchy
+ *
+ * DESCR:       Get archive hierachy
+ * RETURNS:     N/A
+ */
+
+void phg_ar_get_hierarchy(
+    Phg_args_q_ar_hierarchy *args,
+    Phg_ret *ret
+    );
+
+/*******************************************************************************
+ * phg_inq_ar_conflicting
+ *
+ * DESCR:       Get list of conflicting structures in archive
+ * RETURNS:     N/A
+ */
+
+void phg_inq_ar_conflicting(
+    Phg_args_q_conflicting *args,
+    Phg_ret *ret
+    );
+
 #endif /* _ar_h */
 

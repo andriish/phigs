@@ -62,11 +62,6 @@ typedef enum {
 } Phg_args_del_el_op;
 
 typedef enum {
-   PHG_ARGS_HIER_ANCESTORS,
-   PHG_ARGS_HIER_DESCENDANTS
-} Phg_args_hierarchy_dir;
-
-typedef enum {
    PHG_ARGS_INP_LOC,
    PHG_ARGS_INP_LOC3,
    PHG_ARGS_INP_PIK,
@@ -98,6 +93,16 @@ typedef enum {
    PHG_ARGS_AR_NETWORKS,
    PHG_ARGS_AR_ALL
 } Phg_args_ar_op;
+
+typedef enum {
+   PHG_ARGS_HIER_ANCESTORS,
+   PHG_ARGS_HIER_DESCENDANTS
+} Phg_args_hierarchy_dir;
+
+typedef enum {
+   PHG_ARGS_CONF_ALL,
+   PHG_ARGS_CONF_NET
+} Phg_args_conf_op;
 
 typedef struct {
    Pint       el_size;
@@ -222,6 +227,25 @@ typedef struct {
    Pint name_length;
    Pint arid;
 } Phg_args_ar_open;
+
+typedef struct {
+   Phg_args_hierarchy_dir dir;
+   Pint                   struct_id;
+   Ppath_order            order;
+   Pint                   depth;
+} Phg_args_q_hierarchy;
+
+typedef struct {
+   Pint                 arid;
+   Phg_args_q_hierarchy hier;
+} Phg_args_q_ar_hierarchy;
+
+typedef struct {
+   Phg_args_conf_op   op;
+   Pint               arid;
+   Pint               struct_id;
+   Pstruct_net_source src;
+} Phg_args_q_conflicting;
 
 #endif
 
