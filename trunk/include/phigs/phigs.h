@@ -108,6 +108,11 @@ typedef enum {
    PST_AROP
 } Par_st;
 
+typedef enum {
+   PNET_CSS,
+   PNET_AR
+} Pstruct_net_source;
+
 /* Workstation related */
 typedef enum {
    PCLASS_VEC,

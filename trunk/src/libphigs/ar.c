@@ -91,12 +91,33 @@ SOFTWARE.
          (arh != NULL) && (arh->arid != (id)); \
          arh = arh->next);
 
-#ifdef TODO
-static int	get_ar_structure_network_ids();
-static int	get_css_struct_ids();
-static int	get_css_network_sids();
-static int	compile_network_sids();
-#endif
+static int get_ar_structure_network_ids(
+    Ar_handle arh,
+    Pint struct_id,
+    Pint_list *lst
+    );
+
+static int get_css_struct_ids(
+    Pint_list *lst
+    );
+
+static int get_css_network_sids(
+    Pint sid,
+    Pint_list *lst
+    );
+
+static int compile_network_sids(
+    Ar_handle arh,
+    Pint_list *in,
+    Pstruct_net_source where,
+    Pint_list *out
+    );
+
+static void merge_and_remove_duplicates(
+    int nl,
+    Pint_list lsts[],
+    Pint_list *result
+    );
 
 /*******************************************************************************
  * search_integer_list
@@ -161,15 +182,15 @@ void phg_ar_open(
     int		      err;
     Ar_handle	      arh;
     struct stat	      finfo;
-    FILE	     *fp = NULL;
+    int               fd;
     
     ret->err = !0;
     
     if ( (err = stat(args->fname, &finfo)) && errno != ENOENT) {
 	ERR_BUF(PHG_ERH, ERR400);		    /* can't open file */
-    } else if (!err && !(fp = fopen(args->fname, "r"))) {
+    } else if (!err && (fd = open(args->fname, O_RDONLY | O_CREAT, 0644) == -1)) {
 	ERR_BUF(PHG_ERH, ERR400);		    /* can't open file */
-    } else if (!(arh = (Ar_handle)calloc((unsigned)1,sizeof(Ar_struct)))) {
+    } else if (!(arh = (Ar_handle)calloc((unsigned)1, sizeof(Ar_struct)))) {
 	ERR_BUF(PHG_ERH, ERR900);		    /* out of memory */
     } else {
 	/* fill in archive structure and put on beginning of ar_list */
@@ -179,9 +200,7 @@ void phg_ar_open(
 	arh->toc = NULL;
 	arh->next = PHG_AR_LIST;
 	PHG_AR_LIST = arh;
-#ifdef TODO
-	fclose(fp);
-#endif
+	close(fd);
 	if (!err && finfo.st_size) {
 	    /* file exists and is not empty, so read it */
 	    if ((arh->fd = open(arh->fname, O_RDWR)) == -1)
@@ -267,7 +286,7 @@ Phg_args *cp_args;
     int			 i;
     Cpx_css_srvr	*css_srvr;
 
-    GET_ARH(cph, args->arid, arh);
+    GET_ARH(args->arid, arh);
     
     /** Get sids of all the structures we want to archive **/
     switch (args->op) {
@@ -305,7 +324,7 @@ Phg_args *cp_args;
     
     if ( arids.num_ints > 0 && !(arids.ints = (Pint *)
 	    malloc((unsigned)(arids.num_ints * sizeof(Pint))))) {
-	ERR_BUF(cph->erh, ERR900);
+	ERR_BUF(PHG_ERH, ERR900);
 	if (args->op != PHG_ARGS_AR_STRUCTS)
 	    free((char *)(args->data.ints));
 	return;
@@ -320,7 +339,7 @@ Phg_args *cp_args;
 	for (i = 0; i < args->data.num_ints; i++) {
 	    if (search_integer_list(args->data.ints[i],
 				    arids.ints, arids.num_ints)) {
-		ERR_BUF(cph->erh, ERR405);	    
+		ERR_BUF(PHG_ERH, ERR405);	    
 		return;
 	    }
 	}
@@ -329,7 +348,6 @@ Phg_args *cp_args;
     CPX_MASTER_SERVER(cph, css_srvr);
     (*css_srvr->ar_archive)(cph, arh, args, css_srvr);
 }
-
 
 void
 phg_cpx_ar_retrieve( cph, cp_args)
@@ -340,7 +358,7 @@ Phg_args *cp_args;
     Phg_args_ar_info	*args = &(cp_args->data.ar_info);
     Pint_list		 ar_structs, css_ids;
     Ar_handle		 arh;
-    register int	 i, eln;
+    int			 i, eln;
     Phg_args		 args2, el_args;
     Phg_ret		 ret2;
     Phg_ar_index_entry	*entry;
@@ -520,52 +538,6 @@ Phg_args *cp_args;
 	free((char *)ar_structs.ints);
 }
 
-/** Merge nl sorted lists, removing duplicates **/
-static void
-merge_and_remove_duplicates(nl, lsts, result)
-int		 nl;			/* number of lists */
-register Pint_list lsts[];		/* array of intlsts */
-Pint_list		*result;		/* pointer to resulting list */
-{
-    register int i, j;
-    int	     done = 0;
-    int	    *inds = (int *)malloc((unsigned)(nl * sizeof(int)));
-
-    for (i = 0; i < nl; i++)
-	inds[i] = 0;
-	
-    i = 0;
-    
-    while (!done) {
-    
-	int min_lst = -1;
-	Pint min_num = 9999999;
-	
-	/* find smallest number in first elements of all lists */
-	for (j = 0; j < nl; j++) {
-	    if (inds[j] < lsts[j].num_ints && 
-		    ((lsts[j].ints[inds[j]] < min_num) ||
-		    (min_lst == -1))) {
-		min_num = lsts[j].ints[inds[j]];
-		min_lst = j;
-	    }
-	}
-	
-	/* put onto main list */
-	if (min_lst == -1) {
-	    done = 1;
-	} else {
-	    if (i == 0 || min_num != result->ints[i - 1]) {
-		/* not a duplicate */
-		result->ints[i++] = min_num;
-	    }
-	    inds[min_lst]++;
-	}
-    }
-    result->num_ints = i;
-    free((char *)inds);
-}
-
 void
 phg_cpx_ar_delete( cph, cp_args )
 Cp_handle cph;
@@ -672,21 +644,27 @@ Phg_args *cp_args;
 	    return;
     }
 }
+#endif
 
-void
-phg_cpx_ar_get_names( cph, cp_args, ret )
-Cp_handle cph;
-Phg_args *cp_args;
-Phg_ret *ret;
+/*******************************************************************************
+ * phg_ar_get_names
+ *
+ * DESCR:       Get archive catalog of names
+ * RETURNS:     N/A
+ */
+
+void phg_ar_get_names(
+    Pint arid,
+    Phg_ret *ret
+    )
 {
-    Pint	    ar_id = cp_args->data.idata;
-    Ar_handle	    arh;
-    int		    i;
-    Phg_ar_index_entry   *entry;
+    Ar_handle arh;
+    int i;
+    Phg_ar_index_entry *entry;
     
     ret->err = !0;
     
-    GET_ARH(cph, ar_id, arh);
+    GET_ARH(arid, arh);
     
     /* count the structures */
     ret->data.int_list.num_ints = 0;
@@ -694,9 +672,9 @@ Phg_ret *ret;
 	ret->data.int_list.num_ints++;
     PHG_AR_END_FOR_ALL_TOC_ENTRIES
     
-    if (!(ret->data.int_list.ints = (int *)PHG_SCRATCH_SPACE(&cph->scratch, 
+    if (!(ret->data.int_list.ints = (int *)PHG_SCRATCH_SPACE(&PHG_SCRATCH, 
 		ret->data.int_list.num_ints * sizeof(Pint)))) {
-	ERR_BUF(cph->erh, ERR900);
+	ERR_BUF(PHG_ERH, ERR900);
     } else {
         /* catalog the ids */
 	i = 0;
@@ -707,37 +685,42 @@ Phg_ret *ret;
     }
 }
 
+/*******************************************************************************
+ * phg_ar_get_hierarchy
+ *
+ * DESCR:       Get archive hierachy
+ * RETURNS:     N/A
+ */
 
-void
-phg_cpx_ar_get_hierarchy( cph, cp_args, ret )
-Cp_handle cph;
-Phg_args *cp_args;
-Phg_ret *ret;
+void phg_ar_get_hierarchy(
+    Phg_args_q_ar_hierarchy *args,
+    Phg_ret *ret
+    )
 {
-    Phg_args_q_hierarchy    *args = &(cp_args->data.q_ar_hierarchy.hier);
-    Pelem_ref_list	     allpaths, curpath;
-    Pint_list		     counts;
-    int			     retval = TRUE;
-    Phg_args_hierarchy_dir   dir = args->dir;
-    Pint		     struct_id = args->struct_id;
-    Ppath_order		     order = args->order;
-    Pint		     depth = args->depth;
-    Ar_handle		     arh;
-    
+    Phg_args_q_hierarchy *hier = &(args->hier);
+    Pelem_ref_list allpaths, curpath;
+    Pint_list counts;
+    int	retval = TRUE;
+    Phg_args_hierarchy_dir dir = hier->dir;
+    Pint struct_id = hier->struct_id;
+    Ppath_order order = hier->order;
+    Pint depth = hier->depth;
+    Ar_handle arh;
+
     ret->err = !0;
     
-    GET_ARH(cph, cp_args->data.q_ar_hierarchy.arid, arh);
+    GET_ARH(args->arid, arh);
 
     if (!phg_ar_get_entry_from_archive(arh, struct_id)) {
-	ERR_BUF(cph->erh, ERR201);
+	ERR_BUF(PHG_ERH, ERR201);
 	return;
     }
 
     /* alloc 1024 cells, use realloc later if it's not big enough */
     if (!(allpaths.elem_refs = 
-		(Pelem_ref *)PHG_SCRATCH_SPACE(&cph->scratch,
+		(Pelem_ref *)PHG_SCRATCH_SPACE(&PHG_SCRATCH,
 		    1024 * sizeof(Pelem_ref)))) {
-        ERR_BUF(cph->erh, ERR900);
+        ERR_BUF(PHG_ERH, ERR900);
         return;                                         /* out of memory */
     }
     
@@ -746,41 +729,41 @@ Phg_ret *ret;
     curpath.elem_refs = (Pelem_ref *) malloc(PHG_AR_TMPMEM_BLOCKSIZE * 
 				      sizeof(Pelem_ref));
     if (!(curpath.elem_refs)) {
-        ERR_BUF(cph->erh, ERR900);
+        ERR_BUF(PHG_ERH, ERR900);
         return;                                         /* out of memory */
     }
     counts.ints = (Pint *) malloc(PHG_AR_TMPMEM_BLOCKSIZE * sizeof(Pint));
     if (!(counts.ints)) {
 	free((char *)curpath.elem_refs);
-        ERR_BUF(cph->erh, ERR900);
+        ERR_BUF(PHG_ERH, ERR900);
         return;                                         /* out of memory */
     }
 
     allpaths.num_elem_refs = curpath.num_elem_refs = counts.num_ints = 0;
     if (dir == PHG_ARGS_HIER_DESCENDANTS)
-        retval = phg_ar_inq_descendants(cph, arh, struct_id, &allpaths, 
+        retval = phg_ar_inq_descendants(arh, struct_id, &allpaths, 
 			&curpath, &counts, order, depth);
     else 
-        retval = phg_ar_inq_ancestors(cph, arh, struct_id, &allpaths, 
+        retval = phg_ar_inq_ancestors(arh, struct_id, &allpaths, 
 			&curpath, &counts, order, depth);
 				   
     if (!retval) {
-        ERR_BUF(cph->erh, ERR900);                     /* out of memory */
+        ERR_BUF(PHG_ERH, ERR900);                       /* out of memory */
         goto free_and_return;
     }
     
-    /* make sure cph->scratch has enough space before copying counts array */
+    /* make sure scratch has enough space before copying counts array */
     if (allpaths.num_elem_refs*sizeof(Pelem_ref) + counts.num_ints*sizeof(Pint) >
-            cph->scratch.size) {
+            PHG_SCRATCH.size) {
 	    
         int increm = counts.num_ints * sizeof(Pint);
  
-        cph->scratch.buf = realloc(cph->scratch.buf, cph->scratch.size+increm);
-        if (cph->scratch.buf) {
-            cph->scratch.size += increm;
-            allpaths.elem_refs = (Pelem_ref *)cph->scratch.buf;
+        PHG_SCRATCH.buf = realloc(PHG_SCRATCH.buf, PHG_SCRATCH.size+increm);
+        if (PHG_SCRATCH.buf) {
+            PHG_SCRATCH.size += increm;
+            allpaths.elem_refs = (Pelem_ref *)PHG_SCRATCH.buf;
         } else {
-            ERR_BUF(cph->erh, ERR900);                 /* out of memory */
+            ERR_BUF(PHG_ERH, ERR900);                   /* out of memory */
             goto free_and_return;
         }
     }
@@ -803,43 +786,48 @@ free_and_return:
     free((char*)counts.ints);
 }
 
-void
-phg_cpx_inq_ar_conflicting( cph, cp_args, ret )
-Cp_handle cph;
-Phg_args *cp_args;
-Phg_ret *ret;
+/*******************************************************************************
+ * phg_inq_ar_conflicting
+ *
+ * DESCR:       Get list of conflicting structures in archive
+ * RETURNS:     N/A
+ */
+
+void phg_inq_ar_conflicting(
+    Phg_args_q_conflicting *args,
+    Phg_ret *ret
+    )
 {
-    Phg_args_q_conflicting  *args = &(cp_args->data.q_conflicting);
-    Pint_list		     css_ids, ar_net_ids;
-    register int	     i;
-    Phg_ar_index_entry	    *entry;
-    Ar_handle		     arh;
+    Pint_list css_ids, ar_net_ids;
+    int i;
+    Phg_ar_index_entry *entry;
+    Ar_handle arh;
     
     ret->err = !0;
     
-    GET_ARH(cph, args->arid, arh);
+    GET_ARH(args->arid, arh);
     
     /* get the CSS structure ids */
     if (args->op == PHG_ARGS_CONF_NET && args->src == PNET_CSS) {
-	if (get_css_network_sids(cph, args->struct_id, &css_ids))
+	if (get_css_network_sids(args->struct_id, &css_ids))
 	    return;
     } else {
-	if (get_css_struct_ids(cph, &css_ids))
+	if (get_css_struct_ids(&css_ids))
 	    return;
     }
 
     qsort((char *)css_ids.ints, css_ids.num_ints, sizeof(Pint), 
 		    intcompare);
 
-    /* we know that cph->scratch is at least as big as sizeof(Pint)*(#sids)
+    /* we know that scratch is at least as big as sizeof(Pint)*(#sids)
      * because of previous calls, so we don't need to count the conflicting
-     * ones before using cph->scratch. */
-    ret->data.int_list.ints = (Pint *)cph->scratch.buf;
+     * ones before using scratch. */
+    ret->data.int_list.ints = (Pint *)PHG_SCRATCH.buf;
     ret->data.int_list.num_ints = 0;
     
     if (args->op == PHG_ARGS_CONF_NET && args->src == PNET_AR) {
     
-	if (get_ar_structure_network_ids(cph, arh,
+	if (get_ar_structure_network_ids(arh,
 					 args->struct_id, &ar_net_ids)) {
 	    free((char *)css_ids.ints);
 	    return;
@@ -876,30 +864,33 @@ Phg_ret *ret;
     ret->err = 0;
 }
 
+/*******************************************************************************
+ * get_ar_structure_network_ids
+ *
+ * DESCR:     Return an ordered, duplicates removed, list of structure ids in a 
+ *            structure network rooted at the specified struct_id.  IT IS THE
+ *            CALLERS RESPONSIBILITY TO FREE THE lst->ints STRUCTURE WHEN
+ *            IT'S NOT NEEDED
+ * RETURNS    Zero on success, otherwise non-zero
+ */
 
-
-/* return an ordered, duplicates removed, list of structure ids in a 
- * structure network rooted at the specified struct_id.  IT IS THE
- * CALLERS RESPONSIBILITY TO FREE THE lst->ints STRUCTURE WHEN
- * IT'S NOT NEEDED */
-static int
-get_ar_structure_network_ids(cph, arh, struct_id, lst)
-Cp_handle   cph;
-Ar_handle   arh;
-Pint	    struct_id;
-Pint_list	   *lst;
+static int get_ar_structure_network_ids(
+    Ar_handle arh,
+    Pint struct_id,
+    Pint_list *lst
+    )
 {
-    Phg_args		     args;
-    Phg_ret		     ret;
-    Phg_args_q_hierarchy    *hier = &args.data.q_ar_hierarchy.hier;
-    register int	     i, j;
+    Phg_args_q_ar_hierarchy args;
+    Phg_ret ret;
+    int i, j;
+    Phg_args_q_hierarchy *hier = &args.hier;
     
-    args.data.q_ar_hierarchy.arid = arh->arid;
+    args.arid   = arh->arid;
     hier->dir	= PHG_ARGS_HIER_DESCENDANTS;
     hier->depth	= 0;
     hier->order	= PORDER_TOP_FIRST;
     hier->struct_id = struct_id;
-    CP_FUNC(cph, CP_FUNC_OP_AR_GET_HIERARCHY, &args, &ret);
+    phg_ar_get_hierarchy(&args, &ret);
 	
     /** this won't put on the root structure, so explicitly add it in **/
     if (ret.err)
@@ -908,7 +899,7 @@ Pint_list	   *lst;
         lst->num_ints = ret.data.hierarchy.num_pairs + 1;
         if (!(lst->ints = 
 		    (Pint *)malloc((unsigned)(lst->num_ints * sizeof(Pint))))) {
-	    ERR_BUF(cph->erh, ERR900);
+	    ERR_BUF(PHG_ERH, ERR900);
 	    return(1);
         } else {
 	    /* copy list */
@@ -932,18 +923,20 @@ Pint_list	   *lst;
     }
 }
 
+/*******************************************************************************
+ * get_css_network_sids
+ *
+ * DESCR:       CALLERS RESPONSIBILE FOR FREEING ints FIELD
+ * RETURNS      Zero on success, otherwise non-zero
+ */
 
-
-/*** CALLER RESPONSIBLE FOR FREEING ints FIELD ***/
-static int
-get_css_struct_ids(cph, lst)
-Cp_handle   cph;
-Pint_list	   *lst;
+static int get_css_struct_ids(
+    Pint_list *lst
+    )
 {
-    Phg_args	args;
-    Phg_ret	ret;
-    
-    CP_FUNC(cph, CP_FUNC_OP_INQ_STRUCT_IDS, &args, &ret);
+    Phg_ret ret;
+
+    phg_css_inq_struct_ids(PHG_CSS, &ret);
     if (ret.err)
         return(1);
     else {
@@ -952,7 +945,7 @@ Pint_list	   *lst;
 	    lst->ints = NULL;
 	} else if (!(lst->ints = (Pint *)malloc((unsigned)(lst->num_ints * 
 						    sizeof(Pint))))) {
-	    ERR_BUF(cph->erh, ERR900);
+	    ERR_BUF(PHG_ERH, ERR900);
 	    return(1);
         } else {
 	    bcopy((char *)ret.data.int_list.ints, 
@@ -963,31 +956,30 @@ Pint_list	   *lst;
     return(0);
 }
 
+/*******************************************************************************
+ * get_css_network_sids
+ *
+ * DESCR:       CALLERS RESPONSIBILE FOR FREEING lst->ints FIELD
+ * RETURNS      Zero on success, otherwise non-zero
+ */
 
-/*** CALLERS RESPONSIBILE FOR FREEING lst->ints FIELD ***/
-static int
-get_css_network_sids(cph, sid, lst)
-Cp_handle	     cph;
-Pint		     sid;
-register Pint_list    *lst;
+static int get_css_network_sids(
+    Pint sid,
+    Pint_list *lst
+    )
 {
-    Phg_args		     args;
-    Phg_ret		     ret;
-    Phg_args_q_hierarchy    *hier = &(args.data.q_hierarchy);
-    register int	     i;
+    Phg_ret ret;
+    int i;
 
-    hier->dir = PHG_ARGS_HIER_DESCENDANTS;
-    hier->struct_id = sid;
-    hier->order = PORDER_TOP_FIRST;
-    hier->depth = 0;
-    CP_FUNC(cph, CP_FUNC_OP_INQ_HIERARCHY, &args, &ret);
+    phg_css_inq_hierarchy(PHG_CSS, PHG_ARGS_HIER_DESCENDANTS, sid,
+                          PORDER_TOP_FIRST, 0, &ret);
 
     if (ret.err)
 	return(1);
     else if (ret.data.hierarchy.num_pairs == 0) {
 	lst->num_ints = 1;
 	if (!(lst->ints = (Pint *)malloc(sizeof(Pint)))) {
-	    ERR_BUF(cph->erh, ERR900);
+	    ERR_BUF(PHG_ERH, ERR900);
 	    return(1);
 	} else {
 	    lst->ints[0] = sid;
@@ -995,7 +987,7 @@ register Pint_list    *lst;
     } else {
 	lst->num_ints = ret.data.hierarchy.num_pairs;
 	if (!(lst->ints = (Pint *)malloc((unsigned)(lst->num_ints * sizeof(Pint))))) {
-	    ERR_BUF(cph->erh, ERR900);
+	    ERR_BUF(PHG_ERH, ERR900);
 	    return(1);
 	} else {
 	    for (i = 0; i < lst->num_ints; i++) {
@@ -1007,27 +999,30 @@ register Pint_list    *lst;
     return(0);
 }
 
+/*******************************************************************************
+ * compile_network_sids
+ *
+ * DESCR:   Takes in a list of structure ids, which are interpreted as a list of
+ *          structure network roots.  Returns a sorted, duplicates removed, list
+ *          of all of the structures in those networks.  Can come from either
+ *          the CSS or the archive
+ *          CALLER RESPONSIBLE FOR FREEING out->ints
+ * RETURNS  Zero on success, otherwise non-zero
+ */
 
-
-/** takes in a list of structure ids, which are interpreted as a list of
- ** structure network roots.  Returns a sorted, duplicates removed, list
- ** of all of the structures in those networks.  Can come from either the
- ** CSS or the archive **/
-/** CALLER RESPONSIBLE FOR FREEING out->ints **/
-static int
-compile_network_sids(cph, arh, in, where, out)
-Cp_handle	 cph;
-Ar_handle	 arh;		/* ignore if where == PNET_CSS */
-Pint_list		*in;		/* list of networks (by root sid) */
-Pstruct_net_source	 where;		/* get from CSS or archive? */
-Pint_list		*out;		/* list of sids in network */
+static int compile_network_sids(
+    Ar_handle arh,                      /* ignore if where == PNET_CSS */
+    Pint_list *in,                      /* list of networks (by root sid) */
+    Pstruct_net_source where,           /* get from CSS or archive? */
+    Pint_list *out                      /* list of sids in network */
+    )
 {
-    int	      nl = in->num_ints;
-    Pint_list  *lsts = (Pint_list *)malloc((unsigned)(nl * sizeof(Pint_list)));
-    int	      i, j, upper_bound = 0;
+    int nl = in->num_ints;
+    Pint_list *lsts = (Pint_list *)malloc((unsigned)(nl * sizeof(Pint_list)));
+    int	i, j, upper_bound = 0;
 
     if (!lsts) {
-	ERR_BUF(cph->erh, ERR900);
+	ERR_BUF(PHG_ERH, ERR900);
 	return(1);
     }
 
@@ -1039,9 +1034,9 @@ Pint_list		*out;		/* list of sids in network */
 		lsts[i].ints = (Pint *)malloc(sizeof(Pint));
 		lsts[i].ints[0] = in->ints[i];
 	    } else {
-		if (get_ar_structure_network_ids(cph, arh, in->ints[i],
+		if (get_ar_structure_network_ids(arh, in->ints[i],
 				    &lsts[i])) {
-		    ERR_BUF(cph->erh, ERR900);
+		    ERR_BUF(PHG_ERH, ERR900);
 		    for (j = 0; j < i; j++)
 			free((char *)lsts[j].ints);
 		    free((char *)lsts);
@@ -1050,6 +1045,7 @@ Pint_list		*out;		/* list of sids in network */
 	    }
 	    
 	} else { /* where == PNET_CSS */
+#ifdef TODO
 	    Cpx_css_srvr   *css_srvr;
 	    CPX_MASTER_SERVER(cph, css_srvr)
 	    if (!(*css_srvr->struct_exists)(cph, css_srvr, in->ints[i])) {
@@ -1063,6 +1059,7 @@ Pint_list		*out;		/* list of sids in network */
 		    return(1);
 		}
 	    }
+#endif
 	}
 	
 	qsort((char *)lsts[i].ints, lsts[i].num_ints, sizeof(Pint), 
@@ -1084,5 +1081,56 @@ Pint_list		*out;		/* list of sids in network */
     
     return(0);
 }
-#endif
+
+/*******************************************************************************
+ * merge_and_remove_duplicates
+ *
+ * DESCR:       Merge nl sorted lists, removing duplicates
+ * RETURNS:     N/A
+ */
+
+static void merge_and_remove_duplicates(
+    int nl,                                     /* number of lists */
+    Pint_list lsts[],                           /* array of intlsts */
+    Pint_list *result                           /* pointer to resulting list */
+    )
+{
+    int i, j;
+    int	done = 0;
+    int	*inds = (int *)malloc((unsigned)(nl * sizeof(int)));
+
+    for (i = 0; i < nl; i++)
+	inds[i] = 0;
+	
+    i = 0;
+    
+    while (!done) {
+    
+	int min_lst = -1;
+	Pint min_num = 9999999;
+	
+	/* find smallest number in first elements of all lists */
+	for (j = 0; j < nl; j++) {
+	    if (inds[j] < lsts[j].num_ints && 
+		    ((lsts[j].ints[inds[j]] < min_num) ||
+		    (min_lst == -1))) {
+		min_num = lsts[j].ints[inds[j]];
+		min_lst = j;
+	    }
+	}
+	
+	/* put onto main list */
+	if (min_lst == -1) {
+	    done = 1;
+	} else {
+	    if (i == 0 || min_num != result->ints[i - 1]) {
+		/* not a duplicate */
+		result->ints[i++] = min_num;
+	    }
+	    inds[min_lst]++;
+	}
+    }
+    result->num_ints = i;
+    free((char *)inds);
+}
 
