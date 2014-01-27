@@ -22,6 +22,7 @@
 #define _psl_h
 
 #define MAX_NO_OPEN_WS                         10
+#define MAX_NO_OPEN_ARFILES                    10
 
 typedef struct {
    Pint       used;                            /* Mark if workstation is used */
@@ -31,19 +32,26 @@ typedef struct {
 } Psl_ws_info;
 
 typedef struct {
+   Pint used;
+   char *fname;
+   Pint arid;
+} Psl_ar_info;
+
+typedef struct {
    Pevent             id;
    Phg_inp_event_data data;
 } Psl_inp_event;
 
 typedef struct {
-   Psys_st       phg_sys_state;                /* System state */
-   Pws_st        phg_ws_state;                 /* Workstation state */
-   Pstruct_st    phg_struct_state;             /* Structure state */
-   Par_st        phg_ar_state;                 /* Archive state */
-   Psl_ws_info   open_ws[MAX_NO_OPEN_WS];      /* Info list for workstations */
-   Psl_inp_event cur_event;                    /* Event gotten by pwait_event */
-   Pedit_mode    edit_mode;                    /* Structure edit mode */
-   Pint          open_struct;                  /* Open structure */
+   Psys_st       phg_sys_state;                 /* System state */
+   Pws_st        phg_ws_state;                  /* Workstation state */
+   Pstruct_st    phg_struct_state;              /* Structure state */
+   Par_st        phg_ar_state;                  /* Archive state */
+   Psl_ws_info   open_ws[MAX_NO_OPEN_WS];       /* Info list for workstations */
+   Psl_ar_info   ar_files[MAX_NO_OPEN_ARFILES]; /* Info list for archives */
+   Psl_inp_event cur_event;                     /* Event got by pwait_event */
+   Pedit_mode    edit_mode;                     /* Structure edit mode */
+   Pint          open_struct;                   /* Open structure */
 } Phg_state_list;
 
 typedef Phg_state_list *Psl_handle;
@@ -203,6 +211,66 @@ int phg_psl_add_ws(
 void phg_psl_rem_ws(
    Psl_handle psl,
    Pint wsid
+   );
+
+/*******************************************************************************
+ * phg_psl_inq_ar_open
+ *
+ * DESCR:       Check if archive is already open
+ * RETURNS:     Non-zero on open, otherwise zero
+ */
+
+int phg_psl_inq_ar_open(
+   Psl_handle psl,
+   Pint       arid
+   );
+
+/*******************************************************************************
+ * phg_psl_get_ar_info
+ *
+ * DESCR:       Get information about archive
+ * RETURNS:     Pointer to archive info structure or NULL
+ */
+
+Psl_ar_info* phg_psl_get_ar_info(
+   Psl_handle psl,
+   Pint arid
+   );
+
+/*******************************************************************************
+ * phg_psl_ar_free_slot
+ *
+ * DESCR:       Check if there is a free slot for archive
+ * RETURNS:     Non-zero success, otherwise zero
+ */
+
+int phg_psl_ar_free_slot(
+   Psl_handle psl
+   );
+
+/*******************************************************************************
+ * phg_psl_add_ar
+ *
+ * DESCR:       Add achive to list
+ * RETURNS:     Non-zero success, otherwise zero
+ */
+
+int phg_psl_add_ar(
+   Psl_handle psl,
+   Pint arid,
+   char *fname
+   );
+
+/*******************************************************************************
+ * phg_psl_rem_ar
+ *
+ * DESCR:       Remove archive from list
+ * RETURNS:     N/A
+ */
+
+void phg_psl_rem_ar(
+   Psl_handle psl,
+   Pint arid
    );
 
 #endif /* _psl_h */

@@ -122,7 +122,7 @@ typedef struct _Phg_ar_toc {
 } Phg_ar_toc;
 
 typedef struct _Ar_struct {
-   char              fname[PHG_MAX_NAMELEN];
+   char              fname[PHG_MAX_NAMELEN + 1];
    Pint              arid;
    Pint              fd;
    Phg_ar_toc        *toc;
