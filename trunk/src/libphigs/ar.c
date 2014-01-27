@@ -91,11 +91,12 @@ SOFTWARE.
          (arh != NULL) && (arh->arid != (id)); \
          arh = arh->next);
 
-#ifdef NOT_YET
+#ifdef TODO
 static int	get_ar_structure_network_ids();
 static int	get_css_struct_ids();
 static int	get_css_network_sids();
 static int	compile_network_sids();
+#endif
 
 /*******************************************************************************
  * search_integer_list
@@ -131,7 +132,7 @@ static int search_integer_list(
 }
 
 /*******************************************************************************
- * search_integer_list
+ * intcompare
  *
  * DESCR:	Comapre two ingegers helper function
  * RETURNS:	One if equal otherwise Zero
@@ -144,7 +145,6 @@ static int intcompare(
 {
     return(*((int *)a) - *((int *)b));
 }
-#endif
 
 /*******************************************************************************
  * phg_ar_open
@@ -179,7 +179,9 @@ void phg_ar_open(
 	arh->toc = NULL;
 	arh->next = PHG_AR_LIST;
 	PHG_AR_LIST = arh;
+#ifdef TODO
 	fclose(fp);
+#endif
 	if (!err && finfo.st_size) {
 	    /* file exists and is not empty, so read it */
 	    if ((arh->fd = open(arh->fname, O_RDWR)) == -1)

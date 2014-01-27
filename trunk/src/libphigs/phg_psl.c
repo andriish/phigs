@@ -69,6 +69,9 @@ int phg_psl_init(
    for (i = 0; i < MAX_NO_OPEN_WS; i++)
       psl->open_ws[i].used = FALSE;
 
+   for (i = 0; i < MAX_NO_OPEN_ARFILES; i++)
+      psl->ar_files[i].used = FALSE;
+
    psl->edit_mode = PEDIT_INSERT;
 
    return TRUE;
@@ -250,5 +253,148 @@ void phg_psl_rem_ws(
    /* Check if the last workstation was closed */
    if (!cnt)
       PSL_WS_STATE(psl) = PWS_ST_WSCL;
+}
+
+/*******************************************************************************
+ * phg_psl_inq_ar_open
+ *
+ * DESCR:	Check if archive is already open
+ * RETURNS:	Non-zero on open, otherwise zero
+ */
+
+int phg_psl_inq_ar_open(
+   Psl_handle psl,
+   Pint       arid
+   )
+{
+   int i;
+   int status = 0;
+
+   if (psl != NULL) {
+      for (i = 0; i < MAX_NO_OPEN_ARFILES; i++) {
+         if ((psl->ar_files[i].used) &&
+             (psl->ar_files[i].arid == arid)) {
+            status = 1;
+            break;
+         }
+      }
+   }
+
+   return status;
+}
+
+/*******************************************************************************
+ * phg_psl_get_ar_info
+ *
+ * DESCR:	Get information about archive
+ * RETURNS:	Pointer to archive info structure or NULL
+ */
+
+Psl_ar_info* phg_psl_get_ar_info(
+   Psl_handle psl,
+   Pint arid
+   )
+{
+   int i;
+   Psl_ar_info *ar = NULL;
+
+   if (psl != NULL) {
+      for (i = 0; i < MAX_NO_OPEN_ARFILES; i++) {
+         if ((psl->ar_files[i].used) &&
+             (psl->ar_files[i].arid == arid)) {
+            ar = &psl->ar_files[i];
+            break;
+         }
+      }
+   }
+
+   return ar;
+}
+
+/*******************************************************************************
+ * phg_psl_ar_free_slot
+ *
+ * DESCR:	Check if there is a free slot for archive
+ * RETURNS:	Non-zero success, otherwise zero
+ */
+
+int phg_psl_ar_free_slot(
+   Psl_handle psl
+   )
+{
+   int i;
+   int status = 0;
+
+   if (psl != NULL) {
+      for (i = 0; i < MAX_NO_OPEN_ARFILES; i++) {
+         if (!psl->ar_files[i].used) {
+            status = 1;
+            break;
+         }
+      }
+   }
+
+   return status;
+}
+
+/*******************************************************************************
+ * phg_psl_add_ar
+ *
+ * DESCR:	Add achive to list
+ * RETURNS:	Non-zero success, otherwise zero
+ */
+
+int phg_psl_add_ar(
+   Psl_handle psl,
+   Pint arid,
+   char *fname
+   )
+{
+   int i;
+   int status = 0;
+
+   for (i = 0; i < MAX_NO_OPEN_ARFILES; i++) {
+      if (!psl->ar_files[i].used) {
+         psl->ar_files[i].used = TRUE;
+         psl->ar_files[i].arid = arid;
+         psl->ar_files[i].fname = fname;
+         status = 1;
+         break;
+      }
+   }
+
+   return status;
+}
+
+/*******************************************************************************
+ * phg_psl_rem_ar
+ *
+ * DESCR:	Remove archive from list
+ * RETURNS:	N/A
+ */
+
+void phg_psl_rem_ar(
+   Psl_handle psl,
+   Pint arid
+   )
+{
+   int i;
+   int count = 0;
+
+   for (i = 0; i < MAX_NO_OPEN_ARFILES; i++) {
+      if (psl->ar_files[i].used) {
+         if (psl->ar_files[i].arid == arid) {
+            psl->ar_files[i].used = FALSE;
+            free(psl->ar_files[i].fname);
+         }
+         else {
+            ++count;
+         }
+      }
+   }
+
+   if (count == 0) {
+      PSL_AR_STATE(psl) = PST_ARCL;
+   }
 }
 

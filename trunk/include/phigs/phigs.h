@@ -3167,6 +3167,29 @@ void preq_stroke3(
    Ppoint_list3 *stroke
    );
 
+/*******************************************************************************
+ * popen_ar_file
+ *
+ * DESCR:       Open archive file
+ * RETURNS:     N/A
+ */
+
+void popen_ar_file(
+   Pint archive_id,
+   char *archive_file
+   );
+
+/*******************************************************************************
+ * pclose_ar_file
+ * 
+ * DESCR:       Close archive file
+ * RETURNS:     N/A
+ */
+
+void pclose_ar_file(
+   Pint archive_id
+   );
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
