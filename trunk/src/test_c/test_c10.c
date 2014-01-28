@@ -68,7 +68,7 @@ Pcolr_rep col_rep;
 int main(int argc, char *argv[])
 {
    XEvent event;
-   KeySym ks;
+   //KeySym ks;
    Plimit3 vp, win;
 
    if (argc > 1) {
@@ -181,8 +181,9 @@ int main(int argc, char *argv[])
             break;
 
          case KeyPress:
-            ks = XLookupKeysym((XKeyEvent *) &event, 0);
+            //ks = XLookupKeysym((XKeyEvent *) &event, 0);
             popen_ar_file(0, "archive.phg");
+            par_all_structs(0);
             pclose_ar_file(0);
             break;
 

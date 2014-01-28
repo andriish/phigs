@@ -3195,6 +3195,17 @@ void pclose_ar_file(
    Pint archive_id
    );
 
+/*******************************************************************************
+ * par_all_structs
+ *
+ * DESCR:       Store all structures in archive
+ * RETURNS:     N/A
+ */
+
+void par_all_structs(
+   Pint archive_id
+   );
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
