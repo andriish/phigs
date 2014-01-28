@@ -91,6 +91,17 @@ SOFTWARE.
          (arh != NULL) && (arh->arid != (id)); \
          arh = arh->next);
 
+static int search_integer_list(
+    int target,
+    int *intlist,
+    int num
+    );
+
+static int intcompare(
+    const void *a,
+    const void *b
+    );
+
 static int get_ar_structure_network_ids(
     Ar_handle arh,
     Pint struct_id,
@@ -119,53 +130,10 @@ static void merge_and_remove_duplicates(
     Pint_list *result
     );
 
-/*******************************************************************************
- * search_integer_list
- *
- * DESCR:	Perform a binary search on a sorted list of ints helper function
- * RETURNS:	One if found otherwise Zero
- */
-
-static int search_integer_list(
-    int target,
-    int *intlist,
-    int num
-    )
-{
-    int *base = intlist;
-    int *last = &intlist[num-1];
-    int *ptr;
-    
-    while (last >= base) {
-    
-	ptr = base + ((last - base) / 2);
-	
-	if (target == *ptr)
-	    return 1;
-	else if (target < *ptr)
-	    last = ptr - 1;
-	else
-	    base = ptr + 1;
-	    
-    }
-    
-    return 0;
-}
-
-/*******************************************************************************
- * intcompare
- *
- * DESCR:	Comapre two ingegers helper function
- * RETURNS:	One if equal otherwise Zero
- */
-
-static int intcompare(
-    const void *a,
-    const void *b
-    )
-{
-    return(*((int *)a) - *((int *)b));
-}
+static void ar_archive(
+    Ar_handle arh,
+    Phg_args_ar_info *args
+    );
 
 /*******************************************************************************
  * phg_ar_open
@@ -273,21 +241,24 @@ void phg_ar_close(
     free(arh);
 }
 
-#if 0
-void
-phg_cpx_ar_archive( cph, cp_args )
-Cp_handle cph;
-Phg_args *cp_args;
+/*******************************************************************************
+ * phg_ar_archive
+ *
+ * DESCR:	Put structure networks in archive
+ * RETURNS:	N/A
+ */
+
+void phg_ar_archive(
+    Phg_args_ar_info *args
+    )
 {
-    Phg_args_ar_info	*args = &(cp_args->data.ar_info);
-    Pint_list		 sidlist, arids;
-    Ar_handle		 arh;
-    Phg_ar_index_entry	*entry;
-    int			 i;
-    Cpx_css_srvr	*css_srvr;
+    Pint_list sidlist, arids;
+    Ar_handle arh;
+    Phg_ar_index_entry *entry;
+    int i;
 
     GET_ARH(args->arid, arh);
-    
+
     /** Get sids of all the structures we want to archive **/
     switch (args->op) {
     
@@ -297,14 +268,14 @@ Phg_args *cp_args;
 	    break;
 	    
 	case PHG_ARGS_AR_NETWORKS :
-	    if (compile_network_sids(cph, (Ar_handle)NULL, &(args->data),
-					   PNET_CSS, &(args->data))) {
+	    if (compile_network_sids((Ar_handle)NULL, &(args->data),
+				     PNET_CSS, &(args->data))) {
 		return;			       
 	    }
 	    break;
 	    
 	case PHG_ARGS_AR_ALL :
-	    if (get_css_struct_ids(cph, &(args->data))) {
+	    if (get_css_struct_ids(&args->data)) {
 		return;
 	    }
 	    break;
@@ -326,7 +297,7 @@ Phg_args *cp_args;
 	    malloc((unsigned)(arids.num_ints * sizeof(Pint))))) {
 	ERR_BUF(PHG_ERH, ERR900);
 	if (args->op != PHG_ARGS_AR_STRUCTS)
-	    free((char *)(args->data.ints));
+	    free(args->data.ints);
 	return;
     }
     
@@ -344,11 +315,11 @@ Phg_args *cp_args;
 	    }
 	}
     }
-    
-    CPX_MASTER_SERVER(cph, css_srvr);
-    (*css_srvr->ar_archive)(cph, arh, args, css_srvr);
+
+    ar_archive(arh, args);
 }
 
+#if 0
 void
 phg_cpx_ar_retrieve( cph, cp_args)
 Cp_handle cph;
@@ -411,7 +382,7 @@ Phg_args *cp_args;
     
     /* Now we know which structures to retrieve */
     
-    if (get_css_struct_ids(cph, &css_ids)) {
+    if (get_css_struct_ids(&css_ids)) {
 	free((char *)ar_structs.ints);
         return;
     }
@@ -865,6 +836,54 @@ void phg_inq_ar_conflicting(
 }
 
 /*******************************************************************************
+ * search_integer_list
+ *
+ * DESCR:	Perform a binary search on a sorted list of ints helper function
+ * RETURNS:	One if found otherwise Zero
+ */
+
+static int search_integer_list(
+    int target,
+    int *intlist,
+    int num
+    )
+{
+    int *base = intlist;
+    int *last = &intlist[num-1];
+    int *ptr;
+    
+    while (last >= base) {
+    
+	ptr = base + ((last - base) / 2);
+	
+	if (target == *ptr)
+	    return 1;
+	else if (target < *ptr)
+	    last = ptr - 1;
+	else
+	    base = ptr + 1;
+	    
+    }
+    
+    return 0;
+}
+
+/*******************************************************************************
+ * intcompare
+ *
+ * DESCR:	Comapre two ingegers helper function
+ * RETURNS:	One if equal otherwise Zero
+ */
+
+static int intcompare(
+    const void *a,
+    const void *b
+    )
+{
+    return(*((int *)a) - *((int *)b));
+}
+
+/*******************************************************************************
  * get_ar_structure_network_ids
  *
  * DESCR:     Return an ordered, duplicates removed, list of structure ids in a 
@@ -936,6 +955,7 @@ static int get_css_struct_ids(
 {
     Phg_ret ret;
 
+    ret.err = 0;
     phg_css_inq_struct_ids(PHG_CSS, &ret);
     if (ret.err)
         return(1);
@@ -948,8 +968,8 @@ static int get_css_struct_ids(
 	    ERR_BUF(PHG_ERH, ERR900);
 	    return(1);
         } else {
-	    bcopy((char *)ret.data.int_list.ints, 
-		(char *)lst->ints, lst->num_ints * sizeof(Pint));
+	    memcpy(lst->ints, ret.data.int_list.ints,
+                   lst->num_ints * sizeof(Pint));
         }
     }
 
@@ -1132,5 +1152,72 @@ static void merge_and_remove_duplicates(
     }
     result->num_ints = i;
     free((char *)inds);
+}
+
+/*******************************************************************************
+ * ar_archive
+ *
+ * DESCR:       Archive selected elements
+ * RETURNS:     N/A
+ */
+
+static void ar_archive(
+    Ar_handle arh,
+    Phg_args_ar_info *args
+    )
+{
+    Pint struct_id;
+    Pint el_id;
+    Phg_ret ret;
+    int	i, num_els = 0;
+    unsigned struct_length = 0;
+    caddr_t buffer = NULL;
+    unsigned buf_size = 0;
+
+    for ( i = 0; i < args->data.num_ints; i++ ) { /* for all structs */
+	struct_id = args->data.ints[i];
+	el_id = 1;
+	struct_length = 0;
+	num_els = 0;
+	ret.err = 0;
+	do {	/* get element info and buffer it */
+	    phg_css_inq_el_content( PHG_CSS, struct_id, el_id, &ret );
+	    if ( ret.err == 0 ) {
+		/* Get buffer space if buffer too small. */
+		if ( buf_size < (struct_length +
+			        (unsigned) ret.data.el_info.el_head->length) ) {
+		    if ( !buffer )	/* first element of first struct */
+			buffer = malloc( buf_size =
+			    (unsigned) ret.data.el_info.el_head->length );
+		    else
+			buffer = realloc( buffer, buf_size = struct_length +
+			    (unsigned) ret.data.el_info.el_head->length );
+		    if ( !buffer ) {
+			ERR_BUF( PHG_ERH, ERR900 );
+			return;
+		    }
+		}
+		/* Concatenate the element data to the current list. */
+		memcpy(&buffer[struct_length],
+		       &ret.data.el_info.el_head[1],
+		       (int)ret.data.el_info.el_head->length);
+		struct_length += (unsigned) ret.data.el_info.el_head->length;
+		++num_els;
+		++el_id;
+	    }
+	} while ( ret.err == 0 );
+
+	/* Write the entire structure to the archive. */
+	if ( phg_ar_write_struct_to_archive( arh, args->data.ints[i], 
+			args->resflag, (Pint)struct_length, (Pint)num_els, buffer ) ) {
+	    ERR_BUF(PHG_ERH, ERR406);
+	    if ( buffer )
+				free( (char *)buffer );
+	    return;
+	}
+    }
+
+    if ( buffer )
+	free( (char *)buffer );
 }
 

@@ -94,6 +94,13 @@ typedef enum {
    PHG_ARGS_AR_ALL
 } Phg_args_ar_op;
 
+typedef struct {
+   Pint           arid;
+   Phg_args_ar_op op;
+   Pint_list      data;
+   Pconf_res      resflag;
+} Phg_args_ar_info;
+
 typedef enum {
    PHG_ARGS_HIER_ANCESTORS,
    PHG_ARGS_HIER_DESCENDANTS

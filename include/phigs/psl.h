@@ -49,6 +49,8 @@ typedef struct {
    Par_st        phg_ar_state;                  /* Archive state */
    Psl_ws_info   open_ws[MAX_NO_OPEN_WS];       /* Info list for workstations */
    Psl_ar_info   ar_files[MAX_NO_OPEN_ARFILES]; /* Info list for archives */
+   Pconf_res     ar_res;                        /* Archive confl. resolution */
+   Pconf_res     retr_res;                      /* Retreive confl. resolution */
    Psl_inp_event cur_event;                     /* Event got by pwait_event */
    Pedit_mode    edit_mode;                     /* Structure edit mode */
    Pint          open_struct;                   /* Open structure */
@@ -67,6 +69,12 @@ typedef Phg_state_list *Psl_handle;
 
 #define PSL_AR_STATE(_psl) \
    ((_psl)->phg_ar_state)
+
+#define PSL_ARCHIVE_CONFLICT(_psl) \
+    ((_psl)->ar_res)
+
+#define PSL_RETRIEVE_CONFLICT(_psl) \
+    ((_psl)->retr_res)
 
 #define PSL_SET_CUR_EVENT_ID(_psl, _id) \
    ((_psl)->cur_event.id = (_id))

@@ -65,6 +65,8 @@ int phg_psl_init(
    psl->phg_ws_state     = PWS_ST_WSCL;
    psl->phg_struct_state = PSTRUCT_ST_STCL;
    psl->phg_ar_state     = PST_ARCL;
+   psl->ar_res           = PRES_MAINTAIN;
+   psl->retr_res         = PRES_MAINTAIN;
 
    for (i = 0; i < MAX_NO_OPEN_WS; i++)
       psl->open_ws[i].used = FALSE;

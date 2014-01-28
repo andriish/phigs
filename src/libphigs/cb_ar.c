@@ -121,3 +121,32 @@ void pclose_ar_file(
    }
 }
 
+/*******************************************************************************
+ * par_all_structs
+ *
+ * DESCR:       Store all structures in archive
+ * RETURNS:     N/A
+ */
+
+void par_all_structs(
+   Pint archive_id
+   )
+{
+   Phg_args_ar_info args;
+
+   if (phg_entry_check(ERR7, Pfn_ar_all_structs)) {
+      if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
+         ERR_REPORT(PHG_ERH, ERR7);
+      }
+      else if (!phg_psl_inq_ar_open(PHG_PSL, archive_id)) {
+         ERR_REPORT(PHG_ERH, ERR404);
+      }
+      else {
+         args.arid = archive_id;
+         args.op = PHG_ARGS_AR_ALL;
+         args.resflag = PSL_ARCHIVE_CONFLICT(PHG_PSL);
+         phg_ar_archive(&args);
+      }
+   }
+}
+
