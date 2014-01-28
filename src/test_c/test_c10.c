@@ -65,19 +65,8 @@ Pmatrix3 rot3;
 int view_index = 5;
 Pcolr_rep col_rep;
 
-int main(int argc, char *argv[])
+void draw_shape(void)
 {
-   XEvent event;
-   //KeySym ks;
-   Plimit3 vp, win;
-
-   if (argc > 1) {
-      view_index = atoi(argv[1]);
-      printf("Use view: %d\n", view_index);
-   }
-
-   popen_phigs(NULL, 0);
-
    popen_struct(0);
    pfill_area3(&plist_quad);
    ppolymarker3(&plist_quad);
@@ -121,6 +110,20 @@ int main(int argc, char *argv[])
    pexec_struct(0);
    plabel(30);
    pclose_struct();
+}
+
+int main(int argc, char *argv[])
+{
+   XEvent event;
+   KeySym ks;
+   Plimit3 vp, win;
+
+   if (argc > 1) {
+      view_index = atoi(argv[1]);
+      printf("Use view: %d\n", view_index);
+   }
+
+   popen_phigs(NULL, 0);
 
    popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);
    vp.x_min = VP_X0;
@@ -165,9 +168,6 @@ int main(int argc, char *argv[])
    pset_colr_rep(0, 4, &col_rep);
    pset_disp_upd_st(0, PDEFER_BNIL, PMODE_UQUM);
 
-   ppost_struct(0, 1, 0);
-   pupd_ws(0, PFLAG_PERFORM);
-
    XSelectInput(PHG_WSID(0)->display,
                 PHG_WSID(0)->drawable_id,
                 ExposureMask | KeyPressMask);
@@ -181,10 +181,20 @@ int main(int argc, char *argv[])
             break;
 
          case KeyPress:
-            //ks = XLookupKeysym((XKeyEvent *) &event, 0);
-            popen_ar_file(0, "archive.phg");
-            par_all_structs(0);
-            pclose_ar_file(0);
+            ks = XLookupKeysym((XKeyEvent *) &event, 0);
+            if (ks == XK_d) {
+               draw_shape();
+               ppost_struct(0, 1, 0);
+               pupd_ws(0, PFLAG_PERFORM);
+            }
+            else if (ks == XK_w) {
+               popen_ar_file(0, "archive.phg");
+               par_all_structs(0);
+               pclose_ar_file(0);
+            }
+            else if (ks == XK_Escape) {
+               goto exit;
+            }
             break;
 
          default:
@@ -192,6 +202,7 @@ int main(int argc, char *argv[])
       }
    }
 
+exit:
    pclose_ws(0);
    pclose_phigs();
 
