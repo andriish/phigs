@@ -79,6 +79,25 @@ void phg_add_el(
 }
 
 /*******************************************************************************
+ * phg_get_local_tran3
+ *
+ * DESCR:       Get local transformation 3D
+ * RETURNS:     N/A
+ */
+
+void phg_get_local_tran3(
+   Plocal_tran3 *tran,
+   void *elmt
+   )
+{
+   Pint *data;
+
+   data = (Pint *) elmt;
+   tran->compose_type = data[0];
+   phg_mat_pack(tran->matrix, (Pfloat *) &data[1]);
+}
+
+/*******************************************************************************
  * phg_get_colr_ind
  *
  * DESCR:       Get colour from index
@@ -105,10 +124,9 @@ void phg_get_colr_ind(
                                 PHG_ARGS_COREP,
                                 &ret);
       if (ret.err == 0) {
-
-            gcolr->val.general.x = ret.data.rep.corep.rgb.red;
-            gcolr->val.general.y = ret.data.rep.corep.rgb.green;
-            gcolr->val.general.z = ret.data.rep.corep.rgb.blue;
+         gcolr->val.general.x = ret.data.rep.corep.rgb.red;
+         gcolr->val.general.y = ret.data.rep.corep.rgb.green;
+         gcolr->val.general.z = ret.data.rep.corep.rgb.blue;
       }
    }
 }

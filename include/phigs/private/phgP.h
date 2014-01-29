@@ -37,7 +37,7 @@
    ((Phg_args_add_el *) (ARG))->el_type
 
 #define ARGS_ELMT_DATA(ARG) \
-   ((Phg_args_add_el *) (ARG))->el_data
+   ((Phg_args_add_el *) (ARG))->old_data
 
 #define ARGS_COPY_DATA(ELMT) \
    (Phg_elmt_info *) (((Css_eldata *) (ELMT))->ptr)
@@ -126,6 +126,18 @@ int phg_int_in_list(
 void phg_add_el(
    Css_handle cssh,
    Phg_args_add_el *args
+   );
+
+/*******************************************************************************
+ * phg_get_local_tran3
+ *
+ * DESCR:       Get local transformation 3D
+ * RETURNS:     N/A
+ */
+
+void phg_get_local_tran3(
+   Plocal_tran3 *tran,
+   void *elmt
    );
 
 /*******************************************************************************

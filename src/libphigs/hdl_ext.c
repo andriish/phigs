@@ -26,6 +26,64 @@
 #include <phigs/private/hdlP.h>
 
 /*******************************************************************************
+ * hdl_int_ext
+ *
+ * DESCR:       Handle integer data
+ * RETURNS:     TRUE on success, otherwise FALSE
+ */
+
+int hdl_int_ext(
+   Css_handle cssh,
+   El_handle elmt,
+   caddr_t argdata,
+   Css_el_op op
+   )
+{
+   Pint *data;
+
+   switch (op) {
+      case CSS_EL_CREATE:
+         ELMT_HEAD(elmt) = hdl_create((void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
+            return (FALSE);
+         }
+         *data = ARGS_ELMT_DATA(argdata).int_data;
+         break;
+
+      case CSS_EL_REPLACE:
+         data = (Pint *) ELMT_CONTENT(elmt);
+         *data = ARGS_ELMT_DATA(argdata).int_data;
+         break;
+
+      case CSS_EL_COPY:
+         ELMT_HEAD(elmt) = hdl_dup(argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
+            return (FALSE);
+         }
+         break;
+
+      case CSS_EL_INQ_CONTENT:
+         ARGS_INQ_HEAD(argdata) = ELMT_HEAD(elmt);
+         break;
+
+      case CSS_EL_INQ_TYPE_SIZE:
+         ARGS_INQ_SIZE(argdata) = ELMT_INFO_LEN(elmt);
+         break;
+
+      case CSS_EL_FREE:
+         free(ELMT_HEAD(elmt));
+         break;
+
+      default:
+         /* Default */
+         return (FALSE);
+         break;
+   }
+
+   return (TRUE);
+}
+
+/*******************************************************************************
  * hdl_fasd3
  *
  * DESCR:       Handle facet list 3D

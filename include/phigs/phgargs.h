@@ -114,7 +114,8 @@ typedef enum {
 typedef struct {
    Pint       el_size;
    Pelem_type el_type;
-   Pelem_data el_data;
+   Pelem_data old_data;
+   void *     el_data;
 } Phg_args_add_el;
 
 typedef struct {
