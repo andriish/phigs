@@ -559,6 +559,8 @@ void wsgl_render_element(
    )
 {
    Pint_style style;
+   Pmatrix3 mat3;
+   Plocal_tran3 tran3;
    Wsgl_handle wsgl = ws->render_context;
 
    update_cur_struct(ws);
@@ -957,27 +959,28 @@ void wsgl_render_element(
          break;
 
       case PELEM_GLOBAL_MODEL_TRAN3:
-         phg_mat_copy(wsgl->cur_struct.global_tran,
-                      *((Pmatrix3 *) ELMT_CONTENT(el)));
+         phg_mat_pack(mat3, (Pfloat *) ELMT_CONTENT(el));
+         phg_mat_copy(wsgl->cur_struct.global_tran, mat3);
          wsgl_update_modelview(ws);
          break;
 
       case PELEM_LOCAL_MODEL_TRAN3:
-         switch (PHG_LOCAL_TRAN3(el)->compose_type) {
+         phg_get_local_tran3(&tran3, ELMT_CONTENT(el));
+         switch (tran3.compose_type) {
             case PTYPE_PRECONCAT:
                phg_mat_mul(wsgl->cur_struct.local_tran,
                            wsgl->cur_struct.local_tran,
-                           PHG_LOCAL_TRAN3(el)->matrix);
+                           tran3.matrix);
             break;
             case PTYPE_POSTCONCAT:
                phg_mat_mul(wsgl->cur_struct.local_tran,
-                           PHG_LOCAL_TRAN3(el)->matrix,
+                           tran3.matrix,
                            wsgl->cur_struct.local_tran);
             break;
             case PTYPE_REPLACE:
             default:
                phg_mat_copy(wsgl->cur_struct.local_tran,
-                            PHG_LOCAL_TRAN3(el)->matrix);
+                            tran3.matrix);
             break;
          }
          wsgl_update_modelview(ws);

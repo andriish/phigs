@@ -174,9 +174,7 @@ typedef enum {
    PELEM_CHAR_UP_VEC,
    PELEM_TEXT_COLR_IND,
    PELEM_INDIV_ASF,
-   PELEM_LOCAL_MODEL_TRAN,
    PELEM_LOCAL_MODEL_TRAN3,
-   PELEM_GLOBAL_MODEL_TRAN,
    PELEM_GLOBAL_MODEL_TRAN3,
    PELEM_VIEW_IND,
    PELEM_EXEC_STRUCT,
@@ -1893,18 +1891,6 @@ void pset_indiv_asf(
    );
 
 /*******************************************************************************
- * pset_local_tran
- *
- * DESCR:       Creates a new element - Set local model space transformation
- * RETURNS:     N/A
- */
-
-void pset_local_tran(
-   Pmatrix local_tran,
-   Pcompose_type compose_type
-   );
-
-/*******************************************************************************
  * pset_local_tran3
  *
  * DESCR:       Creates a new element - Set local model space transformation 3D
@@ -1914,17 +1900,6 @@ void pset_local_tran(
 void pset_local_tran3(
    Pmatrix3 local_tran,
    Pcompose_type compose_type
-   );
-
-/*******************************************************************************
- * pset_global_tran
- *
- * DESCR:       Creates a new element - Set global model space transformation
- * RETURNS:     N/A
- */
-
-void pset_global_tran(
-   Pmatrix global_tran
    );
 
 /*******************************************************************************

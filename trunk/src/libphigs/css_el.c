@@ -418,7 +418,7 @@ int phg_css_struct_ref(Css_handle cssh,
       case CSS_EL_AR_TO_CSS:
 	structid = opcode == CSS_EL_AR_TO_CSS ? 
 	    ((Css_eldata *)argdata)->idata :
-		ARGS_ELMT_DATA(argdata).int_data;
+                *((Pint *) (((Phg_args_add_el *) argdata)->el_data));
 	/* if executed structure doesn't exist, create an empty one */
 	if ( !(structp = CSS_STRUCT_EXISTS(cssh, structid)) ) {
 	    if ( !(structp = phg_css_create_struct(structid)) )

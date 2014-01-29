@@ -413,7 +413,7 @@ int main(int argc, char *argv[])
    col_rep.rgb.blue = 1.0;
    pset_colr_rep(1, 1, &col_rep);
 
-   wslist();
+   //wslist();
 
    ppost_struct(0, 3, 0);
    ppost_struct(1, 3, 0);

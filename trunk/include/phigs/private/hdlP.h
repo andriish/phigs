@@ -63,13 +63,13 @@ Phg_elmt_info* hdl_dup(
    );
 
 /*******************************************************************************
- * hdl_int_list
+ * hdl_generic_elmt
  *
- * DESCR:       Handle list of integers
+ * DESCR:       Handle generic element
  * RETURNS:     TRUE on success, otherwise FALSE
  */
 
-int hdl_int_list(
+int hdl_generic_elmt(
    Css_handle cssh,
    El_handle elmt,
    caddr_t argdata,
@@ -77,139 +77,13 @@ int hdl_int_list(
    );
 
 /*******************************************************************************
- * hdl_asf_info
+ * hdl_int_ext
  *
- * DESCR:       Handle asf info
+ * DESCR:       Handle integer data
  * RETURNS:     TRUE on success, otherwise FALSE
  */
 
-int hdl_asf_info(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_vec
- *
- * DESCR:       Handle vector
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_vec(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_local_tran
- *
- * DESCR:       Handle local transformation
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_local_tran(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_local_tran3
- *
- * DESCR:       Handle local transformation 3D
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_local_tran3(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_matrix
- *
- * DESCR:       Handle matrix
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_matrix(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_matrix3
- *
- * DESCR:       Handle matrix 3D
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_matrix3(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_point_list
- *
- * DESCR:       Handle point list
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_point_list(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_point_list3
- *
- * DESCR:       Handle point list 3D
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_point_list3(
-   Css_handle cssh,        
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_point_list_list
- *
- * DESCR:       Handle list of point lists
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_point_list_list(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_point_list_list3
- *
- * DESCR:       Handle list of point lists 3D
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_point_list_list3(
+int hdl_int_ext(
    Css_handle cssh,
    El_handle elmt,
    caddr_t argdata,
@@ -238,62 +112,6 @@ int hdl_fasd3(
  */
 
 int hdl_sofas3(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_text_align
- *
- * DESCR:       Handle text alignment
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_text_align(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_text
- *
- * DESCR:       Handle text
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_text(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_int
- *
- * DESCR:       Handle integer data
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_int(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_float
- *
- * DESCR:       Handle float data
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_float(
    Css_handle cssh,
    El_handle elmt,
    caddr_t argdata,

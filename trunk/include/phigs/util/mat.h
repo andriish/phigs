@@ -35,6 +35,8 @@ void phg_mat_identity(Pmatrix3 mat);
 void phg_mat_translate(Pmatrix3 mat, Pvec3 *v);
 void phg_mat_scale(Pmatrix3 mat, Pvec3 *v);
 void phg_mat_copy(Pmatrix3 m1, Pmatrix3 m2);
+void phg_mat_unpack(Pfloat *buf, Pmatrix3 m);
+void phg_mat_pack(Pmatrix3 m, Pfloat *buf);
 void phg_mat_copy_3x3(Pmatrix m1, Pmatrix m2);
 int phg_vector_equal(Pvec3 *a, Pvec3 *b);
 void phg_vector_add(Pvec3 *a, Pvec3 *b, Pvec3 *c);
