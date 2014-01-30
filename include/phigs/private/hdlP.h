@@ -77,20 +77,6 @@ int hdl_generic_elmt(
    );
 
 /*******************************************************************************
- * hdl_fasd3
- *
- * DESCR:       Handle facet list 3D
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_fasd3(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
  * hdl_sofas3
  *
  * DESCR:       Handle set of facet lists 3D
