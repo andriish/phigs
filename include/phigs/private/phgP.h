@@ -36,9 +36,6 @@
 #define ARGS_ELMT_TYPE(ARG) \
    ((Phg_args_add_el *) (ARG))->el_type
 
-#define ARGS_ELMT_DATA(ARG) \
-   ((Phg_args_add_el *) (ARG))->old_data
-
 #define ARGS_COPY_DATA(ELMT) \
    (Phg_elmt_info *) (((Css_eldata *) (ELMT))->ptr)
 

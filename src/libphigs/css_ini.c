@@ -98,7 +98,7 @@ Css_handle phg_css_init(Err_handle erh, Css_ssh_type ssh_type)
     fptr[(int)PELEM_FILL_AREA_SET] = hdl_generic_elmt;
     fptr[(int)PELEM_FILL_AREA_SET3] = hdl_generic_elmt;
     fptr[(int)PELEM_FILL_AREA_SET3_DATA] = hdl_generic_elmt;
-    fptr[(int)PELEM_SET_OF_FILL_AREA_SET3_DATA] = hdl_sofas3;
+    fptr[(int)PELEM_SET_OF_FILL_AREA_SET3_DATA] = hdl_generic_elmt;
     fptr[(int)PELEM_POLYLINE] = hdl_generic_elmt;
     fptr[(int)PELEM_POLYLINE3] = hdl_generic_elmt;
     fptr[(int)PELEM_POLYMARKER] = hdl_generic_elmt;
