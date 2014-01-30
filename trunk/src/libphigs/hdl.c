@@ -125,7 +125,12 @@ int hdl_generic_elmt(
          break;
 
       case CSS_EL_REPLACE:
-         memcpy(ELMT_CONTENT(elmt),
+         ELMT_HEAD(elmt) = hdl_resize(ELMT_HEAD(elmt),
+                                      (void *) &data, argdata);
+         if (ELMT_HEAD(elmt) == NULL) {
+            return (FALSE);
+         }
+         memcpy(data,
                 ((Phg_args_add_el *) argdata)->el_data,
                 ((Phg_args_add_el *) argdata)->el_size);
          break;

@@ -77,20 +77,6 @@ int hdl_generic_elmt(
    );
 
 /*******************************************************************************
- * hdl_int_ext
- *
- * DESCR:       Handle integer data
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_int_ext(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
  * hdl_fasd3
  *
  * DESCR:       Handle facet list 3D
@@ -112,48 +98,6 @@ int hdl_fasd3(
  */
 
 int hdl_sofas3(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_gcolr
- *
- * DESCR:       Handle colour
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_gcolr(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_lss
- *
- * DESCR:       Handle light source state
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_lss(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
-/*******************************************************************************
- * hdl_refl_props
- *
- * DESCR:       Handler surface reflectance properties
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_refl_props(
    Css_handle cssh,
    El_handle elmt,
    caddr_t argdata,
