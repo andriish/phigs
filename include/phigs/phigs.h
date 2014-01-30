@@ -2414,6 +2414,17 @@ void pset_text_colr_ind(
    );
 
 /*******************************************************************************
+ * pexec_struct
+ *
+ * DESCR:       Creates a new element - Nested Structure
+ * RETURNS:     N/A
+ */
+
+void pexec_struct(
+   Pint struct_id
+   );
+
+/*******************************************************************************
  * pset_int_colr
  *
  * DESCR:       Creates a new element - Facet Color Attribute
@@ -2469,14 +2480,14 @@ void pset_edge_colr(
    );
 
 /*******************************************************************************
- * pexec_struct
+ * pset_text_colr
  *
- * DESCR:       Creates a new element - Nested Structure
+ * DESCR:       Creates a new element - Text Color Attribute
  * RETURNS:     N/A
  */
 
-void pexec_struct(
-   Pint struct_id
+void pset_text_colr(
+   Pgcolr *colr
    );
 
 /*******************************************************************************

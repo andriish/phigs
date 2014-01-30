@@ -249,16 +249,22 @@ void pset_back_int_style(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_back_int_style);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_BACK_INT_STYLE;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pint_style);
-      ARGS_ELMT_DATA(&args).int_style = int_style;
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_back_int_style)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_BACK_INT_STYLE;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            *((Pint *) args.el_data) = (Pint) int_style;
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -275,19 +281,25 @@ void pset_back_int_style_ind(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_back_int_style);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else if (int_style_ind < 1) {
-      ERR_REPORT(PHG_ERH, ERR112);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_BACK_INT_STYLE_IND;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
-      ARGS_ELMT_DATA(&args).int_data = int_style_ind;
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_back_int_style_ind)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else if (int_style_ind < 1) {
+         ERR_REPORT(PHG_ERH, ERR112);
+      }
+      else {
+         args.el_type = PELEM_BACK_INT_STYLE_IND;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, &int_style_ind, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -304,16 +316,22 @@ void pset_int_colr(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_int_colr);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_INT_COLR;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pgcolr);
-      memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_int_colr)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_INT_COLR;
+         args.el_size = sizeof(Pgcolr);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, colr, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -330,16 +348,22 @@ void pset_back_int_colr(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_back_int_colr);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_BACK_INT_COLR;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pgcolr);
-      memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_back_int_colr)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_BACK_INT_COLR;
+         args.el_size = sizeof(Pgcolr);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, colr, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -356,16 +380,22 @@ void pset_line_colr(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_line_colr);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_LINE_COLR;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pgcolr);
-      memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_line_colr)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_LINE_COLR;
+         args.el_size = sizeof(Pgcolr);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, colr, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -382,16 +412,22 @@ void pset_marker_colr(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_marker_colr);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_MARKER_COLR;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pgcolr);
-      memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_marker_colr)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_MARKER_COLR;
+         args.el_size = sizeof(Pgcolr);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, colr, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -408,16 +444,54 @@ void pset_edge_colr(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_edge_colr);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
+   if (phg_entry_check(ERR5, Pfn_set_edge_colr)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_EDGE_COLR;
+         args.el_size = sizeof(Pgcolr);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, colr, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_EDGE_COLR;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pgcolr);
-      memcpy(&ARGS_ELMT_DATA(&args).colr, colr, sizeof(Pgcolr));
-      phg_add_el(PHG_CSS, &args);
+}
+
+/*******************************************************************************
+ * pset_text_colr
+ *
+ * DESCR:	Creates a new element - Text Color Attribute
+ * RETURNS:	N/A
+ */
+
+void pset_text_colr(
+   Pgcolr *colr
+   )
+{
+   Phg_args_add_el args;
+
+   if (phg_entry_check(ERR5, Pfn_set_text_colr)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_TEXT_COLR;
+         args.el_size = sizeof(Pgcolr);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, colr, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -434,24 +508,36 @@ void pset_light_src_state(
    )
 {
    Phg_args_add_el args;
+   Pint n1, n2;
+   Pint *data;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_light_src_state);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_LIGHT_SRC_STATE;
-      ARGS_ELMT_SIZE(&args) = 2 * sizeof(Pint) +
-          sizeof(Pint) * activation->num_ints +
-          sizeof(Pint) * deactivation->num_ints;
-      memcpy(&ARGS_ELMT_DATA(&args).lss.activation,
-             activation,
-             sizeof(Plss));
-      memcpy(&ARGS_ELMT_DATA(&args).lss.deactivation,
-             deactivation,
-             sizeof(Plss));
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_light_src_state)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_LIGHT_SRC_STATE;
+         args.el_size = 2 * sizeof(Pint) +
+            sizeof(Pint) * activation->num_ints +
+            sizeof(Pint) * deactivation->num_ints;
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            data = (Pint *) args.el_data;
+            n1 = activation->num_ints;
+            n2 = deactivation->num_ints;
+            data[0] = n1;
+            data = &data[1];
+            memcpy(data, activation->ints, sizeof(Pint) * n1);
+            data = &data[n1];
+            data[0] = n2;
+            data = &data[1];
+            memcpy(data, deactivation->ints, sizeof(Pint) * n2);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -468,16 +554,22 @@ void pset_int_shad_meth(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_int_shad_meth);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_INT_SHAD_METH;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
-      ARGS_ELMT_DATA(&args).int_data = shad_meth;
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_int_shad_meth)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_INT_SHAD_METH;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, &shad_meth, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -494,16 +586,22 @@ void pset_back_int_shad_meth(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_back_int_shad_meth);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_BACK_INT_SHAD_METH;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
-      ARGS_ELMT_DATA(&args).int_data = shad_meth;
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_back_int_shad_meth)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_BACK_INT_SHAD_METH;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, &shad_meth, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -520,16 +618,22 @@ void pset_refl_eqn(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_refl_eqn);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_INT_REFL_EQN;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
-      ARGS_ELMT_DATA(&args).int_data = refl_equ;
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_refl_eqn)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_INT_REFL_EQN;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, &refl_equ, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -546,16 +650,22 @@ void pset_back_refl_eqn(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_back_refl_eqn);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_BACK_INT_REFL_EQN;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
-      ARGS_ELMT_DATA(&args).int_data = refl_equ;
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_back_refl_eqn)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_BACK_INT_REFL_EQN;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, &refl_equ, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -572,16 +682,22 @@ void pset_refl_props(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_refl_props);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_REFL_PROPS;
-      ARGS_ELMT_SIZE(&args) = sizeof(Prefl_props);
-      memcpy(&ARGS_ELMT_DATA(&args).props, refl_props, sizeof(Prefl_props));
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_refl_props)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_REFL_PROPS;
+         args.el_size = sizeof(Prefl_props);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, refl_props, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -598,16 +714,22 @@ void pset_back_refl_props(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_back_refl_props);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_BACK_REFL_PROPS;
-      ARGS_ELMT_SIZE(&args) = sizeof(Prefl_props);
-      memcpy(&ARGS_ELMT_DATA(&args).props, refl_props, sizeof(Prefl_props));
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_back_refl_props)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_BACK_REFL_PROPS;
+         args.el_size = sizeof(Prefl_props);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, refl_props, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -624,16 +746,22 @@ void pset_face_disting_mode(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_face_disting_mode);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_FACE_DISTING_MODE;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pdisting_mode);
-      ARGS_ELMT_DATA(&args).disting_mode = disting_mode;
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_face_disting_mode)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_FACE_DISTING_MODE;
+         args.el_size = sizeof(Pdisting_mode);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, &disting_mode, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -650,16 +778,22 @@ void pset_face_cull_mode(
 {
    Phg_args_add_el args;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_face_cull_mode);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_FACE_CULL_MODE;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pcull_mode);
-      ARGS_ELMT_DATA(&args).cull_mode = cull_mode;
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_face_cull_mode)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_FACE_CULL_MODE;
+         args.el_size = sizeof(Pcull_mode);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            *((Pint *) args.el_data) = (Pint) cull_mode;
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
