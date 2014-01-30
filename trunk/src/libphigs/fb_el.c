@@ -38,34 +38,33 @@ FTN_SUBROUTINE(ppl)(
    FTN_REAL_ARRAY(pya)
    )
 {
-   Pint i;
-   unsigned size;
    Phg_args_add_el args;
+   Pint *data;
+   Pint i, num_points;
+   Ppoint *points;
 
-   Ppoint_list point_list;
-
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_polyline);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      point_list.num_points = FTN_INTEGER_GET(n);
-      size = sizeof(Ppoint) * point_list.num_points;
-      if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, size)) {
-         ERR_REPORT(PHG_ERH, ERR900);
+   if (phg_entry_check(ERR5, Pfn_polyline)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         point_list.points = (Ppoint *) PHG_SCRATCH.buf;
-         for (i = 0; i < point_list.num_points; i++) {
-            point_list.points[i].x = FTN_REAL_ARRAY_GET(pxa, i);
-            point_list.points[i].y = FTN_REAL_ARRAY_GET(pya, i);
+         num_points = FTN_INTEGER_GET(n);
+         args.el_type = PELEM_POLYLINE;
+         args.el_size = sizeof(Pint) + sizeof(Ppoint) * num_points;
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
          }
-         ARGS_ELMT_TYPE(&args) = PELEM_POLYLINE;
-         ARGS_ELMT_SIZE(&args) = sizeof(Pint) + size;
-         ARGS_ELMT_DATA(&args).point_list.num_points = point_list.num_points;
-         ARGS_ELMT_DATA(&args).point_list.points = point_list.points;
-         phg_add_el(PHG_CSS, &args);
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            data = (Pint *) args.el_data;
+            data[0] = num_points;
+            points = (Ppoint *) &data[1];
+            for (i = 0; i < num_points; i++) {
+               points[i].x = FTN_REAL_ARRAY_GET(pxa, i);
+               points[i].y = FTN_REAL_ARRAY_GET(pya, i);
+            }
+            phg_add_el(PHG_CSS, &args);
+         }
       }
    }
 }
@@ -82,22 +81,28 @@ FTN_SUBROUTINE(psplci)(
    )
 {
    Phg_args_add_el args;
+   Pint colr_ind;
 
-   Pint colr_ind = FTN_INTEGER_GET(coli);
-
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_line_colr_ind);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else if (colr_ind < 0) {
-      ERR_REPORT(PHG_ERH, ERR113);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_LINE_COLR_IND;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
-      ARGS_ELMT_DATA(&args).int_data = colr_ind;
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_line_colr_ind)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else if (colr_ind < 0) {
+         ERR_REPORT(PHG_ERH, ERR113);
+      }
+      else {
+         args.el_type = PELEM_LINE_COLR_IND;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            colr_ind = FTN_INTEGER_GET(coli);
+            memcpy(args.el_data, &colr_ind, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -113,17 +118,25 @@ FTN_SUBROUTINE(psln)(
    )
 {
    Phg_args_add_el args;
+   Pint linetype;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_linetype);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_LINETYPE;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pint);
-      ARGS_ELMT_DATA(&args).int_data = FTN_INTEGER_GET(ltype);
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_linetype)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_LINETYPE;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            linetype = FTN_INTEGER_GET(ltype);
+            memcpy(args.el_data, &linetype, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -139,17 +152,25 @@ FTN_SUBROUTINE(pslwsc)(
    )
 {
    Phg_args_add_el args;
+   Pfloat linewidth;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_linewidth);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_LINEWIDTH;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pfloat);
-      ARGS_ELMT_DATA(&args).float_data = FTN_REAL_GET(lwidth);
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_linewidth)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_LINEWIDTH;
+         args.el_size = sizeof(Pfloat);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            linewidth = FTN_REAL_GET(lwidth);
+            memcpy(args.el_data, &linewidth, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 
@@ -167,31 +188,33 @@ FTN_SUBROUTINE(ptx)(
    )
 {
    Phg_args_add_el args;
+   Pint len;
    Ppoint text_pos;
+   Ppoint *data;
    char *char_string;
 
-   Pint len = FTN_CHARACTER_LEN(chars);
-   text_pos.x = FTN_REAL_GET(px);
-   text_pos.y = FTN_REAL_GET(py);
-
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_text);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, len + 1)) {
-         ERR_REPORT(PHG_ERH, ERR900);
+   if (phg_entry_check(ERR5, Pfn_text)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         char_string = (char *) PHG_SCRATCH.buf;
-         ARGS_ELMT_TYPE(&args) = PELEM_TEXT;
-         ARGS_ELMT_SIZE(&args) = sizeof(Ppoint) + len + 1;
-         memcpy(&ARGS_ELMT_DATA(&args).text.pos, &text_pos, sizeof(Ppoint));
-         strncpy(char_string, FTN_CHARACTER_GET(chars), len);
-         char_string[len] = '\0';
-         ARGS_ELMT_DATA(&args).text.char_string = char_string;
-         phg_add_el(PHG_CSS, &args);
+         len = FTN_CHARACTER_LEN(chars);
+         args.el_type = PELEM_TEXT;
+         args.el_size = sizeof(Ppoint) + len + 1;
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            data = (Ppoint *) args.el_data;
+            text_pos.x = FTN_REAL_GET(px);
+            text_pos.y = FTN_REAL_GET(py);
+            memcpy(data, &text_pos, sizeof(Ppoint));
+            char_string = (char *) &data[1];
+            strncpy(char_string, FTN_CHARACTER_GET(chars), len); 
+            char_string[len] = '\0';
+            phg_add_el(PHG_CSS, &args);
+         }
       }
    }
 }
@@ -208,17 +231,25 @@ FTN_SUBROUTINE(pschh)(
    )
 {
    Phg_args_add_el args;
+   Pfloat char_ht;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_set_char_ht);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
-      ERR_REPORT(PHG_ERH, ERR5);
-   }
-   else {
-      ARGS_ELMT_TYPE(&args) = PELEM_CHAR_HT;
-      ARGS_ELMT_SIZE(&args) = sizeof(Pfloat);
-      ARGS_ELMT_DATA(&args).float_data = FTN_REAL_GET(chh);
-      phg_add_el(PHG_CSS, &args);
+   if (phg_entry_check(ERR5, Pfn_set_char_ht)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
+      else {
+         args.el_type = PELEM_CHAR_HT;
+         args.el_size = sizeof(Pfloat);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+            ERR_REPORT(PHG_ERH, ERR900);
+         }
+         else {
+            args.el_data = PHG_SCRATCH.buf;
+            char_ht = FTN_REAL_GET(chh);
+            memcpy(args.el_data, &char_ht, args.el_size);
+            phg_add_el(PHG_CSS, &args);
+         }
+      }
    }
 }
 

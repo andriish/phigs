@@ -76,19 +76,5 @@ int hdl_generic_elmt(
    Css_el_op op
    );
 
-/*******************************************************************************
- * hdl_sofas3
- *
- * DESCR:       Handle set of facet lists 3D
- * RETURNS:     TRUE on success, otherwise FALSE
- */
-
-int hdl_sofas3(
-   Css_handle cssh,
-   El_handle elmt,
-   caddr_t argdata,
-   Css_el_op op
-   );
-
 #endif /* _hdlP_h */
 
