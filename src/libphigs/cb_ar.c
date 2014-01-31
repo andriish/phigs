@@ -151,6 +151,60 @@ void par_all_structs(
 }
 
 /*******************************************************************************
+ * pret_struct_ids
+ *
+ * DESCR:       Retreive all structures identifiers for archive
+ * RETURNS:     N/A
+ */
+
+void pret_struct_ids(
+   Pint archive_id,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint_list *ids,
+   Pint *num_elems_impl_list
+   )
+{
+   Phg_ret ret;
+
+   if (phg_entry_check(ERR7, Pfn_ret_struct_ids)) {
+      if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
+         ERR_REPORT(PHG_ERH, ERR7);
+      }
+      else if (!phg_psl_inq_ar_open(PHG_PSL, archive_id)) {
+         ERR_REPORT(PHG_ERH, ERR404);
+      }
+      else {
+         ret.err = 0;
+         ids->num_ints = 0;
+         *num_elems_impl_list = 0;
+         phg_ar_get_names(archive_id, &ret);
+         if (ret.err == 0) {
+            ids->num_ints = 0;
+            *num_elems_impl_list = ret.data.int_list.num_ints;
+            if (ret.data.int_list.num_ints > 0) {
+               if (start_ind < 0 ||
+                   start_ind >= ret.data.int_list.num_ints) {
+                  ERR_REPORT(PHG_ERH, ERR2201);
+               }
+               else if (num_elems_appl_list > 0) {
+                  ids->num_ints = PHG_MIN(num_elems_appl_list,
+                                          ret.data.int_list.num_ints -
+                                             start_ind);
+                  memcpy(ids->ints, &ret.data.int_list.ints[start_ind],
+                         ids->num_ints * sizeof(Pint));
+               }
+               else if (num_elems_appl_list < 0) {
+                  ERR_REPORT(PHG_ERH, ERRN153);
+               }
+            }
+         }
+         ERR_FLUSH(PHG_ERH);
+      }
+   }
+}
+
+/*******************************************************************************
  * pret_all_structs
  *
  * DESCR:       Retreive all structures from archive
@@ -163,7 +217,7 @@ void pret_all_structs(
 {
    Phg_args_ar_info args;
 
-   if (phg_entry_check(ERR5, Pfn_ret_all_structs)) {
+   if (phg_entry_check(ERR7, Pfn_ret_all_structs)) {
       if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
          ERR_REPORT(PHG_ERH, ERR7);
       }
