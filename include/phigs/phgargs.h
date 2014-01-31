@@ -165,6 +165,11 @@ typedef struct {
    } bundl;
 } Phg_args_rep_data;
 
+typedef struct {
+   Phg_args_set_ep_op op;
+   Pint               data;
+} Phg_args_set_el_ptr;
+
 typedef union {
     struct {
         Pint    ep1;
@@ -176,6 +181,11 @@ typedef union {
     } label_range;
     Pint        struct_id;
 } Phg_args_del_el_data;
+
+typedef struct {
+   Phg_args_del_el_op   op;
+   Phg_args_del_el_data data;
+} Phg_args_del_el;
 
 typedef union {
    struct {

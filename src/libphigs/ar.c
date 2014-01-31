@@ -72,6 +72,7 @@ SOFTWARE.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <phigs/phg.h>
+#include <phigs/private/phgP.h>
 #include <errno.h>
 #include <phigs/private/arP.h>
 
@@ -319,27 +320,33 @@ void phg_ar_archive(
     ar_archive(arh, args);
 }
 
-#if 0
-void
-phg_cpx_ar_retrieve( cph, cp_args)
-Cp_handle cph;
-Phg_args *cp_args;
+/*******************************************************************************
+ * phg_ar_retreieve
+ *
+ * DESCR:	Get structure networks from archive
+ * RETURNS:	N/A
+ */
+
+void phg_ar_retrieve(
+    Phg_args_ar_info *args
+    )
 {
 
-    Phg_args_ar_info	*args = &(cp_args->data.ar_info);
-    Pint_list		 ar_structs, css_ids;
-    Ar_handle		 arh;
-    int			 i, eln;
-    Phg_args		 args2, el_args;
-    Phg_ret		 ret2;
-    Phg_ar_index_entry	*entry;
-    caddr_t		 buffer;
-    Cpx_css_srvr	*css_srvr;
-    pexElementInfo	*pex_el;
-    Pedit_mode           cur_edit_mode;
-    Pint                 cur_open_struct, cur_elem_ptr, cur_struct_state;
+    Pint_list ar_structs, css_ids;
+    Ar_handle arh;
+    int	i, eln;
+    Pint idata;
+    Phg_args_del_el del_el;
+    Phg_elmt_info *el_head;
+    Phg_args_add_el add_el;
+    Phg_args_set_el_ptr set_el_ptr;
+    Phg_ar_index_entry *entry;
+    caddr_t buffer;
+    caddr_t ptr;
+    Pedit_mode cur_edit_mode;
+    Pint cur_open_struct, cur_elem_ptr, cur_struct_state;
 
-    GET_ARH(cph, args->arid, arh);
+    GET_ARH(args->arid, arh);
     
     switch (args->op) {
     
@@ -349,7 +356,7 @@ Phg_args *cp_args;
 	    break;
 	    
 	case PHG_ARGS_AR_NETWORKS :
-	    if (compile_network_sids(cph, arh, &(args->data), PNET_AR,
+	    if (compile_network_sids(arh, &(args->data), PNET_AR,
 					   &(args->data)))
 		return;
 	    ar_structs.num_ints = args->data.num_ints;
@@ -364,7 +371,7 @@ Phg_args *cp_args;
 	    
 	    ar_structs.num_ints = i;
 	    if (!(ar_structs.ints = (Pint *)malloc((unsigned)(i * sizeof(Pint))))) {
-		ERR_BUF(cph->erh, ERR900);
+		ERR_BUF(PHG_ERH, ERR900);
 		return;
 	    }
 	    
@@ -383,7 +390,7 @@ Phg_args *cp_args;
     /* Now we know which structures to retrieve */
     
     if (get_css_struct_ids(&css_ids)) {
-	free((char *)ar_structs.ints);
+	free(ar_structs.ints);
         return;
     }
     
@@ -392,10 +399,10 @@ Phg_args *cp_args;
 	for (i = 0; i < ar_structs.num_ints; i++) {
 	    if (search_integer_list(ar_structs.ints[i],
 				    css_ids.ints, css_ids.num_ints)) {
-		ERR_BUF(cph->erh, ERR405);
-		free((char *)css_ids.ints);
+		ERR_BUF(PHG_ERH, ERR405);
+		free(css_ids.ints);
 		if (args->op != PHG_ARGS_AR_STRUCTS)
-		    free((char *)ar_structs.ints);
+		    free(ar_structs.ints);
 		return;	    
 	    }
 	}
@@ -404,35 +411,36 @@ Phg_args *cp_args;
     for (i = 0; i < ar_structs.num_ints; i++) {
 	if ( !(entry = phg_ar_get_entry_from_archive(arh,
 		ar_structs.ints[i])) ) {
-	   ERR_BUF(cph->erh, ERR408);
+	   ERR_BUF(PHG_ERH, ERR408);
            /* Structure not in archive, create an empty one in CSS if */
            /* it isn't already there */
            if (args->resflag != PRES_MAINTAIN || !(css_ids.num_ints > 0 &&
                search_integer_list(ar_structs.ints[i],
                                    css_ids.ints, css_ids.num_ints))) {
-               args2.data.del_el.op = PHG_ARGS_EMPTY_STRUCT;
-               args2.data.del_el.data.struct_id = ar_structs.ints[i];
+               del_el.op = PHG_ARGS_EMPTY_STRUCT;
+               del_el.data.struct_id = ar_structs.ints[i];
+#ifdef TODO
                CP_FUNC(cph, CP_FUNC_OP_DELETE_EL, &args2, NULL);
+#endif
            }
            continue;
 	} else if (!(buffer = malloc((unsigned)entry->length))) {
-	    ERR_BUF(cph->erh, ERR900);
-	    free((char *)css_ids.ints);
+	    ERR_BUF(PHG_ERH, ERR900);
+	    free(css_ids.ints);
 	    if (args->op != PHG_ARGS_AR_STRUCTS)
-		free((char *)ar_structs.ints);
+		free(ar_structs.ints);
 	    return;
 	}
-	
 	if (phg_ar_read_struct_from_archive(arh, entry, buffer)) {
-	    ERR_BUF(cph->erh, ERR403);	/* bad archive file */
-	    free((char *)css_ids.ints);
+	    ERR_BUF(PHG_ERH, ERR403);	/* bad archive file */
+	    free(css_ids.ints);
 	    if (args->op != PHG_ARGS_AR_STRUCTS)
-		free((char *)ar_structs.ints);
-	    free((char *)buffer);
+		free(ar_structs.ints);
+	    free(buffer);
 	    return;
 	}
 	
-	args2.data.idata = ar_structs.ints[i];
+	idata = ar_structs.ints[i];
 	if (args->resflag != PRES_ABANDON && css_ids.num_ints > 0 &&
 		search_integer_list(ar_structs.ints[i],
 				    css_ids.ints, css_ids.num_ints)) {
@@ -441,10 +449,12 @@ Phg_args *cp_args;
 		continue;
 	    else {
 		/* remove structure from CSS */
-		args2.data.del_el.op = PHG_ARGS_EMPTY_STRUCT;
-		args2.data.del_el.data.struct_id = ar_structs.ints[i];
+		del_el.op = PHG_ARGS_EMPTY_STRUCT;
+		del_el.data.struct_id = ar_structs.ints[i];
+#ifdef TODO
 		CP_FUNC(cph, CP_FUNC_OP_DELETE_EL, &args2, NULL);
-		args2.data.idata = ar_structs.ints[i];
+#endif
+		idata = ar_structs.ints[i];
 	    }
 	}
 
@@ -454,61 +464,63 @@ Phg_args *cp_args;
         /* restored after the close. Also after the close, if the */
         /* structure being opened is the one just retrieved, the */
         /* element pointer should not be reset. */
-        cur_struct_state = PSL_STRUCT_STATE( cph->psl);
+        cur_struct_state = PSL_STRUCT_STATE(PHG_PSL);
         if (cur_struct_state == PSTRUCT_ST_STOP)
         {
-            cur_open_struct = cph->psl->open_struct;
-            CP_FUNC(cph, CP_FUNC_OP_INQ_EL_PTR, &args2, &ret2);
-            cur_elem_ptr = ret2.data.idata;
+            cur_open_struct = PHG_PSL->open_struct;
+            cur_elem_ptr = CSS_INQ_EL_INDEX(PHG_CSS);
         }
-        cur_edit_mode = cph->psl->edit_mode;
-        cph->psl->edit_mode = PEDIT_INSERT;
+        cur_edit_mode = PHG_PSL->edit_mode;
+        PHG_PSL->edit_mode = PEDIT_INSERT;
 
 	/* Create new structure and add the elements. */
-	CP_FUNC(cph, CP_FUNC_OP_OPEN_STRUCT, &args2, &ret2);
-	if (ret2.err) {
-	    free((char *)css_ids.ints);
+	if (phg_css_open_struct(PHG_CSS, idata) == NULL) {
+	    free(css_ids.ints);
 	    if (args->op != PHG_ARGS_AR_STRUCTS)
-		free((char *)ar_structs.ints);
-	    free((char *)buffer);
+		free(ar_structs.ints);
+	    free(buffer);
 	    return;
 	}
 
-	pex_el = (pexElementInfo *)buffer;
+        ptr = buffer;
 	for (eln = 0; eln < entry->nelts; eln++) {
-	    el_args.data.add_el.el_type =
-		phg_utx_pex_eltype_to_phigs(pex_el->elementType);
-	    el_args.data.add_el.pex_oc.oc = pex_el;
-	    el_args.data.add_el.pex_oc.size = pex_el->length * sizeof(CARD32);
-	    CP_FUNC(cph, CP_FUNC_OP_ADD_EL, &el_args, (Phg_ret *)NULL);
-	    pex_el += pex_el->length;
+	    el_head = (Phg_elmt_info *) ptr;
+	    add_el.el_type = el_head->elementType;
+            add_el.el_size = el_head->length - sizeof(Phg_elmt_info);
+	    add_el.el_data = &el_head[1];
+            phg_add_el(PHG_CSS, &add_el);
+	    ptr += el_head->length;
 	}
 
 	/* close the structure */
-	CP_FUNC(cph, CP_FUNC_OP_CLOSE_STRUCT, &args2, (Phg_ret *)NULL);
+        phg_css_close_struct(PHG_CSS);
 
         /* Restore things */
-        cph->psl->edit_mode = cur_edit_mode;
+        PHG_PSL->edit_mode = cur_edit_mode;
         if (cur_struct_state == PSTRUCT_ST_STOP)
         {
-            args2.data.idata = cur_open_struct;
-            CP_FUNC(cph, CP_FUNC_OP_OPEN_STRUCT, &args2, &ret2);
+	    phg_css_open_struct(PHG_CSS, cur_open_struct);
             if (cur_open_struct != ar_structs.ints[i])
             {
-                args2.data.set_el_ptr.op = PHG_ARGS_SETEP_ABS;
-                args2.data.set_el_ptr.data = cur_elem_ptr;
+                set_el_ptr.op = PHG_ARGS_SETEP_ABS;
+                set_el_ptr.data = cur_elem_ptr;
+#ifdef TODO
                 CP_FUNC( cph, CP_FUNC_OP_SET_EL_PTR, &args2, &ret2);
+#else
+                phg_css_set_ep(PHG_CSS, set_el_ptr.op, set_el_ptr.data);
+#endif
             }
         }
 
-	free((char *)buffer);
+	free(buffer);
     }
     
-    free((char *)css_ids.ints);
+    free(css_ids.ints);
     if (args->op != PHG_ARGS_AR_STRUCTS)
-	free((char *)ar_structs.ints);
+	free(ar_structs.ints);
 }
 
+#if 0
 void
 phg_cpx_ar_delete( cph, cp_args )
 Cp_handle cph;
@@ -563,8 +575,8 @@ Phg_args *cp_args;
 				args->data.ints[i], &lsts[i])) {
 			    ERR_BUF(cph->erh, ERR900);
 			    for (j = 0; j < i; j++)
-				free((char *)lsts[j].ints);
-			    free((char *)lsts);
+				free(lsts[j].ints);
+			    free(lsts);
 			    return;
 			}
 		    }
@@ -586,10 +598,10 @@ Phg_args *cp_args;
 		
 		for (i = 0; i < nl; i++) {
 		    if (lsts[i].num_ints) 
-			free((char *)lsts[i].ints);
+			free(lsts[i].ints);
 		}
-		free((char *)lsts);
-		free((char *)ids.ints);
+		free(lsts);
+		free(ids.ints);
 		
 	    }
 	    break;
@@ -609,7 +621,7 @@ Phg_args *cp_args;
 	    op_and_cl_args.data.ar_open.name_length = sizeof(arname);
 	    op_and_cl_args.data.ar_open.arid = id;
 	    CP_FUNC(cph, CP_FUNC_OP_AR_OPEN, &op_and_cl_args, &dummy_ret);
-	    free((char *)arname);
+	    free(arname);
 	    break;
 	default :
 	    return;
@@ -705,7 +717,7 @@ void phg_ar_get_hierarchy(
     }
     counts.ints = (Pint *) malloc(PHG_AR_TMPMEM_BLOCKSIZE * sizeof(Pint));
     if (!(counts.ints)) {
-	free((char *)curpath.elem_refs);
+	free(curpath.elem_refs);
         ERR_BUF(PHG_ERH, ERR900);
         return;                                         /* out of memory */
     }
@@ -753,8 +765,8 @@ void phg_ar_get_hierarchy(
     ret->err = 0;
 
 free_and_return:
-    free((char*)curpath.elem_refs);
-    free((char*)counts.ints);
+    free(curpath.elem_refs);
+    free(counts.ints);
 }
 
 /*******************************************************************************
@@ -800,7 +812,7 @@ void phg_inq_ar_conflicting(
     
 	if (get_ar_structure_network_ids(arh,
 					 args->struct_id, &ar_net_ids)) {
-	    free((char *)css_ids.ints);
+	    free(css_ids.ints);
 	    return;
 	}
 
@@ -814,7 +826,7 @@ void phg_inq_ar_conflicting(
 		}
 	    }
 		
-	free((char *)ar_net_ids.ints);
+	free(ar_net_ids.ints);
 
     } else {
 
@@ -830,7 +842,7 @@ void phg_inq_ar_conflicting(
 	    PHG_AR_END_FOR_ALL_TOC_ENTRIES
     }
 
-    free((char *)css_ids.ints);
+    free(css_ids.ints);
     
     ret->err = 0;
 }
@@ -1058,8 +1070,8 @@ static int compile_network_sids(
 				    &lsts[i])) {
 		    ERR_BUF(PHG_ERH, ERR900);
 		    for (j = 0; j < i; j++)
-			free((char *)lsts[j].ints);
-		    free((char *)lsts);
+			free(lsts[j].ints);
+		    free(lsts);
 		    return(1);
 		}
 	    }
@@ -1074,8 +1086,8 @@ static int compile_network_sids(
 	    } else {
 		if (get_css_network_sids(cph, in->ints[i], &lsts[i])) {
 		    for (j = 0; j < i; j++)
-			free((char *)lsts[j].ints);
-		    free((char *)lsts);
+			free(lsts[j].ints);
+		    free(lsts);
 		    return(1);
 		}
 	    }
@@ -1094,10 +1106,10 @@ static int compile_network_sids(
 
     for (i = 0; i < nl; i++) {
 	if (lsts[i].num_ints)
-	    free((char *)lsts[i].ints);
+	    free(lsts[i].ints);
     }
 	
-    free((char *)lsts);
+    free(lsts);
     
     return(0);
 }
@@ -1151,7 +1163,7 @@ static void merge_and_remove_duplicates(
 	}
     }
     result->num_ints = i;
-    free((char *)inds);
+    free(inds);
 }
 
 /*******************************************************************************
@@ -1199,7 +1211,7 @@ static void ar_archive(
 		}
 		/* Concatenate the element data to the current list. */
 		memcpy(&buffer[struct_length],
-		       &ret.data.el_info.el_head[1],
+		       ret.data.el_info.el_head,
 		       (int)ret.data.el_info.el_head->length);
 		struct_length += (unsigned) ret.data.el_info.el_head->length;
 		++num_els;
@@ -1211,13 +1223,13 @@ static void ar_archive(
 	if ( phg_ar_write_struct_to_archive( arh, args->data.ints[i], 
 			args->resflag, (Pint)struct_length, (Pint)num_els, buffer ) ) {
 	    ERR_BUF(PHG_ERH, ERR406);
-	    if ( buffer )
-				free( (char *)buffer );
+	    if (buffer)
+		free(buffer);
 	    return;
 	}
     }
 
-    if ( buffer )
-	free( (char *)buffer );
+    if (buffer)
+	free(buffer);
 }
 

@@ -150,3 +150,32 @@ void par_all_structs(
    }
 }
 
+/*******************************************************************************
+ * pret_all_structs
+ *
+ * DESCR:       Retreive all structures from archive
+ * RETURNS:     N/A
+ */
+
+void pret_all_structs(
+   Pint archive_id
+   )
+{
+   Phg_args_ar_info args;
+
+   if (phg_entry_check(ERR5, Pfn_ret_all_structs)) {
+      if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
+         ERR_REPORT(PHG_ERH, ERR7);
+      }
+      else if (!phg_psl_inq_ar_open(PHG_PSL, archive_id)) {
+         ERR_REPORT(PHG_ERH, ERR404);
+      }
+      else {
+         args.arid = archive_id;
+         args.op = PHG_ARGS_AR_ALL;
+         args.resflag = PSL_RETRIEVE_CONFLICT(PHG_PSL);
+         phg_ar_retrieve(&args);
+      }
+   }
+}
+

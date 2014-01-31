@@ -28,8 +28,11 @@
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>
 
-#define SHAPE_STRUCT 0xabca
-#define SCENE_STRUCT 0xabcd
+#define SHAPE_STRUCT 0
+#define SCENE_STRUCT 1
+#define LABEL_1      10
+#define LABEL_2      20
+#define LABEL_3      30
 
 #define WIDTH   0.8
 #define HEIGHT  0.8
@@ -106,12 +109,12 @@ void draw_shape(void)
    ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    pset_local_tran3(rot3, PTYPE_POSTCONCAT);
-   plabel(10);
+   plabel(LABEL_1);
    pset_local_tran3(tran3, PTYPE_POSTCONCAT);
    pset_int_colr_ind(2);
-   plabel(20);
+   plabel(LABEL_2);
    pexec_struct(SHAPE_STRUCT);
-   plabel(30);
+   plabel(LABEL_3);
    pclose_struct();
 }
 
@@ -194,6 +197,13 @@ int main(int argc, char *argv[])
                popen_ar_file(0, "archive.phg");
                par_all_structs(0);
                pclose_ar_file(0);
+            }
+            else if (ks == XK_r) {
+               popen_ar_file(0, "archive.phg");
+               pret_all_structs(0);
+               pclose_ar_file(0);
+               ppost_struct(0, SCENE_STRUCT, 0);
+               pupd_ws(0, PFLAG_PERFORM);
             }
             else if (ks == XK_Escape) {
                goto exit;

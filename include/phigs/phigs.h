@@ -3192,6 +3192,17 @@ void par_all_structs(
    Pint archive_id
    );
 
+/*******************************************************************************
+ * pret_all_structs
+ *
+ * DESCR:       Retreive all structures from archive
+ * RETURNS:     N/A
+ */
+
+void pret_all_structs(
+   Pint archive_id
+   );
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

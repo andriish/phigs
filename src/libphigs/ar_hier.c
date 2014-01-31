@@ -306,7 +306,7 @@ int phg_ar_inq_ancestors(
 
     buffer_size = 256;
     if (!(buffer = (caddr_t)malloc(buffer_size))) {
-			free((char *)parents.elem_refs);
+			free(parents.elem_refs);
 			return(FALSE);
     }
 
@@ -329,17 +329,17 @@ int phg_ar_inq_ancestors(
     
 	/* grow buffer if necessary */
 	if (entry->length > buffer_size) {
-	    free((char *)buffer);
+	    free(buffer);
 	    buffer_size = entry->length;
 	    if (!(buffer = (caddr_t)malloc(buffer_size))) {
-		free((char *)parents.elem_refs);
+		free(parents.elem_refs);
 		return(FALSE);
 	    }
 	}
 	
 	if (phg_ar_read_struct_from_archive(arh, entry, buffer)) {
-	    free((char *)buffer);
-	    free((char *)parents.elem_refs);
+	    free(buffer);
+	    free(parents.elem_refs);
 	    return(FALSE);
 	}
 	
@@ -353,7 +353,7 @@ int phg_ar_inq_ancestors(
 		    parents.elem_refs = (Pelem_ref *)realloc((char *)parents.elem_refs, 
 							(int)(ers_size * sizeof(Pelem_ref)));
 		    if (!parents.elem_refs) {
-			free((char *)buffer);
+			free(buffer);
 			return(FALSE);
 		    }
 		}
@@ -388,8 +388,8 @@ int phg_ar_inq_ancestors(
 	    goto free_and_return;
 
 	retval = add_to_allpaths(allpaths, curpath, counts, order, depth);
-	free((char *)buffer);
-	free((char *)parents.elem_refs);
+	free(buffer);
+	free(parents.elem_refs);
 	return(retval);
     }
     
@@ -405,8 +405,8 @@ int phg_ar_inq_ancestors(
     
 
 free_and_return:
-    free((char *)buffer);
-    free((char *)parents.elem_refs);
+    free(buffer);
+    free(parents.elem_refs);
 
     return(TRUE);
     

@@ -42,7 +42,7 @@ Phg_elmt_info* hdl_create(
    head = (Phg_elmt_info *) malloc(ARGS_ELMT_SIZE_FULL(argdata));
    if (head != NULL) {
       head->elementType = ARGS_ELMT_TYPE(argdata);
-      head->length = ARGS_ELMT_SIZE(argdata);
+      head->length = ARGS_ELMT_SIZE_FULL(argdata);
       *data = &head[1];
    }
 
@@ -67,7 +67,7 @@ Phg_elmt_info* hdl_resize(
    head = (Phg_elmt_info *) realloc(buf, ARGS_ELMT_SIZE_FULL(argdata));
    if (head != NULL) {
       head->elementType = ARGS_ELMT_TYPE(argdata);
-      head->length = ARGS_ELMT_SIZE(argdata);
+      head->length = ARGS_ELMT_SIZE_FULL(argdata);
       *data = &head[1];
    }
 
