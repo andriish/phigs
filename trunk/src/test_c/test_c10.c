@@ -71,6 +71,22 @@ Pmatrix3 rot3;
 int view_index = 5;
 Pcolr_rep col_rep;
 
+void list_structs(Pint archive_id)
+{
+   Pint i, n;
+   Pint_list list;
+   Pint ints[10];
+
+   list.num_ints = 0;
+   list.ints = ints;
+
+   pret_struct_ids(archive_id, 10, 0, &list, &n);
+   for (i = 0; i < list.num_ints; i++) {
+      printf("Structure id:\t%d\n", list.ints[i]);
+   }
+   printf("\n");
+}
+
 void draw_shape(void)
 {
    popen_struct(SHAPE_STRUCT);
@@ -196,6 +212,11 @@ int main(int argc, char *argv[])
             else if (ks == XK_w) {
                popen_ar_file(0, "archive.phg");
                par_all_structs(0);
+               pclose_ar_file(0);
+            }
+            else if (ks == XK_l) {
+               popen_ar_file(0, "archive.phg");
+               list_structs(0);
                pclose_ar_file(0);
             }
             else if (ks == XK_r) {

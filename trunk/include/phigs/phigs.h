@@ -3193,6 +3193,21 @@ void par_all_structs(
    );
 
 /*******************************************************************************
+ * pret_struct_ids
+ *
+ * DESCR:       Retreive all structures identifiers for archive
+ * RETURNS:     N/A
+ */
+
+void pret_struct_ids(
+   Pint archive_id,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint_list *ids,
+   Pint *num_elems_impl_list
+   );
+
+/*******************************************************************************
  * pret_all_structs
  *
  * DESCR:       Retreive all structures from archive

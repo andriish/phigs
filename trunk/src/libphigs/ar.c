@@ -646,7 +646,7 @@ void phg_ar_get_names(
     Phg_ar_index_entry *entry;
     
     ret->err = !0;
-    
+
     GET_ARH(arid, arh);
     
     /* count the structures */
@@ -655,11 +655,15 @@ void phg_ar_get_names(
 	ret->data.int_list.num_ints++;
     PHG_AR_END_FOR_ALL_TOC_ENTRIES
     
-    if (!(ret->data.int_list.ints = (int *)PHG_SCRATCH_SPACE(&PHG_SCRATCH, 
-		ret->data.int_list.num_ints * sizeof(Pint)))) {
+    if (ret->data.int_list.num_ints <= 0) {
+	ret->err = 0;
+    }
+    else if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, 
+		                ret->data.int_list.num_ints * sizeof(Pint))) {
 	ERR_BUF(PHG_ERH, ERR900);
     } else {
         /* catalog the ids */
+        ret->data.int_list.ints = (Pint *) PHG_SCRATCH.buf;
 	i = 0;
 	PHG_AR_FOR_ALL_TOC_ENTRIES(arh, entry)
 	    ret->data.int_list.ints[i++] = entry->str;
