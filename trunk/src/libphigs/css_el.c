@@ -464,7 +464,7 @@ int phg_css_struct_ref(Css_handle cssh,
       case CSS_EL_INQ_CONTENT: {
          Phg_ret_q_content *ret_data = (Phg_ret_q_content *)argdata;
          ret_data->el_head->elementType = PELEM_EXEC_STRUCT;
-         ret_data->el_head->length = sizeof(Pint);
+         ret_data->el_head->length = sizeof(Pint) + 4;
          *((Pint *) (&ret_data->el_head[1])) =
              ((Struct_handle)elptr->eldata.ptr)->struct_id;
       } break;

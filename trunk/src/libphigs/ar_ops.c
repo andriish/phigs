@@ -321,9 +321,9 @@ void phg_ar_free_toc(
     curr = arh->toc;
     while (curr) {
 	if (curr->entry)
-	    free((char *)(curr->entry));
+	    free(curr->entry);
 	next = curr->next;
-	free((char *)curr);
+	free(curr);
 	curr = next;
     }
 }
@@ -489,7 +489,7 @@ int phg_ar_write_toc(
  
         /* Free any allocated space */
         if (convert)
-            free((char *)entries);
+            free(entries);
  
         /* Seek to next afi element */
         if (toc->head.nextpos != 0 ) {

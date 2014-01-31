@@ -168,6 +168,17 @@ void phg_ar_archive(
     );
 
 /*******************************************************************************
+ * phg_ar_retreive
+ *
+ * DESCR:       Get structure networks from archive
+ * RETURNS:     N/A
+ */
+
+void phg_ar_retrieve(
+    Phg_args_ar_info *args
+    );
+
+/*******************************************************************************
  * phg_ar_get_names
  *
  * DESCR:       Get archive catalog of names
