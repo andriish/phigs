@@ -210,6 +210,8 @@ int phg_ar_inq_descendants(
     int retval;
     caddr_t buffer;
     unsigned int buffer_size;
+    Phg_elmt_info *el_head;
+    char *ptr;
 
     buffer_size = 256;
     if (!(buffer = (caddr_t)malloc(buffer_size)))
@@ -235,11 +237,11 @@ int phg_ar_inq_descendants(
 	    return(FALSE);
 	}
 	
-#if TODO
-	ptr = (pexElementInfo *)buffer;
+        ptr = (char *) buffer;
 	for (elnum = 1; elnum <= entry->nelts; elnum++) {
-	    if (ptr->elementType == PEXOCExecuteStructure) {
-		execid = ((pexExecuteStructure *)(ptr))->id;
+	    el_head = (Phg_elmt_info *) ptr;
+	    if (el_head->elementType == PELEM_EXEC_STRUCT) {
+                execid = *((Pint *) &el_head[1]);
 		PHG_AR_CHECK_TMPMEM_BLOCKSIZE(curpath->elem_refs, Pelem_ref,
 					      curpath->num_elem_refs)
 		curpath->elem_refs[curpath->num_elem_refs].struct_id = structid;
@@ -250,9 +252,8 @@ int phg_ar_inq_descendants(
 		leafnode = FALSE;
 		curpath->num_elem_refs--;
 	    }
-	    ptr += ptr->length * sizeof(CARD32)/sizeof(*ptr);
+	    ptr += el_head->length;
 	}
-#endif
     }
     if (leafnode && curpath->num_elem_refs) {
 	PHG_AR_CHECK_TMPMEM_BLOCKSIZE(curpath->elem_refs, Pelem_ref, curpath->num_elem_refs)
@@ -297,6 +298,8 @@ int phg_ar_inq_ancestors(
     int ers_size, elnum, i;
     caddr_t buffer;
     unsigned int buffer_size;
+    Phg_elmt_info *el_head;
+    char *ptr;
     
     ers_size = 10;
     parents.num_elem_refs = 0;
@@ -343,11 +346,11 @@ int phg_ar_inq_ancestors(
 	    return(FALSE);
 	}
 	
-#ifdef TODO
-	ptr = (pexElementInfo *)buffer;
+	ptr = (char *) buffer;
 	for (elnum = 1; elnum <= entry->nelts; elnum++) {
-	    if (    ptr->elementType == PEXOCExecuteStructure  &&
-		    ((pexExecuteStructure *)(ptr))->id == structid) {
+	    el_head = (Phg_elmt_info *) ptr;
+	    if (el_head->elementType == PELEM_EXEC_STRUCT &&
+		*((Pint *) &el_head[1]) == structid) {
 		if (parents.num_elem_refs > ers_size) {
 		    ers_size += 10;
 		    parents.elem_refs = (Pelem_ref *)realloc((char *)parents.elem_refs, 
@@ -360,9 +363,8 @@ int phg_ar_inq_ancestors(
 		parents.elem_refs[parents.num_elem_refs].struct_id = entry->str;
 		parents.elem_refs[parents.num_elem_refs++].elem_pos = elnum;
 	    }
-	    ptr += ptr->length * sizeof(CARD32)/sizeof(*ptr);
+	    ptr += el_head->length;
 	}
-#endif
 	
     PHG_AR_END_FOR_ALL_TOC_ENTRIES
     

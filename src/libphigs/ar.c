@@ -520,23 +520,27 @@ void phg_ar_retrieve(
 	free(ar_structs.ints);
 }
 
-#if 0
-void
-phg_cpx_ar_delete( cph, cp_args )
-Cp_handle cph;
-Phg_args *cp_args;
-{
-    Ar_handle		 arh;
-    Pint		 id;
-    Phg_args_ar_info	*args = &(cp_args->data.ar_info);
-    Phg_args		 op_and_cl_args;
-    Phg_ret		 dummy_ret;
-    char		*arname;
-    int			 already_warned = 0;
-    int			 i, j;
-    Phg_ar_index_entry	*entry;
+/*******************************************************************************
+ * phg_ar_delete
+ *
+ * DESCR:	Delete structure networks from archive
+ * RETURNS:	N/A
+ */
 
-    GET_ARH(cph, args->arid, arh);
+void phg_ar_delete(
+    Phg_args_ar_info *args
+    )
+{
+    Ar_handle arh;
+    Pint id;
+    Phg_args_ar_open ar_open;
+    Phg_ret ret;
+    char *arname;
+    int already_warned = 0;
+    int i, j;
+    Phg_ar_index_entry *entry;
+
+    GET_ARH(args->arid, arh);
     
     switch (args->op) {
     
@@ -545,7 +549,7 @@ Phg_args *cp_args;
 		if (!(entry = phg_ar_get_entry_from_archive(arh, 
 				    args->data.ints[i]))) {
 		    if (!already_warned) {
-			ERR_BUF(cph->erh, ERR407);  /* just warn once */
+			ERR_BUF(PHG_ERH, ERR407);  /* just warn once */
 			already_warned = 1;
 		    }
 		} else {
@@ -566,14 +570,14 @@ Phg_args *cp_args;
 		    if (!phg_ar_get_entry_from_archive(arh,
 				    args->data.ints[i])) {
 			if (!already_warned) {
-			    ERR_BUF(cph->erh, ERR407);	/* just warn once */
+			    ERR_BUF(PHG_ERH, ERR407);	/* just warn once */
 			    already_warned = 1;
 			}
 			lsts[i].num_ints = 0;
 		    } else {
-			if (get_ar_structure_network_ids(cph, arh, 
+			if (get_ar_structure_network_ids(arh, 
 				args->data.ints[i], &lsts[i])) {
-			    ERR_BUF(cph->erh, ERR900);
+			    ERR_BUF(PHG_ERH, ERR900);
 			    for (j = 0; j < i; j++)
 				free(lsts[j].ints);
 			    free(lsts);
@@ -610,24 +614,22 @@ Phg_args *cp_args;
 	    /* delete all structs by removing the file and reopening anew */
 	    id = arh->arid;
 	    if (!(arname = malloc((unsigned)(strlen(arh->fname) + 1)))) {
-		ERR_BUF(cph->erh, ERR900);
+		ERR_BUF(PHG_ERH, ERR900);
 		return;
 	    }
 	    strcpy(arname, arh->fname);
-	    op_and_cl_args.data.idata = id;
-	    CP_FUNC(cph, CP_FUNC_OP_AR_CLOSE, &op_and_cl_args, &dummy_ret);
+            phg_ar_close(id);
 	    unlink(arname);
-	    op_and_cl_args.data.ar_open.fname = arname;
-	    op_and_cl_args.data.ar_open.name_length = sizeof(arname);
-	    op_and_cl_args.data.ar_open.arid = id;
-	    CP_FUNC(cph, CP_FUNC_OP_AR_OPEN, &op_and_cl_args, &dummy_ret);
+	    ar_open.fname = arname;
+	    ar_open.name_length = sizeof(arname);
+	    ar_open.arid = id;
+            phg_ar_open(&ar_open, &ret);
 	    free(arname);
 	    break;
 	default :
 	    return;
     }
 }
-#endif
 
 /*******************************************************************************
  * phg_ar_get_names
@@ -1053,6 +1055,7 @@ static int compile_network_sids(
     Pint_list *out                      /* list of sids in network */
     )
 {
+    Phg_ret ret;
     int nl = in->num_ints;
     Pint_list *lsts = (Pint_list *)malloc((unsigned)(nl * sizeof(Pint_list)));
     int	i, j, upper_bound = 0;
@@ -1081,21 +1084,19 @@ static int compile_network_sids(
 	    }
 	    
 	} else { /* where == PNET_CSS */
-#ifdef TODO
-	    Cpx_css_srvr   *css_srvr;
-	    CPX_MASTER_SERVER(cph, css_srvr)
-	    if (!(*css_srvr->struct_exists)(cph, css_srvr, in->ints[i])) {
-		ERR_BUF(cph->erh, ERR200);
+            ret.err = 0;
+	    phg_css_inq_struct_status(PHG_CSS, in->ints[i], &ret);
+            if (ret.err || ret.data.idata == PSTRUCT_STATUS_NON_EXISTENT) {
+		ERR_BUF(PHG_ERH, ERR200);
 		lsts[i].num_ints = 0;
 	    } else {
-		if (get_css_network_sids(cph, in->ints[i], &lsts[i])) {
+		if (get_css_network_sids(in->ints[i], &lsts[i])) {
 		    for (j = 0; j < i; j++)
 			free(lsts[j].ints);
 		    free(lsts);
 		    return(1);
 		}
 	    }
-#endif
 	}
 	
 	qsort((char *)lsts[i].ints, lsts[i].num_ints, sizeof(Pint), 

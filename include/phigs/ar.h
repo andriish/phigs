@@ -179,6 +179,17 @@ void phg_ar_retrieve(
     );
 
 /*******************************************************************************
+ * phg_ar_delete
+ *
+ * DESCR:       Delete structure networks from archive
+ * RETURNS:     N/A
+ */
+
+void phg_ar_delete(
+    Phg_args_ar_info *args
+    );
+
+/*******************************************************************************
  * phg_ar_get_names
  *
  * DESCR:       Get archive catalog of names
