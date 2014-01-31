@@ -28,6 +28,9 @@
 #include <phigs/private/phgP.h>
 #include <phigs/css.h>
 
+#define SHAPE_STRUCT 0xabca
+#define SCENE_STRUCT 0xabcd
+
 #define WIDTH   0.8
 #define HEIGHT  0.8
 #define SPACE   0.9
@@ -67,7 +70,7 @@ Pcolr_rep col_rep;
 
 void draw_shape(void)
 {
-   popen_struct(0);
+   popen_struct(SHAPE_STRUCT);
    pfill_area3(&plist_quad);
    ppolymarker3(&plist_quad);
    pclose_struct();
@@ -78,7 +81,7 @@ void draw_shape(void)
    ptranslate3(&tvec3, &errnum, tran3);
    protate_x(-3.14 / 4.0, &errnum, rot3);
 
-   popen_struct(1);
+   popen_struct(SCENE_STRUCT);
    pset_view_ind(view_index);
    pset_hlhsr_id(PHIGS_HLHSR_ID_ON);
    pset_edge_flag(PEDGE_ON);
@@ -92,13 +95,13 @@ void draw_shape(void)
    pset_marker_size(0.1);
    pset_marker_colr_ind(4);
    pset_local_tran3(tran3, PTYPE_REPLACE);
-   pexec_struct(0);
+   pexec_struct(SHAPE_STRUCT);
    tvec3.delta_z += SPACE;
    ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
    pset_local_tran3(tran3, PTYPE_POSTCONCAT);
    pset_int_colr_ind(1);
-   pexec_struct(0);
+   pexec_struct(SHAPE_STRUCT);
    tvec3.delta_z += SPACE;
    ptranslate3(&tvec3, &errnum, tran3);
    pset_local_tran3(rot3, PTYPE_REPLACE);
@@ -107,7 +110,7 @@ void draw_shape(void)
    pset_local_tran3(tran3, PTYPE_POSTCONCAT);
    pset_int_colr_ind(2);
    plabel(20);
-   pexec_struct(0);
+   pexec_struct(SHAPE_STRUCT);
    plabel(30);
    pclose_struct();
 }
@@ -184,7 +187,7 @@ int main(int argc, char *argv[])
             ks = XLookupKeysym((XKeyEvent *) &event, 0);
             if (ks == XK_d) {
                draw_shape();
-               ppost_struct(0, 1, 0);
+               ppost_struct(0, SCENE_STRUCT, 0);
                pupd_ws(0, PFLAG_PERFORM);
             }
             else if (ks == XK_w) {
