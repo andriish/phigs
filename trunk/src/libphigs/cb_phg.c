@@ -132,20 +132,20 @@ void pclose_phigs(
    void
    )
 {
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_close_phigs);
-
-   if ((PSL_WS_STATE(PHG_PSL) == PWS_ST_WSCL) &&
-       (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STCL) &&
-       (PSL_AR_STATE(PHG_PSL) == PST_ARCL)) {
-      free(PHG_WS_LIST);
-      free(PHG_INPUT_Q);
-      phg_wst_remove_ws_types();
-      phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
-      phg_css_destroy(PHG_CSS);
-      phg_psl_destroy(PHG_PSL);
-   }
-   else  {
-      ERR_REPORT(PHG_ERH, ERR4);
+   if (phg_entry_check(ERR4, Pfn_close_phigs)) {
+      if ((PSL_WS_STATE(PHG_PSL) == PWS_ST_WSCL) &&
+          (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STCL) &&
+          (PSL_AR_STATE(PHG_PSL) == PST_ARCL)) {
+         free(PHG_WS_LIST);
+         free(PHG_INPUT_Q);
+         phg_wst_remove_ws_types();
+         phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
+         phg_css_destroy(PHG_CSS);
+         phg_psl_destroy(PHG_PSL);
+      }
+      else  {
+         ERR_REPORT(PHG_ERH, ERR4);
+      }
    }
 }
 

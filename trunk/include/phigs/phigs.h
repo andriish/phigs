@@ -1818,6 +1818,17 @@ void pdel_elems_labels(
    );
 
 /*******************************************************************************
+ * pempty_struct
+ *
+ * DESCR:       Clear structure
+ * RETURNS:     N/A
+ */
+
+void pempty_struct(
+   Pint struct_id
+   );
+
+/*******************************************************************************
  * pcopy_all_elems_struct
  *
  * DESCR:       Copies the elements of another structure into the open

@@ -126,6 +126,53 @@ void phg_add_el(
    );
 
 /*******************************************************************************
+ * phg_del_el
+ *
+ * DESCR:       Delete element and update workstations posted to
+ * RETURNS:     N/A
+ */
+
+void phg_del_el(
+   Css_handle cssh,
+   Phg_args_del_el *args
+   );
+
+/*******************************************************************************
+ * phg_close_struct
+ *
+ * DESCR:       Close structure and update workstations posted to
+ * RETURNS:     N/A
+ */
+
+void phg_close_struct(
+   Css_handle cssh
+   );
+
+/*******************************************************************************
+ * phg_set_el_ptr
+ *
+ * DESCR:       Set element pointer and update workstations
+ * RETURNS:     N/A
+ */
+
+void phg_set_el_ptr(
+   Css_handle cssh,
+   Phg_args_set_el_ptr *args
+   );
+
+/*******************************************************************************
+ * phg_copy_all_els
+ *
+ * DESCR:       Copy all elements in structure and update workstations
+ * RETURNS:     N/A
+ */
+
+void phg_copy_all_els(
+   Css_handle cssh,
+   Pint struct_id
+   );
+
+/*******************************************************************************
  * phg_get_local_tran3
  *
  * DESCR:       Get local transformation 3D

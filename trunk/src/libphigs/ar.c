@@ -335,7 +335,6 @@ void phg_ar_retrieve(
     Pint_list ar_structs, css_ids;
     Ar_handle arh;
     int	i, eln;
-    Pint idata;
     Phg_args_del_el del_el;
     Phg_elmt_info *el_head;
     Phg_args_add_el add_el;
@@ -344,7 +343,7 @@ void phg_ar_retrieve(
     caddr_t buffer;
     caddr_t ptr;
     Pedit_mode cur_edit_mode;
-    Pint cur_open_struct, cur_elem_ptr, cur_struct_state;
+    Pint struct_id, cur_open_struct, cur_elem_ptr, cur_struct_state;
 
     GET_ARH(args->arid, arh);
     
@@ -419,9 +418,7 @@ void phg_ar_retrieve(
                                    css_ids.ints, css_ids.num_ints))) {
                del_el.op = PHG_ARGS_EMPTY_STRUCT;
                del_el.data.struct_id = ar_structs.ints[i];
-#ifdef TODO
-               CP_FUNC(cph, CP_FUNC_OP_DELETE_EL, &args2, NULL);
-#endif
+               phg_del_el(PHG_CSS, &del_el);
            }
            continue;
 	} else if (!(buffer = malloc((unsigned)entry->length))) {
@@ -440,7 +437,7 @@ void phg_ar_retrieve(
 	    return;
 	}
 	
-	idata = ar_structs.ints[i];
+	struct_id = ar_structs.ints[i];
 	if (args->resflag != PRES_ABANDON && css_ids.num_ints > 0 &&
 		search_integer_list(ar_structs.ints[i],
 				    css_ids.ints, css_ids.num_ints)) {
@@ -451,10 +448,8 @@ void phg_ar_retrieve(
 		/* remove structure from CSS */
 		del_el.op = PHG_ARGS_EMPTY_STRUCT;
 		del_el.data.struct_id = ar_structs.ints[i];
-#ifdef TODO
-		CP_FUNC(cph, CP_FUNC_OP_DELETE_EL, &args2, NULL);
-#endif
-		idata = ar_structs.ints[i];
+                phg_del_el(PHG_CSS, &del_el);
+		struct_id = ar_structs.ints[i];
 	    }
 	}
 
@@ -474,7 +469,7 @@ void phg_ar_retrieve(
         PHG_PSL->edit_mode = PEDIT_INSERT;
 
 	/* Create new structure and add the elements. */
-	if (phg_css_open_struct(PHG_CSS, idata) == NULL) {
+	if (phg_css_open_struct(PHG_CSS, struct_id) == NULL) {
 	    free(css_ids.ints);
 	    if (args->op != PHG_ARGS_AR_STRUCTS)
 		free(ar_structs.ints);
@@ -493,7 +488,7 @@ void phg_ar_retrieve(
 	}
 
 	/* close the structure */
-        phg_css_close_struct(PHG_CSS);
+        phg_close_struct(PHG_CSS);
 
         /* Restore things */
         PHG_PSL->edit_mode = cur_edit_mode;
@@ -504,11 +499,7 @@ void phg_ar_retrieve(
             {
                 set_el_ptr.op = PHG_ARGS_SETEP_ABS;
                 set_el_ptr.data = cur_elem_ptr;
-#ifdef TODO
-                CP_FUNC( cph, CP_FUNC_OP_SET_EL_PTR, &args2, &ret2);
-#else
-                phg_css_set_ep(PHG_CSS, set_el_ptr.op, set_el_ptr.data);
-#endif
+                phg_set_el_ptr(PHG_CSS, &set_el_ptr);
             }
         }
 
@@ -626,6 +617,7 @@ void phg_ar_delete(
             phg_ar_open(&ar_open, &ret);
 	    free(arname);
 	    break;
+
 	default :
 	    return;
     }
