@@ -2,7 +2,7 @@ C *****************************************************************************
 C * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
 C *
 C * This file is part of Open PHIGS
-C * Copyright (C) 2011 - 2013 Surplus Users Ham Society
+C * Copyright (C) 2014 Surplus Users Ham Society
 C *
 C * Open PHIGS is free software: you can redistribute it and/or modify
 C * it under the terms of the GNU Lesser General Public License as published by

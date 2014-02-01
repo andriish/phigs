@@ -2,7 +2,7 @@
 *   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
 *
 *   This file is part of Open PHIGS
-*   Copyright (C) 2011 - 2012 Surplus Users Ham Society
+*   Copyright (C) 2014 Surplus Users Ham Society
 *
 *   Open PHIGS is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU Lesser General Public License as published by
@@ -122,6 +122,86 @@ void pclose_ar_file(
 }
 
 /*******************************************************************************
+ * pset_conf_res
+ *
+ * DESCR:       Set structure conflict resolution for archive
+ * RETURNS:     N/A
+ */
+
+void pset_conf_res(
+   Pconf_res archive_res,
+   Pconf_res retrieval_res
+   )
+{
+   if (phg_entry_check(ERR2, Pfn_set_conf_res)) {
+      PSL_ARCHIVE_CONFLICT(PHG_PSL) = archive_res;
+      PSL_RETRIEVE_CONFLICT(PHG_PSL) = retrieval_res;
+   }
+}
+
+/*******************************************************************************
+ * par_structs
+ *
+ * DESCR:       Store structures in archive
+ * RETURNS:     N/A
+ */
+
+void par_structs(
+   Pint archive_id,
+   Pint_list *struct_ids
+   )
+{
+   Phg_args_ar_info args;
+
+   if (phg_entry_check(ERR7, Pfn_ar_structs)) {
+      if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
+         ERR_REPORT(PHG_ERH, ERR7);
+      }
+      else if (!phg_psl_inq_ar_open(PHG_PSL, archive_id)) {
+         ERR_REPORT(PHG_ERH, ERR404);
+      }
+      else {
+         args.arid = archive_id;
+         memcpy(&args.data, struct_ids, sizeof(Pint_list));
+         args.op = PHG_ARGS_AR_STRUCTS;
+         args.resflag = PSL_ARCHIVE_CONFLICT(PHG_PSL);
+         phg_ar_archive(&args);
+      }
+   }
+}
+
+/*******************************************************************************
+ * par_struct_nets
+ *
+ * DESCR:       Store structure networks in archive
+ * RETURNS:     N/A
+ */
+
+void par_struct_nets(
+   Pint archive_id,
+   Pint_list *struct_ids
+   )
+{
+   Phg_args_ar_info args;
+
+   if (phg_entry_check(ERR7, Pfn_ar_struct_nets)) {
+      if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
+         ERR_REPORT(PHG_ERH, ERR7);
+      }
+      else if (!phg_psl_inq_ar_open(PHG_PSL, archive_id)) {
+         ERR_REPORT(PHG_ERH, ERR404);
+      }
+      else {
+         args.arid = archive_id;
+         memcpy(&args.data, struct_ids, sizeof(Pint_list));
+         args.op = PHG_ARGS_AR_NETWORKS;
+         args.resflag = PSL_ARCHIVE_CONFLICT(PHG_PSL);
+         phg_ar_archive(&args);
+      }
+   }
+}
+
+/*******************************************************************************
  * par_all_structs
  *
  * DESCR:       Store all structures in archive
@@ -205,6 +285,68 @@ void pret_struct_ids(
 }
 
 /*******************************************************************************
+ * pret_structs
+ *
+ * DESCR:       Retreive structures from archive
+ * RETURNS:     N/A
+ */
+
+void pret_structs(
+   Pint archive_id,
+   Pint_list *struct_ids
+   )
+{
+   Phg_args_ar_info args;
+
+   if (phg_entry_check(ERR7, Pfn_ret_structs)) {
+      if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
+         ERR_REPORT(PHG_ERH, ERR7);
+      }
+      else if (!phg_psl_inq_ar_open(PHG_PSL, archive_id)) {
+         ERR_REPORT(PHG_ERH, ERR404);
+      }
+      else {
+         args.arid = archive_id;
+         memcpy(&args.data, struct_ids, sizeof(Pint_list));
+         args.op = PHG_ARGS_AR_STRUCTS;
+         args.resflag = PSL_RETRIEVE_CONFLICT(PHG_PSL);
+         phg_ar_retrieve(&args);
+      }
+   }
+}
+
+/*******************************************************************************
+ * pret_struct_nets
+ *
+ * DESCR:       Retreive structure networks from archive
+ * RETURNS:     N/A
+ */
+
+void pret_struct_nets(
+   Pint archive_id,
+   Pint_list *struct_ids
+   )
+{
+   Phg_args_ar_info args;
+
+   if (phg_entry_check(ERR7, Pfn_ret_struct_nets)) {
+      if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
+         ERR_REPORT(PHG_ERH, ERR7);
+      }
+      else if (!phg_psl_inq_ar_open(PHG_PSL, archive_id)) {
+         ERR_REPORT(PHG_ERH, ERR404);
+      }
+      else {
+         args.arid = archive_id;
+         memcpy(&args.data, struct_ids, sizeof(Pint_list));
+         args.op = PHG_ARGS_AR_NETWORKS;
+         args.resflag = PSL_RETRIEVE_CONFLICT(PHG_PSL);
+         phg_ar_retrieve(&args);
+      }
+   }
+}
+
+/*******************************************************************************
  * pret_all_structs
  *
  * DESCR:       Retreive all structures from archive
@@ -230,6 +372,136 @@ void pret_all_structs(
          args.resflag = PSL_RETRIEVE_CONFLICT(PHG_PSL);
          phg_ar_retrieve(&args);
       }
+   }
+}
+
+/*******************************************************************************
+ * pdel_structs_ar
+ *
+ * DESCR:       Delete structures from archive
+ * RETURNS:     N/A
+ */
+
+void pdel_structs_ar(
+   Pint archive_id,
+   Pint_list *struct_ids
+   )
+{
+   Phg_args_ar_info args;
+
+   if (phg_entry_check(ERR7, Pfn_del_structs_ar)) {
+      if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
+         ERR_REPORT(PHG_ERH, ERR7);
+      }
+      else if (!phg_psl_inq_ar_open(PHG_PSL, archive_id)) {
+         ERR_REPORT(PHG_ERH, ERR404);
+      }
+      else {
+         args.arid = archive_id;
+         memcpy(&args.data, struct_ids, sizeof(Pint_list));
+         args.op = PHG_ARGS_AR_STRUCTS;
+         phg_ar_delete(&args);
+      }
+   }
+}
+
+/*******************************************************************************
+ * pdel_struct_nets_ar
+ *
+ * DESCR:       Delete structure networks from archive
+ * RETURNS:     N/A
+ */
+
+void pdel_struct_nets_ar(
+   Pint archive_id,
+   Pint_list *struct_ids
+   )
+{
+   Phg_args_ar_info args;
+
+   if (phg_entry_check(ERR7, Pfn_del_struct_nets_ar)) {
+      if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
+         ERR_REPORT(PHG_ERH, ERR7);
+      }
+      else if (!phg_psl_inq_ar_open(PHG_PSL, archive_id)) {
+         ERR_REPORT(PHG_ERH, ERR404);
+      }
+      else {
+         args.arid = archive_id;
+         memcpy(&args.data, struct_ids, sizeof(Pint_list));
+         args.op = PHG_ARGS_AR_NETWORKS;
+         phg_ar_delete(&args);
+      }
+   }
+}
+
+/*******************************************************************************
+ * pdel_all_structs_ar
+ *
+ * DESCR:       Delete all structures from archive
+ * RETURNS:     N/A
+ */
+
+void pdel_all_structs_ar(
+   Pint archive_id
+   )
+{
+   Phg_args_ar_info args;
+
+   if (phg_entry_check(ERR7, Pfn_del_all_structs_ar)) {
+      if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
+         ERR_REPORT(PHG_ERH, ERR7);
+      }
+      else if (!phg_psl_inq_ar_open(PHG_PSL, archive_id)) {
+         ERR_REPORT(PHG_ERH, ERR404);
+      }
+      else {
+         args.arid = archive_id;
+         args.op = PHG_ARGS_AR_ALL;
+         phg_ar_delete(&args);
+      }
+   }
+}
+
+/*******************************************************************************
+ * pinq_ar_st
+ *
+ * DESCR:       Get archive state
+ * RETURNS:     N/A
+ */
+
+void pinq_ar_st(
+   Par_st *ar_st
+   )
+{
+   if (phg_entry_check(0, Pfn_INQUIRY)) {
+      *ar_st = PSL_AR_STATE(PHG_PSL);
+   }
+   else {
+      *ar_st = PST_ARCL;
+   }
+}
+
+/*******************************************************************************
+ * pinq_conf_res
+ *
+ * DESCR:       Get archive conflict resolution
+ * RETURNS:     N/A
+ */
+
+void pinq_conf_res(
+   Pint *err_ind,
+   Pconf_res *archive_res,
+   Pconf_res *retrieval_res
+   )
+{
+   if (phg_entry_check(0, Pfn_INQUIRY)) {
+      *err_ind = 0;
+      *archive_res = PSL_ARCHIVE_CONFLICT(PHG_PSL);
+      *retrieval_res = PSL_RETRIEVE_CONFLICT(PHG_PSL);
+   }
+   else {
+      *err_ind = ERR2;
    }
 }
 

@@ -2,7 +2,7 @@
 *   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
 *
 *   This file is part of Open PHIGS
-*   Copyright (C) 2011 - 2012 Surplus Users Ham Society
+*   Copyright (C) 2014 Surplus Users Ham Society
 *
 *   Open PHIGS is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU Lesser General Public License as published by
@@ -85,6 +85,31 @@ void list_structs(Pint archive_id)
       printf("Structure id:\t%d\n", list.ints[i]);
    }
    printf("\n");
+}
+
+void ret_struct_net(Pint archive_id, Pint struct_id)
+{
+   Pint_list list;
+   Pint ints[1];
+
+   list.num_ints = 1;
+   list.ints = ints;
+   ints[0] = struct_id;
+
+   pret_struct_nets(archive_id, &list);
+}
+
+void ret_structs(Pint archive_id)
+{
+   Pint n;
+   Pint_list list;
+   Pint ints[10];
+
+   list.num_ints = 0;
+   list.ints = ints;
+
+   pret_struct_ids(archive_id, 10, 0, &list, &n);
+   pret_structs(archive_id, &list);
 }
 
 void draw_shape(void)
@@ -219,7 +244,21 @@ int main(int argc, char *argv[])
                list_structs(0);
                pclose_ar_file(0);
             }
-            else if (ks == XK_r) {
+            else if (ks == XK_s) {
+               popen_ar_file(0, "archive.phg");
+               ret_structs(0);
+               pclose_ar_file(0);
+               ppost_struct(0, SCENE_STRUCT, 0);
+               pupd_ws(0, PFLAG_PERFORM);
+            }
+            else if (ks == XK_n) {
+               popen_ar_file(0, "archive.phg");
+               ret_struct_net(0, SCENE_STRUCT);
+               pclose_ar_file(0);
+               ppost_struct(0, SCENE_STRUCT, 0);
+               pupd_ws(0, PFLAG_PERFORM);
+            }
+            else if (ks == XK_a) {
                popen_ar_file(0, "archive.phg");
                pret_all_structs(0);
                pclose_ar_file(0);
