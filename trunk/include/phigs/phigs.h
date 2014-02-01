@@ -2,7 +2,7 @@
 *   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
 *
 *   This file is part of Open PHIGS
-*   Copyright (C) 2011 - 2012 Surplus Users Ham Society
+*   Copyright (C) 2014 Surplus Users Ham Society
 *
 *   Open PHIGS is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU Lesser General Public License as published by
@@ -3193,6 +3193,42 @@ void pclose_ar_file(
    );
 
 /*******************************************************************************
+ * pset_conf_res
+ *
+ * DESCR:       Set structure conflict resolution for archive
+ * RETURNS:     N/A
+ */
+
+void pset_conf_res(
+   Pconf_res archive_res,
+   Pconf_res retrieval_res
+   );
+
+/*******************************************************************************
+ * par_structs
+ *
+ * DESCR:       Store structures in archive
+ * RETURNS:     N/A
+ */
+
+void par_structs(
+   Pint archive_id,
+   Pint_list *struct_ids
+   );
+
+/*******************************************************************************
+ * par_struct_nets
+ *
+ * DESCR:       Store structure networks in archive
+ * RETURNS:     N/A
+ */
+
+void par_struct_nets(
+   Pint archive_id,
+   Pint_list *struct_ids
+   );
+
+/*******************************************************************************
  * par_all_structs
  *
  * DESCR:       Store all structures in archive
@@ -3219,6 +3255,30 @@ void pret_struct_ids(
    );
 
 /*******************************************************************************
+ * pret_structs
+ *
+ * DESCR:       Retreive structures from archive
+ * RETURNS:     N/A
+ */
+
+void pret_structs(
+   Pint archive_id,
+   Pint_list *struct_ids
+   );
+
+/*******************************************************************************
+ * pret_struct_nets
+ *
+ * DESCR:       Retreive structure networks from archive
+ * RETURNS:     N/A
+ */
+
+void pret_struct_nets(
+   Pint archive_id,
+   Pint_list *struct_ids
+   );
+
+/*******************************************************************************
  * pret_all_structs
  *
  * DESCR:       Retreive all structures from archive
@@ -3227,6 +3287,65 @@ void pret_struct_ids(
 
 void pret_all_structs(
    Pint archive_id
+   );
+
+/*******************************************************************************
+ * pdel_structs_ar
+ *
+ * DESCR:       Delete structures from archive
+ * RETURNS:     N/A
+ */
+
+void pdel_structs_ar(
+   Pint archive_id,
+   Pint_list *struct_ids
+   );
+
+/*******************************************************************************
+ * pdel_struct_nets_ar
+ *
+ * DESCR:       Delete structure networks from archive
+ * RETURNS:     N/A
+ */
+
+void pdel_struct_nets_ar(
+   Pint archive_id,
+   Pint_list *struct_ids
+   );
+
+/*******************************************************************************
+ * pdel_all_structs_ar
+ *
+ * DESCR:       Delete all structures from archive
+ * RETURNS:     N/A
+ */
+
+void pdel_all_structs_ar(
+   Pint archive_id
+   );
+
+/*******************************************************************************
+ * pinq_ar_st
+ *
+ * DESCR:       Get archive state
+ * RETURNS:     N/A
+ */
+
+void pinq_ar_st(
+   Par_st *ar_st
+   );
+
+/*******************************************************************************
+ * pinq_conf_res
+ *
+ * DESCR:       Get archive conflict resolution
+ * RETURNS:     N/A
+ */
+
+void pinq_conf_res(
+   Pint *err_ind,
+   Pconf_res *archive_res,
+   Pconf_res *retrieval_res
    );
 
 #ifdef __cplusplus
