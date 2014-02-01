@@ -38,17 +38,17 @@ FTN_SUBROUTINE(popst)(
 {
    Pint struct_id = FTN_INTEGER_GET(strid);
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_open_struct);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STCL) {
-      if (phg_css_open_struct(PHG_CSS, struct_id) != NULL) {
-         PSL_STRUCT_STATE(PHG_PSL) = PSTRUCT_ST_STOP;
-         PSL_OPEN_STRUCT(PHG_PSL) = struct_id;
+   if (phg_entry_check(ERR6, Pfn_open_struct)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STCL) {
+         if (phg_css_open_struct(PHG_CSS, struct_id) != NULL) {
+            PSL_STRUCT_STATE(PHG_PSL) = PSTRUCT_ST_STOP;
+            PSL_OPEN_STRUCT(PHG_PSL) = struct_id;
+         }
+         ERR_FLUSH(PHG_ERH);
       }
-      ERR_FLUSH(PHG_ERH);
-   }
-   else {
-      ERR_REPORT(PHG_ERH, ERR6);
+      else {
+         ERR_REPORT(PHG_ERH, ERR6);
+      }
    }
 }
 
@@ -63,25 +63,15 @@ FTN_SUBROUTINE(pclst)(
    void
    )
 {
-   Struct_handle str;
-   Css_ws_list   ws_list;
 
-   ERR_SET_CUR_FUNC(PHG_ERH, Pfn_close_struct);
-
-   if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STOP) {
-      ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(PHG_CSS));
-      str = phg_css_close_struct(PHG_CSS);
-      if (ws_list && str) {
-         for (; ws_list->wsh; ws_list++) {
-            if (ws_list->wsh->close_struct) {
-                (*ws_list->wsh->close_struct)(ws_list->wsh, str);
-            }
-         }
+   if (phg_entry_check(ERR5, Pfn_close_struct)) {
+      if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STOP) {
+         phg_close_struct(PHG_CSS);
+         PSL_STRUCT_STATE(PHG_PSL) = PSTRUCT_ST_STCL;
       }
-      PSL_STRUCT_STATE(PHG_PSL) = PSTRUCT_ST_STCL;
-   }
-   else {
-      ERR_REPORT(PHG_ERH, ERR5);
+      else {
+         ERR_REPORT(PHG_ERH, ERR5);
+      }
    }
 }
 

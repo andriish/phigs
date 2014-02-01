@@ -72,8 +72,135 @@ void phg_add_el(
 
    if (phg_css_add_elem(cssh, args)) {
       if (ws_list != NULL) {
-         for (; ws_list->wsh; ws_list++)
+         for (; ws_list->wsh != NULL; ws_list++)
             (*ws_list->wsh->add_el)(ws_list->wsh);
+      }
+   }
+}
+
+/*******************************************************************************
+ * phg_del_el
+ *
+ * DESCR:	Delete element and update workstations posted to
+ * RETURNS:	N/A
+ */
+
+void phg_del_el(
+   Css_handle cssh,
+   Phg_args_del_el *args
+   )
+{
+   Ws_handle cb_list[MAX_NO_OPEN_WS];
+   Ws_handle *wsp;
+   Struct_handle structh;
+   Css_ws_list ws_list;
+   El_handle ep1, ep2;
+
+   wsp = cb_list;
+   if (args->op == PHG_ARGS_EMPTY_STRUCT) {
+      structh = CSS_STRUCT_EXISTS(cssh, args->data.struct_id);
+   }
+   else {
+      structh = CSS_CUR_STRUCTP(cssh);
+   }
+   ws_list = CSS_GET_WS_ON(structh);
+
+   phg_css_el_delete_list(cssh, args->op, &args->data, &ep1, &ep2);
+
+   if (ep1 != NULL && ep2 != NULL) {
+      if (ws_list != NULL) {
+         for (; ws_list->wsh != NULL; ws_list++) {
+            if ((*ws_list->wsh->delete_el)(ws_list->wsh, structh,
+                                           ep1, ep2, WS_PRE_CSS_DELETE)) {
+               *wsp++ = ws_list->wsh;
+            }
+         }
+      }
+
+      phg_css_delete_el(cssh, args->op, &args->data, ep1, ep2);
+
+      while (wsp-- != cb_list) {
+         (*(*wsp)->delete_el)(*wsp, structh, ep1, ep2, WS_POST_CSS_DELETE);
+      }
+   }
+}
+
+/*******************************************************************************
+ * phg_close_struct
+ *
+ * DESCR:	Close structure and update workstations posted to
+ * RETURNS:	N/A
+ */
+
+void phg_close_struct(
+   Css_handle cssh
+   )
+{
+   Css_ws_list ws_list;
+   Struct_handle str;
+
+   ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(cssh));
+   str = phg_css_close_struct(cssh);
+
+   if (ws_list != NULL && str != NULL) {
+      for (; ws_list->wsh != NULL; ws_list++) {
+         if (ws_list->wsh->close_struct != NULL) {
+            (*ws_list->wsh->close_struct)(ws_list->wsh, str);
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * phg_set_el_ptr
+ *
+ * DESCR:	Set element pointer and update workstations
+ * RETURNS:	N/A
+ */
+
+void phg_set_el_ptr(
+   Css_handle cssh,
+   Phg_args_set_el_ptr *args
+   )
+{
+   Css_ws_list ws_list;
+   El_handle ep;
+
+   ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(cssh));
+   ep = phg_css_set_ep(cssh, args->op, args->data);
+   if (ws_list != NULL && ep != NULL) {
+      for (; ws_list->wsh != NULL; ws_list++) {
+         if (ws_list->wsh->move_ep != NULL) {
+            (*ws_list->wsh->move_ep)(ws_list->wsh, ep);
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * phg_copy_all_els
+ *
+ * DESCR:	Copy all elements in structure and update workstations
+ * RETURNS:	N/A
+ */
+
+void phg_copy_all_els(
+   Css_handle cssh,
+   Pint struct_id
+   )
+{
+   El_handle ep;
+   Struct_handle str;
+   Css_ws_list ws_list;
+
+   if ((str = CSS_STRUCT_EXISTS(PHG_CSS, struct_id)) != NULL) {
+      ws_list = CSS_GET_WS_ON(CSS_CUR_STRUCTP(PHG_CSS));
+      /* Get the element pointer before it changes. */
+      ep = CSS_CUR_ELP(PHG_CSS);
+      if (phg_css_copy_struct(PHG_CSS, str) && ep && ws_list) {
+         for (; ws_list->wsh != NULL; ws_list++) {
+              (*ws_list->wsh->copy_struct)(ws_list->wsh, ep);
+         }
       }
    }
 }
