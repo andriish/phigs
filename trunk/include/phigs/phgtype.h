@@ -24,6 +24,12 @@
 #include <stdint.h>
 #include <sys/types.h>
 
+#include "phigs.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef TRUE
 #define TRUE     1
 #endif
@@ -228,5 +234,9 @@ typedef struct _Ws           *Ws_handle;
     ((_sc)->size >= (_size) ? (_sc)->buf \
         : phg_grow_scratch( (_sc), (unsigned)(_size) ))
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* _phgtype_h */
 

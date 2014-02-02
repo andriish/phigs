@@ -74,6 +74,7 @@ SOFTWARE.
 #include <phigs/private/phgP.h>
 #include <phigs/util.h>
 #include <phigs/ws.h>
+#include <phigs/private/wsb.h>
 #include <phigs/private/wsglP.h>
 #include <phigs/private/wsxP.h>
 #include <phigs/css.h>

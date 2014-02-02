@@ -21,6 +21,12 @@
 #ifndef _mat_h
 #define _mat_h
 
+#include <string.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define PHG_COPY_MAT(to, from) \
    memcpy(to, from, sizeof(Pmatrix3));
 
@@ -54,5 +60,9 @@ int phg_tranpts3(Pmatrix3 m, int n, Ppoint3 *p, Ppoint3 *r);
 void phg_tranpt4(Ppoint4 *p, Pmatrix3 m, Ppoint4 *r);
 void phg_tranpts4(Pmatrix3 m, int n, Ppoint4 *p, Ppoint4 *r);
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* _mat_h */
 

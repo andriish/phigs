@@ -21,6 +21,10 @@
 #ifndef _sin_qP_h
 #define _sin_qP_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define SIN_Q_SIZE                      500
 
 #define SIN_Q_NO_OVERFLOW               0
@@ -242,6 +246,10 @@ void phg_sin_q_set_event_notify_proc(
     Sin_event_queue *queue,
     void (*proc)(void)
     );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _sinqP_h */
 

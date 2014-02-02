@@ -21,10 +21,9 @@
 #ifndef _hdlP_h
 #define _hdlP_h
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/private/cssP.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*******************************************************************************
  * hdl_create
@@ -75,6 +74,10 @@ int hdl_generic_elmt(
    caddr_t argdata,
    Css_el_op op
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _hdlP_h */
 

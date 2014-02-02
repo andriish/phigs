@@ -21,12 +21,20 @@
 #ifndef _phg_dt_h
 #define _phg_dt_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define PDT_NPC_XMIN           0.0
 #define PDT_NPC_YMIN           0.0
 #define PDT_NPC_ZMIN           0.0
 #define PDT_NPC_XMAX           1.0
 #define PDT_NPC_YMAX           1.0
 #define PDT_NPC_ZMAX           1.0
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _phg_dt_h */
 

@@ -63,6 +63,7 @@ SOFTWARE.
 
 ******************************************************************/
 
+#include <stdlib.h>
 #include <sys/types.h>
 #include <phigs/phg.h>
 #include <phigs/ws.h>

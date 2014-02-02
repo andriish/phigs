@@ -21,11 +21,9 @@
 #ifndef _phgP_h
 #define _phgP_h
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <phigs/ws.h>
-#include <phigs/phg.h>
-#include <phigs/private/cssP.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define ARGS_ELMT_SIZE(ARG) \
    ((Phg_args_add_el *) (ARG))->el_size
@@ -252,5 +250,9 @@ int phg_echo_limits_valid(
 extern char phg_default_window_name[];
 extern char phg_default_icon_name[];
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* _phg_p */
 

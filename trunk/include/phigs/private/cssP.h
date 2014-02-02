@@ -63,10 +63,32 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 ******************************************************************/
 
-#ifndef PHG_CSS_INTERNAL_H_INCLUDED
-#define PHG_CSS_INTERNAL_H_INCLUDED
+#ifndef _cssP_h
+#define _cssP_h
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define CSS_MEM_BLOCKSIZE	1024
+
+/* opcodes for handling structure element data */
+typedef enum {
+    CSS_EL_CREATE,
+    CSS_EL_REPLACE,
+    CSS_EL_COPY,
+    CSS_EL_AR_TO_CSS,
+    CSS_EL_CSS_TO_AR,
+    CSS_EL_FREE,
+    CSS_EL_INQ_CONTENT,
+    CSS_EL_INQ_TYPE_SIZE
+} Css_el_op;
+
+typedef enum {
+    CSS_WS_APPEAR,
+    CSS_WS_POST,
+    CSS_WS_BOTH
+} Css_ws_list_op;
 
 #define CSS_MEM_BLOCK(cssh, nbytes, blockptr, blocktype)		\
   { unsigned _size = (nbytes);\
@@ -124,23 +146,9 @@ SOFTWARE.
     if (_ep1 && _ep2)							\
 	phg_css_delete_el((cssh), PHG_ARGS_EMPTY_STRUCT, &_data, _ep1, _ep2); }
 
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
-/* opcodes for handling structure element data */
-typedef enum {
-    CSS_EL_CREATE,
-    CSS_EL_REPLACE,
-    CSS_EL_COPY,
-    CSS_EL_AR_TO_CSS,
-    CSS_EL_CSS_TO_AR,
-    CSS_EL_FREE,
-    CSS_EL_INQ_CONTENT,
-    CSS_EL_INQ_TYPE_SIZE
-} Css_el_op;
+#endif /* _cssP_h */
 
-typedef enum {
-    CSS_WS_APPEAR,
-    CSS_WS_POST,
-    CSS_WS_BOTH
-} Css_ws_list_op;
-
-#endif

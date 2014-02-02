@@ -21,7 +21,9 @@
 #ifndef _sofas3P_h
 #define _sofas3P_h
 
-#include <phigs/phigs.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*******************************************************************************
  * sofas3_head
@@ -127,6 +129,10 @@ void sofas3_print(
 void sofas3_list(
    void *pdata
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _sofas3P_h */
 

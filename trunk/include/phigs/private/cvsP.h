@@ -23,6 +23,10 @@
 
 #include <X11/Xlib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define SIN_MAX_DEV_TRIGGERS   10
 #define SIN_NUM_DEV_NUMS       5
 #define SIN_NUM_DEV_CLASSES    6
@@ -284,6 +288,10 @@ void phg_sin_cvs_destroy(
 Sin_window_table* phg_sin_cvs_create(
     Sin_input_ws *ws
     );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _cvsP_h */
 

@@ -21,6 +21,10 @@
 #ifndef _ftn_h
 #define _ftn_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define FTN_NAME(NAME)                   NAME##_
 
 #define FTN_SUBROUTINE(NAME)             void \
@@ -39,6 +43,10 @@
                                          int NAME_len
 #define FTN_CHARACTER_GET(NAME)          NAME_str
 #define FTN_CHARACTER_LEN(NAME)          NAME_len
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _ftn_h */
 

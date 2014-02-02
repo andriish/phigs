@@ -21,6 +21,10 @@
 #ifndef _phigsfunc_h
 #define _phigsfunc_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define		Pfn_open_phigs			(0)
 #define		Pfn_close_phigs			(1)
 #define		Pfn_open_ws			(2)
@@ -225,6 +229,10 @@
 #define         Pfn_set_light_src_rep           (340)
 
 #define         Pfn_INQUIRY                     (1000)
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _phigsfunc_h */
 

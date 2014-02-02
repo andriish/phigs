@@ -24,7 +24,14 @@
 #include <sys/types.h>
 #include <X11/Xlib.h>
 #include <X11/Intrinsic.h>
-#include <phigs/private/sinqP.h>
+
+#include "phigs.h"
+#include "ws_type.h"
+#include "private/sinqP.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define SIN_EVT_ACKNOWLEDGE    0x0001
 
@@ -474,6 +481,10 @@ void phg_sin_resize_dev(
     XRectangle *old_rect,
     XRectangle *new_rect
     );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _sin_h */
 

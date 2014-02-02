@@ -21,8 +21,13 @@
 #ifndef _ws_inp_h
 #define _ws_inp_h
 
-#include <phigs/sin.h>
-#include <phigs/util.h>
+#include "phigs.h"
+#include "sin.h"
+#include "util.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
    Pint         num;
@@ -319,6 +324,10 @@ void phg_wsx_destroy_overlay(
     Window overlay,
     Drawable parent
     );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _ws_inp_h */
 

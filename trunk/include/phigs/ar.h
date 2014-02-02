@@ -23,6 +23,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef VAX
 #define PHG_AR_HOST_FLOAT_FORMAT 0x2
 #else /* !VAX */
@@ -224,6 +228,10 @@ void phg_inq_ar_conflicting(
     Phg_args_q_conflicting *args,
     Phg_ret *ret
     );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _ar_h */
 

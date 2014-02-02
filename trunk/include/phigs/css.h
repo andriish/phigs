@@ -22,8 +22,13 @@
 #define _css_h
 
 #include <sys/types.h>
-#include <phigs/phg.h>
-#include <phigs/private/cssP.h>
+
+#include "phg.h"
+#include "private/cssP.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define NUM_EL_TYPES           PELEM_NUM_EL_TYPES
 
@@ -298,5 +303,9 @@ int phg_css_copy_ws_lists(Css_handle cssh,
 int phg_css_ws_posted(Struct_handle structp, Ws_handle wsh);
 int phg_css_ws_appearances(Struct_handle structp, Ws_handle wsh);
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* _css_h */
 

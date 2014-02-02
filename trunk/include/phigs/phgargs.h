@@ -21,10 +21,15 @@
 #ifndef _phgargs_h
 #define _phgargs_h
 
-#include <phigs/util.h>
-#include <phigs/ws_type.h>
 #include <X11/Xlib.h>
 #include <GL/glx.h>
+
+#include "util.h"
+#include "ws_type.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum {
     PHG_ARGS_LNREP,
@@ -264,5 +269,9 @@ typedef struct {
    Pstruct_net_source src;
 } Phg_args_q_conflicting;
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* _phgargs_h */
 

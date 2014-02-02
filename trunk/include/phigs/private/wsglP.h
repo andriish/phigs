@@ -22,11 +22,11 @@
 #define _wsglP_h
 
 #include <stdint.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/ws.h>
-#include <phigs/util.h>
 #include <GL/gl.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define WS_CLEAR_AREA_OFFSET   2.0
 #define WS_FILL_AREA_OFFSET    1.0
@@ -1067,6 +1067,10 @@ void wsgl_update_light_src_state(
 
 extern Phg_font *fnt_fonts[];
 extern unsigned char *wsgl_hatch_tbl[];
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _wsglP_h */
 

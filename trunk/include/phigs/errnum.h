@@ -23,6 +23,13 @@
  * Automatically generated file, do not edit.
  */
 
+#ifndef _errnum_h
+#define _errnum_h
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define	ERRN500	-500
 #define	ERRN501	-501
 #define	ERRN200	-200
@@ -236,3 +243,10 @@
 #define	ERR2004	2004
 #define	ERR2005	2005
 #define	ERR2006	2006
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* _errnum_h */
+

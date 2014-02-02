@@ -21,7 +21,9 @@
 #ifndef _fasd3P_h
 #define _fasd3P_h
 
-#include <phigs/phigs.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*******************************************************************************
  * fasd3_head
@@ -72,6 +74,10 @@ void fasd3_normal3(
    Pvec3 *norm,
    Pfasd3 *fasd3
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _fasd3P_h */
 

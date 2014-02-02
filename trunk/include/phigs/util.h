@@ -22,12 +22,17 @@
 #define _util_h
 
 #include <sys/types.h>
-#include <phigs/util/list.h>
-#include <phigs/util/stk.h>
-#include <phigs/util/htab.h>
-#include <phigs/util/mat.h>
-#include <phigs/util/nset.h>
-#include <phigs/util/conv.h>
+
+#include "util/list.h"
+#include "util/stk.h"
+#include "util/htab.h"
+#include "util/mat.h"
+#include "util/nset.h"
+#include "util/conv.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*******************************************************************************
  * phg_grow_scratch
@@ -63,5 +68,9 @@ int phg_mtime(
    time_t *tm_val
    );
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* _util_h */
 

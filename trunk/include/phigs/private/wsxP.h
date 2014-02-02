@@ -24,6 +24,10 @@
 #include <X11/Xlib.h>
 #include <GL/glx.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*******************************************************************************
  * phg_wsx_create
  *
@@ -184,6 +188,10 @@ int phg_wstx_init(
    Wst *wst,
    Pws_cat category
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _wsxP_h */
 

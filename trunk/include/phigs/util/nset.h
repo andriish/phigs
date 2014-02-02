@@ -23,6 +23,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
    unsigned max_names;
    unsigned num_chunks;
@@ -195,6 +199,10 @@ int phg_nset_names_is_empty_all(
 void phg_nset_print(
    Nameset nset
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _nset_h */
 
