@@ -8,7 +8,7 @@ ADD_LIBRARY(phigs
     sin.c sinq.c sin_evt.c sin_ws.c sin_cvs.c sin_val.c sin_cho.c sin_str.c
     sin_dev.c
     fnt.c fnt_mroman.c fnt_roman.c
-    ar.c ar_conv.c ar_hier.c ar_ops.c
+    phg_swap.c ar.c ar_conv.c ar_hier.c ar_ops.c
     wsgl.c wsgl_attr.c wsgl_hatch.c
     wsgl_clear.c wsgl_fill.c wsgl_edge.c wsgl_marker.c wsgl_line.c wsgl_text.c
     wsgl_extattr.c wsgl_light.c

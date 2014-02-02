@@ -249,6 +249,7 @@ int phg_echo_limits_valid(
 
 extern char phg_default_window_name[];
 extern char phg_default_icon_name[];
+extern Phg_conv phg_swap_tbl[];
 
 #ifdef __cplusplus
 }

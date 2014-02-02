@@ -66,6 +66,7 @@ SOFTWARE.
 #include <stdio.h>
 
 #include "phg.h"
+#include "private/phgP.h"
 #include "util.h"
 #include "ar.h"
 #include "private/arP.h"
@@ -276,18 +277,14 @@ void phg_ar_convert_elements(
 		type = head->elementType;
 		length = head->length;
 	    }
-#ifdef TODO
-	    (*cPEXOutputCmd[type])(swp, ptr);
-#endif
+	    (*phg_swap_tbl)(swp, ptr);
 	    
 	} else {
 	
 	    /* we are writing to an archive, so we must 'encode' */
 	    type = head->elementType;
 	    length = head->length;
-#ifdef TODO
-	    (*uPEXOutputCmd[type])(swp, ptr);
-#endif
+	    (*phg_swap_tbl[type])(swp, ptr);
 	    
 	}
 	

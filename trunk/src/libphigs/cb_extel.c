@@ -925,13 +925,13 @@ void pset_face_disting_mode(
       }
       else {
          args.el_type = PELEM_FACE_DISTING_MODE;
-         args.el_size = sizeof(Pdisting_mode);
+         args.el_size = sizeof(Pint);
          if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
             args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &disting_mode, args.el_size);
+            *((Pint *) args.el_data) = (Pint) disting_mode;
             phg_add_el(PHG_CSS, &args);
          }
       }

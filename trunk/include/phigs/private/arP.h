@@ -94,6 +94,17 @@ void phg_ar_convert_afs(
     );
 
 /******************************************************************************
+ * phg_ar_convert_afi
+ *
+ * DESCR:       Convert Archive Index
+ * RETURNS:     N/A
+ */
+
+void phg_ar_convert_afi(
+    Phg_ar_index *index
+    );
+
+/******************************************************************************
  * phg_ar_convert_afie
  *
  * DESCR:       Convert Archive Index Entries

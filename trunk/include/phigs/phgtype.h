@@ -51,6 +51,8 @@ typedef struct {
    Phg_conv_float conv_float;
 } Phg_swap;
 
+typedef void (*Phg_conv)(Phg_swap *swp, void *data);
+
 typedef struct {
    uint16_t elementType;
    uint16_t length;

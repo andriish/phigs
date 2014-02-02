@@ -178,10 +178,8 @@ int phg_ar_write_afd(
     d.version = 1;
     d.length  = txtlen;
  
-#ifdef TODO
     /* Change binary format */
     phg_ar_convert_afd(&d);
-#endif
  
     /* Write the afd element */
     if (write(arh->fd, (char *)&d, sizeof(d)) != sizeof(d)) 
@@ -220,10 +218,8 @@ int phg_ar_read_afd(
     phg_ar_set_conversion((int)d.format, PHG_AR_HOST_BYTE_ORDER |
 					 PHG_AR_HOST_FLOAT_FORMAT);
  
-#ifdef TODO
     /* Convert to host format */
     phg_ar_convert_afd(&d);
-#endif
  
     if (d.length != 0) {
     
@@ -363,10 +359,8 @@ int phg_ar_read_toc(
 			return(1);
     }
 
-#ifdef TODO
     /* Convert to host format */
     phg_ar_convert_afi(&toc->head);
-#endif
  
     toc->entry =(Phg_ar_index_entry *) malloc((unsigned)toc->head.length);
     if ((toc == NULL) ||
@@ -377,10 +371,8 @@ int phg_ar_read_toc(
 	return(1);
     }
 
-#ifdef TODO
     /* Convert to host format */
     phg_ar_convert_afie((int)toc->head.numUsed, toc->entry);
-#endif
  
     /* Read remaining AFI elements, chain them together in memory */
     while( toc->head.nextpos != 0 ) {
@@ -398,10 +390,8 @@ int phg_ar_read_toc(
 	    return(1);
         }
  
-#ifdef TODO
         /* Convert to host format */
         phg_ar_convert_afi(&tmp->head);
-#endif
  
         tmp->entry = (Phg_ar_index_entry *) malloc((unsigned)tmp->head.length);
         if ((tmp->entry == NULL) ||
@@ -412,10 +402,8 @@ int phg_ar_read_toc(
 	    return(1);
         }
  
-#ifdef TODO
         /* Convert to host format */
         phg_ar_convert_afie((int)tmp->head.numUsed, tmp->entry);
-#endif
  
         toc = tmp;
     }
@@ -459,9 +447,7 @@ int phg_ar_write_toc(
         if (convert) {
             afi = toc->head;
             afiptr = &afi;
-#ifdef TODO
             phg_ar_convert_afi(afiptr);
-#endif
  
             entries = (Phg_ar_index_entry *)malloc((unsigned)toc->head.length);
 	    
@@ -472,9 +458,7 @@ int phg_ar_write_toc(
                    toc->entry,
 		   (size_t)(toc->head.length));
 
-#ifdef TODO
             phg_ar_convert_afie((int)toc->head.numAvail, entries);
-#endif
         } else {
             afiptr  = &toc->head;
             entries = toc->entry;
@@ -609,18 +593,14 @@ int phg_ar_read_struct_from_archive(
     if (read(arh->fd, (char *)&begstr, sizeof(begstr)) != sizeof(begstr) )
         return(1);
  
-#ifdef TODO
     phg_ar_convert_bse(&begstr);
-#endif
  
     /* read this structure */
     if (read(arh->fd, mem, (int)begstr.length) != begstr.length )
         return(1);
  
-#ifdef TODO
     /* Convert to host format */
     phg_ar_convert_elements((int)entry->nelts, mem, PHG_AR_READING_ARCHIVE);
-#endif
  
     return(0);
 }
@@ -648,9 +628,7 @@ static void update_block(
     /* Convert to archive binary format */
     phg_ar_set_conversion(PHG_AR_HOST_BYTE_ORDER + PHG_AR_HOST_FLOAT_FORMAT, 
 			  (int)arh->format);
-#ifdef TODO
     phg_ar_convert_afs(&f);
-#endif
  
     /* Seek to this blocks position */
     (void) lseek(fd, (off_t)entry->position, L_SET);
@@ -854,17 +832,13 @@ int phg_ar_write_struct_to_archive(
     begstr.id     = str;
     begstr.nelts  = nelts;
  
-#ifdef TODO
     phg_ar_convert_bse(&begstr);
-#endif
     
     if (write(arh->fd, (char *)&begstr, sizeof(begstr)) != sizeof(begstr) )
         return(1);
  
-#ifdef TODO
     /* convert to archive format */
     phg_ar_convert_elements((int)entry->nelts, mem, PHG_AR_WRITING_ARCHIVE);
-#endif
 
     if (write(arh->fd, mem, nbytes) != nbytes )
         return(1);
