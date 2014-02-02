@@ -23,9 +23,8 @@
 #include <string.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/css.h>
+
+#include "phg.h"
 
 #define INT_STYLE     PSTYLE_SOLID
 #define EDGE_FLAG     PEDGE_ON

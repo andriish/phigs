@@ -242,3 +242,4 @@ unsigned char *wsgl_hatch_tbl[] = {
    wsgl_hatch_horvertcross,
    wsgl_hatch_diagonalcross
 };
+

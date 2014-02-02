@@ -70,11 +70,12 @@ SOFTWARE.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <phigs/phg.h>
-#include <phigs/ws.h>
-#include <phigs/sin.h>
-#include <phigs/private/sinP.h>
-#include <phigs/private/cvsP.h>
+
+#include "phg.h"
+#include "ws.h"
+#include "sin.h"
+#include "private/sinP.h"
+#include "private/cvsP.h"
 
 /*******************************************************************************
  * phg_sin_destroy

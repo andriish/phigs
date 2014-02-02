@@ -67,11 +67,12 @@ SOFTWARE.
 #include <stdlib.h>
 #include <assert.h>
 #include <X11/Xos.h>
-#include <phigs/phg.h>
-#include <phigs/css.h>
-#include <phigs/private/cssP.h>
-#include <phigs/private/phgP.h>
-#include <phigs/alloc.h>
+
+#include "phg.h"
+#include "css.h"
+#include "private/cssP.h"
+#include "private/phgP.h"
+#include "alloc.h"
 
 static void css_rm_from_refer_sets(Struct_handle edit_struct,
                                    El_handle elptr);

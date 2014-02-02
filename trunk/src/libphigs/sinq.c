@@ -69,9 +69,10 @@ SOFTWARE.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/sin.h>
-#include <phigs/private/sinP.h>
+
+#include "phg.h"
+#include "sin.h"
+#include "private/sinP.h"
 
 /*******************************************************************************
  * phg_sin_q_enque_free_event

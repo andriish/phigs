@@ -20,8 +20,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/util/list.h>
+
+#include "phg.h"
+#include "util/list.h"
 
 /*******************************************************************************
  * list_init

@@ -20,8 +20,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/private/wsxP.h>
+
+#include "phg.h"
+#include "private/wsxP.h"
 
 /*******************************************************************************
  * phg_wst_create

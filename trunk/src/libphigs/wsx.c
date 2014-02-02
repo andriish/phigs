@@ -22,10 +22,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <X11/Xlib.h>
-#include <phigs/phg.h>
-#include <phigs/ws.h>
-#include <phigs/private/wsglP.h>
-#include <phigs/private/wsxP.h>
+
+#include "phg.h"
+#include "ws.h"
+#include "private/wsglP.h"
+#include "private/wsxP.h"
 
 /*******************************************************************************
  * phg_wsx_create

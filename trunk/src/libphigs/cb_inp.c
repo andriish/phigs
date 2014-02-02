@@ -20,10 +20,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/private/sinqP.h>
-#include <phigs/private/wsxP.h>
+
+#include "phg.h"
+#include "private/phgP.h"
+#include "private/sinqP.h"
+#include "private/wsxP.h"
 
 /*******************************************************************************
  * input_ws_open

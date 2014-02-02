@@ -69,12 +69,13 @@ SOFTWARE.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/ws_type.h>
-#include <phigs/sin.h>
-#include <phigs/private/sinP.h>
-#include <phigs/private/cvsP.h>
-#include <phigs/private/evtP.h>
+
+#include "phg.h"
+#include "ws_type.h"
+#include "sin.h"
+#include "private/sinP.h"
+#include "private/cvsP.h"
+#include "private/evtP.h"
 
 #define NUM_COMMON_EVENTS (sizeof(common_events) / sizeof(common_events[0]))
 

@@ -94,7 +94,8 @@ SOFTWARE.
  */
 
 #include <stdint.h>
-#include <phigs/util/conv.h>
+
+#include "util/conv.h"
 
 #define VAX_EXPONENT_BIAS      0x00000081
 #define IEEE_EXPONENT_BIAS     0x0000007f

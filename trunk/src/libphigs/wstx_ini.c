@@ -26,12 +26,13 @@
 #include <GL/glu.h>
 #include <GL/glx.h>
 #include <X11/Xlib.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/ws.h>
-#include <phigs/private/wsxP.h>
-#include <phigs/private/wsb.h>
-#include <phigs/private/wsglP.h>
+
+#include "phg.h"
+#include "private/phgP.h"
+#include "ws.h"
+#include "private/wsxP.h"
+#include "private/wsb.h"
+#include "private/wsglP.h"
 
 /*******************************************************************************
  * init_output_ws_dt

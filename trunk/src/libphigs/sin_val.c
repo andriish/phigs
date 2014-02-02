@@ -69,10 +69,12 @@ SOFTWARE.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/ws_type.h>
-#include <phigs/sin.h>
-#include <phigs/private/sinP.h>
+
+#include "phg.h"
+#include "ws_type.h"
+#include "sin.h"
+#include "private/sinP.h"
+
 #ifdef REMOVED
 #include <X11/StringDefs.h>
 #include <X11/Shell.h>

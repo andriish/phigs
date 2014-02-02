@@ -22,11 +22,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <phigs/phigs.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/css.h>
-#include <phigs/ws.h>
+
+#include "phg.h"
+#include "private/phgP.h"
+#include "css.h"
+#include "ws.h"
 
 /*******************************************************************************
  * popen_ws

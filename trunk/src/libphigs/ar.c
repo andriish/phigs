@@ -71,10 +71,11 @@ SOFTWARE.
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
 #include <errno.h>
-#include <phigs/private/arP.h>
+
+#include "phg.h"
+#include "private/phgP.h"
+#include "private/arP.h"
 
 /* parameters for LSEEK */
 #ifndef L_SET

@@ -24,9 +24,8 @@
 #include <math.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/css.h>
+
+#include "phg.h"
 
 #define ANGLE_DELTA   0.1
 #define WIDTH         1.0

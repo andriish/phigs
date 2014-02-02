@@ -21,10 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/css.h>
-#include <phigs/ws.h>
+
+#include "phg.h"
 
 #define WIDTH     0.5
 #define HEIGHT    0.5

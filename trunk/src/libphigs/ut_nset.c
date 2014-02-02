@@ -22,8 +22,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <phigs/phg.h>
-#include <phigs/util/nset.h>
+
+#include "phg.h"
+#include "util/nset.h"
 
 /*******************************************************************************
  * phg_nset_create

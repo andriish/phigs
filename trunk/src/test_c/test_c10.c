@@ -24,9 +24,8 @@
 #include <sys/types.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/css.h>
+
+#include "phg.h"
 
 #define SHAPE_STRUCT 0
 #define SCENE_STRUCT 1

@@ -20,10 +20,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <phigs/phigs.h>
-#include <phigs/phg.h>
-#include <phigs/err.h>
-#include <phigs/private/errP.h>
+
+#include "phg.h"
+#include "err.h"
+#include "private/errP.h"
 
 typedef struct {
    Pint num;

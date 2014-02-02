@@ -22,20 +22,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include <math.h>
 #include <stdint.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xmu/StdCmap.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/ws.h>
-#include <phigs/util.h>
-#include <phigs/private/wsxP.h>
-#include <phigs/private/wsglP.h>
-#include <phigs/private/sofas3P.h>
+
+#include "phg.h"
+#include "private/phgP.h"
+#include "ws.h"
+#include "util.h"
+#include "private/wsxP.h"
+#include "private/wsglP.h"
+#include "private/sofas3P.h"
 
 #define LOG_INT(DATA) \
    css_print_eltype(ELMT_HEAD(DATA)->elementType); \

@@ -66,13 +66,14 @@ SOFTWARE.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <phigs/phg.h>
-#include <phigs/ws.h>
-#include <phigs/private/wsxP.h>
-#include <phigs/phg_dt.h>
-#include <phigs/private/evtP.h>
-#include <phigs/util.h>
-#include <phigs/ws_inp.h>
+
+#include "phg.h"
+#include "ws.h"
+#include "private/wsxP.h"
+#include "phg_dt.h"
+#include "private/evtP.h"
+#include "util.h"
+#include "ws_inp.h"
 
 /*******************************************************************************
  * resolve_locator

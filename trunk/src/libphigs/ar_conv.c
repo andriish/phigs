@@ -64,10 +64,11 @@ SOFTWARE.
 ******************************************************************************/
 
 #include <stdio.h>
-#include <phigs/phg.h>
-#include <phigs/util.h>
-#include <phigs/ar.h>
-#include <phigs/private/arP.h>
+
+#include "phg.h"
+#include "util.h"
+#include "ar.h"
+#include "private/arP.h"
 
 /* For in place conversions which happen in this file */
 #define CONVERT_UINT32(swp, val) \
