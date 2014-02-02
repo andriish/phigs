@@ -70,15 +70,33 @@ SOFTWARE.
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/util.h>
-#include <phigs/ws.h>
-#include <phigs/private/wsb.h>
-#include <phigs/private/wsglP.h>
-#include <phigs/private/wsxP.h>
-#include <phigs/css.h>
-#include <phigs/alloc.h>
+
+#include "phg.h"
+#include "private/phgP.h"
+#include "util.h"
+#include "ws.h"
+#include "private/wsb.h"
+#include "private/wsglP.h"
+#include "private/wsxP.h"
+#include "css.h"
+#include "alloc.h"
+
+#define WSB_NONE_POSTED(posted_ptr) \
+   ((posted_ptr)->lowest.higher == &(posted_ptr)->highest)
+
+#define WSB_SOME_POSTED(posted_ptr) \
+   ((posted_ptr)->lowest.higher != &(posted_ptr)->highest)
+
+#define WSB_CHECK_POSTED(posted_ptr) \
+        assert(((posted_ptr)->lowest.higher == &(posted_ptr)->highest) \
+                == ((posted_ptr)->highest.lower == &(posted_ptr)->lowest))
+
+#define WSB_CHECK_FOR_INTERACTION_UNDERWAY(ws, now_action_ptr)  \
+{                                                               \
+   if ( *(now_action_ptr) == PHG_UPDATE_IF_IG ||                \
+        *(now_action_ptr) == PHG_UPDATE_IF_IL)                  \
+      phg_wsb_resolve_now_action(ws, now_action_ptr);           \
+}
 
 static void wsb_load_funcs(
     Ws *ws

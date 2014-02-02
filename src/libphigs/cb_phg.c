@@ -22,15 +22,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <phigs/phigs.h>
-#include <phigs/err.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/css.h>
-#include <phigs/ws.h>
-#include <phigs/ws_type.h>
-#include <phigs/private/wsxP.h>
-#include <phigs/private/evtP.h>
+
+#include "phg.h"
+#include "private/phgP.h"
+#include "css.h"
+#include "ws.h"
+#include "ws_type.h"
+#include "private/wsxP.h"
+#include "private/evtP.h"
 
 /*******************************************************************************
  * popen_phigs

@@ -67,11 +67,12 @@ SOFTWARE.
 /* Initialise css */
 
 #include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/css.h>
-#include <phigs/private/phgP.h>
-#include <phigs/private/hdlP.h>
-#include <phigs/private/cssP.h>
+
+#include "phg.h"
+#include "css.h"
+#include "private/phgP.h"
+#include "private/hdlP.h"
+#include "private/cssP.h"
 
 #define CSS_STAB_SIZE		1009
 #define CHOICE_POPUP_STAB_SIZE	5

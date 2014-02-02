@@ -65,10 +65,11 @@ SOFTWARE.
 
 #include <stdlib.h>
 #include <sys/types.h>
-#include <phigs/phg.h>
-#include <phigs/ws.h>
-#include <phigs/ar.h>
-#include <phigs/private/arP.h>
+
+#include "phg.h"
+#include "ws.h"
+#include "ar.h"
+#include "private/arP.h"
 
 /*******************************************************************************
  * path_unique

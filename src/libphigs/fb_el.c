@@ -20,10 +20,11 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <phigs/phg.h>
-#include <phigs/css.h>
-#include <phigs/private/phgP.h>
-#include <phigs/util/ftn.h>
+
+#include "phg.h"
+#include "css.h"
+#include "private/phgP.h"
+#include "util/ftn.h"
 
 /*******************************************************************************
  * ppl

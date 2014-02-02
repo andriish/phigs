@@ -69,8 +69,9 @@ SOFTWARE.
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <phigs/phg.h>
-#include <phigs/util/htab.h>
+
+#include "phg.h"
+#include "util/htab.h"
 
 typedef struct _Htab_entry {
     int			key;

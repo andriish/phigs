@@ -66,10 +66,11 @@ SOFTWARE.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/css.h>
-#include <phigs/private/cssP.h>
-#include <phigs/alloc.h>
+
+#include "phg.h"
+#include "css.h"
+#include "private/cssP.h"
+#include "alloc.h"
 
 static void css_struct_free(Css_handle cssh, Struct_handle structp);
 static int css_get_dlist(Css_handle cssh,

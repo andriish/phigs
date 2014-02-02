@@ -66,7 +66,9 @@ SOFTWARE.
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <phigs/phg.h>
+
+#include "phg.h"
+#include "util.h"
 
 /*******************************************************************************
  * ptranslate3

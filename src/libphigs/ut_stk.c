@@ -21,10 +21,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <phigs/phg.h>
-#include <phigs/util/node.h>
-#include <phigs/util/list.h>
-#include <phigs/util/stk.h>
+
+#include "phg.h"
+#include "util/node.h"
+#include "util/list.h"
+#include "util/stk.h"
 
 typedef struct {
    Node    node;

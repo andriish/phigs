@@ -66,7 +66,8 @@ SOFTWARE.
 #include <stdlib.h>
 #include <sys/select.h>
 #include <sys/time.h>
-#include <phigs/phg.h>
+
+#include "phg.h"
 
 /*******************************************************************************
  * phg_grow_scratch

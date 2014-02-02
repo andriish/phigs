@@ -20,11 +20,12 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/css.h>
-#include <phigs/private/phgP.h>
-#include <phigs/private/cssP.h>
-#include <phigs/ws.h>
+
+#include "phg.h"
+#include "css.h"
+#include "private/phgP.h"
+#include "private/cssP.h"
+#include "ws.h"
 
 /*******************************************************************************
  * phg_attr_group_create

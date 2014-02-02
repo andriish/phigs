@@ -24,9 +24,8 @@
 #include <sys/types.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/css.h>
+
+#include "phg.h"
 
 #define WIDTH   0.8
 #define HEIGHT  0.8

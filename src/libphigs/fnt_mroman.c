@@ -43,7 +43,7 @@ Mono-spaced version of Roman Simplex font.
 
 ******************************************************************************/
 
-#include <phigs/phg.h>
+#include "phg.h"
 
 /* char: 33 '!' */
 

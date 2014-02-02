@@ -21,8 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <phigs/phg.h>
-#include <phigs/private/wsxP.h>
+
+#include "phg.h"
 
 #define STRUCT_OBJECT  0
 #define STRUCT_SCENE   1

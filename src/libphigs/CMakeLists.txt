@@ -1,10 +1,10 @@
 ADD_LIBRARY(phigs
     ut.c ut_mat.c ut_list.c ut_htab.c ut_nset.c ut_stk.c ut_conv.c
     css_ini.c css_stb.c css_set.c css_str.c css_el.c css_inq.c css_pr.c
-    css_ws.c
-    phg.c phg_attr.c hdl.c phg_psl.c phg_wst.c phg_err.c phg_errnum.c
+    css_ws.c phg.c phg_attr.c
+    hdl.c err.c err_num.c psl.c
     wsb.c wsb_lut.c ws_inp.c
-    wsx.c wsx_util.c wstx_ini.c wsx_inp.c
+    wst.c wsx.c wsx_util.c wstx_ini.c wsx_inp.c
     sin.c sinq.c sin_evt.c sin_ws.c sin_cvs.c sin_val.c sin_cho.c sin_str.c
     sin_dev.c
     fnt.c fnt_mroman.c fnt_roman.c

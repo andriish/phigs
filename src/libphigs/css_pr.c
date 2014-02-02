@@ -66,9 +66,10 @@ SOFTWARE.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/css.h>
-#include <phigs/private/cssP.h>
+
+#include "phg.h"
+#include "css.h"
+#include "private/cssP.h"
 
 static void css_print_refer_to_me(Css_set_ptr s);
 static void css_print_i_refer_to(Css_set_ptr s);

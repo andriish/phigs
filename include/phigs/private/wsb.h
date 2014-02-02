@@ -25,23 +25,6 @@
 extern "C" {
 #endif
 
-#define WSB_NONE_POSTED(posted_ptr) \
-   ((posted_ptr)->lowest.higher == &(posted_ptr)->highest)
-
-#define WSB_SOME_POSTED(posted_ptr) \
-   ((posted_ptr)->lowest.higher != &(posted_ptr)->highest)
-
-#define WSB_CHECK_POSTED(posted_ptr) \
-        assert(((posted_ptr)->lowest.higher == &(posted_ptr)->highest) \
-                == ((posted_ptr)->highest.lower == &(posted_ptr)->lowest))
-
-#define WSB_CHECK_FOR_INTERACTION_UNDERWAY(ws, now_action_ptr)	\
-{								\
-   if ( *(now_action_ptr) == PHG_UPDATE_IF_IG ||		\
-        *(now_action_ptr) == PHG_UPDATE_IF_IL)			\
-      phg_wsb_resolve_now_action(ws, now_action_ptr);		\
-}
-
 Ws* phg_wsb_open_ws(
     Phg_args_open_ws *args,
     Phg_ret *ret

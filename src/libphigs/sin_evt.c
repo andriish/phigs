@@ -20,8 +20,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/private/evtP.h>
+
+#include "phg.h"
+#include "private/evtP.h"
 
 static char *eventNames[] = {
    "Illegal Event",

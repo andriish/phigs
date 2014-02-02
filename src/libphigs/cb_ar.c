@@ -20,10 +20,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <phigs/phg.h>
-#include <phigs/css.h>
-#include <phigs/ar.h>
-#include <phigs/private/phgP.h>
+
+#include "phg.h"
+#include "css.h"
+#include "ar.h"
+#include "private/phgP.h"
  
 /*******************************************************************************
  * valid_ar_fname

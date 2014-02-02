@@ -21,12 +21,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-#include <GL/gl.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/ws.h>
-#include <phigs/private/wsglP.h>
+
+#include "phg.h"
+#include "private/phgP.h"
+#include "ws.h"
+#include "private/wsglP.h"
 
 extern Phg_font fnt_mroman;
 extern Phg_font fnt_roman;

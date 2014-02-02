@@ -22,14 +22,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <phigs/phg.h>
-#include <phigs/private/phgP.h>
-#include <phigs/ws.h>
-#include <phigs/ws_inp.h>
-#include <phigs/private/wsb.h>
-#include <phigs/private/wsglP.h>
-#include <phigs/css.h>
-#include <phigs/alloc.h>
+
+#include "phg.h"
+#include "private/phgP.h"
+#include "ws.h"
+#include "ws_inp.h"
+#include "private/wsb.h"
+#include "private/wsglP.h"
+#include "css.h"
+#include "alloc.h"
 
 #define HASH_SIZE 10
 

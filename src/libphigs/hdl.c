@@ -20,10 +20,11 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <phigs/phg.h>
-#include <phigs/css.h>
-#include <phigs/private/phgP.h>
-#include <phigs/private/hdlP.h>
+
+#include "phg.h"
+#include "css.h"
+#include "private/phgP.h"
+#include "private/hdlP.h"
 
 /*******************************************************************************
  * hdl_create

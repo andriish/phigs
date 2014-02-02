@@ -20,8 +20,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <phigs/phigs.h>
-#include <phigs/phg.h>
+
+#include "phg.h"
 
 /*******************************************************************************
  * phg_psl_create

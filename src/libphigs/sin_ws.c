@@ -66,10 +66,10 @@ SOFTWARE.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <phigs/phg.h>
-#include <phigs/sin.h>
-#include <phigs/private/sinP.h>
-#include <X11/keysym.h>
+
+#include "phg.h"
+#include "sin.h"
+#include "private/sinP.h"
 
 /*******************************************************************************
  * phg_sin_ws_window_event_proc

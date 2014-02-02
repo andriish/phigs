@@ -45,15 +45,14 @@ typedef struct {
     int sfd;
 } Err_remote_data;
 
-typedef struct {
+typedef struct _Err_struct {
     Perr_mode mode;
     Perr_mode err_state;
     int       cur_func_num;
-    int       errno;
-    void      (*buf_func)();
-    void      (*flush_func)();
-    void      (*report_func)();
-    void      (*destroy_func)();
+    void      (*buf_func)(struct _Err_struct *erh, Pint errnum);
+    void      (*flush_func)(struct _Err_struct *erh);
+    void      (*report_func)(struct _Err_struct *erh, Pint errnum);
+    void      (*destroy_func)(struct _Err_struct *erh);
     union {
 	Err_local_data  local;
 	Err_client_data	client;

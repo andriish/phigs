@@ -21,9 +21,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>
-#include <phigs/phg.h>
-#include <phigs/private/evtP.h>
-#include <phigs/private/wsxP.h>
+
+#include "phg.h"
+#include "private/evtP.h"
+#include "private/wsxP.h"
 
 /*******************************************************************************
  * phg_wsx_input_dispatch_next
