@@ -21,7 +21,11 @@
 #ifndef _attr_h
 #define _attr_h
 
-#include <phigs/phigs.h>
+#include "phigs.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
    Pline_bundle_plus   line_bundle;
@@ -130,6 +134,10 @@ void phg_attr_group_set_int_bundle(
    Pattr_group *attr_group,
    Pint_bundle_plus *int_bundle
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _attr_h */
 

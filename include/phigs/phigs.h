@@ -21,11 +21,11 @@
 #ifndef _phigs_h
 #define _phigs_h
 
+#include <sys/types.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <stdlib.h>
 
 /* Max name length */
 #define PHIGS_MAX_NAME_LEN      255

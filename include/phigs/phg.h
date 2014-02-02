@@ -21,28 +21,28 @@
 #ifndef _phg_h
 #define _phg_h
 
+#include "phigs.h"
+#include "phgtype.h"
+#include "err.h"
+#include "phgargs.h"
+#include "phgretdata.h"
+#include "util.h"
+#include "errnum.h"
+#include "css.h"
+#include "attr.h"
+#include "ws_inp.h"
+#include "ws.h"
+#include "ws_type.h"
+#include "phigsfunc.h"
+#include "psl.h"
+#include "phg_dt.h"
+#include "sin.h"
+#include "private/evtP.h"
+#include "ar.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <phigs/phigs.h>
-#include <phigs/phgtype.h>
-#include <phigs/err.h>
-#include <phigs/phgargs.h>
-#include <phigs/phgretdata.h>
-#include <phigs/util.h>
-#include <phigs/errnum.h>
-#include <phigs/css.h>
-#include <phigs/attr.h>
-#include <phigs/ws_inp.h>
-#include <phigs/ws.h>
-#include <phigs/ws_type.h>
-#include <phigs/phigsfunc.h>
-#include <phigs/psl.h>
-#include <phigs/phg_dt.h>
-#include <phigs/sin.h>
-#include <phigs/private/evtP.h>
-#include <phigs/ar.h>
 
 #define PHG_NUM_EVENTS         35
 
@@ -77,5 +77,5 @@ extern Phg_handle phg;
 }
 #endif /* __cplusplus */
 
-#endif
+#endif /* _phg_h */
 

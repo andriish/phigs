@@ -21,6 +21,12 @@
 #ifndef _phgretdata_h
 #define _phgretdata_h
 
+#include "phigs.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
    Psearch_status status;
    Pint           found_el;
@@ -143,5 +149,9 @@ typedef struct {
    Phg_ret_data data;
 } Phg_ret;
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* _phgretdata_h */
 

@@ -19,6 +19,7 @@
 ******************************************************************************/
 
 #include <string.h>
+#include <stdlib.h>
 #include <phigs/phg.h>
 #include <phigs/css.h>
 #include <phigs/private/phgP.h>

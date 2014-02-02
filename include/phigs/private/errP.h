@@ -21,6 +21,10 @@
 #ifndef _errP_h
 #define _errP_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*******************************************************************************
  * phg_get_funcname
  *
@@ -42,6 +46,10 @@ char* phg_get_funcname(
 char* phg_get_errmsg(
    Pint errnum
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _errP_h */
 

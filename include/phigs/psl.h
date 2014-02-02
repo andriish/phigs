@@ -21,6 +21,13 @@
 #ifndef _psl_h
 #define _psl_h
 
+#include "phigs.h"
+#include "ws_type.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define MAX_NO_OPEN_WS                         10
 #define MAX_NO_OPEN_ARFILES                    10
 
@@ -280,6 +287,10 @@ void phg_psl_rem_ar(
    Psl_handle psl,
    Pint arid
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _psl_h */
 

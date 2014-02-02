@@ -21,6 +21,13 @@
 #ifndef _ws_type_h
 #define _ws_type_h
 
+#include "phigs.h"
+#include "phgretdata.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Workstation types */
 #define PWST_OUTPUT_TRUE                 0
 #define PWST_OUTIN_TRUE                  1
@@ -184,6 +191,9 @@ typedef struct {
    Wst_defstring  strings[WST_MAX_NUM_STRING_DEVS];
 } Wst_input_wsdt;
 
+struct _Ws;
+struct _Phg_args_open_ws;
+
 typedef struct {
    Pws_cat    ws_category;
    Pdc_units  dev_coord_units;
@@ -199,6 +209,11 @@ typedef struct {
 
    Wst_output_wsdt out_dt;
    Wst_input_wsdt  in_dt;
+
+   struct _Ws* (*ws_open)(
+                  struct _Phg_args_open_ws *args,
+                  Phg_ret *ret
+                  );
 } Wst_phigs_dt;
 
 typedef struct {
@@ -220,9 +235,6 @@ typedef struct {
    Wst_phigs_dt    phigs_dt;
    Wst_xwin_dt     xwin_dt;
 } Wst_dt;
-
-struct _Ws;
-struct _Phg_args_open_ws;
 
 typedef struct {
    Node             node;
@@ -317,6 +329,10 @@ int phg_wst_add_ws_type(
 void phg_wst_remove_ws_types(
    void
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _ws_type_h */
 

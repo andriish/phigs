@@ -30,6 +30,7 @@
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
 #include <phigs/private/wsxP.h>
+#include <phigs/private/wsb.h>
 #include <phigs/private/wsglP.h>
 
 /*******************************************************************************
@@ -447,6 +448,9 @@ int phg_wstx_init(
          return FALSE;
       }
    }
+
+   /* Set open method */
+   dt->ws_open = phg_wsb_open_ws;
 
 #ifdef DEBUG
    printf("Added workstation type with coords: %f %f %f\n",

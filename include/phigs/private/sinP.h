@@ -21,6 +21,10 @@
 #ifndef _sinP_h
 #define _sinP_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define SIN_EVENT_NOT_ENQUED_FLAG       0x1
 #define SIN_EVENT_ENQUED_FLAG           0x2
 #define SIN_EVENT_NOTIFIED_FLAG         0x4
@@ -414,6 +418,10 @@ void phg_sin_dev_destroy_devices(
 void phg_sin_dev_init_devices(
     Sin_input_ws *ws
     );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _sinP_h */
 

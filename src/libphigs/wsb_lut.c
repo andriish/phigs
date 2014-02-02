@@ -26,6 +26,7 @@
 #include <phigs/private/phgP.h>
 #include <phigs/ws.h>
 #include <phigs/ws_inp.h>
+#include <phigs/private/wsb.h>
 #include <phigs/private/wsglP.h>
 #include <phigs/css.h>
 #include <phigs/alloc.h>

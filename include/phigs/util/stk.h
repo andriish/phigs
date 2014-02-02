@@ -23,6 +23,10 @@
 
 #include <sys/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct _Stk;
 typedef struct _Stk *Stack;
 
@@ -109,6 +113,10 @@ int stack_peek(
    Stack stack,
    caddr_t data
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _stk_h */
 

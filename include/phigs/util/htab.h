@@ -21,6 +21,10 @@
 #ifndef _htabP_h
 #define _htabP_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct _Htab;
 typedef struct _Htab *Hash_table;
 
@@ -146,6 +150,10 @@ int phg_htab_next_entry(
     int *key,
     caddr_t *cdata
     );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _htabP_h */
 

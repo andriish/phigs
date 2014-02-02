@@ -21,6 +21,10 @@
 #ifndef _arP_h
 #define _arP_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define PHG_AR_FOR_ALL_TOC_ENTRIES(_arh, _e)                        \
     {                                                               \
         Phg_ar_toc *_t;                                             \
@@ -309,6 +313,10 @@ int phg_ar_inq_ancestors(
     Ppath_order order,
     Pint depth
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _arP_h */
 

@@ -23,6 +23,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*******************************************************************************
  * conv_swap_uint32
  *
@@ -99,6 +103,10 @@ void conv_swap_ieee_to_vax(
 void conv_swap_vax_to_ieee(
     float *f
     );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _conv_h */
 

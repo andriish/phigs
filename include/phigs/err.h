@@ -21,6 +21,12 @@
 #ifndef _err_h
 #define _err_h
 
+#include "phigs.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     Pint errnum;
     Pint funcnum;
@@ -177,4 +183,8 @@ void perr_hand(
    char *fname
    );
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* _err_h */

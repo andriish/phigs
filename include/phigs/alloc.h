@@ -64,8 +64,12 @@ SOFTWARE.
 
 /* Assures that allocated memory is freed when *alloc is unsuccessful */
 
-#ifndef ALLOC_INCLUDED
-#define ALLOC_INCLUDED
+#ifndef _alloc_h
+#define _alloc_h
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Use this macro to declare as many holders for malloc'd pointers as needed. */
 /* There is no error checking for exceeding the array size, so be generous. */
@@ -133,4 +137,9 @@ routine()
 }
 #endif /* EXAMPLE_USES */
 
-#endif /* ALLOC_INCLUDED */
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* _alloc_h */
+

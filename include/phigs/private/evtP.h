@@ -23,8 +23,10 @@
 
 #include <sys/types.h>
 #include <X11/Xlib.h>
-#include <phigs/phg.h>
-#include <phigs/util.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
    Node    node;
@@ -167,6 +169,10 @@ char* phg_sin_evt_name(
 void phg_sin_evt_print(
    XEvent *event
    );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _evtP_h */
 

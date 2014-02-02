@@ -21,7 +21,11 @@
 #ifndef _list_h
 #define _list_h
 
-#include <phigs/util/node.h>
+#include "node.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Macros */
 #define LIST_HEAD(pList) ( ((List *)(pList))->pHead)
@@ -175,6 +179,10 @@ Node* list_exec(
     ListExecCallback exec,
     void *arg1
     );
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _list_h */
 

@@ -82,7 +82,7 @@ void popen_ws(
             args.icon_name = phg_default_icon_name;
 
             /* Open workstation */
-            PHG_WSID(ws_id) = phg_wsb_open_ws(&args, &ret);
+            PHG_WSID(ws_id) = (*wst->desc_tbl.phigs_dt.ws_open)(&args, &ret);
             if (PHG_WSID(ws_id) == NULL) {
                ERR_REPORT(PHG_ERH, ERR900);
             }

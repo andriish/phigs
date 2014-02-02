@@ -21,6 +21,10 @@
 #ifndef _node_h
 #define _node_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Macros */
 #define NODE_NEXT(pNode) ( ((Node *)(pNode))->pNext)
 #define NODE_PREV(pNode) ( ((Node *)(pNode))->pPrev)
@@ -37,6 +41,10 @@ typedef struct nodeType
     struct nodeType *pPrev;
     int             key;
 } Node;
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _node_h */
 
