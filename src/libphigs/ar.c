@@ -463,11 +463,12 @@ void phg_ar_retrieve(
         cur_struct_state = PSL_STRUCT_STATE(PHG_PSL);
         if (cur_struct_state == PSTRUCT_ST_STOP)
         {
-            cur_open_struct = PHG_PSL->open_struct;
+            cur_open_struct = PSL_OPEN_STRUCT(PHG_PSL);
             cur_elem_ptr = CSS_INQ_EL_INDEX(PHG_CSS);
         }
-        cur_edit_mode = PHG_PSL->edit_mode;
-        PHG_PSL->edit_mode = PEDIT_INSERT;
+        cur_edit_mode = PSL_EDIT_MODE(PHG_PSL);
+        phg_set_edit_mode(PHG_CSS, PEDIT_INSERT);
+        PSL_EDIT_MODE(PHG_PSL) = PEDIT_INSERT;
 
 	/* Create new structure and add the elements. */
 	if (phg_css_open_struct(PHG_CSS, struct_id) == NULL) {
@@ -492,7 +493,8 @@ void phg_ar_retrieve(
         phg_close_struct(PHG_CSS);
 
         /* Restore things */
-        PHG_PSL->edit_mode = cur_edit_mode;
+        phg_set_edit_mode(PHG_CSS, cur_edit_mode);
+        PSL_EDIT_MODE(PHG_PSL) = cur_edit_mode;
         if (cur_struct_state == PSTRUCT_ST_STOP)
         {
 	    phg_css_open_struct(PHG_CSS, cur_open_struct);

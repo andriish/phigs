@@ -1722,6 +1722,42 @@ void pclose_struct(
    );
 
 /*******************************************************************************
+ * pchange_struct_id
+ *
+ * DESCR:       Changes structure id
+ * RETURNS:     N/A
+ */
+
+void pchange_struct_id(
+   Pint orig_struct_id,
+   Pint result_struct_id
+   );
+
+/*******************************************************************************
+ * pchange_struct_refs
+ *
+ * DESCR:       Changes structure references
+ * RETURNS:     N/A
+ */
+
+void pchange_struct_refs(
+   Pint orig_struct_id,
+   Pint result_struct_id
+   );
+
+/*******************************************************************************
+ * pchange_struct_id_refs
+ *
+ * DESCR:       Changes structure ids and references
+ * RETURNS:     N/A
+ */
+
+void pchange_struct_id_refs(
+   Pint orig_struct_id,
+   Pint result_struct_id
+   );
+
+/*******************************************************************************
  * pset_edit_mode
  *
  * DESCR:       Set structure edit mode
@@ -1729,7 +1765,7 @@ void pclose_struct(
  */
 
 void pset_edit_mode(
-   Pedit_mode mode
+   Pedit_mode edit_mode
    );
 
 /*******************************************************************************
@@ -1829,6 +1865,40 @@ void pempty_struct(
    );
 
 /*******************************************************************************
+ * pdel_struct
+ *
+ * DESCR:       Delete structure
+ * RETURNS:     N/A
+ */
+
+void pdel_struct(
+   Pint struct_id
+   );
+
+/*******************************************************************************
+ * pdel_struct_net
+ *
+ * DESCR:       Delete structure network
+ * RETURNS:     N/A
+ */
+
+void pdel_struct_net(
+   Pint struct_id,
+   Pref_flag ref_flag
+   );
+
+/*******************************************************************************
+ * pdel_all_structs
+ *
+ * DESCR:       Delete all structures
+ * RETURNS:     N/A
+ */
+
+void pdel_all_structs(
+   void
+   );
+
+/*******************************************************************************
  * pcopy_all_elems_struct
  *
  * DESCR:       Copies the elements of another structure into the open
@@ -1865,6 +1935,18 @@ void pinq_open_struct(
    Pint *err_ind,
    Popen_struct_status *status,
    Pint *struct_id
+   );
+
+/*******************************************************************************
+ * pinq_edit_mode
+ *
+ * DESCR:       Get structure edit mode
+ * RETURNS:     N/A
+ */
+
+void pinq_edit_mode(
+   Pint *err_ind,
+   Pedit_mode *edit_mode
    );
 
 /*******************************************************************************

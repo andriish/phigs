@@ -62,7 +62,7 @@ void popen_ar_file(
    Phg_ret ret;
    char *fname;
 
-   if (phg_entry_check(ERR2, Pfn_open_ar_file)) {
+   if (phg_entry_check(PHG_ERH, ERR2, Pfn_open_ar_file)) {
       if (phg_psl_inq_ar_open(PHG_PSL, archive_id)) {
          ERR_REPORT(PHG_ERH, ERR402);
       }
@@ -108,7 +108,7 @@ void pclose_ar_file(
    Pint archive_id
    )
 {
-   if (phg_entry_check(ERR7, Pfn_close_ar_file)) {
+   if (phg_entry_check(PHG_ERH, ERR7, Pfn_close_ar_file)) {
       if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
          ERR_REPORT(PHG_ERH, ERR7);
       }
@@ -134,7 +134,7 @@ void pset_conf_res(
    Pconf_res retrieval_res
    )
 {
-   if (phg_entry_check(ERR2, Pfn_set_conf_res)) {
+   if (phg_entry_check(PHG_ERH, ERR2, Pfn_set_conf_res)) {
       PSL_ARCHIVE_CONFLICT(PHG_PSL) = archive_res;
       PSL_RETRIEVE_CONFLICT(PHG_PSL) = retrieval_res;
    }
@@ -154,7 +154,7 @@ void par_structs(
 {
    Phg_args_ar_info args;
 
-   if (phg_entry_check(ERR7, Pfn_ar_structs)) {
+   if (phg_entry_check(PHG_ERH, ERR7, Pfn_ar_structs)) {
       if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
          ERR_REPORT(PHG_ERH, ERR7);
       }
@@ -185,7 +185,7 @@ void par_struct_nets(
 {
    Phg_args_ar_info args;
 
-   if (phg_entry_check(ERR7, Pfn_ar_struct_nets)) {
+   if (phg_entry_check(PHG_ERH, ERR7, Pfn_ar_struct_nets)) {
       if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
          ERR_REPORT(PHG_ERH, ERR7);
       }
@@ -215,7 +215,7 @@ void par_all_structs(
 {
    Phg_args_ar_info args;
 
-   if (phg_entry_check(ERR7, Pfn_ar_all_structs)) {
+   if (phg_entry_check(PHG_ERH, ERR7, Pfn_ar_all_structs)) {
       if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
          ERR_REPORT(PHG_ERH, ERR7);
       }
@@ -248,7 +248,7 @@ void pret_struct_ids(
 {
    Phg_ret ret;
 
-   if (phg_entry_check(ERR7, Pfn_ret_struct_ids)) {
+   if (phg_entry_check(PHG_ERH, ERR7, Pfn_ret_struct_ids)) {
       if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
          ERR_REPORT(PHG_ERH, ERR7);
       }
@@ -299,7 +299,7 @@ void pret_structs(
 {
    Phg_args_ar_info args;
 
-   if (phg_entry_check(ERR7, Pfn_ret_structs)) {
+   if (phg_entry_check(PHG_ERH, ERR7, Pfn_ret_structs)) {
       if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
          ERR_REPORT(PHG_ERH, ERR7);
       }
@@ -330,7 +330,7 @@ void pret_struct_nets(
 {
    Phg_args_ar_info args;
 
-   if (phg_entry_check(ERR7, Pfn_ret_struct_nets)) {
+   if (phg_entry_check(PHG_ERH, ERR7, Pfn_ret_struct_nets)) {
       if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
          ERR_REPORT(PHG_ERH, ERR7);
       }
@@ -360,7 +360,7 @@ void pret_all_structs(
 {
    Phg_args_ar_info args;
 
-   if (phg_entry_check(ERR7, Pfn_ret_all_structs)) {
+   if (phg_entry_check(PHG_ERH, ERR7, Pfn_ret_all_structs)) {
       if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
          ERR_REPORT(PHG_ERH, ERR7);
       }
@@ -390,7 +390,7 @@ void pdel_structs_ar(
 {
    Phg_args_ar_info args;
 
-   if (phg_entry_check(ERR7, Pfn_del_structs_ar)) {
+   if (phg_entry_check(PHG_ERH, ERR7, Pfn_del_structs_ar)) {
       if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
          ERR_REPORT(PHG_ERH, ERR7);
       }
@@ -420,7 +420,7 @@ void pdel_struct_nets_ar(
 {
    Phg_args_ar_info args;
 
-   if (phg_entry_check(ERR7, Pfn_del_struct_nets_ar)) {
+   if (phg_entry_check(PHG_ERH, ERR7, Pfn_del_struct_nets_ar)) {
       if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
          ERR_REPORT(PHG_ERH, ERR7);
       }
@@ -449,7 +449,7 @@ void pdel_all_structs_ar(
 {
    Phg_args_ar_info args;
 
-   if (phg_entry_check(ERR7, Pfn_del_all_structs_ar)) {
+   if (phg_entry_check(PHG_ERH, ERR7, Pfn_del_all_structs_ar)) {
       if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
          ERR_REPORT(PHG_ERH, ERR7);
       }
@@ -475,7 +475,7 @@ void pinq_ar_st(
    Par_st *ar_st
    )
 {
-   if (phg_entry_check(0, Pfn_INQUIRY)) {
+   if (phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *ar_st = PSL_AR_STATE(PHG_PSL);
    }
    else {
@@ -496,7 +496,7 @@ void pinq_conf_res(
    Pconf_res *retrieval_res
    )
 {
-   if (phg_entry_check(0, Pfn_INQUIRY)) {
+   if (phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = 0;
       *archive_res = PSL_ARCHIVE_CONFLICT(PHG_PSL);
       *retrieval_res = PSL_RETRIEVE_CONFLICT(PHG_PSL);

@@ -131,7 +131,7 @@ void pclose_phigs(
    void
    )
 {
-   if (phg_entry_check(ERR4, Pfn_close_phigs)) {
+   if (phg_entry_check(PHG_ERH, ERR4, Pfn_close_phigs)) {
       if ((PSL_WS_STATE(PHG_PSL) == PWS_ST_WSCL) &&
           (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STCL) &&
           (PSL_AR_STATE(PHG_PSL) == PST_ARCL)) {

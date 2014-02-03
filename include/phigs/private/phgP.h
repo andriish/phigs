@@ -147,6 +147,89 @@ void phg_close_struct(
    );
 
 /*******************************************************************************
+ * phg_change_struct_id
+ *
+ * DESCR:       Change structure id
+ * RETURNS:     N/A
+ */
+
+void phg_change_struct_id(
+   Css_handle cssh,
+   Phg_args_change_struct *args
+   );
+
+/*******************************************************************************
+ * phg_change_struct_refs
+ *
+ * DESCR:       Change structure references
+ * RETURNS:     N/A
+ */
+
+void phg_change_struct_refs(
+   Css_handle cssh,
+   Phg_args_change_struct *args
+   );
+
+/*******************************************************************************
+ * phg_change_struct_idrefs
+ *
+ * DESCR:       Change structure ids and references
+ * RETURNS:     N/A
+ */
+
+void phg_change_struct_idrefs(
+   Css_handle cssh,
+   Phg_args_change_struct *args
+   );
+
+/*******************************************************************************
+ * phg_del_struct
+ *
+ * DESCR:       Delete structure and update all workstations posted to
+ * RETURNS:     N/A
+ */
+
+void phg_del_struct(
+   Css_handle cssh,
+   Pint struct_id
+   );
+
+/*******************************************************************************
+ * phg_del_struct_net
+ *
+ * DESCR:       Delete structure network and update all workstations posted to
+ * RETURNS:     N/A
+ */
+
+void phg_del_struct_net(
+   Css_handle cssh,
+   Phg_args_del_struct_net *args
+   );
+
+/*******************************************************************************
+ * phg_del_all_structs
+ *
+ * DESCR:       Delete all structures and update all workstations posted to
+ * RETURNS:     N/A
+ */
+
+void phg_del_all_structs(
+   Css_handle cssh
+   );
+
+/*******************************************************************************
+ * phg_set_edit_mode
+ *
+ * DESCR:       Set structure edit mode
+ * RETURNS:     N/A
+ */
+
+void phg_set_edit_mode(
+   Css_handle cssh,
+   Pedit_mode edit_mode
+   );
+
+/*******************************************************************************
  * phg_set_el_ptr
  *
  * DESCR:       Set element pointer and update workstations
@@ -203,6 +286,7 @@ void phg_get_colr_ind(
  */
 
 int phg_entry_check(
+   Err_handle erh,
    int err,
    int fn_id
    );

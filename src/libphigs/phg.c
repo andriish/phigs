@@ -153,6 +153,209 @@ void phg_close_struct(
 }
 
 /*******************************************************************************
+ * phg_change_struct_id
+ *
+ * DESCR:	Change structure id
+ * RETURNS:	N/A
+ */
+
+void phg_change_struct_id(
+   Css_handle cssh,
+   Phg_args_change_struct *args
+   )
+{
+   Struct_handle orig, result;
+   Css_ws_list ws_list;
+
+   orig = CSS_STRUCT_EXISTS(cssh, args->orig_id);
+   result = CSS_STRUCT_EXISTS(cssh, args->new_id);
+   if (!(orig != NULL) && (result != NULL) && (orig == result)) {
+      ws_list =
+         phg_css_change_struct_id(cssh, args, orig, result, args->posted);
+      if (ws_list != NULL) {
+         for (; ws_list->wsh != NULL; ws_list++) {
+            (*ws_list->wsh->conditional_redraw)(ws_list->wsh);
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * phg_change_struct_refs
+ *
+ * DESCR:	Change structure references
+ * RETURNS:	N/A
+ */
+
+void phg_change_struct_refs(
+   Css_handle cssh,
+   Phg_args_change_struct *args
+   )
+{
+   Struct_handle orig, result;
+   Css_ws_list ws_list;
+
+   orig = CSS_STRUCT_EXISTS(cssh, args->orig_id);
+   result = CSS_STRUCT_EXISTS(cssh, args->new_id);
+   if (!(orig != NULL) && (result != NULL) && (orig == result)) {
+      ws_list =
+         phg_css_change_struct_refs(cssh, args, orig, result);
+      if (ws_list != NULL) {
+         for (; ws_list->wsh != NULL; ws_list++) {
+            (*ws_list->wsh->conditional_redraw)(ws_list->wsh);
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * phg_change_struct_idrefs
+ *
+ * DESCR:	Change structure ids and references
+ * RETURNS:	N/A
+ */
+
+void phg_change_struct_idrefs(
+   Css_handle cssh,
+   Phg_args_change_struct *args
+   )
+{
+   Struct_handle orig, result;
+   Css_ws_list ws_list;
+
+   orig = CSS_STRUCT_EXISTS(cssh, args->orig_id);
+   result = CSS_STRUCT_EXISTS(cssh, args->new_id);
+   if (!(orig != NULL) && (result != NULL) && (orig == result)) {
+      ws_list =
+         phg_css_change_struct_idrefs(cssh, args, orig, result);
+      if (ws_list != NULL) {
+         for (; ws_list->wsh != NULL; ws_list++) {
+            (*ws_list->wsh->conditional_redraw)(ws_list->wsh);
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * phg_del_struct
+ *
+ * DESCR:	Delete structure and update all workstations posted to
+ * RETURNS:	N/A
+ */
+
+void phg_del_struct(
+   Css_handle cssh,
+   Pint struct_id
+   )
+{
+   Ws_handle cb_list[MAX_NO_OPEN_WS];
+   Ws_handle *wsp;
+   Struct_handle structh;
+   Css_ws_list ws_list;
+
+   wsp = cb_list;
+   structh = CSS_STRUCT_EXISTS(cssh, struct_id);
+   if (structh != NULL) {
+      ws_list = CSS_GET_WS_ON(structh);
+      if (ws_list != NULL) {
+         for (; ws_list->wsh != NULL; ws_list++) {
+            if ((*ws_list->wsh->delete_struct)(ws_list->wsh, structh,
+                                               WS_PRE_CSS_DELETE)) {
+               *wsp++ = ws_list->wsh;
+            }
+         }
+      }
+
+      phg_css_delete_struct(cssh, structh);
+
+      while (wsp-- != cb_list) {
+         (*(*wsp)->delete_struct)(*wsp, structh, WS_POST_CSS_DELETE);
+      }
+   }
+}
+
+/*******************************************************************************
+ * phg_del_struct_net
+ *
+ * DESCR:	Delete structure network and update all workstations posted to
+ * RETURNS:	N/A
+ */
+
+void phg_del_struct_net(
+   Css_handle cssh,
+   Phg_args_del_struct_net *args
+   )
+{
+   Ws_handle cb_list[MAX_NO_OPEN_WS];
+   Ws_handle *wsp;
+   Struct_handle structh;
+   Css_ws_list ws_list;
+
+   wsp = cb_list;
+   structh = CSS_STRUCT_EXISTS(cssh, args->id);
+   if (structh != NULL) {
+      ws_list = CSS_GET_WS_ON(structh);
+      if (ws_list != NULL) {
+         for (; ws_list->wsh != NULL; ws_list++) {
+            if ((*ws_list->wsh->delete_struct_net)(ws_list->wsh, structh,
+                                                   args->flag,
+                                                   WS_PRE_CSS_DELETE)) {
+               *wsp++ = ws_list->wsh;
+            }
+         }
+      }
+
+      phg_css_delete_net(cssh, structh, args->flag);
+
+      while (wsp-- != cb_list) {
+         (*(*wsp)->delete_struct_net)(*wsp, structh, args->flag,
+                                      WS_POST_CSS_DELETE);
+      }
+   }
+}
+
+/*******************************************************************************
+ * phg_del_all_structs
+ *
+ * DESCR:	Delete all structures and update all workstations posted to
+ * RETURNS:	N/A
+ */
+
+void phg_del_all_structs(
+   Css_handle cssh
+   )
+{
+   Pint ws_id;
+   Ws_handle wsh;
+
+   for (ws_id = 0; ws_id < MAX_NO_OPEN_WS; ws_id++) {
+      if (phg_psl_get_ws_info(PHG_PSL, ws_id) != NULL) {
+         wsh = PHG_WSID(ws_id);
+         if (wsh->out_ws.model.b.cssh == cssh) {
+            (*wsh->delete_all_structs)(wsh);
+         }
+      }
+   }
+
+   phg_css_delete_all_structs(cssh);
+}
+
+/*******************************************************************************
+ * phg_set_edit_mode
+ *
+ * DESCR:	Set structure edit mode
+ * RETURNS:	N/A
+ */
+
+void phg_set_edit_mode(
+   Css_handle cssh,
+   Pedit_mode edit_mode
+   )
+{
+   CSS_EDIT_MODE(cssh) = edit_mode;
+}
+
+/*******************************************************************************
  * phg_set_el_ptr
  *
  * DESCR:	Set element pointer and update workstations
@@ -267,6 +470,7 @@ void phg_get_colr_ind(
  */
 
 int phg_entry_check(
+   Err_handle erh,
    int err,
    int fn_id
    )
@@ -274,8 +478,8 @@ int phg_entry_check(
    int status;
 
    if (PSL_SYS_STATE(PHG_PSL) == PSYS_ST_PHOP) {
-       ERR_FLUSH(PHG_ERH);
-       ERR_SET_CUR_FUNC(PHG_ERH, fn_id);
+       ERR_FLUSH(erh);
+       ERR_SET_CUR_FUNC(erh, fn_id);
        status = 1;
    }
    else {
@@ -302,7 +506,7 @@ Psl_ws_info* phg_ws_open(
 {
    Psl_ws_info *wsinfo = NULL;
 
-   if (phg_entry_check(ERR3, fn_id)) {
+   if (phg_entry_check(PHG_ERH, ERR3, fn_id)) {
       if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
          ERR_REPORT(PHG_ERH, ERR3);
       }

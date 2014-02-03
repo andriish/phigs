@@ -36,7 +36,7 @@ void popen_struct(
    Pint struct_id
    )
 {
-   if (phg_entry_check(ERR6, Pfn_open_struct)) {
+   if (phg_entry_check(PHG_ERH, ERR6, Pfn_open_struct)) {
       if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STCL) {
          if (phg_css_open_struct(PHG_CSS, struct_id) != NULL) {
             PSL_STRUCT_STATE(PHG_PSL) = PSTRUCT_ST_STOP;
@@ -61,7 +61,7 @@ void pclose_struct(
    void
    )
 {
-   if (phg_entry_check(ERR5, Pfn_close_struct)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_close_struct)) {
       if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STOP) {
          phg_close_struct(PHG_CSS);
          PSL_STRUCT_STATE(PHG_PSL) = PSTRUCT_ST_STCL;
@@ -73,6 +73,69 @@ void pclose_struct(
 }
 
 /*******************************************************************************
+ * pchange_struct_id
+ *
+ * DESCR:	Changes structure id
+ * RETURNS:	N/A
+ */
+
+void pchange_struct_id(
+   Pint orig_struct_id,
+   Pint result_struct_id
+   )
+{
+   Phg_args_change_struct args;
+
+   if (phg_entry_check(PHG_ERH, ERR2, Pfn_change_struct_id)) {
+      args.orig_id = orig_struct_id;
+      args.new_id = result_struct_id;
+      phg_change_struct_id(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pchange_struct_refs
+ *
+ * DESCR:	Changes structure references
+ * RETURNS:	N/A
+ */
+
+void pchange_struct_refs(
+   Pint orig_struct_id,
+   Pint result_struct_id
+   )
+{
+   Phg_args_change_struct args;
+
+   if (phg_entry_check(PHG_ERH, ERR2, Pfn_change_struct_refs)) {
+      args.orig_id = orig_struct_id;
+      args.new_id = result_struct_id;
+      phg_change_struct_refs(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pchange_struct_id_refs
+ *
+ * DESCR:	Changes structure ids and references
+ * RETURNS:	N/A
+ */
+
+void pchange_struct_id_refs(
+   Pint orig_struct_id,
+   Pint result_struct_id
+   )
+{
+   Phg_args_change_struct args;
+
+   if (phg_entry_check(PHG_ERH, ERR2, Pfn_change_struct_id_refs)) {
+      args.orig_id = orig_struct_id;
+      args.new_id = result_struct_id;
+      phg_change_struct_idrefs(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
  * pset_edit_mode
  *
  * DESCR:	Set structure edit mode
@@ -80,12 +143,12 @@ void pclose_struct(
  */
 
 void pset_edit_mode(
-   Pedit_mode mode
+   Pedit_mode edit_mode
    )
 {
-   if (phg_entry_check(ERR2, Pfn_set_edit_mode)) {
-      CSS_EDIT_MODE(PHG_CSS) = mode;
-      PSL_EDIT_MODE(PHG_PSL) = mode;
+   if (phg_entry_check(PHG_ERH, ERR2, Pfn_set_edit_mode)) {
+      phg_set_edit_mode(PHG_CSS, edit_mode);
+      PSL_EDIT_MODE(PHG_PSL) = edit_mode;
    }
 }
 
@@ -104,7 +167,7 @@ void pset_elem_ptr(
 {
    Phg_args_set_el_ptr args;
 
-   if (phg_entry_check(ERR5, Pfn_set_elem_ptr)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_elem_ptr)) {
       if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STOP) {
          args.op = PHG_ARGS_SETEP_ABS;
          args.data = elem_ptr_value;
@@ -132,7 +195,7 @@ void poffset_elem_ptr(
 {
    Phg_args_set_el_ptr args;
 
-   if (phg_entry_check(ERR5, Pfn_offset_elem_ptr)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_offset_elem_ptr)) {
       if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STOP) {
          args.op = PHG_ARGS_SETEP_REL;
          args.data = elem_ptr_offset;
@@ -163,7 +226,7 @@ void pset_elem_ptr_label(
 {
    Phg_args_set_el_ptr args;
 
-   if (phg_entry_check(ERR5, Pfn_set_elem_ptr_label)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_elem_ptr_label)) {
       if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STOP) {
          args.op = PHG_ARGS_SETEP_LABEL;
          args.data = label_id;
@@ -190,7 +253,7 @@ void pdel_elem(
 {
    Phg_args_del_el args;
 
-   if (phg_entry_check(ERR5, Pfn_del_elem)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_del_elem)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -217,7 +280,7 @@ void pdel_elem_range(
 {
    Phg_args_del_el args;
 
-   if (phg_entry_check(ERR5, Pfn_del_elem_range)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_del_elem_range)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -246,7 +309,7 @@ void pdel_elems_labels(
 {
    Phg_args_del_el args;
 
-   if (phg_entry_check(ERR5, Pfn_del_elems_labels)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_del_elems_labels)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -272,10 +335,63 @@ void pempty_struct(
 {
    Phg_args_del_el args;
 
-   if (phg_entry_check(ERR2, Pfn_empty_struct)) {
+   if (phg_entry_check(PHG_ERH, ERR2, Pfn_empty_struct)) {
       args.op = PHG_ARGS_EMPTY_STRUCT;
       args.data.struct_id = struct_id;
       phg_del_el(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pdel_struct
+ *
+ * DESCR:	Delete structure
+ * RETURNS:	N/A
+ */
+
+void pdel_struct(
+   Pint struct_id
+   )
+{
+   if (phg_entry_check(PHG_ERH, ERR2, Pfn_del_struct)) {
+      phg_del_struct(PHG_CSS, struct_id);
+   }
+}
+
+/*******************************************************************************
+ * pdel_struct_net
+ *
+ * DESCR:	Delete structure network
+ * RETURNS:	N/A
+ */
+
+void pdel_struct_net(
+   Pint struct_id,
+   Pref_flag ref_flag
+   )
+{
+   Phg_args_del_struct_net args;
+
+   if (phg_entry_check(PHG_ERH, ERR2, Pfn_del_struct_net)) {
+      args.id = struct_id;
+      args.flag = ref_flag;
+      phg_del_struct_net(PHG_CSS, &args);
+   }
+}
+
+/*******************************************************************************
+ * pdel_all_structs
+ *
+ * DESCR:	Delete all structures
+ * RETURNS:	N/A
+ */
+
+void pdel_all_structs(
+   void
+   )
+{
+   if (phg_entry_check(PHG_ERH, ERR2, Pfn_del_all_struct)) {
+      phg_del_all_structs(PHG_CSS);
    }
 }
 
@@ -293,7 +409,7 @@ void pcopy_all_elems_struct(
    Pint struct_id
    )
 {
-   if (phg_entry_check(ERR5, Pfn_copy_all_elems_struct)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_copy_all_elems_struct)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -315,7 +431,7 @@ void pinq_elem_ptr(
    Pint *elem_ptr_value
    )
 {
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR5;
    }
    else if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
@@ -340,7 +456,7 @@ void pinq_open_struct(
    Pint *struct_id
    )
 {
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR2;
    }
    else if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
@@ -351,6 +467,27 @@ void pinq_open_struct(
       *err_ind = 0;
       *status = PSTRUCT_OPEN;
       *struct_id = CSS_CUR_STRUCT_ID(PHG_CSS);
+   }
+}
+
+/*******************************************************************************
+ * pinq_edit_mode
+ *
+ * DESCR:	Get structure edit mode
+ * RETURNS:	N/A
+ */
+
+void pinq_edit_mode(
+   Pint *err_ind,
+   Pedit_mode *edit_mode
+   )
+{
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
+      *err_ind = ERR2;
+   }
+   else {
+      *err_ind = 0;
+      *edit_mode = PSL_EDIT_MODE(PHG_PSL);
    }
 }
 
