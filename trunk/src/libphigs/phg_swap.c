@@ -71,10 +71,29 @@ static void phg_swap_int(
    void *data
    )
 {
-   uint32_t *p_idata;
+   Pint *p_idata;
 
-   p_idata = (uint32_t *) phg_swap_head(swp, data);
-   (*swp->conv_long)(p_idata);
+   p_idata = (Pint *) phg_swap_head(swp, data);
+   (*swp->conv_long)((uint32_t *) p_idata);
+}
+
+/******************************************************************************
+ * phg_swap_int2
+ *
+ * DESCR:       Swap dual integer element
+ * RETURNS:     N/A
+ */
+
+static void phg_swap_int2(
+   Phg_swap *swp,
+   void *data
+   )
+{
+   Pint *p_idata;
+
+   p_idata = (Pint *) phg_swap_head(swp, data);
+   (*swp->conv_long)((uint32_t *) p_idata);
+   (*swp->conv_long)((uint32_t *) &p_idata[1]);
 }
 
 /******************************************************************************
@@ -89,28 +108,265 @@ static void phg_swap_float(
    void *data
    )
 {
-   float *p_fdata;
+   Pfloat *p_fdata;
 
-   p_fdata = (float *) phg_swap_head(swp, data);
-   (*swp->conv_float)(p_fdata);
+   p_fdata = (Pfloat *) phg_swap_head(swp, data);
+   (*swp->conv_float)((float *) p_fdata);
+}
+
+/******************************************************************************
+ * phg_swap_float2
+ *
+ * DESCR:       Swap dual float element
+ * RETURNS:     N/A
+ */
+
+static void phg_swap_float2(
+   Phg_swap *swp,
+   void *data
+   )
+{
+   Pfloat *p_fdata;
+
+   p_fdata = (Pfloat *) phg_swap_head(swp, data);
+   (*swp->conv_float)((float *) p_fdata);
+   (*swp->conv_float)((float *) &p_fdata[1]);
+}
+
+/******************************************************************************
+ * phg_swap_int_list
+ *
+ * DESCR:       Swap integer list element
+ * RETURNS:     N/A
+ */
+
+static void phg_swap_int_list(
+   Phg_swap *swp,
+   void *data
+   )
+{
+   Pint *p_idata;
+   Pint_list int_list;
+   Pint i;
+
+   p_idata = (Pint *) phg_swap_head(swp, data);
+
+   if (swp->fromFormat & PHG_AR_HOST_BYTE_ORDER) {
+      int_list.num_ints = p_idata[0];
+      (*swp->conv_long)((uint32_t *) p_idata);
+   }
+   else if (swp->toFormat & PHG_AR_HOST_BYTE_ORDER) {
+      (*swp->conv_long)((uint32_t *) p_idata);
+      int_list.num_ints = p_idata[0];
+   }
+   else {
+      int_list.num_ints = p_idata[0];
+   }
+
+   int_list.ints = (Pint *) &p_idata[1];
+   for (i = 0; i < int_list.num_ints; i++) {
+      (*swp->conv_long)((uint32_t *) &int_list.ints[i]);
+   }
+}
+
+/******************************************************************************
+ * phg_swap_point_list
+ *
+ * DESCR:       Swap point list element
+ * RETURNS:     N/A
+ */
+
+static void phg_swap_point_list(
+   Phg_swap *swp,
+   void *data
+   )
+{
+   Pint *p_idata;
+   Ppoint_list point_list;
+   Pint i;
+
+   p_idata = (Pint *) phg_swap_head(swp, data);
+
+   if (swp->fromFormat & PHG_AR_HOST_BYTE_ORDER) {
+      point_list.num_points = p_idata[0];
+      (*swp->conv_long)((uint32_t *) p_idata);
+   }
+   else if (swp->toFormat & PHG_AR_HOST_BYTE_ORDER) {
+      (*swp->conv_long)((uint32_t *) p_idata);
+      point_list.num_points = p_idata[0];
+   }
+   else {
+      point_list.num_points = p_idata[0];
+   }
+
+   point_list.points = (Ppoint *) &p_idata[1];
+   for (i = 0; i < point_list.num_points; i++) {
+      (*swp->conv_float)((float *) &point_list.points[i].x);
+      (*swp->conv_float)((float *) &point_list.points[i].y);
+   }
+}
+
+/******************************************************************************
+ * phg_swap_point_list3
+ *
+ * DESCR:       Swap point list 3D element
+ * RETURNS:     N/A
+ */
+
+static void phg_swap_point_list3(
+   Phg_swap *swp,
+   void *data
+   )
+{
+   Pint *p_idata;
+   Ppoint_list3 point_list;
+   Pint i;
+
+   p_idata = (Pint *) phg_swap_head(swp, data);
+
+   if (swp->fromFormat & PHG_AR_HOST_BYTE_ORDER) {
+      point_list.num_points = p_idata[0];
+      (*swp->conv_long)((uint32_t *) p_idata);
+   }
+   else if (swp->toFormat & PHG_AR_HOST_BYTE_ORDER) {
+      (*swp->conv_long)((uint32_t *) p_idata);
+      point_list.num_points = p_idata[0];
+   }
+   else {
+      point_list.num_points = p_idata[0];
+   }
+
+   point_list.points = (Ppoint3 *) &p_idata[1];
+   for (i = 0; i < point_list.num_points; i++) {
+      (*swp->conv_float)((float *) &point_list.points[i].x);
+      (*swp->conv_float)((float *) &point_list.points[i].y);
+      (*swp->conv_float)((float *) &point_list.points[i].z);
+   }
+}
+
+/******************************************************************************
+ * phg_swap_text
+ *
+ * DESCR:       Swap text element
+ * RETURNS:     N/A
+ */
+
+static void phg_swap_text(
+   Phg_swap *swp,
+   void *data
+   )
+{
+   Ppoint *p_pdata;
+
+   p_pdata = (Ppoint *) phg_swap_head(swp, data);
+   (*swp->conv_float)((float *) &p_pdata->x);
+   (*swp->conv_float)((float *) &p_pdata->y);
+}
+
+/******************************************************************************
+ * phg_swap_matrix3
+ *
+ * DESCR:       Swap matrix 3D element
+ * RETURNS:     N/A
+ */
+
+static void phg_swap_matrix3(
+   Phg_swap *swp,
+   void *data
+   )
+{
+   Pfloat *p_fdata;
+   Pint i;
+
+   p_fdata = (Pfloat *) phg_swap_head(swp, data);
+
+   for (i = 0; i < 16; i++) {
+      (*swp->conv_float)((float *) p_fdata);
+   }
+}
+
+/******************************************************************************
+ * phg_swap_local_tran3
+ *
+ * DESCR:       Swap local transformation 3D element
+ * RETURNS:     N/A
+ */
+
+static void phg_swap_local_tran3(
+   Phg_swap *swp,
+   void *data
+   )
+{
+   Pint *p_idata;
+   Pfloat *p_fdata;
+   Pint i;
+
+   p_idata = (Pint *) phg_swap_head(swp, data);
+   (*swp->conv_long)((uint32_t *) p_idata);
+   p_fdata = (Pfloat *) &p_idata[1];
+
+   for (i = 0; i < 16; i++) {
+      (*swp->conv_float)((float *) p_fdata);
+   }
+}
+
+/******************************************************************************
+ * phg_swap_gcolr
+ *
+ * DESCR:       Swap generic colour element
+ * RETURNS:     N/A
+ */
+
+static void phg_swap_gcolr(
+   Phg_swap *swp,
+   void *data
+   )
+{
+   Pint *p_idata;
+   Pfloat *p_fdata;
+   Pgcolr gcolr;
+
+   p_idata = (Pint *) phg_swap_head(swp, data);
+
+   if (swp->fromFormat & PHG_AR_HOST_BYTE_ORDER) {
+      gcolr.type = p_idata[0];
+      (*swp->conv_long)((uint32_t *) p_idata);
+   }
+   else if (swp->toFormat & PHG_AR_HOST_BYTE_ORDER) {
+      (*swp->conv_long)((uint32_t *) p_idata);
+      gcolr.type = p_idata[0];
+   }
+   else {
+      gcolr.type = p_idata[0];
+   }
+
+   if (gcolr.type == PINDIRECT) {
+      (*swp->conv_long)((uint32_t *) &p_idata[1]);
+   }
+   else if (gcolr.type == PMODEL_RGB) {
+      p_fdata = (Pfloat *) &p_idata[1];
+      (*swp->conv_float)((float *) &p_fdata[0]);
+      (*swp->conv_float)((float *) &p_fdata[1]);
+      (*swp->conv_float)((float *) &p_fdata[2]);
+   }
 }
 
 Phg_conv phg_swap_tbl[PELEM_NUM_EL_TYPES] = {
    NULL,                           /* PELEM_ALL */
    phg_swap_nil,                   /* PELEM_NIL */
-   phg_swap_nil,                   /* PELEM_ADD_NAMES_SET */
-   phg_swap_nil,                   /* PELEM_REMOVE_NAMES_SET */
-   phg_swap_nil,                   /* PELEM_FILL_AREA */
-   phg_swap_nil,                   /* PELEM_FILL_AREA3 */
+   phg_swap_int_list,              /* PELEM_ADD_NAMES_SET */
+   phg_swap_int_list,              /* PELEM_REMOVE_NAMES_SET */
+   phg_swap_point_list,            /* PELEM_FILL_AREA */
+   phg_swap_point_list3,           /* PELEM_FILL_AREA3 */
    phg_swap_nil,                   /* PELEM_FILL_AREA_SET */
    phg_swap_nil,                   /* PELEM_FILL_AREA_SET3 */
    phg_swap_nil,                   /* PELEM_FILL_AREA_SET3_DATA */
    phg_swap_nil,                   /* PELEM_SET_OF_FILL_AREA_SET3_DATA */
-   phg_swap_nil,                   /* PELEM_POLYLINE */
-   phg_swap_nil,                   /* PELEM_POLYLINE3 */
-   phg_swap_nil,                   /* PELEM_POLYMARKER */
-   phg_swap_nil,                   /* PELEM_POLYMARKER3 */
-   phg_swap_nil,                   /* PELEM_TEXT */
+   phg_swap_point_list,            /* PELEM_POLYLINE */
+   phg_swap_point_list3,           /* PELEM_POLYLINE3 */
+   phg_swap_point_list,            /* PELEM_POLYMARKER */
+   phg_swap_point_list3,           /* PELEM_POLYMARKER3 */
+   phg_swap_text,                  /* PELEM_TEXT */
    phg_swap_int,                   /* PELEM_INT_IND */
    phg_swap_int,                   /* PELEM_INT_COLR_IND */
    phg_swap_int,                   /* PELEM_INT_STYLE */
@@ -134,26 +390,26 @@ Phg_conv phg_swap_tbl[PELEM_NUM_EL_TYPES] = {
    phg_swap_int,                   /* PELEM_TEXT_FONT */
    phg_swap_int,                   /* PELEM_TEXT_PREC */
    phg_swap_int,                   /* PELEM_TEXT_PATH */
-   phg_swap_nil,                   /* PELEM_TEXT_ALIGN */
+   phg_swap_int2,                  /* PELEM_TEXT_ALIGN */
    phg_swap_float,                 /* PELEM_CHAR_HT */
    phg_swap_float,                 /* PELEM_CHAR_EXPAN */
    phg_swap_float,                 /* PELEM_CHAR_SPACE */
-   phg_swap_nil,                   /* PELEM_CHAR_UP_VEC */
+   phg_swap_float2,                /* PELEM_CHAR_UP_VEC */
    phg_swap_int,                   /* PELEM_TEXT_COLR_IND */
-   phg_swap_nil,                   /* PELEM_INDIV_ASF */
-   phg_swap_nil,                   /* PELEM_LOCAL_MODEL_TRAN3 */
-   phg_swap_nil,                   /* PELEM_GLOBAL_MODEL_TRAN3 */
+   phg_swap_int2,                  /* PELEM_INDIV_ASF */
+   phg_swap_local_tran3,           /* PELEM_LOCAL_MODEL_TRAN3 */
+   phg_swap_matrix3,               /* PELEM_GLOBAL_MODEL_TRAN3 */
    phg_swap_int,                   /* PELEM_VIEW_IND */
    phg_swap_int,                   /* PELEM_EXEC_STRUCT */
    phg_swap_int,                   /* PELEM_LABEL */
    phg_swap_int,                   /* PELEM_PICK_ID */
    phg_swap_int,                   /* PELEM_HLHSR_ID */
-   phg_swap_nil,                   /* PELEM_INT_COLR */
-   phg_swap_nil,                   /* PELEM_BACK_INT_COLR */
-   phg_swap_nil,                   /* PELEM_LINE_COLR */
-   phg_swap_nil,                   /* PELEM_MARKER_COLR */
-   phg_swap_nil,                   /* PELEM_EDGE_COLR */
-   phg_swap_nil,                   /* PELEM_TEXT_COLR */
+   phg_swap_gcolr,                 /* PELEM_INT_COLR */
+   phg_swap_gcolr,                 /* PELEM_BACK_INT_COLR */
+   phg_swap_gcolr,                 /* PELEM_LINE_COLR */
+   phg_swap_gcolr,                 /* PELEM_MARKER_COLR */
+   phg_swap_gcolr,                 /* PELEM_EDGE_COLR */
+   phg_swap_gcolr,                 /* PELEM_TEXT_COLR */
    phg_swap_nil,                   /* PELEM_LIGHT_SRC_STATE */
    phg_swap_int,                   /* PELEM_INT_SHAD_METH */
    phg_swap_int,                   /* PELEM_BACK_INT_SHAD_METH */

@@ -81,9 +81,6 @@ SOFTWARE.
 static Phg_swap  clientSwapStructure;	
 static Phg_swap  *swp = &clientSwapStructure;
 
-static int fromFormat;
-static int toFormat;
-
 typedef struct {
     Phg_conv_short s;          /* Function to convert a short */
     Phg_conv_long  l;          /* Function to convert a long */
@@ -133,9 +130,9 @@ void phg_ar_set_conversion(
     int to
     )
 {
-    toFormat = to;
-    fromFormat = from;
-    
+    swp->toFormat   = to;
+    swp->fromFormat = from;
+
     swp->conv_short = ConversionFunction[from][to].s;
     swp->conv_long  = ConversionFunction[from][to].l;
     swp->conv_float = ConversionFunction[from][to].f;
@@ -257,8 +254,9 @@ void phg_ar_convert_elements(
 	return;
 	
 
-    localswapshort = ConversionFunction[fromFormat][PHG_AR_HOST_BYTE_ORDER |
-						  PHG_AR_HOST_FLOAT_FORMAT].s;
+    localswapshort = ConversionFunction[swp->fromFormat][
+                                        PHG_AR_HOST_BYTE_ORDER |
+					PHG_AR_HOST_FLOAT_FORMAT].s;
 
     /* For each element in the structure */
     for (command = 0; command < nelts; command++) {
