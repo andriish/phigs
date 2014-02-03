@@ -39,7 +39,7 @@ void padd_names_set(
    Phg_args_add_el args;
    Pint *data;
 
-   if (phg_entry_check(ERR5, Pfn_add_names_set)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_add_names_set)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -74,7 +74,7 @@ void premove_names_set(
    Phg_args_add_el args;
    Pint *data;
 
-   if (phg_entry_check(ERR5, Pfn_remove_names_set)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_remove_names_set)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -110,7 +110,7 @@ void pset_indiv_asf(
    Phg_args_add_el args;
    Pasf_info *data;
 
-   if (phg_entry_check(ERR5, Pfn_set_indiv_asf)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_indiv_asf)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -146,7 +146,7 @@ void pset_local_tran3(
    Phg_args_add_el args;
    Pint *data;
 
-   if (phg_entry_check(ERR5, Pfn_set_local_tran3)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_local_tran3)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -180,7 +180,7 @@ void pset_global_tran3(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_global_tran3)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_global_tran3)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -212,7 +212,7 @@ void pset_view_ind(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_view_ind)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_view_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -249,7 +249,7 @@ void ptext(
    Phg_args_add_el args;
    Ppoint *data;
 
-   if (phg_entry_check(ERR5, Pfn_text)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_text)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -284,7 +284,7 @@ void ppolyline(
    Phg_args_add_el args;
    Pint *data;
 
-   if (phg_entry_check(ERR5, Pfn_polyline)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_polyline)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -320,7 +320,7 @@ void ppolyline3(
    Phg_args_add_el args;
    Pint *data;
 
-   if (phg_entry_check(ERR5, Pfn_polyline3)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_polyline3)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -356,7 +356,7 @@ void ppolymarker(
    Phg_args_add_el args;
    Pint *data;
 
-   if (phg_entry_check(ERR5, Pfn_polymarker)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_polymarker)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -392,7 +392,7 @@ void ppolymarker3(
    Phg_args_add_el args;
    Pint *data;
 
-   if (phg_entry_check(ERR5, Pfn_polymarker3)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_polymarker3)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -428,7 +428,7 @@ void pfill_area(
    Phg_args_add_el args;
    Pint *data;
 
-   if (phg_entry_check(ERR5, Pfn_fill_area)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_fill_area)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -464,7 +464,7 @@ void pfill_area3(
    Phg_args_add_el args;
    Pint *data;
 
-   if (phg_entry_check(ERR5, Pfn_fill_area3)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_fill_area3)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -503,7 +503,7 @@ void pfill_area_set(
    Pint *data;
    Ppoint *pts;
 
-   if (phg_entry_check(ERR5, Pfn_fill_area_set)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_fill_area_set)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -553,7 +553,7 @@ void pfill_area_set3(
    Pint *data;
    Ppoint3 *pts;
 
-   if (phg_entry_check(ERR5, Pfn_fill_area_set3)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_fill_area_set3)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -599,7 +599,7 @@ void plabel(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_label)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_label)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -631,7 +631,7 @@ void pset_pick_id(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_pick_id)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_pick_id)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -663,7 +663,7 @@ void pset_hlhsr_id(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_hlhsr_id)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_hlhsr_id)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -695,7 +695,7 @@ void pset_int_ind(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_int_ind)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_int_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -730,7 +730,7 @@ void pset_int_colr_ind(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_int_colr_ind)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_int_colr_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -765,7 +765,7 @@ void pset_int_style(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_int_style)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_int_style)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -797,7 +797,7 @@ void pset_int_style_ind(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_int_style)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_int_style)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -832,7 +832,7 @@ void pset_line_ind(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_line_ind)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_line_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -867,7 +867,7 @@ void pset_line_colr_ind(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_line_colr_ind)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_line_colr_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -902,7 +902,7 @@ void pset_linewidth(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_linewidth)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_linewidth)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -934,7 +934,7 @@ void pset_linetype(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_linetype)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_linetype)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -966,7 +966,7 @@ void pset_marker_ind(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_marker_ind)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_marker_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1001,7 +1001,7 @@ void pset_marker_colr_ind(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_marker_colr_ind)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_marker_colr_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1036,7 +1036,7 @@ void pset_marker_size(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_marker_size)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_marker_size)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1068,7 +1068,7 @@ void pset_marker_type(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_marker_type)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_marker_type)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1100,7 +1100,7 @@ void pset_edge_ind(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_edge_ind)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_edge_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1135,7 +1135,7 @@ void pset_edge_colr_ind(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_edge_colr_ind)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_edge_colr_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1170,7 +1170,7 @@ void pset_edgetype(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_edgetype)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_edgetype)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1202,7 +1202,7 @@ void pset_edge_flag(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_edge_flag)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_edge_flag)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1234,7 +1234,7 @@ void pset_edgewidth(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_edgewidth)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_edgewidth)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1266,7 +1266,7 @@ void pset_text_font(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_text_font)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_text_font)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1298,7 +1298,7 @@ void pset_text_prec(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_text_prec)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_text_prec)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1330,7 +1330,7 @@ void pset_text_path(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_text_path)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_text_path)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1362,7 +1362,7 @@ void pset_text_align(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_text_align)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_text_align)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1394,7 +1394,7 @@ void pset_char_ht(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_char_ht)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_char_ht)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1426,7 +1426,7 @@ void pset_char_expan(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_char_expan)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_char_expan)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1458,7 +1458,7 @@ void pset_char_space(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_char_space)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_char_space)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1490,7 +1490,7 @@ void pset_char_up_vec(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_char_up_vec)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_char_up_vec)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1522,7 +1522,7 @@ void pset_text_ind(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_text_ind)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_text_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1557,7 +1557,7 @@ void pset_text_colr_ind(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_set_text_colr_ind)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_text_colr_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -1592,7 +1592,7 @@ void pexec_struct(
 {
    Phg_args_add_el args;
 
-   if (phg_entry_check(ERR5, Pfn_exec_struct)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_exec_struct)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }

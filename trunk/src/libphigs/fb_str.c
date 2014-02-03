@@ -39,7 +39,7 @@ FTN_SUBROUTINE(popst)(
 {
    Pint struct_id = FTN_INTEGER_GET(strid);
 
-   if (phg_entry_check(ERR6, Pfn_open_struct)) {
+   if (phg_entry_check(PHG_ERH, ERR6, Pfn_open_struct)) {
       if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STCL) {
          if (phg_css_open_struct(PHG_CSS, struct_id) != NULL) {
             PSL_STRUCT_STATE(PHG_PSL) = PSTRUCT_ST_STOP;
@@ -65,7 +65,7 @@ FTN_SUBROUTINE(pclst)(
    )
 {
 
-   if (phg_entry_check(ERR5, Pfn_close_struct)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_close_struct)) {
       if (PSL_STRUCT_STATE(PHG_PSL) == PSTRUCT_ST_STOP) {
          phg_close_struct(PHG_CSS);
          PSL_STRUCT_STATE(PHG_PSL) = PSTRUCT_ST_STCL;

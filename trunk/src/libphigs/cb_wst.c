@@ -40,7 +40,7 @@ void pinq_ws_cat(
 {
    Wst *wst;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR2;
    }
    else {

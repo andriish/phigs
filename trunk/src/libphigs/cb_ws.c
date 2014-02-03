@@ -45,7 +45,7 @@ void popen_ws(
    Phg_args_open_ws args;
    Phg_ret ret;
 
-   if (phg_entry_check(ERR2, Pfn_open_ws)) {
+   if (phg_entry_check(PHG_ERH, ERR2, Pfn_open_ws)) {
       if ((ws_id < 0) || (ws_id > MAX_NO_OPEN_WS)) {
          ERR_REPORT(PHG_ERH, ERR65);
       }
@@ -572,7 +572,7 @@ void punpost_struct(
    Ws_handle wsh;
    Struct_handle structp;
 
-   if (phg_entry_check(ERR3, Pfn_unpost_struct)) {
+   if (phg_entry_check(PHG_ERH, ERR3, Pfn_unpost_struct)) {
       if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
          ERR_REPORT(PHG_ERH, ERR3);
       }
@@ -602,7 +602,7 @@ void punpost_all_structs(
 {
    Ws_handle wsh;
 
-   if (phg_entry_check(ERR3, Pfn_unpost_all_structs)) {
+   if (phg_entry_check(PHG_ERH, ERR3, Pfn_unpost_all_structs)) {
       if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
          ERR_REPORT(PHG_ERH, ERR3);
       }
@@ -831,7 +831,7 @@ void pinq_ws_st(
    Pws_st *ws_state
    )
 {
-   if (phg_entry_check(0, Pfn_INQUIRY)) {
+   if (phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *ws_state = PSL_WS_STATE(PHG_PSL);
    }
    else {
@@ -856,7 +856,7 @@ void pinq_ws_conn_type(
 {
    Psl_ws_info *ws_info;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -893,7 +893,7 @@ void pinq_open_wss(
    Pint ws_ids[MAX_NO_OPEN_WS];
    Pint n;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR2;
    }
    else {
@@ -989,7 +989,7 @@ void pinq_list_view_inds(
    Psl_ws_info *wsinfo;
    Wst_phigs_dt *dt;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -1033,7 +1033,7 @@ void pinq_list_line_inds(
    Psl_ws_info *wsinfo;
    Wst_phigs_dt *dt;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -1079,7 +1079,7 @@ void pinq_list_marker_inds(
    Psl_ws_info *wsinfo;
    Wst_phigs_dt *dt;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -1125,7 +1125,7 @@ void pinq_list_text_inds(
    Psl_ws_info *wsinfo;
    Wst_phigs_dt *dt;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -1171,7 +1171,7 @@ void pinq_list_int_inds(
    Psl_ws_info *wsinfo;
    Wst_phigs_dt *dt;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -1217,7 +1217,7 @@ void pinq_list_edge_inds(
    Psl_ws_info *wsinfo;
    Wst_phigs_dt *dt;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -1263,7 +1263,7 @@ void pinq_list_colr_inds(
    Psl_ws_info *wsinfo;
    Wst_phigs_dt *dt;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -1310,7 +1310,7 @@ void pinq_line_rep(
    Ws_handle wsh;
    Phg_ret ret;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -1372,7 +1372,7 @@ void pinq_marker_rep(
    Ws_handle wsh;
    Phg_ret ret;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -1434,7 +1434,7 @@ void pinq_text_rep(
    Ws_handle wsh;
    Phg_ret ret;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -1498,7 +1498,7 @@ void pinq_int_rep(
    Ws_handle wsh;
    Phg_ret ret;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -1560,7 +1560,7 @@ void pinq_edge_rep(
    Ws_handle wsh;
    Phg_ret ret;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
@@ -1623,7 +1623,7 @@ void pinq_colr_rep(
    Ws_handle wsh;
    Phg_ret ret;
 
-   if (!phg_entry_check(0, Pfn_INQUIRY)) {
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR3;
    }
    else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {

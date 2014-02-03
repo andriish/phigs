@@ -192,6 +192,11 @@ typedef struct {
    Phg_args_del_el_data data;
 } Phg_args_del_el;
 
+typedef struct {
+   Pint      id;
+   Pref_flag flag;
+} Phg_args_del_struct_net;
+
 typedef union {
    struct {
       Ploc3         init;

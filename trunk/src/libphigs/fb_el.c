@@ -44,7 +44,7 @@ FTN_SUBROUTINE(ppl)(
    Pint i, num_points;
    Ppoint *points;
 
-   if (phg_entry_check(ERR5, Pfn_polyline)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_polyline)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -84,7 +84,7 @@ FTN_SUBROUTINE(psplci)(
    Phg_args_add_el args;
    Pint colr_ind;
 
-   if (phg_entry_check(ERR5, Pfn_set_line_colr_ind)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_line_colr_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -121,7 +121,7 @@ FTN_SUBROUTINE(psln)(
    Phg_args_add_el args;
    Pint linetype;
 
-   if (phg_entry_check(ERR5, Pfn_set_linetype)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_linetype)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -155,7 +155,7 @@ FTN_SUBROUTINE(pslwsc)(
    Phg_args_add_el args;
    Pfloat linewidth;
 
-   if (phg_entry_check(ERR5, Pfn_set_linewidth)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_linewidth)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -194,7 +194,7 @@ FTN_SUBROUTINE(ptx)(
    Ppoint *data;
    char *char_string;
 
-   if (phg_entry_check(ERR5, Pfn_text)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_text)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
@@ -234,7 +234,7 @@ FTN_SUBROUTINE(pschh)(
    Phg_args_add_el args;
    Pfloat char_ht;
 
-   if (phg_entry_check(ERR5, Pfn_set_char_ht)) {
+   if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_char_ht)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
