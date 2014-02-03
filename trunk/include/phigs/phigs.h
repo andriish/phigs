@@ -442,7 +442,8 @@ typedef enum {
    PSWITCH_ECHO
 } Pecho_switch;
 
-typedef void *Pstore;
+struct _Pstore;
+typedef struct _Pstore *Pstore;
 
 typedef int Pint;
 typedef long Plong;
@@ -1151,6 +1152,29 @@ void popen_phigs(
 
 void pclose_phigs(
    void
+   );
+
+/*******************************************************************************
+ * pcreate_store
+ *
+ * DESCR:       Create storage object
+ * RETURNS:     N/A
+ */
+
+void pcreate_store(
+   Pint *err_ind,
+   Pstore *store
+   );
+
+/*******************************************************************************
+ * pdel_store
+ *
+ * DESCR:       Delete storage object
+ * RETURNS:     N/A
+ */
+
+void pdel_store(
+   Pstore store
    );
 
 /* See phgsargs.h for more info */

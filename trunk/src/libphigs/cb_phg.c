@@ -141,9 +141,57 @@ void pclose_phigs(
          phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
          phg_css_destroy(PHG_CSS);
          phg_psl_destroy(PHG_PSL);
+         phg_destroy_all_stores();
       }
       else  {
          ERR_REPORT(PHG_ERH, ERR4);
+      }
+   }
+}
+
+/*******************************************************************************
+ * pcreate_store
+ *
+ * DESCR:       Create storage object
+ * RETURNS:     N/A
+ */
+
+void pcreate_store(
+   Pint *err_ind,
+   Pstore *store
+   )
+{
+   *store = (Pstore) calloc(1, sizeof(struct _Pstore));
+   if (*store == NULL) {
+      *err_ind = ERR900;
+   }
+   else {
+      *err_ind = 0;
+      (*store)->next = phg_store_list;
+      phg_store_list = *store;
+   }
+}
+
+/*******************************************************************************
+ * pdel_store
+ *
+ * DESCR:       Delete storage object
+ * RETURNS:     N/A
+ */
+
+void pdel_store(
+   Pstore store
+   )
+{
+   Pstore *node;
+
+   for (node = &phg_store_list; *node != NULL; node = &(*node)->next) {
+      if (*node == store) {
+         *node = (*node)->next;
+         if (store->size > 0) {
+            free(store->buf);
+            break;
+         }
       }
    }
 }
