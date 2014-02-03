@@ -46,6 +46,8 @@ typedef void (*Phg_conv_short) (uint16_t *);
 typedef void (*Phg_conv_float) (float *);
 
 typedef struct {
+   int            fromFormat;
+   int            toFormat;
    Phg_conv_long  conv_long;
    Phg_conv_short conv_short;
    Phg_conv_float conv_float;
