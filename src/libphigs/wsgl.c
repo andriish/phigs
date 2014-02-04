@@ -959,7 +959,7 @@ void wsgl_render_element(
          break;
 
       case PELEM_GLOBAL_MODEL_TRAN3:
-         phg_mat_pack(mat3, (Pfloat *) ELMT_CONTENT(el));
+         phg_get_matrix3(mat3, ELMT_CONTENT(el));
          phg_mat_copy(wsgl->cur_struct.global_tran, mat3);
          wsgl_update_modelview(ws);
          break;
