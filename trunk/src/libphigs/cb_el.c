@@ -24,6 +24,7 @@
 #include "phg.h"
 #include "css.h"
 #include "private/phgP.h"
+#include "private/cbP.h"
 
 /*******************************************************************************
  * padd_names_set
@@ -37,23 +38,16 @@ void padd_names_set(
    )
 {
    Phg_args_add_el args;
-   Pint *data;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_add_names_set)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_ADD_NAMES_SET;
-         args.el_size = sizeof(Pint) + sizeof(Pint) * names->num_ints;
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int_list(&args, PELEM_ADD_NAMES_SET, names)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Pint *) args.el_data;
-            data[0] = names->num_ints;
-            memcpy(&data[1], names->ints, sizeof(Pint) * names->num_ints);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -72,23 +66,16 @@ void premove_names_set(
    )
 {
    Phg_args_add_el args;
-   Pint *data;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_remove_names_set)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_REMOVE_NAMES_SET;
-         args.el_size = sizeof(Pint) + sizeof(Pint) * names->num_ints;
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int_list(&args, PELEM_REMOVE_NAMES_SET, names)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Pint *) args.el_data;
-            data[0] = names->num_ints;
-            memcpy(&data[1], names->ints, sizeof(Pint) * names->num_ints);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -108,23 +95,17 @@ void pset_indiv_asf(
    )
 {
    Phg_args_add_el args;
-   Pasf_info *data;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_indiv_asf)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_INDIV_ASF;
-         args.el_size = sizeof(Pasf_info);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int2(&args, PELEM_INDIV_ASF,
+                                (Pint) asf_id, (Pint) asf_source)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Pasf_info *) args.el_data;
-            data->id = asf_id;
-            data->source = asf_source; 
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -144,23 +125,17 @@ void pset_local_tran3(
    )
 {
    Phg_args_add_el args;
-   Pint *data;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_local_tran3)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_LOCAL_MODEL_TRAN3;
-         args.el_size = sizeof(Pint) + 16 * sizeof(Pfloat);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int_matrix3(&args, PELEM_LOCAL_MODEL_TRAN3,
+                                       compose_type, local_tran)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Pint *) args.el_data;
-            data[0] = (Pint) compose_type;
-            phg_mat_unpack((Pfloat *) &data[1], local_tran);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -185,14 +160,11 @@ void pset_global_tran3(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_GLOBAL_MODEL_TRAN3;
-         args.el_size = 16 * sizeof(Pfloat);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_matrix3(&args, PELEM_GLOBAL_MODEL_TRAN3,
+                                   global_tran)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            phg_mat_unpack((Pfloat *) args.el_data, global_tran);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -220,14 +192,10 @@ void pset_view_ind(
          ERR_REPORT(PHG_ERH, ERR114);
       }
       else {
-         args.el_type = PELEM_VIEW_IND;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_VIEW_IND, view_ind)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &view_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -247,23 +215,17 @@ void ptext(
    )
 {
    Phg_args_add_el args;
-   Ppoint *data;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_text)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_TEXT;
-         args.el_size = sizeof(Ppoint) + strlen(char_string) + 1;
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_point_string(&args, PELEM_TEXT,
+                                        text_pos, char_string)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Ppoint *) args.el_data;
-            memcpy(data, text_pos, sizeof(Ppoint));
-            strcpy((char *) &data[1], char_string);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -282,24 +244,16 @@ void ppolyline(
    )
 {
    Phg_args_add_el args;
-   Pint *data;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_polyline)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_POLYLINE;
-         args.el_size = sizeof(Pint) + sizeof(Ppoint) * point_list->num_points;
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_point_list(&args, PELEM_POLYLINE, point_list)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Pint *) args.el_data;
-            data[0] = point_list->num_points;
-            memcpy(&data[1], point_list->points,
-                   sizeof(Ppoint) * point_list->num_points);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -318,24 +272,16 @@ void ppolyline3(
    )
 {
    Phg_args_add_el args;
-   Pint *data;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_polyline3)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_POLYLINE3;
-         args.el_size = sizeof(Pint) + sizeof(Ppoint3) * point_list->num_points;
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_point_list3(&args, PELEM_POLYLINE3, point_list)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Pint *) args.el_data;
-            data[0] = point_list->num_points;
-            memcpy(&data[1], point_list->points,
-                   sizeof(Ppoint3) * point_list->num_points);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -354,24 +300,16 @@ void ppolymarker(
    )
 {
    Phg_args_add_el args;
-   Pint *data;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_polymarker)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_POLYMARKER;
-         args.el_size = sizeof(Pint) + sizeof(Ppoint) * point_list->num_points;
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_point_list(&args, PELEM_POLYMARKER, point_list)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Pint *) args.el_data;
-            data[0] = point_list->num_points;
-            memcpy(&data[1], point_list->points,
-                   sizeof(Ppoint) * point_list->num_points);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -390,24 +328,16 @@ void ppolymarker3(
    )
 {
    Phg_args_add_el args;
-   Pint *data;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_polymarker3)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_POLYMARKER3;
-         args.el_size = sizeof(Pint) + sizeof(Ppoint3) * point_list->num_points;
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_point_list3(&args, PELEM_POLYMARKER3, point_list)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Pint *) args.el_data;
-            data[0] = point_list->num_points;
-            memcpy(&data[1], point_list->points,
-                   sizeof(Ppoint3) * point_list->num_points);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -426,24 +356,16 @@ void pfill_area(
    )
 {
    Phg_args_add_el args;
-   Pint *data;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_fill_area)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_FILL_AREA;
-         args.el_size = sizeof(Pint) + sizeof(Ppoint) * point_list->num_points;
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_point_list(&args, PELEM_FILL_AREA, point_list)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Pint *) args.el_data;
-            data[0] = point_list->num_points;
-            memcpy(&data[1], point_list->points,
-                   sizeof(Ppoint) * point_list->num_points);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -462,24 +384,16 @@ void pfill_area3(
    )
 {
    Phg_args_add_el args;
-   Pint *data;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_fill_area3)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_FILL_AREA3;
-         args.el_size = sizeof(Pint) + sizeof(Ppoint3) * point_list->num_points;
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_point_list3(&args, PELEM_FILL_AREA3, point_list)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Pint *) args.el_data;
-            data[0] = point_list->num_points;
-            memcpy(&data[1], point_list->points,
-                   sizeof(Ppoint3) * point_list->num_points);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -498,38 +412,17 @@ void pfill_area_set(
    )
 {
    Phg_args_add_el args;
-   Pint i, num_points;
-   Pint num_lists;
-   Pint *data;
-   Ppoint *pts;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_fill_area_set)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_FILL_AREA_SET;
-         num_lists = point_list_list->num_point_lists;
-         for (i = 0, num_points = 0; i < num_lists; i++) {
-            num_points += point_list_list->point_lists[i].num_points;
-         }
-         args.el_size = sizeof(Pint) +
-            sizeof(Pint) * num_lists + sizeof(Ppoint) * num_points;
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_point_list_list(&args, PELEM_FILL_AREA_SET,
+                                           point_list_list)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Pint *) args.el_data;
-            data[0] = num_lists;
-            data = &data[1];
-            for (i = 0; i < num_lists; i++) {
-               data[0] = point_list_list->point_lists[i].num_points;
-               pts = (Ppoint *) &data[1];
-               memcpy(pts, point_list_list->point_lists[i].points,
-                      data[0] * sizeof(Ppoint));
-               data = (Pint *) &pts[data[0]];
-            }
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -548,38 +441,17 @@ void pfill_area_set3(
    )
 {
    Phg_args_add_el args;
-   Pint i, num_points;
-   Pint num_lists;
-   Pint *data;
-   Ppoint3 *pts;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_fill_area_set3)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_FILL_AREA_SET3;
-         num_lists = point_list_list->num_point_lists;
-         for (i = 0, num_points = 0; i < num_lists; i++) {
-            num_points += point_list_list->point_lists[i].num_points;
-         }
-         args.el_size = sizeof(Pint) +
-            sizeof(Pint) * num_lists + sizeof(Ppoint3) * num_points;
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_point_list_list3(&args, PELEM_FILL_AREA_SET3,
+                                            point_list_list)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            data = (Pint *) args.el_data;
-            data[0] = num_lists;
-            data = &data[1];
-            for (i = 0; i < num_lists; i++) {
-               data[0] = point_list_list->point_lists[i].num_points;
-               pts = (Ppoint3 *) &data[1];
-               memcpy(pts, point_list_list->point_lists[i].points,
-                      data[0] * sizeof(Ppoint3));
-               data = (Pint *) &pts[data[0]];
-            }
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -604,14 +476,10 @@ void plabel(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_LABEL;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_LABEL, label_id)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &label_id, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -636,14 +504,10 @@ void pset_pick_id(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_PICK_ID;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_PICK_ID, pick_id)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &pick_id, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -668,14 +532,10 @@ void pset_hlhsr_id(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_HLHSR_ID;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_HLHSR_ID, hlhsr_id)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &hlhsr_id, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -703,14 +563,10 @@ void pset_int_ind(
          ERR_REPORT(PHG_ERH, ERR100);
       }
       else {
-         args.el_type = PELEM_INT_IND;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_INT_IND, int_ind)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &int_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -738,14 +594,10 @@ void pset_int_colr_ind(
          ERR_REPORT(PHG_ERH, ERR113);
       }
       else {
-         args.el_type = PELEM_INT_COLR_IND;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_INT_COLR_IND, colr_ind)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &colr_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -770,14 +622,10 @@ void pset_int_style(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_INT_STYLE;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_INT_STYLE, (Pint) int_style)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            *((Pint *) args.el_data) = (Pint) int_style;
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -805,14 +653,10 @@ void pset_int_style_ind(
          ERR_REPORT(PHG_ERH, ERR112);
       }
       else {
-         args.el_type = PELEM_INT_STYLE_IND;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_INT_STYLE_IND, int_style_ind)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &int_style_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -840,14 +684,10 @@ void pset_line_ind(
          ERR_REPORT(PHG_ERH, ERR100);
       }
       else {
-         args.el_type = PELEM_LINE_IND;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_LINE_IND, line_ind)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &line_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -875,14 +715,10 @@ void pset_line_colr_ind(
          ERR_REPORT(PHG_ERH, ERR113);
       }
       else {
-         args.el_type = PELEM_LINE_COLR_IND;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_LINE_COLR_IND, colr_ind)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &colr_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -907,14 +743,10 @@ void pset_linewidth(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_LINEWIDTH;
-         args.el_size = sizeof(Pfloat);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_float(&args, PELEM_LINEWIDTH, linewidth)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &linewidth, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -939,14 +771,10 @@ void pset_linetype(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_LINETYPE;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_LINETYPE, linetype)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &linetype, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -974,14 +802,10 @@ void pset_marker_ind(
          ERR_REPORT(PHG_ERH, ERR100);
       }
       else {
-         args.el_type = PELEM_MARKER_IND;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_MARKER_IND, marker_ind)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &marker_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1009,14 +833,10 @@ void pset_marker_colr_ind(
          ERR_REPORT(PHG_ERH, ERR113);
       }
       else {
-         args.el_type = PELEM_MARKER_COLR_IND;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_MARKER_COLR_IND, colr_ind)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &colr_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1041,14 +861,10 @@ void pset_marker_size(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_MARKER_SIZE;
-         args.el_size = sizeof(Pfloat);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_float(&args, PELEM_MARKER_SIZE, marker_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &marker_size, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1073,14 +889,10 @@ void pset_marker_type(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_MARKER_TYPE;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_MARKER_TYPE, marker_type)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &marker_type, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1108,14 +920,10 @@ void pset_edge_ind(
          ERR_REPORT(PHG_ERH, ERR100);
       }
       else {
-         args.el_type = PELEM_EDGE_IND;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_EDGE_IND, edge_ind)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &edge_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1143,14 +951,10 @@ void pset_edge_colr_ind(
          ERR_REPORT(PHG_ERH, ERR113);
       }
       else {
-         args.el_type = PELEM_EDGE_COLR_IND;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_EDGE_COLR_IND, colr_ind)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &colr_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1175,14 +979,10 @@ void pset_edgetype(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_EDGETYPE;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_EDGETYPE, edgetype)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &edgetype, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1207,14 +1007,10 @@ void pset_edge_flag(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_EDGE_FLAG;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_EDGE_FLAG, (Pint) edge_flag)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            *((Pint *) args.el_data) = (Pint) edge_flag;
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1239,14 +1035,10 @@ void pset_edgewidth(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_EDGEWIDTH;
-         args.el_size = sizeof(Pfloat);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_float(&args, PELEM_EDGEWIDTH, edgewidth)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &edgewidth, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1271,14 +1063,10 @@ void pset_text_font(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_TEXT_FONT;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_TEXT_FONT, font)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &font, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1303,14 +1091,10 @@ void pset_text_prec(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_TEXT_PREC;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_TEXT_PREC, (Pint) prec)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            *((Pint *) args.el_data) = (Pint) prec;
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1335,14 +1119,10 @@ void pset_text_path(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_TEXT_PATH;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_TEXT_PATH, (Pint) text_path)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            *((Pint *) args.el_data) = (Pint) text_path;
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1367,14 +1147,11 @@ void pset_text_align(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_TEXT_ALIGN;
-         args.el_size = sizeof(Ptext_align);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int2(&args, PELEM_TEXT_ALIGN,
+                                text_align->hor, text_align->vert)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, text_align, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1399,14 +1176,10 @@ void pset_char_ht(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_CHAR_HT;
-         args.el_size = sizeof(Pfloat);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_float(&args, PELEM_CHAR_HT, char_ht)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &char_ht, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1431,14 +1204,10 @@ void pset_char_expan(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_CHAR_EXPAN;
-         args.el_size = sizeof(Pfloat);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_float(&args, PELEM_CHAR_EXPAN, char_expan)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &char_expan, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1463,14 +1232,10 @@ void pset_char_space(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_CHAR_SPACE;
-         args.el_size = sizeof(Pfloat);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_float(&args, PELEM_CHAR_SPACE, char_space)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &char_space, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1495,14 +1260,11 @@ void pset_char_up_vec(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_CHAR_UP_VEC;
-         args.el_size = sizeof(Pvec);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_float2(&args, PELEM_CHAR_UP_VEC,
+                                  char_up_vec->delta_x, char_up_vec->delta_y)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, char_up_vec, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1530,14 +1292,10 @@ void pset_text_ind(
          ERR_REPORT(PHG_ERH, ERR100);
       }
       else {
-         args.el_type = PELEM_TEXT_IND;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_TEXT_IND, text_ind)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &text_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1565,14 +1323,10 @@ void pset_text_colr_ind(
          ERR_REPORT(PHG_ERH, ERR113);
       }
       else {
-         args.el_type = PELEM_TEXT_COLR_IND;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_TEXT_COLR_IND, colr_ind)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &colr_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -1597,14 +1351,10 @@ void pexec_struct(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         args.el_type = PELEM_EXEC_STRUCT;
-         args.el_size = sizeof(Pint);
-         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
+         if (!phg_cb_store_int(&args, PELEM_EXEC_STRUCT, struct_id)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
-            args.el_data = PHG_SCRATCH.buf;
-            memcpy(args.el_data, &struct_id, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
