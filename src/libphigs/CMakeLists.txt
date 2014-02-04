@@ -14,7 +14,7 @@ ADD_LIBRARY(phigs
     wsgl_extattr.c wsgl_light.c
     fasd3.c wsgl_fasd3clear.c wsgl_fasd3fill.c wsgl_fasd3edge.c
     sofas3.c wsgl_sofas3clear.c wsgl_sofas3fill.c wsgl_sofas3edge.c
-    cb_phg.c cb_ws.c cb_wst.c cb_str.c cb_el.c cb_extel.c cb_inp.c cb_tr.c
+    cb.c cb_phg.c cb_ws.c cb_wst.c cb_str.c cb_el.c cb_extel.c cb_inp.c cb_tr.c
     cb_ar.c
     fb_phg.c fb_ws.c fb_str.c fb_el.c
     )
