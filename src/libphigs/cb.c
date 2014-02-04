@@ -345,7 +345,8 @@ int phg_cb_store_point_list(
    float *fdata;
 
    args->el_type = type;
-   args->el_size = sizeof(uint32_t) + 2 * sizeof(float) * point_list->num_points;
+   args->el_size = sizeof(uint32_t) +
+      2 * sizeof(float) * point_list->num_points;
    if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args->el_size)) {
       return (FALSE);
    }
@@ -380,7 +381,8 @@ int phg_cb_store_point_list3(
    float *fdata;
 
    args->el_type = type;
-   args->el_size = sizeof(uint32_t) + 3 * sizeof(float) * point_list->num_points;
+   args->el_size = sizeof(uint32_t) +
+      3 * sizeof(float) * point_list->num_points;
    if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args->el_size)) {
       return (FALSE);
    }
