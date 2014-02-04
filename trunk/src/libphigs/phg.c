@@ -25,7 +25,6 @@
 #include "css.h"
 #include "private/phgP.h"
 
-struct _Pstore *phg_store_list = (struct _Pstore *) NULL;
 char phg_default_window_name[] = "Open PHIGS Workstation";
 char phg_default_icon_name[]   = "Open PHIGS";
 Phg_handle phg = NULL;
@@ -54,62 +53,6 @@ int phg_int_in_list(
    }
 
    return status;
-}
-
-/*******************************************************************************
- * phg_resize_store
- *
- * DESCR:       Resize storage object
- * RETURNS:     TRUE or FALSE
- */
-
-int phg_resize_store(
-   Pstore store,
-   Pint size,
-   Pint *err_ind
-   )
-{
-   struct _Pstore old_store;
-
-   *err_ind = 0;
-   if (store != NULL) {
-      old_store.buf = store->buf;
-      if (size > 0 && (store->buf = malloc(size)) == NULL) {
-         *err_ind = ERR900;
-         store->buf = old_store.buf;
-      }
-      else {
-         if (store->size > 0) {
-            free(old_store.buf);
-         }
-         store->size = size;
-      }
-   }
-
-   return (*err_ind ? FALSE : TRUE);
-}
-
-/*******************************************************************************
- * phg_destroy_all_stores
- *
- * DESCR:       Destroy all storage objects
- * RETURNS:     N/A
- */
-
-void phg_destroy_all_stores(
-   void
-   )
-{
-   Pstore node;
-   Pstore next = NULL;
-
-   for (node = phg_store_list; node != NULL; node = next) {
-      node = node->next;
-      if (node->size > 0) {
-         free(node->buf);
-      }
-      free(node);
-   }
 }
 
 /*******************************************************************************

@@ -30,6 +30,7 @@
 #include "ws_type.h"
 #include "private/wsxP.h"
 #include "private/evtP.h"
+#include "private/cbP.h"
 
 /*******************************************************************************
  * popen_phigs
@@ -141,7 +142,7 @@ void pclose_phigs(
          phg_sin_evt_tbl_destroy(PHG_EVT_TABLE);
          phg_css_destroy(PHG_CSS);
          phg_psl_destroy(PHG_PSL);
-         phg_destroy_all_stores();
+         phg_cb_destroy_all_stores();
       }
       else  {
          ERR_REPORT(PHG_ERH, ERR4);
@@ -167,8 +168,8 @@ void pcreate_store(
    }
    else {
       *err_ind = 0;
-      (*store)->next = phg_store_list;
-      phg_store_list = *store;
+      (*store)->next = phg_cb_store_list;
+      phg_cb_store_list = *store;
    }
 }
 
@@ -185,7 +186,7 @@ void pdel_store(
 {
    Pstore *node;
 
-   for (node = &phg_store_list; *node != NULL; node = &(*node)->next) {
+   for (node = &phg_cb_store_list; *node != NULL; node = &(*node)->next) {
       if (*node == store) {
          *node = (*node)->next;
          if (store->size > 0) {

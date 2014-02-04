@@ -25,15 +25,6 @@
 extern "C" {
 #endif
 
-struct _Pstore {
-   Pint size;
-   union {
-      Pelem_data elem_data;
-   } data;
-   void *buf;
-   struct _Pstore *next;
-};
-
 #define ARGS_ELMT_SIZE(ARG) \
    ((Phg_args_add_el *) (ARG))->el_size
 
@@ -118,30 +109,6 @@ int phg_int_in_list(
    Pint v,
    Pint num,
    Pint *list
-   );
-
-/*******************************************************************************
- * phg_resize_store
- *
- * DESCR:       Resize storage object
- * RETURNS:     TRUE or FALSE
- */
-
-int phg_resize_store(
-   Pstore store,
-   Pint size,
-   Pint *err_ind
-   );
-
-/*******************************************************************************
- * phg_destroy_all_stores
- *
- * DESCR:       Destroy all storage objects
- * RETURNS:     N/A
- */
-
-void phg_destroy_all_stores(
-   void
    );
 
 /*******************************************************************************
@@ -373,5 +340,5 @@ extern Phg_conv phg_swap_tbl[];
 }
 #endif /* __cplusplus */
 
-#endif /* _phg_p */
+#endif /* _phgP_h */
 
