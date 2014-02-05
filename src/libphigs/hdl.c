@@ -20,7 +20,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
 #include "phg.h"
 #include "css.h"

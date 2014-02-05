@@ -21,8 +21,6 @@
 #ifndef _conv_h
 #define _conv_h
 
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -57,7 +55,7 @@ void conv_swap_uint16(
  */
 
 void conv_swap_float(
-    float *f
+    float32_t *f
     );
 
 /*******************************************************************************
@@ -68,7 +66,7 @@ void conv_swap_float(
  */
 
 void conv_vax_to_ieee(
-    float *f
+    float32_t *f
     );
 
 /*******************************************************************************
@@ -79,7 +77,7 @@ void conv_vax_to_ieee(
  */
     
 void conv_ieee_to_vax(
-    float *f
+    float32_t *f
     );
 
 /*******************************************************************************
@@ -90,7 +88,7 @@ void conv_ieee_to_vax(
  */
 
 void conv_swap_ieee_to_vax(
-    float *f
+    float32_t *f
     );
 
 /*******************************************************************************
@@ -101,7 +99,7 @@ void conv_swap_ieee_to_vax(
  */
 
 void conv_swap_vax_to_ieee(
-    float *f
+    float32_t *f
     );
 
 #ifdef __cplusplus

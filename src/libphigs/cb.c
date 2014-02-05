@@ -20,7 +20,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
 #include "phg.h"
 #include "private/cbP.h"
@@ -152,13 +151,13 @@ int phg_cb_store_float(
    )
 {
    args->el_type = type;
-   args->el_size = sizeof(float);
+   args->el_size = sizeof(float32_t);
    if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args->el_size)) {
       return (FALSE);
    }
    else {
       args->el_data = PHG_SCRATCH.buf;
-      *((float *) args->el_data) = (float) float_data;
+      *((float32_t *) args->el_data) = (float32_t) float_data;
       return (TRUE);
    }
 }
@@ -177,18 +176,18 @@ int phg_cb_store_float2(
    Pfloat float_data2
    )
 {
-   float *fdata;
+   float32_t *fdata;
 
    args->el_type = type;
-   args->el_size = 2 * sizeof(float);
+   args->el_size = 2 * sizeof(float32_t);
    if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args->el_size)) {
       return (FALSE);
    }
    else {
       args->el_data = PHG_SCRATCH.buf;
-      fdata = (float *) args->el_data;
-      fdata[0] = float_data1;
-      fdata[1] = float_data2;
+      fdata = (float32_t *) args->el_data;
+      fdata[0] = (float32_t) float_data1;
+      fdata[1] = (float32_t) float_data2;
       return (TRUE);
    }
 }
@@ -207,18 +206,18 @@ int phg_cb_store_point_string(
    char *str
    )
 {
-   float *fdata;
+   float32_t *fdata;
 
    args->el_type = type;
-   args->el_size = 2 * sizeof(float) + strlen(str) + 1;
+   args->el_size = 2 * sizeof(float32_t) + strlen(str) + 1;
    if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args->el_size)) {
       return (FALSE);
    }
    else {
       args->el_data = PHG_SCRATCH.buf;
-      fdata = (float *) args->el_data;
-      *fdata++ = point->x;
-      *fdata++ = point->y;
+      fdata = (float32_t *) args->el_data;
+      *fdata++ = (float32_t) point->x;
+      *fdata++ = (float32_t) point->y;
       strcpy((char *) fdata, str);
       return (TRUE);
    }
@@ -238,19 +237,19 @@ int phg_cb_store_matrix3(
    )
 {
    int i, j;
-   float *fdata;
+   float32_t *fdata;
 
    args->el_type = type;
-   args->el_size = 16 * sizeof(float);
+   args->el_size = 16 * sizeof(float32_t);
    if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args->el_size)) {
       return (FALSE);
    }
    else {
       args->el_data = PHG_SCRATCH.buf;
-      fdata = (float *) args->el_data;
+      fdata = (float32_t *) args->el_data;
       for (i = 0; i < 4; i++) {
          for (j = 0; j < 4; j++) {
-            *fdata++ = mat[i][j];
+            *fdata++ = (float32_t) mat[i][j];
          }
       }
       return (TRUE);
@@ -273,10 +272,10 @@ int phg_cb_store_int_matrix3(
 {
    int i, j;
    uint32_t *idata;
-   float *fdata;
+   float32_t *fdata;
 
    args->el_type = type;
-   args->el_size = sizeof(uint32_t) + 16 * sizeof(float);
+   args->el_size = sizeof(uint32_t) + 16 * sizeof(float32_t);
    if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args->el_size)) {
       return (FALSE);
    }
@@ -284,10 +283,10 @@ int phg_cb_store_int_matrix3(
       args->el_data = PHG_SCRATCH.buf;
       idata = (uint32_t *) args->el_data;
       *idata = (uint32_t) int_data;
-      fdata = (float *) &idata[1];
+      fdata = (float32_t *) &idata[1];
       for (i = 0; i < 4; i++) {
          for (j = 0; j < 4; j++) {
-            *fdata++ = mat[i][j];
+            *fdata++ = (float32_t) mat[i][j];
          }
       }
       return (TRUE);
@@ -311,7 +310,7 @@ int phg_cb_store_int_list(
    uint32_t *idata;
 
    args->el_type = type;
-   args->el_size = sizeof(uint32_t) + sizeof(float) * int_list->num_ints;
+   args->el_size = sizeof(uint32_t) + sizeof(uint32_t) * int_list->num_ints;
    if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args->el_size)) {
       return (FALSE);
    }
@@ -342,11 +341,11 @@ int phg_cb_store_point_list(
 {
    int i;
    uint32_t *idata;
-   float *fdata;
+   float32_t *fdata;
 
    args->el_type = type;
    args->el_size = sizeof(uint32_t) +
-      2 * sizeof(float) * point_list->num_points;
+      2 * sizeof(float32_t) * point_list->num_points;
    if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args->el_size)) {
       return (FALSE);
    }
@@ -354,10 +353,10 @@ int phg_cb_store_point_list(
       args->el_data = PHG_SCRATCH.buf;
       idata = (uint32_t *) args->el_data;
       *idata = (uint32_t) point_list->num_points;
-      fdata = (float *) &idata[1];
+      fdata = (float32_t *) &idata[1];
       for (i = 0; i < point_list->num_points; i++) {
-         *fdata++ = (float) point_list->points[i].x;
-         *fdata++ = (float) point_list->points[i].y;
+         *fdata++ = (float32_t) point_list->points[i].x;
+         *fdata++ = (float32_t) point_list->points[i].y;
       }
       return (TRUE);
    }
@@ -378,11 +377,11 @@ int phg_cb_store_point_list3(
 {
    int i;
    uint32_t *idata;
-   float *fdata;
+   float32_t *fdata;
 
    args->el_type = type;
    args->el_size = sizeof(uint32_t) +
-      3 * sizeof(float) * point_list->num_points;
+      3 * sizeof(float32_t) * point_list->num_points;
    if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args->el_size)) {
       return (FALSE);
    }
@@ -390,11 +389,11 @@ int phg_cb_store_point_list3(
       args->el_data = PHG_SCRATCH.buf;
       idata = (uint32_t *) args->el_data;
       *idata = (uint32_t) point_list->num_points;
-      fdata = (float *) &idata[1];
+      fdata = (float32_t *) &idata[1];
       for (i = 0; i < point_list->num_points; i++) {
-         *fdata++ = (float) point_list->points[i].x;
-         *fdata++ = (float) point_list->points[i].y;
-         *fdata++ = (float) point_list->points[i].z;
+         *fdata++ = (float32_t) point_list->points[i].x;
+         *fdata++ = (float32_t) point_list->points[i].y;
+         *fdata++ = (float32_t) point_list->points[i].z;
       }
       return (TRUE);
    }
@@ -415,7 +414,7 @@ int phg_cb_store_point_list_list(
 {
    int i, j, num_lists, num_points;
    uint32_t *idata;
-   float *fdata;
+   float32_t *fdata;
 
    args->el_type = type;
    num_lists = point_list_list->num_point_lists;
@@ -423,7 +422,7 @@ int phg_cb_store_point_list_list(
       num_points += point_list_list->point_lists[i].num_points;
    }
    args->el_size = sizeof(uint32_t) +
-      sizeof(uint32_t) * num_lists + 2 * sizeof(float) * num_points;
+      sizeof(uint32_t) * num_lists + 2 * sizeof(float32_t) * num_points;
    if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args->el_size)) {
       return (FALSE);
    }
@@ -434,10 +433,10 @@ int phg_cb_store_point_list_list(
       idata = &idata[1];
       for (i = 0; i < num_lists; i++) {
          *idata = point_list_list->point_lists[i].num_points;
-         fdata = (float *) &idata[1];
+         fdata = (float32_t *) &idata[1];
          for (j = 0; j < point_list_list->point_lists[i].num_points; j++) {
-            *fdata++ = (float) point_list_list->point_lists[i].points[j].x;
-            *fdata++ = (float) point_list_list->point_lists[i].points[j].y;
+            *fdata++ = (float32_t) point_list_list->point_lists[i].points[j].x;
+            *fdata++ = (float32_t) point_list_list->point_lists[i].points[j].y;
          }
          idata = (uint32_t *) fdata;
       }
@@ -460,7 +459,7 @@ int phg_cb_store_point_list_list3(
 {
    int i, j, num_lists, num_points;
    uint32_t *idata;
-   float *fdata;
+   float32_t *fdata;
 
    args->el_type = type;
    num_lists = point_list_list->num_point_lists;
@@ -468,7 +467,7 @@ int phg_cb_store_point_list_list3(
       num_points += point_list_list->point_lists[i].num_points;
    }
    args->el_size = sizeof(uint32_t) +
-      sizeof(uint32_t) * num_lists + 3 * sizeof(float) * num_points;
+      sizeof(uint32_t) * num_lists + 3 * sizeof(float32_t) * num_points;
    if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args->el_size)) {
       return (FALSE);
    }
@@ -479,11 +478,11 @@ int phg_cb_store_point_list_list3(
       idata = &idata[1];
       for (i = 0; i < num_lists; i++) {
          *idata = point_list_list->point_lists[i].num_points;
-         fdata = (float *) &idata[1];
+         fdata = (float32_t *) &idata[1];
          for (j = 0; j < point_list_list->point_lists[i].num_points; j++) {
-            *fdata++ = (float) point_list_list->point_lists[i].points[j].x;
-            *fdata++ = (float) point_list_list->point_lists[i].points[j].y;
-            *fdata++ = (float) point_list_list->point_lists[i].points[j].z;
+            *fdata++ = (float32_t) point_list_list->point_lists[i].points[j].x;
+            *fdata++ = (float32_t) point_list_list->point_lists[i].points[j].y;
+            *fdata++ = (float32_t) point_list_list->point_lists[i].points[j].z;
          }
          idata = (uint32_t *) fdata;
       }

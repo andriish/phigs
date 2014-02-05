@@ -65,7 +65,6 @@ SOFTWARE.
 ******************************************************************/
 
 #include <stdlib.h>
-#include <stdint.h>
 #include <assert.h>
 #include <X11/Xos.h>
 
