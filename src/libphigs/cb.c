@@ -306,7 +306,7 @@ int phg_cb_store_int_list(
    Pint_list *int_list
    )
 {
-   int i;
+   Pint i;
    uint32_t *idata;
 
    args->el_type = type;
@@ -339,7 +339,7 @@ int phg_cb_store_point_list(
    Ppoint_list *point_list
    )
 {
-   int i;
+   Pint i;
    uint32_t *idata;
    float32_t *fdata;
 
@@ -375,7 +375,7 @@ int phg_cb_store_point_list3(
    Ppoint_list3 *point_list
    )
 {
-   int i;
+   Pint i;
    uint32_t *idata;
    float32_t *fdata;
 
@@ -412,7 +412,7 @@ int phg_cb_store_point_list_list(
    Ppoint_list_list *point_list_list
    )
 {
-   int i, j, num_lists, num_points;
+   Pint i, j, num_lists, num_points;
    uint32_t *idata;
    float32_t *fdata;
 
@@ -457,7 +457,7 @@ int phg_cb_store_point_list_list3(
    Ppoint_list_list3 *point_list_list
    )
 {
-   int i, j, num_lists, num_points;
+   Pint i, j, num_lists, num_points;
    uint32_t *idata;
    float32_t *fdata;
 

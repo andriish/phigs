@@ -37,22 +37,23 @@
 
 void wsgl_polyline(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    )
 {
-   int i;
-   Ppoint_list point_list;
-   Pint *data = (Pint *) pdata;
+   uint32_t i, num_points;
+   uint32_t *idata;
+   float32_t *fdata;
 
-   point_list.num_points = *data;
-   point_list.points = (Ppoint *) &data[1];
+   idata = (uint32_t *) data;
+   num_points = *idata;
+   fdata = (float32_t *) &idata[1];
 
    wsgl_setup_line_attr(ast);
    glBegin(GL_LINES);
-   for (i = 0; i < point_list.num_points; i++) {
-      glVertex2f(point_list.points[i].x,
-                 point_list.points[i].y);
+   for (i = 0; i < num_points; i++) {
+      glVertex2f(fdata[0], fdata[1]);
+      fdata += 2;
    }
    glEnd();
 }
@@ -66,23 +67,23 @@ void wsgl_polyline(
 
 void wsgl_polyline3(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    )
 {
-   int i;
-   Ppoint_list3 point_list;
-   Pint *data = (Pint *) pdata;
+   uint32_t i, num_points;
+   uint32_t *idata;
+   float32_t *fdata;
 
-   point_list.num_points = *data;
-   point_list.points = (Ppoint3 *) &data[1];
+   idata = (uint32_t *) data;
+   num_points = *idata;
+   fdata = (float32_t *) &idata[1];
 
    wsgl_setup_line_attr(ast);
    glBegin(GL_LINES);
-   for (i = 0; i < point_list.num_points; i++) {
-      glVertex3f(point_list.points[i].x,
-                 point_list.points[i].y,
-                 point_list.points[i].z);
+   for (i = 0; i < num_points; i++) {
+      glVertex3f(fdata[0], fdata[1], fdata[2]);
+      fdata += 3;
    }
    glEnd();
 }

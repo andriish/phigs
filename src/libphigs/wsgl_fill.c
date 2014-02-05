@@ -36,15 +36,16 @@
  */
 
 void priv_fill_area(
-   Ppoint_list *point_list
+   uint32_t num_points,
+   float32_t *fdata
    )
 {
-   int i;
+   uint32_t i;
 
    glBegin(GL_POLYGON);
-   for (i = 0; i < point_list->num_points; i++) {
-      glVertex2f(point_list->points[i].x,
-                 point_list->points[i].y);
+   for (i = 0; i < num_points; i++) {
+      glVertex2f(fdata[0], fdata[1]);
+      fdata += 2;
    }
    glEnd();
 }
@@ -58,23 +59,23 @@ void priv_fill_area(
 
 void priv_normal3(
    Pvec3 *norm,
-   Ppoint_list3 *point_list
+   float32_t *fdata
    )
 {
    Pvec3 a, b, c;
    Pvec3 v1, v2;
 
-   a.delta_x = point_list->points[0].x;
-   a.delta_y = point_list->points[0].y;
-   a.delta_z = point_list->points[0].z;
+   a.delta_x = *fdata++;
+   a.delta_y = *fdata++;
+   a.delta_z = *fdata++;
 
-   b.delta_x = point_list->points[1].x;
-   b.delta_y = point_list->points[1].y;
-   b.delta_z = point_list->points[1].z;
+   b.delta_x = *fdata++;
+   b.delta_y = *fdata++;
+   b.delta_z = *fdata++;
 
-   c.delta_x = point_list->points[2].x;
-   c.delta_y = point_list->points[2].y;
-   c.delta_z = point_list->points[2].z;
+   c.delta_x = *fdata++;
+   c.delta_y = *fdata++;
+   c.delta_z = *fdata++;
 
    phg_vector_sub(&v1, &b, &a);
    phg_vector_sub(&v2, &c, &a);
@@ -89,16 +90,16 @@ void priv_normal3(
  */
 
 void priv_fill_area3(
-   Ppoint_list3 *point_list
+   uint32_t num_points,
+   float32_t *fdata
    )
 {
-   int i;
+   uint32_t i;
 
    glBegin(GL_POLYGON);
-   for (i = 0; i < point_list->num_points; i++) {
-      glVertex3f(point_list->points[i].x,
-                 point_list->points[i].y,
-                 point_list->points[i].z);
+   for (i = 0; i < num_points; i++) {
+      glVertex3f(fdata[0], fdata[1], fdata[2]);
+      fdata += 3;
    }
    glEnd();
 }
@@ -112,18 +113,18 @@ void priv_fill_area3(
 
 void wsgl_fill_area(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    )
 {
-   Ppoint_list point_list;
-   Pint *data = (Pint *) pdata;
+   uint32_t num_points;
+   uint32_t *idata;
 
-   point_list.num_points = *data;
-   point_list.points = (Ppoint *) &data[1];
+   idata = (uint32_t *) data;
+   num_points = *idata;
 
    wsgl_setup_int_attr(ws, ast);
-   priv_fill_area(&point_list);
+   priv_fill_area(num_points, (float32_t *) &idata[1]);
 }
 
 /*******************************************************************************
@@ -135,25 +136,27 @@ void wsgl_fill_area(
 
 void wsgl_fill_area3(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    )
 {
    Pvec3 norm;
-   Ppoint_list3 point_list;
-   Pint *data = (Pint *) pdata;
+   uint32_t num_points;
+   uint32_t *idata;
+   float32_t *fdata;
 
-   point_list.num_points = *data;
-   point_list.points = (Ppoint3 *) &data[1];
+   idata = (uint32_t *) data;
+   num_points = *idata;
+   fdata = (float32_t *) &idata[1];
 
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
    if (wsgl_setup_int_attr_plus(ws, ast)) {
-      priv_normal3(&norm, &point_list);
+      priv_normal3(&norm, fdata);
       glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
    }
-   priv_fill_area3(&point_list);
+   priv_fill_area3(num_points, fdata);
    glDisable(GL_POLYGON_OFFSET_LINE);
    glDisable(GL_POLYGON_OFFSET_FILL);
 }
@@ -167,25 +170,27 @@ void wsgl_fill_area3(
 
 void wsgl_back_area3(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    )
 {
    Pvec3 norm;
-   Ppoint_list3 point_list;
-   Pint *data = (Pint *) pdata;
+   uint32_t num_points;
+   uint32_t *idata;
+   float32_t *fdata;
 
-   point_list.num_points = *data;
-   point_list.points = (Ppoint3 *) &data[1];
+   idata = (uint32_t *) data;
+   num_points = *idata;
+   fdata = (float32_t *) &idata[1];
 
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
    if (wsgl_setup_back_int_attr_plus(ws, ast)) {
-      priv_normal3(&norm, &point_list);
+      priv_normal3(&norm, fdata);
       glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
    }
-   priv_fill_area3(&point_list);
+   priv_fill_area3(num_points, fdata);
    glDisable(GL_POLYGON_OFFSET_LINE);
    glDisable(GL_POLYGON_OFFSET_FILL);
 }
@@ -199,24 +204,25 @@ void wsgl_back_area3(
 
 void wsgl_fill_area_set(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    )
 {
-   Pint i, num_lists;
-   Ppoint_list point_list;
-   Pint *data = (Pint *) pdata;
+   uint32_t i, num_lists, num_points;
+   uint32_t *idata;
+   float32_t *fdata;
 
-   num_lists = *data;
-   data = &data[1];
+   idata = (uint32_t *) data;
+   num_lists = *idata;
+   idata = &idata[1];
 
    wsgl_setup_int_attr(ws, ast);
 
    for (i = 0; i < num_lists; i++) {
-      point_list.num_points = *data;
-      point_list.points = (Ppoint *) &data[1];
-      priv_fill_area(&point_list);
-      data = (Pint *) &point_list.points[point_list.num_points];
+      num_points = *idata;
+      fdata = (float32_t *) &idata[1];
+      priv_fill_area(num_points, fdata);
+      idata = (uint32_t *) &fdata[num_points * 2];
    }
 }
 
@@ -229,34 +235,32 @@ void wsgl_fill_area_set(
 
 void wsgl_fill_area_set3(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    )
 {
    Pvec3 norm;
-   Pint i, num_lists;
-   Ppoint_list3 point_list;
-   Pint *data = (Pint *) pdata;
+   uint32_t i, num_lists, num_points;
+   uint32_t *idata;
+   float32_t *fdata;
 
-   num_lists = *data;
-   data = &data[1];
-
-   point_list.num_points = *data;
-   point_list.points = (Ppoint3 *) &data[1];
+   idata = (uint32_t *) data;
+   num_lists = *idata;
+   idata = &idata[1];
 
    glPolygonOffset(WS_FILL_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    glEnable(GL_POLYGON_OFFSET_LINE);
    if (wsgl_setup_int_attr_plus(ws, ast)) {
-      priv_normal3(&norm, &point_list);
+      priv_normal3(&norm, (float32_t *) &idata[1]);
       glNormal3f(norm.delta_x, norm.delta_y, norm.delta_z);
    }
 
    for (i = 0; i < num_lists; i++) {
-      point_list.num_points = *data;
-      point_list.points = (Ppoint3 *) &data[1];
-      priv_fill_area3(&point_list);
-      data = (Pint *) &point_list.points[point_list.num_points];
+      num_points = *idata;
+      fdata = (float32_t *) &idata[1];
+      priv_fill_area3(num_points, fdata);
+      idata = (uint32_t *) &fdata[num_points * 3];
    }
 
    glDisable(GL_POLYGON_OFFSET_LINE);
