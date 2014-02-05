@@ -61,14 +61,11 @@ extern "C" {
 #define ELMT_CONTENT(ELMT) \
    (((Phg_elmt_info *) (ELMT)->eldata.ptr) + 1)
 
-#define PHG_LOCAL_TRAN3(ELMT) \
-   ((Plocal_tran3 *) ELMT_CONTENT(ELMT))
-
 #define PHG_INT(ELMT) \
    *((int32_t *) ELMT_CONTENT(ELMT))
 
 #define PHG_FLOAT(ELMT) \
-   *((float *) ELMT_CONTENT(ELMT))
+   *((float32_t *) ELMT_CONTENT(ELMT))
 
 #define PHG_IN_RANGE( low, high, val) \
    ((val) >= (low) && (val) <= (high))

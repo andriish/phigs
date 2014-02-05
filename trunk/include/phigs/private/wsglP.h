@@ -765,7 +765,7 @@ void wsgl_polymarker3(
 
 void wsgl_polyline(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    );
 
@@ -778,7 +778,20 @@ void wsgl_polyline(
 
 void wsgl_polyline3(
    Ws *ws,
-   void *pdata,
+   void *data,
+   Ws_attr_st *ast
+   );
+
+/*******************************************************************************
+ * wsgl_text
+ *
+ * DESCR:       Draw text
+ * RETURNS:     N/A
+ */
+
+void wsgl_text(
+   Ws *ws,
+   void *tdata,
    Ws_attr_st *ast
    );
 
@@ -791,7 +804,7 @@ void wsgl_polyline3(
 
 void wsgl_clear_area3(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    );
 
@@ -804,7 +817,7 @@ void wsgl_clear_area3(
 
 void wsgl_clear_area_set3(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    );
 
@@ -817,7 +830,7 @@ void wsgl_clear_area_set3(
 
 void wsgl_fill_area(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    );
 
@@ -843,7 +856,7 @@ void wsgl_fill_area3(
 
 void wsgl_back_area3(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    );
 
@@ -856,7 +869,7 @@ void wsgl_back_area3(
 
 void wsgl_fill_area_set(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    );
 
@@ -869,7 +882,7 @@ void wsgl_fill_area_set(
 
 void wsgl_fill_area_set3(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    );
 
@@ -882,7 +895,7 @@ void wsgl_fill_area_set3(
 
 void wsgl_edge_area(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    );
 
@@ -895,7 +908,7 @@ void wsgl_edge_area(
 
 void wsgl_edge_area3(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    );
 
@@ -908,20 +921,7 @@ void wsgl_edge_area3(
 
 void wsgl_edge_area_set(
    Ws *ws,
-   void *pdata,
-   Ws_attr_st *ast
-   );
-
-/*******************************************************************************
- * wsgl_text
- *
- * DESCR:       Draw text
- * RETURNS:     N/A
- */
-
-void wsgl_text(
-   Ws *ws,
-   void *tdata,
+   void *data,
    Ws_attr_st *ast
    );
 
@@ -934,7 +934,7 @@ void wsgl_text(
 
 void wsgl_edge_area_set3(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    );
 

@@ -36,16 +36,16 @@
  */
 
 static void priv_clear_area3(
-   Ppoint_list3 *point_list
+   uint32_t num_points,
+   float32_t *fdata
    )
 {
-   int i;
+   uint32_t i;
 
    glBegin(GL_POLYGON);
-   for (i = 0; i < point_list->num_points; i++) {
-      glVertex3f(point_list->points[i].x,
-                 point_list->points[i].y,
-                 point_list->points[i].z);
+   for (i = 0; i < num_points; i++) {
+      glVertex3f(fdata[0], fdata[1], fdata[2]);
+      fdata += 3;
    }
    glEnd();
 }
@@ -59,20 +59,20 @@ static void priv_clear_area3(
 
 void wsgl_clear_area3(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    )
 {
-   Ppoint_list3 point_list;
-   Pint *data = (Pint *) pdata;
+   uint32_t num_points;
+   uint32_t *idata;
 
-   point_list.num_points = *data;
-   point_list.points = (Ppoint3 *) &data[1];
+   idata = (uint32_t *) data;
+   num_points = *idata;
 
    glPolygonOffset(WS_CLEAR_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    wsgl_setup_background(ws);
-   priv_clear_area3(&point_list);
+   priv_clear_area3(num_points, (float32_t *) &idata[1]);
    glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
@@ -85,26 +85,27 @@ void wsgl_clear_area3(
 
 void wsgl_clear_area_set3(
    Ws *ws,
-   void *pdata,
+   void *data,
    Ws_attr_st *ast
    )
 {
-   Pint i, num_lists;
-   Ppoint_list3 point_list;
-   Pint *data = (Pint *) pdata;
+   uint32_t i, num_lists, num_points;
+   uint32_t *idata;
+   float32_t *fdata;
 
-   num_lists = *data;
-   data = &data[1];
+   idata = (uint32_t *) data;
+   num_lists = *idata;
+   idata = &idata[1];
 
    glPolygonOffset(WS_CLEAR_AREA_OFFSET, wsgl_get_edge_width(ast));
    glEnable(GL_POLYGON_OFFSET_FILL);
    wsgl_setup_background(ws);
 
    for (i = 0; i < num_lists; i++) {
-      point_list.num_points = *data;
-      point_list.points = (Ppoint3 *) &data[1];
-      priv_clear_area3(&point_list);
-      data = (Pint *) &point_list.points[point_list.num_points];
+      num_points = *idata;
+      fdata = (float32_t *) &idata[1];
+      priv_clear_area3(num_points, fdata);
+      idata = (uint32_t *) &fdata[num_points * 3];
    }
 
    glDisable(GL_POLYGON_OFFSET_FILL);
