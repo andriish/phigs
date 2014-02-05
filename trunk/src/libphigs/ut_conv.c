@@ -95,6 +95,7 @@ SOFTWARE.
 
 #include <stdint.h>
 
+#include "stdfloat.h"
 #include "util/conv.h"
 
 #define VAX_EXPONENT_BIAS      0x00000081
@@ -165,7 +166,7 @@ void conv_swap_uint16(
  */
 
 void conv_swap_float(
-    float *f
+    float32_t *f
     )
 {
     uint8_t n;
@@ -204,7 +205,7 @@ void conv_swap_float(
  */
 
 void conv_vax_to_ieee(
-    float *f
+    float32_t *f
     )
 {
     uint32_t Vaxnum = *(uint32_t *) f;
@@ -263,12 +264,12 @@ void conv_vax_to_ieee(
  */
     
 void conv_ieee_to_vax(
-    float *f
+    float32_t *f
     )
 {
     uint32_t IEEEnum = *(uint32_t *) f;
     uint32_t *IEEEnumP = (uint32_t *) f;
-    uint32_t result=0;
+    uint32_t result = 0;
 
     if ((IEEE_SIGN_MASK & IEEEnum) == MAX_IEEE_POSITIVE)
     {
@@ -303,11 +304,11 @@ void conv_ieee_to_vax(
  */
 
 void conv_swap_ieee_to_vax(
-    float *f
+    float32_t *f
     )
 {
     conv_swap_uint32((uint32_t *) f);
-    conv_ieee_to_vax((float *) f);
+    conv_ieee_to_vax(f);
 
 }
 
@@ -319,10 +320,10 @@ void conv_swap_ieee_to_vax(
  */
 
 void conv_swap_vax_to_ieee(
-    float *f
+    float32_t *f
     )
 {
     conv_swap_uint32((uint32_t *) f);
-    conv_vax_to_ieee((float *) f);
+    conv_vax_to_ieee(f);
 }
 

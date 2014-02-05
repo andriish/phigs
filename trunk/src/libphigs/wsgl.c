@@ -22,7 +22,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include <stdint.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <X11/Xlib.h>
