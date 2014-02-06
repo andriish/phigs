@@ -21,6 +21,8 @@
 #ifndef _sinP_h
 #define _sinP_h
 
+#include <X11/keysym.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
