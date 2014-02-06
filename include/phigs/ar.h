@@ -27,24 +27,6 @@
 extern "C" {
 #endif
 
-#ifdef VAX
-#define PHG_AR_HOST_FLOAT_FORMAT 0x2
-#else /* !VAX */
-#define PHG_AR_HOST_FLOAT_FORMAT 0x0
-#endif /* VAX */
-
-#ifdef MSBFIRST
-#define PHG_AR_HOST_BYTE_ORDER   0x1
-#else /* LSBFIRST */
-#define PHG_AR_HOST_BYTE_ORDER   0x0
-#endif
-
-#ifdef DEBUG
-#define TOCSIZE                  256
-#else
-#define TOCSIZE                  4
-#endif
-
 /* Archive element opcodes */
 #define PHG_AR_BAF               0x1010      /* Begin Archive File */
 #define PHG_AR_AFD               0x1111      /* Archive File Descriptor */
@@ -58,7 +40,6 @@ extern "C" {
 #define PHG_AR_FREE_SPACE        0x2         /* block is free space */
 
 #define PHG_AR_TMPMEM_BLOCKSIZE  20          /* size of memblock increament */
-
 
 typedef enum {
     PHG_AR_WRITING_ARCHIVE,
