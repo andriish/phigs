@@ -233,6 +233,24 @@ void phg_mat_copy(Pmatrix3 m1, Pmatrix3 m2)
 	   m1[i][j] = m2[i][j];
 }
 
+void phg_mat_unpack(Pfloat *buf, Pmatrix3 m)
+{
+    int	i,j;
+
+    for( i = 0 ; i < 4; i++) 
+	for( j = 0; j < 4; j++)
+	   *buf++ = m[i][j];
+}
+
+void phg_mat_pack(Pmatrix3 m, Pfloat *buf)
+{
+    int	i,j;
+
+    for( i = 0 ; i < 4; i++) 
+	for( j = 0; j < 4; j++)
+	   m[i][j] = *buf++;
+}
+
 void phg_mat_copy_3x3(Pmatrix m1, Pmatrix m2)
 {
     int	i,j;

@@ -410,28 +410,6 @@ void phg_copy_all_els(
 }
 
 /*******************************************************************************
- * phg_get_matrix3
- *
- * DESCR:       Get matrix 3D from element data
- * RETURNS:     TRUE or FALSE
- */
-
-void phg_get_matrix3(
-   Pmatrix3 m,
-   void *elmt
-   )
-{
-   int i, j;
-   float *fdata = (float *) elmt;
-
-   for(i = 0 ; i < 4; i++) {
-      for(j = 0; j < 4; j++) {
-         m[i][j] = (Pfloat) *fdata++;
-      }
-   }
-}
-
-/*******************************************************************************
  * phg_get_local_tran3
  *
  * DESCR:       Get local transformation 3D
@@ -443,11 +421,11 @@ void phg_get_local_tran3(
    void *elmt
    )
 {
-   Pint *idata;
+   Pint *data;
 
-   idata = (Pint *) elmt;
-   tran->compose_type = *idata;
-   phg_get_matrix3(tran->matrix, (float *) &idata[1]);
+   data = (Pint *) elmt;
+   tran->compose_type = data[0];
+   phg_mat_pack(tran->matrix, (Pfloat *) &data[1]);
 }
 
 /*******************************************************************************
