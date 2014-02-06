@@ -275,18 +275,18 @@ void phg_ar_convert_elements(
 		type = head->elementType;
 		length = head->length;
 	    }
-	    (*phg_swap_tbl)(swp, ptr);
+	    (*phg_swap_tbl[type])(swp, &head[1]);
 	    
 	} else {
 	
 	    /* we are writing to an archive, so we must 'encode' */
 	    type = head->elementType;
 	    length = head->length;
-	    (*phg_swap_tbl[type])(swp, ptr);
+	    (*phg_swap_tbl[type])(swp, &head[1]);
 	    
 	}
 	
-	ptr += length * sizeof(uint32_t);
+	ptr += length;
     }
 }
 

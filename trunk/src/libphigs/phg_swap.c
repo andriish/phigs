@@ -24,27 +24,6 @@
 #include "phgtype.h"
 
 /******************************************************************************
- * phg_swap_head
- *
- * DESCR:       Swap element heading
- * RETURNS:     N/A
- */
-
-static void* phg_swap_head(
-   Phg_swap *swp,
-   void *data
-   )
-{
-   Phg_elmt_info *el_head;
-
-   el_head = (Phg_elmt_info *) data;
-   (*swp->conv_short)(&el_head->elementType);
-   (*swp->conv_short)(&el_head->length);
-
-   return (&el_head[1]);
-}
-
-/******************************************************************************
  * phg_swap_nil
  *
  * DESCR:       Swap empty element
@@ -56,7 +35,6 @@ static void phg_swap_nil(
    void *data
    )
 {
-   phg_swap_head(swp, data);
 }
 
 /******************************************************************************
@@ -71,10 +49,7 @@ static void phg_swap_int(
    void *data
    )
 {
-   Pint *p_idata;
-
-   p_idata = (Pint *) phg_swap_head(swp, data);
-   (*swp->conv_long)((uint32_t *) p_idata);
+   (*swp->conv_long)((uint32_t *) data);
 }
 
 /******************************************************************************
@@ -89,11 +64,11 @@ static void phg_swap_int2(
    void *data
    )
 {
-   Pint *p_idata;
+   Pint *idata;
 
-   p_idata = (Pint *) phg_swap_head(swp, data);
-   (*swp->conv_long)((uint32_t *) p_idata);
-   (*swp->conv_long)((uint32_t *) &p_idata[1]);
+   idata = (Pint *) data;
+   (*swp->conv_long)((uint32_t *) idata);
+   (*swp->conv_long)((uint32_t *) &idata[1]);
 }
 
 /******************************************************************************
@@ -108,10 +83,7 @@ static void phg_swap_float(
    void *data
    )
 {
-   Pfloat *p_fdata;
-
-   p_fdata = (Pfloat *) phg_swap_head(swp, data);
-   (*swp->conv_float)((float *) p_fdata);
+   (*swp->conv_float)((float *) data);
 }
 
 /******************************************************************************
@@ -126,11 +98,11 @@ static void phg_swap_float2(
    void *data
    )
 {
-   Pfloat *p_fdata;
+   Pfloat *fdata;
 
-   p_fdata = (Pfloat *) phg_swap_head(swp, data);
-   (*swp->conv_float)((float *) p_fdata);
-   (*swp->conv_float)((float *) &p_fdata[1]);
+   fdata = (Pfloat *) data;
+   (*swp->conv_float)((float *) fdata);
+   (*swp->conv_float)((float *) &fdata[1]);
 }
 
 /******************************************************************************
@@ -145,25 +117,21 @@ static void phg_swap_int_list(
    void *data
    )
 {
-   Pint *p_idata;
+   Pint *idata;
    Pint_list int_list;
    Pint i;
 
-   p_idata = (Pint *) phg_swap_head(swp, data);
-
+   idata = (Pint *) data;
    if (swp->fromFormat & PHG_AR_HOST_BYTE_ORDER) {
-      int_list.num_ints = p_idata[0];
-      (*swp->conv_long)((uint32_t *) p_idata);
-   }
-   else if (swp->toFormat & PHG_AR_HOST_BYTE_ORDER) {
-      (*swp->conv_long)((uint32_t *) p_idata);
-      int_list.num_ints = p_idata[0];
+      int_list.num_ints = idata[0];
+      (*swp->conv_long)((uint32_t *) &int_list.num_ints);
    }
    else {
-      int_list.num_ints = p_idata[0];
+      (*swp->conv_long)((uint32_t *) idata);
+      int_list.num_ints = idata[0];
    }
 
-   int_list.ints = (Pint *) &p_idata[1];
+   int_list.ints = (Pint *) &idata[1];
    for (i = 0; i < int_list.num_ints; i++) {
       (*swp->conv_long)((uint32_t *) &int_list.ints[i]);
    }
@@ -181,25 +149,22 @@ static void phg_swap_point_list(
    void *data
    )
 {
-   Pint *p_idata;
+   Pint *idata;
    Ppoint_list point_list;
    Pint i;
 
-   p_idata = (Pint *) phg_swap_head(swp, data);
+   idata = (Pint *) data;
 
    if (swp->fromFormat & PHG_AR_HOST_BYTE_ORDER) {
-      point_list.num_points = p_idata[0];
-      (*swp->conv_long)((uint32_t *) p_idata);
-   }
-   else if (swp->toFormat & PHG_AR_HOST_BYTE_ORDER) {
-      (*swp->conv_long)((uint32_t *) p_idata);
-      point_list.num_points = p_idata[0];
+      point_list.num_points = idata[0];
+      (*swp->conv_long)((uint32_t *) &point_list.num_points);
    }
    else {
-      point_list.num_points = p_idata[0];
+      (*swp->conv_long)((uint32_t *) idata);
+      point_list.num_points = idata[0];
    }
 
-   point_list.points = (Ppoint *) &p_idata[1];
+   point_list.points = (Ppoint *) &idata[1];
    for (i = 0; i < point_list.num_points; i++) {
       (*swp->conv_float)((float *) &point_list.points[i].x);
       (*swp->conv_float)((float *) &point_list.points[i].y);
@@ -218,25 +183,22 @@ static void phg_swap_point_list3(
    void *data
    )
 {
-   Pint *p_idata;
+   Pint *idata;
    Ppoint_list3 point_list;
    Pint i;
 
-   p_idata = (Pint *) phg_swap_head(swp, data);
+   idata = (Pint *) data;
 
    if (swp->fromFormat & PHG_AR_HOST_BYTE_ORDER) {
-      point_list.num_points = p_idata[0];
-      (*swp->conv_long)((uint32_t *) p_idata);
-   }
-   else if (swp->toFormat & PHG_AR_HOST_BYTE_ORDER) {
-      (*swp->conv_long)((uint32_t *) p_idata);
-      point_list.num_points = p_idata[0];
+      point_list.num_points = idata[0];
+      (*swp->conv_long)((uint32_t *) &point_list.num_points);
    }
    else {
-      point_list.num_points = p_idata[0];
+      (*swp->conv_long)((uint32_t *) idata);
+      point_list.num_points = idata[0];
    }
 
-   point_list.points = (Ppoint3 *) &p_idata[1];
+   point_list.points = (Ppoint3 *) &idata[1];
    for (i = 0; i < point_list.num_points; i++) {
       (*swp->conv_float)((float *) &point_list.points[i].x);
       (*swp->conv_float)((float *) &point_list.points[i].y);
@@ -256,11 +218,11 @@ static void phg_swap_text(
    void *data
    )
 {
-   Ppoint *p_pdata;
+   Ppoint *pdata;
 
-   p_pdata = (Ppoint *) phg_swap_head(swp, data);
-   (*swp->conv_float)((float *) &p_pdata->x);
-   (*swp->conv_float)((float *) &p_pdata->y);
+   pdata = (Ppoint *) data;
+   (*swp->conv_float)((float *) &pdata->x);
+   (*swp->conv_float)((float *) &pdata->y);
 }
 
 /******************************************************************************
@@ -275,13 +237,13 @@ static void phg_swap_matrix3(
    void *data
    )
 {
-   Pfloat *p_fdata;
+   Pfloat *fdata;
    Pint i;
 
-   p_fdata = (Pfloat *) phg_swap_head(swp, data);
+   fdata = (Pfloat *) data;
 
    for (i = 0; i < 16; i++) {
-      (*swp->conv_float)((float *) p_fdata);
+      (*swp->conv_float)((float *) fdata++);
    }
 }
 
@@ -297,16 +259,16 @@ static void phg_swap_local_tran3(
    void *data
    )
 {
-   Pint *p_idata;
-   Pfloat *p_fdata;
+   Pint *idata;
+   Pfloat *fdata;
    Pint i;
 
-   p_idata = (Pint *) phg_swap_head(swp, data);
-   (*swp->conv_long)((uint32_t *) p_idata);
-   p_fdata = (Pfloat *) &p_idata[1];
+   idata = (Pint *) data;
+   (*swp->conv_long)((uint32_t *) idata);
+   fdata = (Pfloat *) &idata[1];
 
    for (i = 0; i < 16; i++) {
-      (*swp->conv_float)((float *) p_fdata);
+      (*swp->conv_float)((float *) fdata++);
    }
 }
 
@@ -322,32 +284,29 @@ static void phg_swap_gcolr(
    void *data
    )
 {
-   Pint *p_idata;
-   Pfloat *p_fdata;
+   Pint *idata;
+   Pfloat *fdata;
    Pgcolr gcolr;
 
-   p_idata = (Pint *) phg_swap_head(swp, data);
+   idata = (Pint *) data;
 
    if (swp->fromFormat & PHG_AR_HOST_BYTE_ORDER) {
-      gcolr.type = p_idata[0];
-      (*swp->conv_long)((uint32_t *) p_idata);
-   }
-   else if (swp->toFormat & PHG_AR_HOST_BYTE_ORDER) {
-      (*swp->conv_long)((uint32_t *) p_idata);
-      gcolr.type = p_idata[0];
+      gcolr.type = idata[0];
+      (*swp->conv_long)((uint32_t *) &gcolr.type);
    }
    else {
-      gcolr.type = p_idata[0];
+      (*swp->conv_long)((uint32_t *) idata);
+      gcolr.type = idata[0];
    }
 
    if (gcolr.type == PINDIRECT) {
-      (*swp->conv_long)((uint32_t *) &p_idata[1]);
+      (*swp->conv_long)((uint32_t *) &idata[1]);
    }
    else if (gcolr.type == PMODEL_RGB) {
-      p_fdata = (Pfloat *) &p_idata[1];
-      (*swp->conv_float)((float *) &p_fdata[0]);
-      (*swp->conv_float)((float *) &p_fdata[1]);
-      (*swp->conv_float)((float *) &p_fdata[2]);
+      fdata = (Pfloat *) &idata[1];
+      (*swp->conv_float)((float *) &fdata[0]);
+      (*swp->conv_float)((float *) &fdata[1]);
+      (*swp->conv_float)((float *) &fdata[2]);
    }
 }
 
