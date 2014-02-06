@@ -36,16 +36,15 @@
  */
 
 void priv_edge_area(
-   uint32_t num_points,
-   float32_t *fdata
+   Ppoint_list *point_list
    )
 {
-   uint32_t i;
+   int i;
 
    glBegin(GL_LINE_LOOP);
-   for (i = 0; i < num_points; i++) {
-      glVertex2f(fdata[0], fdata[1]);
-      fdata += 2;
+   for (i = 0; i < point_list->num_points; i++) {
+      glVertex2f(point_list->points[i].x,
+                 point_list->points[i].y);
    }
    glEnd();
 }
@@ -58,16 +57,16 @@ void priv_edge_area(
  */
 
 void priv_edge_area3(
-   uint32_t num_points,
-   float32_t *fdata
+   Ppoint_list3 *point_list
    )
 {
-   uint32_t i;
+   int i;
 
    glBegin(GL_LINE_LOOP);
-   for (i = 0; i < num_points; i++) {
-      glVertex3f(fdata[0], fdata[1], fdata[2]);
-      fdata += 3;
+   for (i = 0; i < point_list->num_points; i++) {
+      glVertex3f(point_list->points[i].x,
+                 point_list->points[i].y,
+                 point_list->points[i].z);
    }
    glEnd();
 }
@@ -81,18 +80,18 @@ void priv_edge_area3(
 
 void wsgl_edge_area(
    Ws *ws,
-   void *data,
+   void *pdata,
    Ws_attr_st *ast
    )
 {
-   uint32_t num_points;
-   uint32_t *idata;
+   Ppoint_list point_list;
+   Pint *data = (Pint *) pdata;
 
-   idata = (uint32_t *) data;
-   num_points = *idata;
+   point_list.num_points = *data;
+   point_list.points = (Ppoint *) &data[1];
 
    wsgl_setup_edge_attr(ast);
-   priv_edge_area(num_points, (float32_t *) &idata[1]);
+   priv_edge_area(&point_list);
 }
 
 /*******************************************************************************
@@ -104,18 +103,18 @@ void wsgl_edge_area(
 
 void wsgl_edge_area3(
    Ws *ws,
-   void *data,
+   void *pdata,
    Ws_attr_st *ast
    )
 {
-   uint32_t num_points;
-   uint32_t *idata;
+   Ppoint_list3 point_list;
+   Pint *data = (Pint *) pdata;
 
-   idata = (uint32_t *) data;
-   num_points = *idata;
+   point_list.num_points = *data;
+   point_list.points = (Ppoint3 *) &data[1];
 
    wsgl_setup_edge_attr(ast);
-   priv_edge_area3(num_points, (float32_t *) &idata[1]);
+   priv_edge_area3(&point_list);
 }
 
 /*******************************************************************************
@@ -127,25 +126,24 @@ void wsgl_edge_area3(
 
 void wsgl_edge_area_set(
    Ws *ws,
-   void *data,
+   void *pdata,
    Ws_attr_st *ast
    )
 {
-   uint32_t i, num_lists, num_points;
-   uint32_t *idata;
-   float32_t *fdata;
+   Pint i, num_lists;
+   Ppoint_list point_list;
+   Pint *data = (Pint *) pdata;
 
-   idata = (uint32_t *) data;
-   num_lists = *idata;
-   idata = &idata[1];
+   num_lists = *data;
+   data = &data[1];
 
    wsgl_setup_edge_attr(ast);
 
    for (i = 0; i < num_lists; i++) {
-      num_points = *idata;
-      fdata = (float32_t *) &idata[1];
-      priv_edge_area(num_points, fdata);
-      idata = (uint32_t *) &fdata[num_points * 2];
+      point_list.num_points = *data;
+      point_list.points = (Ppoint *) &data[1];
+      priv_edge_area(&point_list);
+      data = (Pint *) &point_list.points[point_list.num_points];
    }
 }
 
@@ -158,25 +156,24 @@ void wsgl_edge_area_set(
 
 void wsgl_edge_area_set3(
    Ws *ws,
-   void *data,
+   void *pdata,
    Ws_attr_st *ast
    )
 {
-   uint32_t i, num_lists, num_points;
-   uint32_t *idata;
-   float32_t *fdata;
+   Pint i, num_lists;
+   Ppoint_list3 point_list;
+   Pint *data = (Pint *) pdata;
 
-   idata = (uint32_t *) data;
-   num_lists = *idata;
-   idata = &idata[1];
+   num_lists = *data;
+   data = &data[1];
 
    wsgl_setup_edge_attr(ast);
 
    for (i = 0; i < num_lists; i++) {
-      num_points = *idata;
-      fdata = (float32_t *) &idata[1];
-      priv_edge_area3(num_points, fdata);
-      idata = (uint32_t *) &fdata[num_points * 3];
+      point_list.num_points = *data;
+      point_list.points = (Ppoint3 *) &data[1];
+      priv_edge_area3(&point_list);
+      data = (Pint *) &point_list.points[point_list.num_points];
    }
 }
 

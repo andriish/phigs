@@ -21,8 +21,6 @@
 #ifndef _phgP_h
 #define _phgP_h
 
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -61,11 +59,14 @@ extern "C" {
 #define ELMT_CONTENT(ELMT) \
    (((Phg_elmt_info *) (ELMT)->eldata.ptr) + 1)
 
+#define PHG_LOCAL_TRAN3(ELMT) \
+   ((Plocal_tran3 *) ELMT_CONTENT(ELMT))
+
 #define PHG_INT(ELMT) \
-   *((int32_t *) ELMT_CONTENT(ELMT))
+   *((Pint *) ELMT_CONTENT(ELMT))
 
 #define PHG_FLOAT(ELMT) \
-   *((float32_t *) ELMT_CONTENT(ELMT))
+   *((Pfloat *) ELMT_CONTENT(ELMT))
 
 #define PHG_IN_RANGE( low, high, val) \
    ((val) >= (low) && (val) <= (high))
@@ -250,18 +251,6 @@ void phg_set_el_ptr(
 void phg_copy_all_els(
    Css_handle cssh,
    Pint struct_id
-   );
-
-/*******************************************************************************
- * phg_get_matrix3
- *
- * DESCR:       Get matrix 3D from element data
- * RETURNS:     TRUE or FALSE
- */
-
-void phg_get_matrix3(
-   Pmatrix3 m,
-   void *elmt
    );
 
 /*******************************************************************************

@@ -40,29 +40,29 @@ FTN_SUBROUTINE(ppl)(
    )
 {
    Phg_args_add_el args;
-   uint32_t i, num_points;
-   uint32_t *idata;
-   float32_t *fdata;
+   Pint *data;
+   Pint i, num_points;
+   Ppoint *points;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_polyline)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         num_points = (uint32_t) FTN_INTEGER_GET(n);
+         num_points = FTN_INTEGER_GET(n);
          args.el_type = PELEM_POLYLINE;
-         args.el_size = sizeof(uint32_t) + 2 * sizeof(float32_t) * num_points;
+         args.el_size = sizeof(Pint) + sizeof(Ppoint) * num_points;
          if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
             args.el_data = PHG_SCRATCH.buf;
-            idata = (uint32_t *) args.el_data;
-            idata[0] = num_points;
-            fdata = (float32_t *) &idata[1];
+            data = (Pint *) args.el_data;
+            data[0] = num_points;
+            points = (Ppoint *) &data[1];
             for (i = 0; i < num_points; i++) {
-               *fdata++ = (float32_t) FTN_REAL_ARRAY_GET(pxa, i);
-               *fdata++ = (float32_t) FTN_REAL_ARRAY_GET(pya, i);
+               points[i].x = FTN_REAL_ARRAY_GET(pxa, i);
+               points[i].y = FTN_REAL_ARRAY_GET(pya, i);
             }
             phg_add_el(PHG_CSS, &args);
          }
@@ -82,7 +82,7 @@ FTN_SUBROUTINE(psplci)(
    )
 {
    Phg_args_add_el args;
-   uint32_t colr_ind = (uint32_t) FTN_INTEGER_GET(coli);
+   Pint colr_ind;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_line_colr_ind)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
@@ -93,13 +93,14 @@ FTN_SUBROUTINE(psplci)(
       }
       else {
          args.el_type = PELEM_LINE_COLR_IND;
-         args.el_size = sizeof(uint32_t);
+         args.el_size = sizeof(Pint);
          if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
             args.el_data = PHG_SCRATCH.buf;
-            *((uint32_t *) args.el_data) = colr_ind;
+            colr_ind = FTN_INTEGER_GET(coli);
+            memcpy(args.el_data, &colr_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -118,6 +119,7 @@ FTN_SUBROUTINE(psln)(
    )
 {
    Phg_args_add_el args;
+   Pint linetype;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_linetype)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
@@ -125,13 +127,14 @@ FTN_SUBROUTINE(psln)(
       }
       else {
          args.el_type = PELEM_LINETYPE;
-         args.el_size = sizeof(uint32_t);
+         args.el_size = sizeof(Pint);
          if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
             args.el_data = PHG_SCRATCH.buf;
-            *((uint32_t *) args.el_data) = (uint32_t) FTN_INTEGER_GET(ltype);
+            linetype = FTN_INTEGER_GET(ltype);
+            memcpy(args.el_data, &linetype, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -150,6 +153,7 @@ FTN_SUBROUTINE(pslwsc)(
    )
 {
    Phg_args_add_el args;
+   Pfloat linewidth;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_linewidth)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
@@ -157,13 +161,14 @@ FTN_SUBROUTINE(pslwsc)(
       }
       else {
          args.el_type = PELEM_LINEWIDTH;
-         args.el_size = sizeof(float32_t);
+         args.el_size = sizeof(Pfloat);
          if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
             args.el_data = PHG_SCRATCH.buf;
-            *((float32_t *) args.el_data) = (float32_t) FTN_REAL_GET(lwidth);
+            linewidth = FTN_REAL_GET(lwidth);
+            memcpy(args.el_data, &linewidth, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -184,8 +189,9 @@ FTN_SUBROUTINE(ptx)(
    )
 {
    Phg_args_add_el args;
-   int len;
-   float32_t *fdata;
+   Pint len;
+   Ppoint text_pos;
+   Ppoint *data;
    char *char_string;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_text)) {
@@ -201,10 +207,11 @@ FTN_SUBROUTINE(ptx)(
          }
          else {
             args.el_data = PHG_SCRATCH.buf;
-            fdata = (float32_t *) args.el_data;
-            fdata[0] = (float32_t) FTN_REAL_GET(px);
-            fdata[1] = (float32_t) FTN_REAL_GET(py);
-            char_string = (char *) &fdata[2];
+            data = (Ppoint *) args.el_data;
+            text_pos.x = FTN_REAL_GET(px);
+            text_pos.y = FTN_REAL_GET(py);
+            memcpy(data, &text_pos, sizeof(Ppoint));
+            char_string = (char *) &data[1];
             strncpy(char_string, FTN_CHARACTER_GET(chars), len); 
             char_string[len] = '\0';
             phg_add_el(PHG_CSS, &args);
@@ -225,6 +232,7 @@ FTN_SUBROUTINE(pschh)(
    )
 {
    Phg_args_add_el args;
+   Pfloat char_ht;
 
    if (phg_entry_check(PHG_ERH, ERR5, Pfn_set_char_ht)) {
       if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
@@ -232,13 +240,14 @@ FTN_SUBROUTINE(pschh)(
       }
       else {
          args.el_type = PELEM_CHAR_HT;
-         args.el_size = sizeof(float32_t);
+         args.el_size = sizeof(Pfloat);
          if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
             args.el_data = PHG_SCRATCH.buf;
-            *((float32_t *) args.el_data) = (float32_t) FTN_REAL_GET(chh);
+            char_ht = FTN_REAL_GET(chh);
+            memcpy(args.el_data, &char_ht, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }

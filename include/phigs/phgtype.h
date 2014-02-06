@@ -25,7 +25,6 @@
 #include <sys/types.h>
 
 #include "phigs.h"
-#include "stdfloat.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,7 +43,7 @@ extern "C" {
 
 typedef void (*Phg_conv_long)  (uint32_t *);
 typedef void (*Phg_conv_short) (uint16_t *);
-typedef void (*Phg_conv_float) (float32_t *);
+typedef void (*Phg_conv_float) (float *);
 
 typedef struct {
    int            fromFormat;

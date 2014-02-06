@@ -24,7 +24,6 @@
 #include "phg.h"
 #include "css.h"
 #include "private/phgP.h"
-#include "private/cbP.h"
 
 /*******************************************************************************
  * pfill_area_set3_data
@@ -428,10 +427,14 @@ void pset_back_int_style(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         if (!phg_cb_store_int(&args, PELEM_BACK_INT_STYLE, (Pint) int_style)) {
+         args.el_type = PELEM_BACK_INT_STYLE;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
+            args.el_data = PHG_SCRATCH.buf;
+            *((Pint *) args.el_data) = (Pint) int_style;
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -459,11 +462,14 @@ void pset_back_int_style_ind(
          ERR_REPORT(PHG_ERH, ERR112);
       }
       else {
-         if (!phg_cb_store_int(&args, PELEM_BACK_INT_STYLE_IND,
-                               int_style_ind)) {
+         args.el_type = PELEM_BACK_INT_STYLE_IND;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, &int_style_ind, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -726,10 +732,14 @@ void pset_int_shad_meth(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         if (!phg_cb_store_int(&args, PELEM_INT_SHAD_METH, shad_meth)) {
+         args.el_type = PELEM_INT_SHAD_METH;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, &shad_meth, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -754,10 +764,14 @@ void pset_back_int_shad_meth(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         if (!phg_cb_store_int(&args, PELEM_BACK_INT_SHAD_METH, shad_meth)) {
+         args.el_type = PELEM_BACK_INT_SHAD_METH;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, &shad_meth, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -782,10 +796,14 @@ void pset_refl_eqn(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         if (!phg_cb_store_int(&args, PELEM_INT_REFL_EQN, refl_equ)) {
+         args.el_type = PELEM_INT_REFL_EQN;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, &refl_equ, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -810,10 +828,14 @@ void pset_back_refl_eqn(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         if (!phg_cb_store_int(&args, PELEM_BACK_INT_REFL_EQN, refl_equ)) {
+         args.el_type = PELEM_BACK_INT_REFL_EQN;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
+            args.el_data = PHG_SCRATCH.buf;
+            memcpy(args.el_data, &refl_equ, args.el_size);
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -902,11 +924,14 @@ void pset_face_disting_mode(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         if (!phg_cb_store_int(&args, PELEM_FACE_DISTING_MODE,
-                               (Pint) disting_mode)) {
+         args.el_type = PELEM_FACE_DISTING_MODE;
+         args.el_size = sizeof(Pint);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
+            args.el_data = PHG_SCRATCH.buf;
+            *((Pint *) args.el_data) = (Pint) disting_mode;
             phg_add_el(PHG_CSS, &args);
          }
       }
@@ -931,10 +956,14 @@ void pset_face_cull_mode(
          ERR_REPORT(PHG_ERH, ERR5);
       }
       else {
-         if (!phg_cb_store_int(&args, PELEM_FACE_CULL_MODE, (Pint) cull_mode)) {
+         args.el_type = PELEM_FACE_CULL_MODE;
+         args.el_size = sizeof(Pcull_mode);
+         if (!PHG_SCRATCH_SPACE(&PHG_SCRATCH, args.el_size)) {
             ERR_REPORT(PHG_ERH, ERR900);
          }
          else {
+            args.el_data = PHG_SCRATCH.buf;
+            *((Pint *) args.el_data) = (Pint) cull_mode;
             phg_add_el(PHG_CSS, &args);
          }
       }
