@@ -22,6 +22,7 @@
 
 #include "phg.h"
 #include "phgtype.h"
+#include "private/arP.h"
 
 /******************************************************************************
  * phg_swap_nil

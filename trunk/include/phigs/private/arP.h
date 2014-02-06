@@ -21,8 +21,34 @@
 #ifndef _arP_h
 #define _arP_h
 
+#include <endian.h>
+
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#ifdef __BYTE_ORDER
+#if __BYTE_ORDER == __BIG_ENDIAN
+#define PHG_AR_HOST_BYTE_ORDER 0x0
+#elif __BYTE_ORDER == __LITTLE_ENDIAN
+#define PHG_AR_HOST_BYTE_ORDER 0x1
+#elif __BYTE_ORDER == __PDP_ENDIAN
+#error "PDP/ARM not supported yet"
+#else 
+#error "Endian determination failed"
+#endif
+#endif
+
+#ifdef VAX
+#define PHG_AR_HOST_FLOAT_FORMAT 0x2
+#else /* !VAX */
+#define PHG_AR_HOST_FLOAT_FORMAT 0x0
+#endif /* VAX */
+
+#ifdef DEBUG
+#define TOCSIZE                  256
+#else
+#define TOCSIZE                  4
 #endif
 
 #define PHG_AR_FOR_ALL_TOC_ENTRIES(_arh, _e)                        \
