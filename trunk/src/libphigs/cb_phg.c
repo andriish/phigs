@@ -191,8 +191,9 @@ void pdel_store(
          *node = (*node)->next;
          if (store->size > 0) {
             free(store->buf);
-            break;
          }
+         free(store);
+         break;
       }
    }
 }

@@ -95,40 +95,37 @@ Pfloat angle_x = 0.0;
 Pfloat angle_y = 0.0;
 Pgcolr blue;
 
-void struct_content(Pint struct_id, Pint elmt_num)
+void print_fill_area_set3(Pelem_data *elem_data)
 {
-   Pint i, num_longs;
-   Phg_ret ret;
-   caddr_t data;
+   Pint i, j;
 
-   ret.err = 0;
-   phg_css_inq_el_type_size(PHG_CSS, struct_id, elmt_num, &ret);
-   if (!ret.err) {
-      num_longs = ret.data.el_type_size.size / 4;
-      css_print_eltype(ret.data.el_type_size.type);
-      printf("\t\t\tSIZE: %d\n", ret.data.el_type_size.size);
-   }
-   else {
-      num_longs = 0;
-      printf("Error %d\n", ret.err);
-   }
-
-   ret.err = 0;
-   phg_css_inq_el_content(PHG_CSS, struct_id, elmt_num, &ret);
-   if (!ret.err) {
-      data = (caddr_t) ret.data.el_info.el_head + 4;
-      printf("-------------------------------------------------------------\n");
-      for (i = 0; i < num_longs; i++) {
-         printf("%08x:\tINTEGER: %d\n"
-                "\t\t\t\t\tFLOAT: %f\n",
-                i, *((int *) data), *((float *) data));
-         data += 4;
+   for (i = 0; i < elem_data->point_list_list3.num_point_lists; i++) {
+      printf("List #%d:\n", i);
+      for (j = 0;
+           j < elem_data->point_list_list3.point_lists[i].num_points;
+           j++) {
+         printf("\t%g %g %g\n",
+                elem_data->point_list_list3.point_lists[i].points[j].x,
+                elem_data->point_list_list3.point_lists[i].points[j].y,
+                elem_data->point_list_list3.point_lists[i].points[j].z);
       }
    }
-   else {
-      printf("Error: %d\n", ret.err);
+}
+
+void print_elem_content(Pint struct_id, Pint elem_num)
+{
+   Pstore store;
+   Pint err;
+   Pelem_data *elem_data;
+
+   pcreate_store(&err, &store);
+   if (!err) {
+      pinq_elem_content(struct_id, elem_num, store, &err, &elem_data);
+      if (!err) {
+         print_fill_area_set3(elem_data);
+      }
+      pdel_store(store);
    }
-   printf("\n");
 }
 
 int main(int argc, char *argv[])
@@ -162,7 +159,7 @@ int main(int argc, char *argv[])
    pfill_area_set3(&shape);
    pclose_struct();
 
-   //struct_content(STRUCT_OBJECT, 7);
+   print_elem_content(STRUCT_OBJECT, 10);
 
    popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);
    pset_hlhsr_mode(0, PHIGS_HLHSR_MODE_ZBUFF);
@@ -196,6 +193,9 @@ int main(int argc, char *argv[])
             else if (ks == XK_Right) {
                angle_y += ANGLE_DELTA;
             }
+            else if (ks == XK_Escape) {
+               goto exit;
+            }
             protate_x(angle_x * 3.14 / 2.0, &errnum, rotx);
             protate_y(angle_y * 3.14 / 2.0, &errnum, roty);
             pcompose_matrix3(rotx, roty, &errnum, rot3);
@@ -214,6 +214,7 @@ int main(int argc, char *argv[])
       }
    }
 
+exit:
    pclose_ws(0);
    pclose_phigs();
 
