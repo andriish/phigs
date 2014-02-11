@@ -295,6 +295,7 @@ int main(int argc, char *argv[])
 {
    Plimit vp, win;
    XEvent event;
+   KeySym ks;
 
    if (argc > 1) {
       view_index = atoi(argv[1]);
@@ -429,9 +430,15 @@ int main(int argc, char *argv[])
          break;
 
          case KeyPress:
-            popen_struct(3);
-            pexec_struct(2);
-            pclose_struct();
+            ks = XLookupKeysym((XKeyEvent *) &event, 0);
+            if (ks == XK_Escape) {
+               goto exit;
+            }
+            else {
+               popen_struct(3);
+               pexec_struct(2);
+               pclose_struct();
+            }
          break;
 
          default:
@@ -439,6 +446,7 @@ int main(int argc, char *argv[])
       }
    }
 
+exit:
    pclose_ws(0);
    pclose_ws(1);
    pclose_phigs();

@@ -1550,6 +1550,9 @@ int main(int argc, char *argv[])
             else if (ks == XK_Right) {
                angle_y += ANGLE_DELTA;
             }
+            else if (ks == XK_Escape) {
+               goto exit;
+            }
             protate_x(angle_x * 3.14 / 2.0, &errnum, rotx);
             protate_y(angle_y * 3.14 / 2.0, &errnum, roty);
             pcompose_matrix3(rotx, roty, &errnum, rot3);
@@ -1568,6 +1571,7 @@ int main(int argc, char *argv[])
       }
    }
 
+exit:
    pclose_ws(0);
    pclose_phigs();
 

@@ -266,6 +266,9 @@ int main(int argc, char *argv[])
                punpost_all_structs(0);
                pupd_ws(0, PFLAG_PERFORM);
             }
+            else if (ks == XK_Escape) {
+               goto exit;
+            }
             else {
                popen_struct(1);
                tvec3.delta_y = -LOW;
@@ -306,6 +309,7 @@ int main(int argc, char *argv[])
       }
    }
 
+exit:
    pclose_ws(0);
    pclose_phigs();
 

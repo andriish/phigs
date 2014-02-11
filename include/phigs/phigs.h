@@ -1974,6 +1974,21 @@ void pinq_edit_mode(
    );
 
 /*******************************************************************************
+ * pinq_elem_content
+ *
+ * DESCR:       Get element content
+ * RETURNS:     N/A
+ */
+
+void pinq_elem_content(
+   Pint struct_id,
+   Pint elem_num,
+   Pstore store,
+   Pint *err_ind,
+   Pelem_data **elem_data
+   );
+
+/*******************************************************************************
  * padd_names_set
  *
  * DESCR:       Creates a new element - name set Inclusion

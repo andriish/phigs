@@ -193,7 +193,8 @@ int main(int argc, char *argv[])
 
          case KeyPress:
             ks = XLookupKeysym((XKeyEvent *) &event, 0);
-            if (ks == XK_Down) {
+            if (ks == XK_Escape) {
+               goto exit;
             }
             break;
 
@@ -202,6 +203,7 @@ int main(int argc, char *argv[])
       }
    }
 
+exit:
    pclose_ws(0);
    pclose_phigs();
 

@@ -42,16 +42,18 @@ int phg_cb_resize_store(
 
    *err_ind = 0;
    if (store != NULL) {
-      old_store.buf = store->buf;
-      if (size > 0 && (store->buf = malloc(size)) == NULL) {
-         *err_ind = ERR900;
-         store->buf = old_store.buf;
-      }
-      else {
-         if (store->size > 0) {
-            free(old_store.buf);
+      if (store->size < size) {
+         old_store.buf = store->buf;
+         if (size > 0 && (store->buf = malloc(size)) == NULL) {
+            *err_ind = ERR900;
+            store->buf = old_store.buf;
          }
-         store->size = size;
+         else {
+            if (store->size > 0) {
+               free(old_store.buf);
+            }
+            store->size = size;
+         }
       }
    }
 
@@ -74,10 +76,186 @@ void phg_cb_destroy_all_stores(
 
    for (node = phg_cb_store_list; node != NULL; node = next) {
       node = node->next;
-      if (node->size > 0) {
-         free(node->buf);
+      if (node != NULL) {
+         if (node->size > 0) {
+            free(node->buf);
+         }
       }
       free(node);
+   }
+}
+
+/*******************************************************************************
+ * phg_cb_store_el_size
+ *
+ * DESCR:       Get size for store data buffer used by inquiry function
+ * RETURNS:     Element size
+ */
+
+int phg_cb_store_el_size(
+   Phg_elmt_info *el_info
+   )
+{
+   Pint *idata;
+   int size;
+
+   size = 0;
+   switch(el_info->elementType) {
+      case PELEM_FILL_AREA_SET:
+         idata = (Pint *) &el_info[1];
+         size = sizeof(Ppoint_list) * (*idata);
+         break;
+
+      case PELEM_FILL_AREA_SET3:
+         idata = (Pint *) &el_info[1];
+         size = sizeof(Ppoint_list3) * (*idata);
+         break;
+
+      case PELEM_FILL_AREA_SET3_DATA:
+         /* TODO */
+         break;
+
+      case PELEM_SET_OF_FILL_AREA_SET3_DATA:
+         /* TODO */
+         break;
+
+      default:
+         break;
+   }
+
+   return (size);
+}
+
+/*******************************************************************************
+ * phg_cb_store_el_data
+ *
+ * DESCR:       Store element data for inquiry function
+ * RETURNS:     N/A
+ */
+
+void phg_cb_store_el_data(
+   Phg_elmt_info *el_info,
+   void *buf,
+   Pelem_data *ed
+   )
+{
+   Pint i;
+   Pint *idata;
+
+   switch(el_info->elementType) {
+      case PELEM_ADD_NAMES_SET:
+      case PELEM_REMOVE_NAMES_SET:
+         idata = (Pint *) &el_info[1];
+         ed->int_list.num_ints = *idata;
+         ed->int_list.ints = (Pint *) &idata[1];
+         break;
+
+      case PELEM_POLYLINE:
+      case PELEM_POLYMARKER:
+      case PELEM_FILL_AREA:
+         idata = (Pint *) &el_info[1];
+         ed->point_list.num_points = *idata;
+         ed->point_list.points = (Ppoint *) &idata[1];
+         break;
+
+      case PELEM_POLYLINE3:
+      case PELEM_POLYMARKER3:
+      case PELEM_FILL_AREA3:
+         idata = (Pint *) &el_info[1];
+         ed->point_list3.num_points = *idata;
+         ed->point_list3.points = (Ppoint3 *) &idata[1];
+         break;
+
+      case PELEM_FILL_AREA_SET:
+         break;
+
+      case PELEM_FILL_AREA_SET3:
+         idata = (Pint *) &el_info[1];
+         ed->point_list_list3.num_point_lists = *idata;
+         idata = (Pint *) &idata[1];
+         ed->point_list_list3.point_lists = (Ppoint_list3 *) buf;
+         for (i = 0; i < ed->point_list_list3.num_point_lists; i++) {
+            ed->point_list_list3.point_lists[i].num_points = *idata;
+            ed->point_list_list3.point_lists[i].points = (Ppoint3 *) &idata[1];
+            idata = (Pint *) &ed->point_list_list3.point_lists[i].points[
+                             ed->point_list_list3.point_lists[i].num_points];
+         }
+         break;
+
+      case PELEM_FILL_AREA_SET3_DATA:
+         break;
+
+      case PELEM_SET_OF_FILL_AREA_SET3_DATA:
+         break;
+
+      case PELEM_TEXT:
+      case PELEM_INT_IND:
+      case PELEM_INT_COLR_IND:
+      case PELEM_INT_STYLE:
+      case PELEM_BACK_INT_STYLE:
+      case PELEM_INT_STYLE_IND:
+      case PELEM_BACK_INT_STYLE_IND:
+      case PELEM_LINE_COLR_IND:
+      case PELEM_LINEWIDTH:
+      case PELEM_LINETYPE:
+      case PELEM_LINE_IND:
+      case PELEM_MARKER_IND:
+      case PELEM_MARKER_COLR_IND:
+      case PELEM_MARKER_SIZE:
+      case PELEM_MARKER_TYPE:
+      case PELEM_EDGE_IND:
+      case PELEM_EDGE_COLR_IND:
+      case PELEM_EDGEWIDTH:
+      case PELEM_EDGETYPE:
+      case PELEM_EDGE_FLAG:
+      case PELEM_TEXT_IND:
+      case PELEM_TEXT_FONT:
+      case PELEM_TEXT_PREC:
+      case PELEM_TEXT_PATH:
+      case PELEM_TEXT_ALIGN:
+      case PELEM_CHAR_HT:
+      case PELEM_CHAR_EXPAN:
+      case PELEM_CHAR_SPACE:
+      case PELEM_CHAR_UP_VEC:
+      case PELEM_TEXT_COLR_IND:
+      case PELEM_INDIV_ASF:
+
+      case PELEM_VIEW_IND:
+      case PELEM_EXEC_STRUCT:
+      case PELEM_LABEL:
+      case PELEM_PICK_ID:
+      case PELEM_HLHSR_ID:
+         break;
+
+      case PELEM_LOCAL_MODEL_TRAN3:
+         break;
+
+      case PELEM_GLOBAL_MODEL_TRAN3:
+         break;
+
+      case PELEM_INT_COLR:
+      case PELEM_BACK_INT_COLR:
+      case PELEM_LINE_COLR:
+      case PELEM_MARKER_COLR:
+      case PELEM_EDGE_COLR:
+      case PELEM_TEXT_COLR:
+         break;
+
+      case PELEM_INT_SHAD_METH:
+      case PELEM_BACK_INT_SHAD_METH:
+      case PELEM_INT_REFL_EQN:
+      case PELEM_BACK_INT_REFL_EQN:
+      case PELEM_REFL_PROPS:
+      case PELEM_BACK_REFL_PROPS:
+      case PELEM_FACE_DISTING_MODE:
+      case PELEM_FACE_CULL_MODE:
+         break;
+
+      case PELEM_LIGHT_SRC_STATE:
+         break;
+
+      default:
+         break;
    }
 }
 

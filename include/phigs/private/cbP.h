@@ -58,6 +58,30 @@ void phg_cb_destroy_all_stores(
    void
    );
 
+/*******************************************************************************
+ * phg_cb_store_el_size
+ *
+ * DESCR:       Get size for store data buffer used by inquiry function
+ * RETURNS:     Element size
+ */
+
+int phg_cb_store_el_size(
+   Phg_elmt_info *el_info
+   );
+
+/*******************************************************************************
+ * phg_cb_store_el_data
+ *
+ * DESCR:       Store element data for inquiry function
+ * RETURNS:     N/A
+ */
+
+void phg_cb_store_el_data(
+   Phg_elmt_info *el_info,
+   void *buf,
+   Pelem_data *ed
+   );
+
 extern struct _Pstore *phg_cb_store_list;
 
 #ifdef __cplusplus
