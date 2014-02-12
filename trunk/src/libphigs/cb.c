@@ -21,6 +21,7 @@
 #include <stdlib.h>
 
 #include "phg.h"
+#include "private/phgP.h"
 #include "private/cbP.h"
 
 struct _Pstore *phg_cb_store_list = (struct _Pstore *) NULL;
@@ -99,7 +100,6 @@ int phg_cb_store_el_size(
    Pint *idata;
    int size;
 
-   size = 0;
    switch(el_info->elementType) {
       case PELEM_FILL_AREA_SET:
          idata = (Pint *) &el_info[1];
@@ -113,13 +113,16 @@ int phg_cb_store_el_size(
 
       case PELEM_FILL_AREA_SET3_DATA:
          /* TODO */
+         size = 0;
          break;
 
       case PELEM_SET_OF_FILL_AREA_SET3_DATA:
          /* TODO */
+         size = 0;
          break;
 
       default:
+         size = 0;
          break;
    }
 
@@ -141,6 +144,7 @@ void phg_cb_store_el_data(
 {
    Pint i;
    Pint *idata;
+   Pfloat *fdata;
 
    switch(el_info->elementType) {
       case PELEM_ADD_NAMES_SET:
@@ -167,6 +171,7 @@ void phg_cb_store_el_data(
          break;
 
       case PELEM_FILL_AREA_SET:
+         /* TODO */
          break;
 
       case PELEM_FILL_AREA_SET3:
@@ -183,54 +188,45 @@ void phg_cb_store_el_data(
          break;
 
       case PELEM_FILL_AREA_SET3_DATA:
+         /* TODO */
          break;
 
       case PELEM_SET_OF_FILL_AREA_SET3_DATA:
+         /* TODO */
          break;
 
       case PELEM_TEXT:
-      case PELEM_INT_IND:
-      case PELEM_INT_COLR_IND:
-      case PELEM_INT_STYLE:
-      case PELEM_BACK_INT_STYLE:
-      case PELEM_INT_STYLE_IND:
-      case PELEM_BACK_INT_STYLE_IND:
-      case PELEM_LINE_COLR_IND:
+         /* TODO */
+         break;
+
       case PELEM_LINEWIDTH:
-      case PELEM_LINETYPE:
-      case PELEM_LINE_IND:
-      case PELEM_MARKER_IND:
-      case PELEM_MARKER_COLR_IND:
       case PELEM_MARKER_SIZE:
-      case PELEM_MARKER_TYPE:
-      case PELEM_EDGE_IND:
-      case PELEM_EDGE_COLR_IND:
       case PELEM_EDGEWIDTH:
-      case PELEM_EDGETYPE:
-      case PELEM_EDGE_FLAG:
-      case PELEM_TEXT_IND:
-      case PELEM_TEXT_FONT:
-      case PELEM_TEXT_PREC:
-      case PELEM_TEXT_PATH:
-      case PELEM_TEXT_ALIGN:
       case PELEM_CHAR_HT:
       case PELEM_CHAR_EXPAN:
       case PELEM_CHAR_SPACE:
-      case PELEM_CHAR_UP_VEC:
-      case PELEM_TEXT_COLR_IND:
-      case PELEM_INDIV_ASF:
+         fdata = (Pfloat *) &el_info[1];
+         ed->float_data = *fdata;
+         break;
 
-      case PELEM_VIEW_IND:
-      case PELEM_EXEC_STRUCT:
-      case PELEM_LABEL:
-      case PELEM_PICK_ID:
-      case PELEM_HLHSR_ID:
+      case PELEM_INDIV_ASF:
+         /* TODO */
+         break;
+
+      case PELEM_TEXT_ALIGN:
+         /* TODO */
+         break;
+
+      case PELEM_CHAR_UP_VEC:
+         /* TODO */
          break;
 
       case PELEM_LOCAL_MODEL_TRAN3:
+         phg_get_local_tran3(&ed->local_tran3, (Pfloat *) &el_info[1]);
          break;
 
       case PELEM_GLOBAL_MODEL_TRAN3:
+         phg_mat_pack(ed->global_tran3, (Pfloat *) &el_info[1]);
          break;
 
       case PELEM_INT_COLR:
@@ -239,22 +235,21 @@ void phg_cb_store_el_data(
       case PELEM_MARKER_COLR:
       case PELEM_EDGE_COLR:
       case PELEM_TEXT_COLR:
+         memcpy(&ed->colr, &el_info[1], sizeof(Pgcolr));
          break;
 
-      case PELEM_INT_SHAD_METH:
-      case PELEM_BACK_INT_SHAD_METH:
-      case PELEM_INT_REFL_EQN:
-      case PELEM_BACK_INT_REFL_EQN:
       case PELEM_REFL_PROPS:
       case PELEM_BACK_REFL_PROPS:
-      case PELEM_FACE_DISTING_MODE:
-      case PELEM_FACE_CULL_MODE:
+         /* TODO */
          break;
 
       case PELEM_LIGHT_SRC_STATE:
+         /* TODO */
          break;
 
       default:
+         idata = (Pint *) &el_info[1];
+         ed->int_data = *idata;
          break;
    }
 }

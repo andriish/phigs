@@ -1974,6 +1974,21 @@ void pinq_edit_mode(
    );
 
 /*******************************************************************************
+ * pinq_elem_type_size
+ *
+ * DESCR:       Get element type and size
+ * RETURNS:     N/A
+ */
+
+void pinq_elem_type_size(
+   Pint struct_id,
+   Pint elem_num,
+   Pint *err_ind,
+   Pelem_type *elem_type,
+   size_t *elem_size
+   );
+
+/*******************************************************************************
  * pinq_elem_content
  *
  * DESCR:       Get element content

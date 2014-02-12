@@ -25,6 +25,7 @@
 #include <X11/keysym.h>
 
 #include "phg.h"
+#include "util.h"
 
 #define ANGLE_DELTA   0.1
 #define WIDTH         1.0
@@ -112,17 +113,76 @@ void print_fill_area_set3(Pelem_data *elem_data)
    }
 }
 
+void print_gcolr(Pelem_data *elem_data)
+{
+   switch(elem_data->colr.type) {
+      case PMODEL_RGB:
+         printf("(R G B) = (%g %g %g)\n",
+                elem_data->colr.val.general.x,
+                elem_data->colr.val.general.y,
+                elem_data->colr.val.general.z);
+         break;
+
+      case PINDIRECT:
+         printf("%d\n", elem_data->colr.val.ind);
+         break;
+
+      default:
+         printf("Unknown colour model\n");
+         break;
+   }
+}
+
 void print_elem_content(Pint struct_id, Pint elem_num)
 {
    Pstore store;
    Pint err;
+   Pelem_type el_type;
+   size_t el_size;
    Pelem_data *elem_data;
 
    pcreate_store(&err, &store);
    if (!err) {
-      pinq_elem_content(struct_id, elem_num, store, &err, &elem_data);
+      pinq_elem_type_size(struct_id, elem_num, &err, &el_type, &el_size);
       if (!err) {
-         print_fill_area_set3(elem_data);
+         pinq_elem_content(struct_id, elem_num, store, &err, &elem_data);
+         if (!err) {
+            switch (el_type) {
+               case PELEM_FILL_AREA_SET3:
+                  print_fill_area_set3(elem_data);
+                  break;
+
+               case PELEM_LINEWIDTH:
+               case PELEM_MARKER_SIZE:
+               case PELEM_EDGEWIDTH:
+               case PELEM_CHAR_HT:
+               case PELEM_CHAR_EXPAN:
+               case PELEM_CHAR_SPACE:
+                  printf("Floating point data: %g\n", elem_data->float_data);
+                  break;
+
+               case PELEM_LOCAL_MODEL_TRAN3:
+                  printf("Local transformation 3D data: %d\n",
+                         elem_data->local_tran3.compose_type);
+                  phg_mat_print(elem_data->local_tran3.matrix);
+                  printf("\n");
+                  break;
+
+               case PELEM_INT_COLR:
+               case PELEM_BACK_INT_COLR:
+               case PELEM_LINE_COLR:
+               case PELEM_MARKER_COLR:
+               case PELEM_EDGE_COLR:
+               case PELEM_TEXT_COLR:
+                  printf("Colour data: ");
+                  print_gcolr(elem_data);
+                  break;
+
+               default:
+                  printf("Integer data: %d\n", elem_data->int_data);
+                  break;
+            }
+         }
       }
       pdel_store(store);
    }
@@ -159,6 +219,15 @@ int main(int argc, char *argv[])
    pfill_area_set3(&shape);
    pclose_struct();
 
+   print_elem_content(STRUCT_OBJECT, 1);
+   print_elem_content(STRUCT_OBJECT, 2);
+   print_elem_content(STRUCT_OBJECT, 3);
+   print_elem_content(STRUCT_OBJECT, 4);
+   print_elem_content(STRUCT_OBJECT, 5);
+   print_elem_content(STRUCT_OBJECT, 6);
+   print_elem_content(STRUCT_OBJECT, 7);
+   print_elem_content(STRUCT_OBJECT, 8);
+   print_elem_content(STRUCT_OBJECT, 9);
    print_elem_content(STRUCT_OBJECT, 10);
 
    popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);
