@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "phg.h"
+#include "eldata.h"
 
 #define WIDTH     0.5
 #define HEIGHT    0.5
@@ -317,6 +318,18 @@ int main(int argc, char *argv[])
    ppolymarker(&plist_mark);
    pclose_struct();
 
+   printf("Struct 0\n");
+   print_elem_content(0, 1);
+   print_elem_content(0, 2);
+   print_elem_content(0, 3);
+   print_elem_content(0, 4);
+   print_elem_content(0, 5);
+   print_elem_content(0, 6);
+   print_elem_content(0, 7);
+   print_elem_content(0, 8);
+   print_elem_content(0, 9);
+   print_elem_content(0, 10);
+
    popen_struct(1);
    pset_indiv_asf(PASPECT_EDGE_FLAG, PASF_BUNDLED);
    pset_indiv_asf(PASPECT_EDGETYPE, PASF_BUNDLED);
@@ -330,6 +343,18 @@ int main(int argc, char *argv[])
    pfill_area(&plist_quad);
    pclose_struct();
 
+   printf("\nStruct 1\n");
+   print_elem_content(1, 1);
+   print_elem_content(1, 2);
+   print_elem_content(1, 3);
+   print_elem_content(1, 4);
+   print_elem_content(1, 5);
+   print_elem_content(1, 6);
+   print_elem_content(1, 7);
+   print_elem_content(1, 8);
+   print_elem_content(1, 9);
+   print_elem_content(1, 10);
+
    popen_struct(2);
    pset_indiv_asf(PASPECT_EDGE_FLAG, PASF_INDIV);
    pset_edge_flag(PEDGE_OFF);
@@ -340,6 +365,16 @@ int main(int argc, char *argv[])
    pset_int_style_ind(HATCH_IND);
    pfill_area(&plist_tri);
    pclose_struct();
+
+   printf("\nStruct 2\n");
+   print_elem_content(2, 1);
+   print_elem_content(2, 2);
+   print_elem_content(2, 3);
+   print_elem_content(2, 4);
+   print_elem_content(2, 5);
+   print_elem_content(2, 6);
+   print_elem_content(2, 7);
+   print_elem_content(2, 8);
 
    popen_struct(3);
    pset_view_ind(view_index);
@@ -357,6 +392,22 @@ int main(int argc, char *argv[])
    pset_char_up_vec(&text_up);
    ptext(&text_pos, "Hello World!");
    pclose_struct();
+
+   printf("\nStruct 3\n");
+   print_elem_content(3, 1);
+   print_elem_content(3, 2);
+   print_elem_content(3, 3);
+   print_elem_content(3, 4);
+   print_elem_content(3, 5);
+   print_elem_content(3, 6);
+   print_elem_content(3, 7);
+   print_elem_content(3, 8);
+   print_elem_content(3, 9);
+   print_elem_content(3, 10);
+   print_elem_content(3, 11);
+   print_elem_content(3, 12);
+   print_elem_content(3, 13);
+   print_elem_content(3, 14);
 
    popen_ws(0, NULL, PWST_OUTPUT_TRUE_DB);
    vp.x_min =   0.0;

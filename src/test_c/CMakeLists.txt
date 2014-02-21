@@ -1,16 +1,16 @@
 SET(PHIGS_LIBRARIES phigs
     ${OPENGL_LIBRARY} ${X11_LIBRARY} ${XMU_LIBRARY} m)
 
-ADD_EXECUTABLE(test_c1 test_c1.c)
+ADD_EXECUTABLE(test_c1 test_c1.c eldata.c)
 TARGET_LINK_LIBRARIES(test_c1 ${PHIGS_LIBRARIES})
 
-ADD_EXECUTABLE(test_c2 test_c2.c)
+ADD_EXECUTABLE(test_c2 test_c2.c eldata.c)
 TARGET_LINK_LIBRARIES(test_c2 ${PHIGS_LIBRARIES})
 
-ADD_EXECUTABLE(test_c3 test_c3.c)
+ADD_EXECUTABLE(test_c3 test_c3.c eldata.c )
 TARGET_LINK_LIBRARIES(test_c3 ${PHIGS_LIBRARIES})
 
-ADD_EXECUTABLE(test_c4 test_c4.c)
+ADD_EXECUTABLE(test_c4 test_c4.c eldata.c )
 TARGET_LINK_LIBRARIES(test_c4 ${PHIGS_LIBRARIES})
 
 ADD_EXECUTABLE(test_c5 test_c5.c)

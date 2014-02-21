@@ -144,7 +144,7 @@ void phg_cb_store_el_data(
 {
    Pint i;
    Pint *idata;
-   Pfloat *fdata;
+   Ppoint *pdata;
 
    switch(el_info->elementType) {
       case PELEM_ADD_NAMES_SET:
@@ -171,7 +171,16 @@ void phg_cb_store_el_data(
          break;
 
       case PELEM_FILL_AREA_SET:
-         /* TODO */
+         idata = (Pint *) &el_info[1];
+         ed->point_list_list.num_point_lists = *idata;
+         idata = (Pint *) &idata[1];
+         ed->point_list_list.point_lists = (Ppoint_list *) buf;
+         for (i = 0; i < ed->point_list_list.num_point_lists; i++) {
+            ed->point_list_list.point_lists[i].num_points = *idata;
+            ed->point_list_list.point_lists[i].points = (Ppoint *) &idata[1];
+            idata = (Pint *) &ed->point_list_list.point_lists[i].points[
+                             ed->point_list_list.point_lists[i].num_points];
+         }
          break;
 
       case PELEM_FILL_AREA_SET3:
@@ -196,7 +205,9 @@ void phg_cb_store_el_data(
          break;
 
       case PELEM_TEXT:
-         /* TODO */
+         pdata = (Ppoint *) &el_info[1];
+         memcpy(&ed->text.pos, pdata, sizeof(Ppoint));
+         ed->text.char_string = (char *) &pdata[1];
          break;
 
       case PELEM_LINEWIDTH:
@@ -205,20 +216,19 @@ void phg_cb_store_el_data(
       case PELEM_CHAR_HT:
       case PELEM_CHAR_EXPAN:
       case PELEM_CHAR_SPACE:
-         fdata = (Pfloat *) &el_info[1];
-         ed->float_data = *fdata;
+         memcpy(&ed->float_data, &el_info[1], sizeof(Pfloat));
          break;
 
       case PELEM_INDIV_ASF:
-         /* TODO */
+         memcpy(&ed->asf_info, &el_info[1], sizeof(Pasf_info));
          break;
 
       case PELEM_TEXT_ALIGN:
-         /* TODO */
+         memcpy(&ed->text_align, &el_info[1], sizeof(Ptext_align));
          break;
 
       case PELEM_CHAR_UP_VEC:
-         /* TODO */
+         memcpy(&ed->vec, &el_info[1], sizeof(Pvec));
          break;
 
       case PELEM_LOCAL_MODEL_TRAN3:
@@ -240,7 +250,7 @@ void phg_cb_store_el_data(
 
       case PELEM_REFL_PROPS:
       case PELEM_BACK_REFL_PROPS:
-         /* TODO */
+         memcpy(&ed->props, &el_info[1], sizeof(Prefl_props));
          break;
 
       case PELEM_LIGHT_SRC_STATE:
@@ -248,8 +258,7 @@ void phg_cb_store_el_data(
          break;
 
       default:
-         idata = (Pint *) &el_info[1];
-         ed->int_data = *idata;
+         memcpy(&ed->int_data, &el_info[1], sizeof(Pint));
          break;
    }
 }

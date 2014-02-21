@@ -463,16 +463,18 @@ int phg_css_struct_ref(Css_handle cssh,
 	break;
 
       case CSS_EL_INQ_CONTENT: {
-         Phg_ret_q_content *ret_data = (Phg_ret_q_content *)argdata;
-         ret_data->el_head->elementType = PELEM_EXEC_STRUCT;
-         ret_data->el_head->length = sizeof(Pint) + sizeof(Phg_elmt_info);
-         *((Pint *) (&ret_data->el_head[1])) =
-             ((Struct_handle)elptr->eldata.ptr)->struct_id;
+            Phg_ret_q_content *ret_data = (Phg_ret_q_content *)argdata;
+            CSS_MEM_BLOCK(cssh, sizeof(Phg_elmt_info) + sizeof(Pint),
+                          ret_data->el_head, Phg_elmt_info);
+            ret_data->el_head->elementType = PELEM_EXEC_STRUCT;
+            ret_data->el_head->length = sizeof(Phg_elmt_info) + sizeof(Pint);
+            *((Pint *) (&ret_data->el_head[1])) =
+                ((Struct_handle)elptr->eldata.ptr)->struct_id;
       } break;
 
       case CSS_EL_INQ_TYPE_SIZE:
-	ARGS_ELMT_SIZE(argdata) = 0;
-      break;
+        *((Pint *)argdata) = 0;
+        break;
     }
     return(retval);
 }

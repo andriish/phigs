@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "phg.h"
+#include "eldata.h"
 
 #define STRUCT_OBJECT  0
 #define STRUCT_SCENE   1
@@ -202,6 +203,25 @@ void init_scene(void)
    pexec_struct(STRUCT_SCENE);
    premove_names_set(&names_view_4);
    pclose_struct();
+
+   print_elem_content(STRUCT_MAIN, 1);
+   print_elem_content(STRUCT_MAIN, 2);
+   print_elem_content(STRUCT_MAIN, 3);
+   print_elem_content(STRUCT_MAIN, 4);
+   print_elem_content(STRUCT_MAIN, 5);
+   print_elem_content(STRUCT_MAIN, 6);
+   print_elem_content(STRUCT_MAIN, 7);
+   print_elem_content(STRUCT_MAIN, 8);
+   print_elem_content(STRUCT_MAIN, 9);
+   print_elem_content(STRUCT_MAIN, 10);
+   print_elem_content(STRUCT_MAIN, 11);
+   print_elem_content(STRUCT_MAIN, 12);
+   print_elem_content(STRUCT_MAIN, 13);
+   print_elem_content(STRUCT_MAIN, 14);
+   print_elem_content(STRUCT_MAIN, 15);
+   print_elem_content(STRUCT_MAIN, 16);
+   print_elem_content(STRUCT_MAIN, 17);
+   print_elem_content(STRUCT_MAIN, 18);
 
    popen_struct(STRUCT_BORDER);
    pexec_struct(STRUCT_MAIN);
