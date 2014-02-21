@@ -26,6 +26,7 @@
 #include <X11/keysym.h>
 
 #include "phg.h"
+#include "eldata.h"
 
 #define WIDTH   0.8
 #define HEIGHT  0.8
@@ -154,6 +155,9 @@ int main(int argc, char *argv[])
    pfill_area3(&plist_quad);
    ppolymarker3(&plist_quad);
    pclose_struct();
+
+   print_elem_content(0, 1);
+   print_elem_content(0, 2);
 
    tvec3.delta_x = 0.0;
    tvec3.delta_y = 0.0;
