@@ -527,6 +527,38 @@ void pinq_elem_type_size(
 }
 
 /*******************************************************************************
+ * pinq_cur_elem_type_size
+ *
+ * DESCR:	Get current element type and size
+ * RETURNS:	N/A
+ */
+
+void pinq_cur_elem_type_size(
+   Pint *err_ind,
+   Pelem_type *elem_type,
+   size_t *elem_size
+   )
+{
+   Phg_ret ret;
+
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
+      *err_ind = ERR5;
+   }
+   else if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      *err_ind = ERR5;
+   }
+   else {
+      ret.err = 0;
+      phg_css_inq_el_type_size(PHG_CSS, 0, -1, &ret);
+      if (!ret.err) {
+         *elem_type = ret.data.el_type_size.type;
+         *elem_size = ret.data.el_type_size.size;
+      }
+      *err_ind = ret.err;
+   }
+}
+
+/*******************************************************************************
  * pinq_elem_content
  *
  * DESCR:	Get element content
@@ -558,6 +590,47 @@ void pinq_elem_content(
    else {
       ret.err = 0;
       phg_css_inq_el_content(PHG_CSS, struct_id, elem_num, &ret);
+      if (!ret.err) {
+         if (ret.data.el_info.op != PELEM_NIL) {
+            el_info = ret.data.el_info.el_head;
+            size = phg_cb_store_el_size(el_info);
+            if (phg_cb_resize_store(store, size, err_ind)) {
+               phg_cb_store_el_data(el_info, store->buf,
+                                    &store->data.elem_data);
+               *elem_data = &((struct _Pstore *) store)->data.elem_data;
+            }
+         }
+      }
+      *err_ind = ret.err;
+   }
+}
+
+/*******************************************************************************
+ * pinq_cur_elem_content
+ *
+ * DESCR:	Get current element content
+ * RETURNS:	N/A
+ */
+
+void pinq_cur_elem_content(
+   Pstore store,
+   Pint *err_ind,
+   Pelem_data **elem_data
+   )
+{
+   Phg_ret ret;
+   Phg_elmt_info *el_info;
+   int size;
+
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
+      *err_ind = ERR5;
+   }
+   else if (PSL_STRUCT_STATE(PHG_PSL) != PSTRUCT_ST_STOP) {
+      *err_ind = ERR5;
+   }
+   else {
+      ret.err = 0;
+      phg_css_inq_el_content(PHG_CSS, 0, -1, &ret);
       if (!ret.err) {
          if (ret.data.el_info.op != PELEM_NIL) {
             el_info = ret.data.el_info.el_head;

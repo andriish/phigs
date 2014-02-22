@@ -135,7 +135,9 @@ void init_scene(void)
 
    popen_struct(STRUCT_OBJECT);
    pfill_area3(&plist_quad);
+   print_elem_content(0, -1);
    ppolymarker3(&plist_quad);
+   print_elem_content(0, -1);
    pclose_struct();
 
    tvec3.delta_x = 1.0;

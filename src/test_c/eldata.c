@@ -117,9 +117,19 @@ void print_elem_content(Pint struct_id, Pint elem_num)
 
    pcreate_store(&err, &store);
    if (!err) {
-      pinq_elem_type_size(struct_id, elem_num, &err, &el_type, &el_size);
+      if (elem_num >= 0) {
+         pinq_elem_type_size(struct_id, elem_num, &err, &el_type, &el_size);
+      }
+      else {
+         pinq_cur_elem_type_size(&err, &el_type, &el_size);
+      }
       if (!err) {
-         pinq_elem_content(struct_id, elem_num, store, &err, &elem_data);
+         if (elem_num >= 0) {
+            pinq_elem_content(struct_id, elem_num, store, &err, &elem_data);
+         }
+         else {
+            pinq_cur_elem_content(store, &err, &elem_data);
+         }
          if (!err) {
             css_print_eltype(el_type);
             printf("\n");

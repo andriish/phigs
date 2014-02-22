@@ -1989,6 +1989,19 @@ void pinq_elem_type_size(
    );
 
 /*******************************************************************************
+ * pinq_cur_elem_type_size
+ *
+ * DESCR:       Get current element type and size
+ * RETURNS:     N/A
+ */
+
+void pinq_cur_elem_type_size(
+   Pint *err_ind,
+   Pelem_type *elem_type,
+   size_t *elem_size
+   );
+
+/*******************************************************************************
  * pinq_elem_content
  *
  * DESCR:       Get element content
@@ -1998,6 +2011,19 @@ void pinq_elem_type_size(
 void pinq_elem_content(
    Pint struct_id,
    Pint elem_num,
+   Pstore store,
+   Pint *err_ind,
+   Pelem_data **elem_data
+   );
+
+/*******************************************************************************
+ * pinq_cur_elem_content
+ *
+ * DESCR:       Get current element content
+ * RETURNS:     N/A
+ */
+
+void pinq_cur_elem_content(
    Pstore store,
    Pint *err_ind,
    Pelem_data **elem_data
