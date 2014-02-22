@@ -144,7 +144,6 @@ void phg_cb_store_el_data(
 {
    Pint i;
    Pint *idata;
-   Ppoint *pdata;
 
    switch(el_info->elementType) {
       case PELEM_ADD_NAMES_SET:
@@ -204,11 +203,11 @@ void phg_cb_store_el_data(
          /* TODO */
          break;
 
-      case PELEM_TEXT:
-         pdata = (Ppoint *) &el_info[1];
-         memcpy(&ed->text.pos, pdata, sizeof(Ppoint));
-         ed->text.char_string = (char *) &pdata[1];
-         break;
+      case PELEM_TEXT: {
+            Ppoint *pdata = (Ppoint *) &el_info[1];
+            memcpy(&ed->text.pos, pdata, sizeof(Ppoint));
+            ed->text.char_string = (char *) &pdata[1];
+         } break;
 
       case PELEM_LINEWIDTH:
       case PELEM_MARKER_SIZE:
