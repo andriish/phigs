@@ -421,6 +421,64 @@ void pcopy_all_elems_struct(
 }
 
 /*******************************************************************************
+ * pelem_search
+ *
+ * DESCR:	Get all matching elements
+ * RETURNS:	N/A
+ */
+
+void pelem_search(
+   Pint struct_id,
+   Pint struct_elem,
+   Psearch_dir dir,
+   Pelem_type_list *incl,
+   Pelem_type_list *excl,
+   Pint *err_ind,
+   Psearch_status *status,
+   Pint *found_elem_ptr
+   )
+{
+   Phg_ret ret;
+
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
+      *err_ind = ERR2;
+   }
+   else {
+      ret.err = 0;
+      phg_css_el_search(PHG_CSS, struct_id, struct_elem, dir, incl, excl, &ret);
+      if (ret.err) {
+         *err_ind = ret.err;
+      }
+      else {
+         *err_ind = 0;
+         *status = ret.data.el_search.status;
+         *found_elem_ptr = ret.data.el_search.found_el;
+      }
+   }
+}
+
+/*******************************************************************************
+ * pinq_edit_mode
+ *
+ * DESCR:	Get structure edit mode
+ * RETURNS:	N/A
+ */
+
+void pinq_edit_mode(
+   Pint *err_ind,
+   Pedit_mode *edit_mode
+   )
+{
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
+      *err_ind = ERR2;
+   }
+   else {
+      *err_ind = 0;
+      *edit_mode = PSL_EDIT_MODE(PHG_PSL);
+   }
+}
+
+/*******************************************************************************
  * pinq_elem_ptr
  *
  * DESCR:	Returns the index of the current element.
@@ -445,9 +503,28 @@ void pinq_elem_ptr(
 }
 
 /*******************************************************************************
+ * pinq_struct_st
+ *
+ * DESCR:	Get current structure state
+ * RETURNS:	N/A
+ */
+
+void pinq_struct_st(
+   Pint *struct_st
+   )
+{
+   if (phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
+      *struct_st = PSL_STRUCT_STATE(PHG_PSL);
+   }
+   else {
+      *struct_st = PSTRUCT_ST_STCL;
+   }
+}
+
+/*******************************************************************************
  * pinq_open_struct
  *
- * DESCR:	Check if a structure is open for appending or editing.
+ * DESCR:       Get current structure open and edit status
  * RETURNS:	N/A
  */
 
@@ -472,23 +549,33 @@ void pinq_open_struct(
 }
 
 /*******************************************************************************
- * pinq_edit_mode
+ * pinq_struct_status
  *
- * DESCR:	Get structure edit mode
+ * DESCR:	Get current status of give structure
  * RETURNS:	N/A
  */
 
-void pinq_edit_mode(
+void pinq_struct_status(
+   Pint struct_id,
    Pint *err_ind,
-   Pedit_mode *edit_mode
+   Pstruct_status *status
    )
 {
+   Phg_ret ret;
+
    if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
       *err_ind = ERR2;
    }
    else {
-      *err_ind = 0;
-      *edit_mode = PSL_EDIT_MODE(PHG_PSL);
+      ret.err = 0;
+      phg_css_inq_struct_status(PHG_CSS, struct_id, &ret);
+      if (ret.err) {
+         *err_ind = ret.err;
+      }
+      else {
+         *err_ind = 0;
+         *status = (Pstruct_status) ret.data.idata;
+      }
    }
 }
 

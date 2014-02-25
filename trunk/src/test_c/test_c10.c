@@ -81,9 +81,31 @@ void list_structs(Pint archive_id)
 
    pret_struct_ids(archive_id, 10, 0, &list, &n);
    for (i = 0; i < list.num_ints; i++) {
-      printf("Structure id:\t%d\n", list.ints[i]);
+      printf("\t%d\n", list.ints[i]);
    }
-   printf("\n");
+}
+
+void list_archives(void)
+{
+   Pint i;
+   Pint err;
+   Pstore store;
+   Par_file_list *file_list;
+
+   pcreate_store(&err, &store);
+   if (!err) {
+      pinq_ar_files(store, &err, &file_list);
+      if (!err) {
+         for (i = 0; i < file_list->num_ar_files; i++) {
+            printf("Archive file #%d: %s\n",
+                   file_list->ar_files[i].id,
+                   file_list->ar_files[i].name);
+            list_structs(file_list->ar_files[i].id);
+            printf("\n");
+         }
+      }
+      pdel_store(store);
+   }
 }
 
 void ret_struct_net(Pint archive_id, Pint struct_id)
@@ -240,7 +262,7 @@ int main(int argc, char *argv[])
             }
             else if (ks == XK_l) {
                popen_ar_file(0, "archive.phg");
-               list_structs(0);
+               list_archives();
                pclose_ar_file(0);
             }
             else if (ks == XK_s) {

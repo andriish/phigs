@@ -20,11 +20,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "phg.h"
 #include "css.h"
 #include "ar.h"
 #include "private/phgP.h"
+#include "private/cbP.h"
  
 /*******************************************************************************
  * valid_ar_fname
@@ -484,6 +486,57 @@ void pinq_ar_st(
 }
 
 /*******************************************************************************
+ * pinq_ar_files
+ *
+ * DESCR:       Get open archive files
+ * RETURNS:     N/A
+ */
+
+void pinq_ar_files(
+   Pstore store,
+   Pint *err_ind,
+   Par_file_list **ar_files
+   )
+{
+   int i, j, size;
+   char *name_buf;
+
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
+      *err_ind = ERR2;
+   }
+   else {
+      *err_ind = 0;
+      *ar_files = &((struct _Pstore *) store)->data.ar_files;
+      (*ar_files)->num_ar_files = 0;
+      if (PSL_AR_STATE(PHG_PSL) == PST_AROP) {
+         for (i = 0, size = 0; i < MAX_NO_OPEN_ARFILES; i++) {
+            if (PHG_PSL->ar_files[i].used) {
+               (*ar_files)->num_ar_files++;
+               size += strlen(PHG_PSL->ar_files[i].fname) + 1;
+            }
+            size += (*ar_files)->num_ar_files * sizeof(Par_file);
+            if (phg_cb_resize_store(store, size, err_ind)) {
+               j = 0;
+               (*ar_files)->ar_files =
+                  (Par_file *) ((struct _Pstore *) store)->buf;
+               name_buf = (char *)
+                  ((*ar_files)->ar_files + (*ar_files)->num_ar_files);
+               for (i = 0; i < MAX_NO_OPEN_ARFILES; i++) {
+                  if (PHG_PSL->ar_files[i].used) {
+                     (*ar_files)->ar_files[j].id = PHG_PSL->ar_files[i].arid;
+                     (*ar_files)->ar_files[j].name = name_buf;
+                     strcpy(name_buf, PHG_PSL->ar_files[i].fname);
+                     name_buf += strlen(PHG_PSL->ar_files[i].fname) + 1;
+                     j++;
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+
+/*******************************************************************************
  * pinq_conf_res
  *
  * DESCR:       Get archive conflict resolution
@@ -503,6 +556,126 @@ void pinq_conf_res(
    }
    else {
       *err_ind = ERR2;
+   }
+}
+
+/*******************************************************************************
+ * pinq_all_conf_structs
+ *
+ * DESCR:       Get all conflicting structure ids
+ * RETURNS:     N/A
+ */
+
+void pinq_all_conf_structs(
+   Pint ar_id,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *ids,
+   Pint *num_elems_impl_list
+   )
+{
+   Phg_args_q_conflicting args;
+   Phg_ret ret;
+
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
+      *err_ind = ERR7;
+   }
+   else if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
+      *err_ind = ERR7;
+   }
+   else if (!phg_psl_inq_ar_open(PHG_PSL, ar_id)) {
+      *err_ind = ERR404;
+   }
+   else {
+      args.op = PHG_ARGS_CONF_ALL;
+      args.arid = ar_id;
+      ret.err = 0;
+      phg_inq_ar_conflicting(&args, &ret);
+      if (ret.err) {
+         *err_ind = ret.err;
+      }
+      else {
+         *err_ind = 0;
+         ids->num_ints = 0;
+         *num_elems_impl_list = ret.data.int_list.num_ints;
+         if (ret.data.int_list.num_ints > 0) {
+            if (start_ind < 0 || start_ind >= ret.data.int_list.num_ints) {
+               *err_ind = ERR2201;
+            }
+            else if (num_elems_appl_list > 0) {
+               ids->num_ints = PHG_MIN(num_elems_appl_list,
+                                       ret.data.int_list.num_ints - start_ind);
+               memcpy(ids->ints, &ret.data.int_list.ints[start_ind],
+                      ids->num_ints * sizeof(Pint));
+            }
+            else if (num_elems_appl_list < 0) {
+               *err_ind = ERRN153;
+            }
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * pinq_conf_structs_net
+ *
+ * DESCR:       Get conflicting structure ids in network
+ * RETURNS:     N/A
+ */
+
+void pinq_conf_structs_net(
+   Pint ar_id,
+   Pint struct_id,
+   Pstruct_net_source source,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *ids,
+   Pint *num_elems_impl_list
+   )
+{
+   Phg_args_q_conflicting args;
+   Phg_ret ret;
+
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
+      *err_ind = ERR7;
+   }
+   else if (PSL_AR_STATE(PHG_PSL) != PST_AROP) {
+      *err_ind = ERR7;
+   }
+   else if (!phg_psl_inq_ar_open(PHG_PSL, ar_id)) {
+      *err_ind = ERR404;
+   }
+   else {
+      args.op = PHG_ARGS_CONF_NET;
+      args.arid = ar_id;
+      args.struct_id = struct_id;
+      args.src = source;
+      ret.err = 0;
+      phg_inq_ar_conflicting(&args, &ret);
+      if (ret.err) {
+         *err_ind = ret.err;
+      }
+      else {
+         *err_ind = 0;
+         ids->num_ints = 0;
+         *num_elems_impl_list = ret.data.int_list.num_ints;
+         if (ret.data.int_list.num_ints > 0) {
+            if (start_ind < 0 || start_ind >= ret.data.int_list.num_ints) {
+               *err_ind = ERR2201;
+            }
+            else if (num_elems_appl_list > 0) {
+               ids->num_ints = PHG_MIN(num_elems_appl_list,
+                                       ret.data.int_list.num_ints - start_ind);
+               memcpy(ids->ints, &ret.data.int_list.ints[start_ind],
+                      ids->num_ints * sizeof(Pint));
+            }
+            else if (num_elems_appl_list < 0) {
+               *err_ind = ERRN153;
+            }
+         }
+      }
    }
 }
 
