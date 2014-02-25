@@ -943,6 +943,16 @@ typedef struct {
 } Pfilter;
 
 typedef struct {
+   Pint  id;
+   char *name;
+} Par_file;
+
+typedef struct {
+   Pint     num_ar_files;
+   Par_file *ar_files;
+} Par_file_list;
+
+typedef struct {
    Pint struct_id;
    Pint pick_id;
    Pint elem_pos;
@@ -1937,28 +1947,21 @@ void pcopy_all_elems_struct(
    );
 
 /*******************************************************************************
- * pinq_elem_ptr
+ * pelem_search
  *
- * DESCR:       Returns the index of the current element.
+ * DESCR:       Get all matching elements
  * RETURNS:     N/A
  */
 
-void pinq_elem_ptr(
+void pelem_search(
+   Pint struct_id,
+   Pint struct_elem,
+   Psearch_dir dir,
+   Pelem_type_list *incl,
+   Pelem_type_list *excl,
    Pint *err_ind,
-   Pint *elem_ptr_value
-   );
-
-/*******************************************************************************
- * pinq_open_struct
- *
- * DESCR:       Check if a structure is open for appending or editing.
- * RETURNS:     N/A
- */
-
-void pinq_open_struct(
-   Pint *err_ind,
-   Popen_struct_status *status,
-   Pint *struct_id
+   Psearch_status *status,
+   Pint *found_elem_ptr
    );
 
 /*******************************************************************************
@@ -1971,6 +1974,55 @@ void pinq_open_struct(
 void pinq_edit_mode(
    Pint *err_ind,
    Pedit_mode *edit_mode
+   );
+
+/*******************************************************************************
+ * pinq_elem_ptr
+ *
+ * DESCR:       Returns the index of the current element.
+ * RETURNS:     N/A
+ */
+
+void pinq_elem_ptr(
+   Pint *err_ind,
+   Pint *elem_ptr_value
+   );
+
+/*******************************************************************************
+ * pinq_struct_st
+ *
+ * DESCR:       Get current structure state
+ * RETURNS:     N/A
+ */
+
+void pinq_struct_st(
+   Pint *struct_st
+   );
+
+/*******************************************************************************
+ * pinq_open_struct
+ *
+ * DESCR:       Get current open structure and edit status
+ * RETURNS:     N/A
+ */
+
+void pinq_open_struct(
+   Pint *err_ind,
+   Popen_struct_status *status,
+   Pint *struct_id
+   );
+
+/*******************************************************************************
+ * pinq_struct_status
+ *
+ * DESCR:       Get current status of give structure
+ * RETURNS:     N/A
+ */
+
+void pinq_struct_status(
+   Pint struct_id,
+   Pint *err_ind,
+   Pstruct_status *status
    );
 
 /*******************************************************************************
@@ -3498,6 +3550,19 @@ void pinq_ar_st(
    );
 
 /*******************************************************************************
+ * pinq_ar_files
+ *
+ * DESCR:       Get open archive files
+ * RETURNS:     N/A
+ */
+
+void pinq_ar_files(
+   Pstore store,
+   Pint *err_ind,
+   Par_file_list **ar_files
+   );
+
+/*******************************************************************************
  * pinq_conf_res
  *
  * DESCR:       Get archive conflict resolution
@@ -3508,6 +3573,40 @@ void pinq_conf_res(
    Pint *err_ind,
    Pconf_res *archive_res,
    Pconf_res *retrieval_res
+   );
+
+/*******************************************************************************
+ * pinq_all_conf_structs
+ *
+ * DESCR:       Get conflicting structure ids
+ * RETURNS:     N/A
+ */
+
+void pinq_all_conf_structs(
+   Pint ar_id,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *ids,
+   Pint *num_elems_impl_list
+   );
+
+/*******************************************************************************
+ * pinq_conf_structs_net
+ *
+ * DESCR:       Get conflicting structure ids in network
+ * RETURNS:     N/A
+ */
+
+void pinq_conf_structs_net(
+   Pint ar_id,
+   Pint struct_id,
+   Pstruct_net_source source,
+   Pint num_elems_appl_list,
+   Pint start_ind,
+   Pint *err_ind,
+   Pint_list *ids,
+   Pint *num_elems_impl_list
    );
 
 #ifdef __cplusplus

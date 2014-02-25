@@ -28,7 +28,8 @@ extern "C" {
 struct _Pstore {
    Pint size;
    union {
-      Pelem_data elem_data;
+      Par_file_list ar_files;
+      Pelem_data    elem_data;
    } data;
    void *buf;
    struct _Pstore *next;
