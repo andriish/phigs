@@ -270,6 +270,11 @@ int main(int argc, char *argv[])
                punpost_all_structs(0);
                pupd_ws(0, PFLAG_PERFORM);
             }
+            if (ks == XK_s) {
+               popen_ar_file(0, "test_c1.ar");
+               par_all_structs(0);
+               pclose_ar_file(0);
+            }
             else if (ks == XK_Escape) {
                goto exit;
             }

@@ -482,7 +482,12 @@ int main(int argc, char *argv[])
 
          case KeyPress:
             ks = XLookupKeysym((XKeyEvent *) &event, 0);
-            if (ks == XK_Escape) {
+            if (ks == XK_s) {
+               popen_ar_file(0, "test_c2.ar");
+               par_all_structs(0);
+               pclose_ar_file(0);
+            }
+            else if (ks == XK_Escape) {
                goto exit;
             }
             else {

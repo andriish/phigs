@@ -356,6 +356,11 @@ int main(int argc, char *argv[])
             else if (ks == XK_Escape) {
                goto exit;
             }
+            if (ks == XK_s) {
+               popen_ar_file(0, "test_c5.ar");
+               par_all_structs(0);
+               pclose_ar_file(0);
+            }
             protate_x(angle_x * 3.14 / 2.0, &errnum, rotx);
             protate_y(angle_y * 3.14 / 2.0, &errnum, roty);
             pcompose_matrix3(rotx, roty, &errnum, rot3);
