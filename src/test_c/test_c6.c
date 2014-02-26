@@ -1550,6 +1550,11 @@ int main(int argc, char *argv[])
             else if (ks == XK_Right) {
                angle_y += ANGLE_DELTA;
             }
+            if (ks == XK_s) {
+               popen_ar_file(0, "test_c6.ar");
+               par_all_structs(0);
+               pclose_ar_file(0);
+            }
             else if (ks == XK_Escape) {
                goto exit;
             }

@@ -255,32 +255,32 @@ int main(int argc, char *argv[])
                ppost_struct(0, SCENE_STRUCT, 0);
                pupd_ws(0, PFLAG_PERFORM);
             }
-            else if (ks == XK_w) {
-               popen_ar_file(0, "archive.phg");
+            else if (ks == XK_s) {
+               popen_ar_file(0, "test_c10.ar");
                par_all_structs(0);
                pclose_ar_file(0);
             }
             else if (ks == XK_l) {
-               popen_ar_file(0, "archive.phg");
+               popen_ar_file(0, "test_c10.ar");
                list_archives();
                pclose_ar_file(0);
             }
-            else if (ks == XK_s) {
-               popen_ar_file(0, "archive.phg");
+            else if (ks == XK_1) {
+               popen_ar_file(0, "test_c10.ar");
                ret_structs(0);
                pclose_ar_file(0);
                ppost_struct(0, SCENE_STRUCT, 0);
                pupd_ws(0, PFLAG_PERFORM);
             }
-            else if (ks == XK_n) {
-               popen_ar_file(0, "archive.phg");
+            else if (ks == XK_2) {
+               popen_ar_file(0, "test_c10.ar");
                ret_struct_net(0, SCENE_STRUCT);
                pclose_ar_file(0);
                ppost_struct(0, SCENE_STRUCT, 0);
                pupd_ws(0, PFLAG_PERFORM);
             }
-            else if (ks == XK_a) {
-               popen_ar_file(0, "archive.phg");
+            else if (ks == XK_3) {
+               popen_ar_file(0, "test_c10.ar");
                pret_all_structs(0);
                pclose_ar_file(0);
                ppost_struct(0, SCENE_STRUCT, 0);
