@@ -27,7 +27,7 @@
 #include "private/phgP.h"
 #include "ws.h"
 #include "ws_inp.h"
-#include "private/wsb.h"
+#include "private/wsbP.h"
 #include "private/wsglP.h"
 #include "css.h"
 #include "alloc.h"
@@ -692,6 +692,71 @@ void phg_wsb_set_name_set(
       default:
          /* TODO: Other filter types */
          break;
+   }
+}
+
+/*******************************************************************************
+ * phg_wsb_inq_name_set
+ *
+ * DESCR:	Inquery filter name set
+ * RETURNS:	N/A
+ */
+
+void phg_wsb_inq_name_set(
+   Ws *ws,
+   Phg_args_flt_type type,
+   Pint dev_id,
+   Phg_ret *ret
+   )
+{
+   Nameset incl;
+   Nameset excl;
+   int incl_count;
+   int excl_count;
+   Ws_output_ws *ows = &ws->out_ws;
+
+   ret->err = 0;
+   switch (type) {
+      case PHG_ARGS_FLT_INVIS:
+         incl = ows->nset.invis_incl;
+         excl = ows->nset.invis_excl;
+         break;
+
+      case PHG_ARGS_FLT_PICK:
+         incl = ws->in_ws.devs.pick[dev_id - 1].filter.incl;
+         excl = ws->in_ws.devs.pick[dev_id - 1].filter.excl;
+         break;
+
+      default:
+         /* TODO: Other filter types */
+         ret->err = ERR2006;
+         break;
+   }
+
+   if (!ret->err) {
+      incl_count = phg_nset_num_names_get(incl);
+      excl_count = phg_nset_num_names_get(excl);
+      ret->data.filter.incl.num_ints = incl_count;
+      ret->data.filter.excl.num_ints = excl_count;
+      if ((incl_count + excl_count) > 0) {
+         if (!PHG_SCRATCH_SPACE(&ws->scratch,
+                                (incl_count + excl_count) * sizeof(Pint))) {
+            ret->err = ERR900;
+            ret->data.filter.incl.num_ints = 0;
+            ret->data.filter.excl.num_ints = 0;
+         }
+         else {
+            ret->data.filter.incl.ints = (Pint *) ws->scratch.buf;
+            ret->data.filter.excl.ints =
+               &ret->data.filter.incl.ints[incl_count];
+            phg_nset_names_get(incl,
+                               ret->data.filter.incl.num_ints,
+                               ret->data.filter.incl.ints);
+            phg_nset_names_get(excl,
+                               ret->data.filter.excl.num_ints,
+                               ret->data.filter.excl.ints);
+         }
+      }
    }
 }
 

@@ -24,9 +24,10 @@
 #include <math.h>
 
 #include "phg.h"
-#include "private/phgP.h"
 #include "css.h"
 #include "ws.h"
+#include "private/phgP.h"
+#include "private/cbP.h"
 
 /*******************************************************************************
  * popen_ws
@@ -1658,5 +1659,94 @@ void pinq_colr_rep(
          }
       }
    }
+}
+
+/*******************************************************************************
+ * inq_filter
+ *
+ * DESCR:       Get workstation filter
+ * RETURNS:     N/A
+ */
+
+static void inq_filter(
+   Phg_args_flt_type type,
+   Pint ws_id,
+   struct _Pstore *store,
+   Pint *err_ind,
+   Pfilter **filter
+   )
+{
+   Phg_ret ret;
+   Phg_ret_filter *pf = &ret.data.filter;
+   Psl_ws_info *wsinfo;
+   Wst_phigs_dt *dt;
+   Ws_handle wsh;
+   int size;
+
+   if (!phg_entry_check(PHG_ERH, 0, Pfn_INQUIRY)) {
+      *err_ind = ERR3;
+   }
+   else if (PSL_WS_STATE(PHG_PSL) != PWS_ST_WSOP) {
+      *err_ind = ERR3;
+   }
+   else {
+      wsinfo = phg_psl_get_ws_info(PHG_PSL, ws_id);
+      if (wsinfo == NULL) {
+         *err_ind = ERR54;
+      }
+      else {
+         dt = &wsinfo->wstype->desc_tbl.phigs_dt;
+         if (!(dt->ws_category == PCAT_OUT ||
+               dt->ws_category == PCAT_OUTIN ||
+               dt->ws_category == PCAT_MO)) {
+            *err_ind = ERR59;
+         }
+         else {
+            wsh = PHG_WSID(ws_id);
+            (*wsh->inq_filter)(wsh, type, &ret);
+            if (ret.err) {
+               *err_ind = ret.err;
+            }
+            else {
+               *err_ind = 0;
+               size = (pf->incl.num_ints + pf->excl.num_ints) * sizeof(Pint);
+               if (phg_cb_resize_store(store, size, err_ind)) {
+                  *filter = &store->data.filter;
+                  (*filter)->incl_set.num_ints = pf->incl.num_ints;
+                  (*filter)->excl_set.num_ints = pf->excl.num_ints;
+                  (*filter)->incl_set.ints = (Pint *) store->buf;
+                  (*filter)->excl_set.ints =
+                     &(*filter)->incl_set.ints[(*filter)->incl_set.num_ints];
+                  if (pf->incl.num_ints > 0) {
+                     memcpy((*filter)->incl_set.ints, pf->incl.ints,
+                            (*filter)->incl_set.num_ints * sizeof(Pint));
+                  }
+                  if (pf->excl.num_ints > 0) {
+                     memcpy((*filter)->excl_set.ints, pf->excl.ints,
+                            (*filter)->excl_set.num_ints * sizeof(Pint));
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+
+/*******************************************************************************
+ * pinq_invis_filter
+ *
+ * DESCR:       Get workstation invisibility filter
+ * RETURNS:     N/A
+ */
+
+void pinq_invis_filter(
+   Pint ws_id,
+   Pstore store,
+   Pint *err_ind,
+   Pfilter **invis_filter
+   )
+{
+   inq_filter(PHG_ARGS_FLT_INVIS, ws_id, ((struct _Pstore *) store),
+              err_ind, invis_filter);
 }
 

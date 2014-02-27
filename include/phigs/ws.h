@@ -306,6 +306,11 @@ typedef struct _Ws {
                    struct _Ws *ws,
                    Phg_ret *ret
                    );
+   void         (*inq_filter)(
+                   struct _Ws *ws,
+                   Phg_args_flt_type type,
+                   Phg_ret *ret
+                   );
    void         (*inq_hlhsr_mode)(
                    struct _Ws *ws,
                    Phg_ret *ret

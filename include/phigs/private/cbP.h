@@ -29,6 +29,7 @@ struct _Pstore {
    Pint size;
    union {
       Par_file_list ar_files;
+      Pfilter       filter;
       Pelem_data    elem_data;
    } data;
    void *buf;
