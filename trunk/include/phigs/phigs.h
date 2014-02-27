@@ -1708,6 +1708,20 @@ void pinq_colr_rep(
    );
 
 /*******************************************************************************
+ * pinq_invis_filter
+ *
+ * DESCR:       Get workstation invisibility filter
+ * RETURNS:     N/A
+ */
+
+void pinq_invis_filter(
+   Pint ws_id,
+   Pstore store,
+   Pint *err_ind,
+   Pfilter **invis_filter
+   );
+
+/*******************************************************************************
  * pinq_ws_cat
  *
  * DESCR:       Get workstation category

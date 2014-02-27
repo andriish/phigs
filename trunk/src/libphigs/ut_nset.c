@@ -316,6 +316,57 @@ int phg_nset_name_is_set(
 }
 
 /*******************************************************************************
+ * phg_nset_num_names_get
+ *
+ * DESCR:       Get number of names in nameset
+ * RETURNS:     TRUE of FALSE
+ */
+
+int phg_nset_num_names_get(
+   Nameset nset
+   )
+{
+   unsigned i;
+
+   for (i = nset->max_names - 1; i >= 0; i--) {
+      if (phg_nset_name_is_set(nset, i)) {
+         break;
+      }
+   }
+
+   return (i + 1);
+}
+
+/*******************************************************************************
+ * phg_nset_names_get
+ *
+ * DESCR:       Get names in nameset to integer list
+ * RETURNS:     TRUE of FALSE
+ */
+
+int phg_nset_names_get(
+   Nameset nset,
+   Pint num_names,
+   Pint *name_list
+   )
+{
+   int status;
+   unsigned i;
+
+   if (num_names > nset->max_names) {
+      status = FALSE;
+   }
+   else {
+      for (i = 0; i < num_names; i++) {
+         name_list[i] = phg_nset_name_is_set(nset, i);
+      }
+      status = TRUE;
+   }
+
+   return status;
+}
+
+/*******************************************************************************
  * phg_nset_names_is_empty_all
  *
  * DESCR:       Check if all names in nameset is empty

@@ -179,6 +179,30 @@ int phg_nset_name_is_set(
    );
 
 /*******************************************************************************
+ * phg_nset_num_names_get
+ *
+ * DESCR:       Get number of names in nameset
+ * RETURNS:     TRUE of FALSE
+ */
+
+int phg_nset_num_names_get(
+   Nameset nset
+   );
+
+/*******************************************************************************
+ * phg_nset_names_get
+ *
+ * DESCR:       Get names in nameset to integer list
+ * RETURNS:     TRUE of FALSE
+ */
+
+int phg_nset_names_get(
+   Nameset nset,
+   Pint num_names,
+   Pint *name_list
+   );
+
+/*******************************************************************************
  * phg_nset_names_is_empty_all
  *
  * DESCR:       Check if all names in nameset is empty

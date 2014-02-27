@@ -75,7 +75,7 @@ SOFTWARE.
 #include "private/phgP.h"
 #include "util.h"
 #include "ws.h"
-#include "private/wsb.h"
+#include "private/wsbP.h"
 #include "private/wsglP.h"
 #include "private/wsxP.h"
 #include "css.h"
@@ -128,6 +128,7 @@ static void wsb_load_funcs(
     ws->change_posting = phg_wsb_change_posting;
     ws->inq_posted = phg_wsb_inq_posted;
     ws->inq_disp_update_state = phg_wsb_inq_disp_update_state;
+    ws->inq_filter = phg_wsb_inq_filter;
     ws->inq_hlhsr_mode = phg_wsb_inq_hlhsr_mode;
     ws->inq_representation = phg_wsb_inq_rep;
     ws->inq_view_indices = phg_wsb_inq_view_indices;
@@ -1617,17 +1618,15 @@ void phg_wsb_set_filter(
     }
 }
 
-#ifdef TODO
-void
-phg_wsb_inq_filter( ws, type, ret )
-    Ws                  *ws;
-    Phg_args_flt_type   type;
-    Phg_ret             *ret;
+void phg_wsb_inq_filter(
+    Ws *ws,
+    Phg_args_flt_type type,
+    Phg_ret *ret
+    )
 {
-    phg_wsx_inq_name_set( ws, type, (Pint)0, ret );
+    phg_wsb_inq_name_set( ws, type, 0, ret );
 }
 
-#endif
 
 void phg_wsb_inq_posted(
     Ws *ws,

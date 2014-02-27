@@ -31,7 +31,7 @@
 #include "private/phgP.h"
 #include "ws.h"
 #include "private/wsxP.h"
-#include "private/wsb.h"
+#include "private/wsbP.h"
 #include "private/wsglP.h"
 
 /*******************************************************************************

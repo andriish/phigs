@@ -478,6 +478,30 @@ void print_size(Pint ws_type)
    }
 }
 
+void print_invis_filter(Pint ws_id)
+{
+   Pint i;
+   Pint err;
+   Pstore store;
+   Pfilter *filter;
+
+   pcreate_store(&err, &store);
+   if (!err) {
+      pinq_invis_filter(ws_id, store, &err, &filter);
+      if (!err) {
+         printf("Included set:\n");
+         for (i = 0; i < filter->incl_set.num_ints; i++) {
+            printf("\t#%d\t%d\n", i, filter->incl_set.ints[i]);
+         }
+         printf("Excluded set:\n");
+         for (i = 0; i < filter->excl_set.num_ints; i++) {
+            printf("\t#%d\t%d\n", i, filter->excl_set.ints[i]);
+         }
+      }
+      pdel_store(store);
+   }
+}
+
 int main(void)
 {
    Pfilter invis_filter;
@@ -497,6 +521,7 @@ int main(void)
    pset_invis_filter(WS_1, &invis_filter);
    pset_hlhsr_mode(WS_1, PHIGS_HLHSR_MODE_ZBUFF);
    pset_view_tran_in_pri(WS_1, 0, 4, PPRI_LOWER);
+   print_invis_filter(WS_1);
    ppost_struct(WS_1, STRUCT_BORDER, 0);
    wsh1 = PHG_WSID(WS_1);
 
