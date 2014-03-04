@@ -328,13 +328,13 @@ int phg_nset_num_names_get(
 {
    unsigned i;
 
-   for (i = nset->max_names - 1; i >= 0; i--) {
+   for (i = nset->max_names; i > 0; i--) {
       if (phg_nset_name_is_set(nset, i)) {
          break;
       }
    }
 
-   return (i + 1);
+   return i;
 }
 
 /*******************************************************************************
@@ -351,14 +351,16 @@ int phg_nset_names_get(
    )
 {
    int status;
-   unsigned i;
+   unsigned i, count;
 
    if (num_names > nset->max_names) {
       status = FALSE;
    }
    else {
-      for (i = 0; i < num_names; i++) {
-         name_list[i] = phg_nset_name_is_set(nset, i);
+      for (i = 1, count = 0; i <= nset->max_names && count < num_names; i++) {
+         if (phg_nset_name_is_set(nset, i)) {
+            name_list[count++] = i;
+         }
       }
       status = TRUE;
    }
