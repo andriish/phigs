@@ -182,6 +182,12 @@ void phg_wsb_set_filter(
     Pint_list *excl_set
     );
 
+void phg_wsb_inq_filter(
+    Ws *ws,
+    Phg_args_flt_type type,
+    Phg_ret *ret
+    );
+
 void phg_wsb_inq_posted(
     Ws *ws,
     Phg_ret *ret
@@ -214,6 +220,13 @@ void phg_wsb_inq_view_indices(
     Ws *ws,
     Phg_ret *ret
     );
+
+void phg_wsb_inq_name_set(
+   Ws *ws,
+   Phg_args_flt_type type,
+   Pint dev_id,
+   Phg_ret *ret
+   );
 
 /*******************************************************************************
  * phg_wsb_set_view_input_priority
