@@ -1,4 +1,4 @@
-ADD_LIBRARY(vk
+ADD_LIBRARY(Vk
     VkApp.C
     VkComponent.C
     VkComponentList.C

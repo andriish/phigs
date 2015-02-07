@@ -113,10 +113,10 @@ static VkMenuDesc subMenuDesc[] = {
 };
 
 static VkMenuDesc menuDesc[] = {
-    {ACTION,  "action1", NULL, NULL, NULL},
+    {ACTION,  "action1",  NULL, NULL, NULL},
     {SUBMENU, "submenu1", NULL, subMenuDesc, NULL},
-    {ACTION,  "action2", NULL, NULL, NULL},
-    {END,    NULL,         NULL, NULL, NULL}
+    {ACTION,  "action2",  NULL, NULL, NULL},
+    {END,          NULL,  NULL, NULL, NULL}
 };
 
     bar->addSubmenu("submenudesc", menuDesc);
