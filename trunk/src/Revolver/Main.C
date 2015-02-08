@@ -55,6 +55,11 @@ void quitCallback(Widget w, XtPointer callData, XtPointer clientData)
    exit(0);
 }
 
+void aboutCallback(Widget w, XtPointer callData, XtPointer clientData)
+{
+   std::cout << "About" << std::endl;
+}
+
 int main(int argc, char *argv[])
 {
     popen_phigs(NULL, 0);
@@ -115,11 +120,20 @@ static VkMenuDesc subMenuDesc[] = {
 static VkMenuDesc menuDesc[] = {
     {ACTION,  "action1",  NULL, NULL, NULL},
     {SUBMENU, "submenu1", NULL, subMenuDesc, NULL},
-    {ACTION,  "action2",  NULL, NULL, NULL},
+    {ACTION,   "action2", NULL, NULL, NULL},
     {END,          NULL,  NULL, NULL, NULL}
 };
 
     bar->addSubmenu("submenudesc", menuDesc);
+
+    VkSubMenu *subHelp = new VkSubMenu("help");
+    std::cout << "Sub menu class name: " << subHelp->className() << std::endl;
+    std::cout << "Sub menu instance name: " << subHelp->name() << std::endl;
+    std::cout << std::endl;
+
+    subHelp->addAction("about", aboutCallback);
+
+    bar->addSubmenu(subHelp);
 
     bar->build(mainWindow->mainWindowWidget());
 
