@@ -43,7 +43,7 @@ public:
     // DESCR:       Destroy widget list
     // RETURNS:     N/A
     //
-    ~VkWidgetList();
+    virtual ~VkWidgetList();
 
     ///////////////////////////////////////////////////////////////////////////
     // add
@@ -51,7 +51,7 @@ public:
     // DESCR:       Add widget to widget list
     // RETURNS:     N/A
     //
-    void add(Widget widget);
+    virtual void add(Widget widget);
 
     ///////////////////////////////////////////////////////////////////////////
     // add
@@ -59,7 +59,7 @@ public:
     // DESCR:       Add component widget to widget list
     // RETURNS:     N/A
     //
-    void add(VkComponent *component);
+    virtual void add(VkComponent *component);
 
     ///////////////////////////////////////////////////////////////////////////
     // remove
@@ -67,7 +67,7 @@ public:
     // DESCR:       Remove widget from widget list
     // RETURNS:     N/A
     //
-    void remove(Widget widget);
+    virtual void remove(Widget widget);
 
     ///////////////////////////////////////////////////////////////////////////
     // remove
@@ -75,7 +75,7 @@ public:
     // DESCR:       Remove component widget from widget list
     // RETURNS:     N/A
     //
-    void remove(VkComponent *component);
+    virtual void remove(VkComponent *component);
 
     ///////////////////////////////////////////////////////////////////////////
     // removeFirst
@@ -83,7 +83,7 @@ public:
     // DESCR:       Remove first widget from widget list
     // RETURNS:     N/A
     //
-    void removeFirst();
+    virtual void removeFirst();
 
     ///////////////////////////////////////////////////////////////////////////
     // removeLast
@@ -91,7 +91,7 @@ public:
     // DESCR:       Remove last widget from widget list
     // RETURNS:     N/A
     //
-    void removeLast();
+    virtual void removeLast();
 
     ///////////////////////////////////////////////////////////////////////////
     // exists
@@ -99,7 +99,7 @@ public:
     // DESCR:       Check if widget exists in list
     // RETURNS:     True if widget exists, otherwise False
     //
-    Boolean exists(Widget widget);
+    virtual Boolean exists(Widget widget);
 
     ///////////////////////////////////////////////////////////////////////////
     // size
