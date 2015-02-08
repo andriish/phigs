@@ -1,4 +1,5 @@
 ADD_LIBRARY(Vk
+    VkBase.C
     VkApp.C
     VkComponent.C
     VkComponentList.C
@@ -9,5 +10,6 @@ ADD_LIBRARY(Vk
     VkSimpleWindow.C
     VkSubMenu.C
     VkWindow.C
+    VkWidgetList.C
     )
 
