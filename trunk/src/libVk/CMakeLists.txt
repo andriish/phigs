@@ -11,5 +11,6 @@ ADD_LIBRARY(Vk
     VkSubMenu.C
     VkWindow.C
     VkWidgetList.C
+    VkDialogManager.C
     )
 
