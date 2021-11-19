@@ -126,7 +126,7 @@ configure_package_config_file(cmake/Templates/phigsConfig.cmake.in
   INSTALL_DESTINATION ${CONFIG_INSTALL_DIR}
   PATH_VARS CMAKE_INSTALL_INCLUDEDIR
             CMAKE_INSTALL_LIBDIR)
-write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/share/phigs/cmake/PHIGSConfig-version.cmake COMPATIBILITY SameMajorVersion VERSION ${PROJECT_VERSION})
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/share/PHIGS/cmake/PHIGSConfig-version.cmake COMPATIBILITY SameMajorVersion VERSION ${PROJECT_VERSION})
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/PHIGS/cmake/PHIGSConfig.cmake
               ${CMAKE_CURRENT_BINARY_DIR}/share/PHIGS/cmake/PHIGSConfig-version.cmake
