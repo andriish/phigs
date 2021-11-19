@@ -118,6 +118,7 @@ ADD_EXECUTABLE(Revolver.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/Revolver/Main.C ${CM
 TARGET_LINK_LIBRARIES(Revolver.exe ${REVOLVER_LIBRARIES})
 
 include(CMakePackageConfigHelpers)
+set(CONFIG_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/PHIGS/cmake)
 configure_package_config_file(cmake/Templates/phigsConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/share/PHIGS/cmake/PHIGSConfig.cmake
   INSTALL_DESTINATION ${CONFIG_INSTALL_DIR}
